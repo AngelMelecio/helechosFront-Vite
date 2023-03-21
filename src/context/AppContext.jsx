@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useContext } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "./AuthContext";
-import {entorno} from "../constants/entornos.jsx"
+import { entorno } from "../constants/entornos.jsx"
 
 const AppContext = React.createContext()
 
@@ -11,10 +11,10 @@ export function useApp() {
   return useContext(AppContext)
 }
 
-const apiEmpleadosUrl = entorno+"/api/empleados/"
-const apiMaquinasUrl = entorno+"/api/maquinas/"
-const apiEmpleadoMaquinaUrl = entorno+"/api/empleados_maquina/"
-const apiEmpleadoMaquinasUrl = entorno+"/api/empleado_maquinas/"
+const apiEmpleadosUrl = entorno + "/api/empleados/"
+const apiMaquinasUrl = entorno + "/api/maquinas/"
+const apiEmpleadoMaquinaUrl = entorno + "/api/empleados_maquina/"
+const apiEmpleadoMaquinasUrl = entorno + "/api/empleado_maquinas/"
 const imageEndPoint = entorno
 
 const empleadosColumns = [
@@ -46,6 +46,7 @@ export function AppProvider({ children }) {
   const { session, notify } = useAuth()
 
   const [fetchingEmpleados, setFetchingEmpleados] = useState(false)
+
   const [allEmpleados, setAllEmpleados] = useState([])
 
   const [fetchingMaquinas, setFetchingMaquinas] = useState(false)
@@ -76,7 +77,7 @@ export function AppProvider({ children }) {
     setFetchingEmpleados(false)
   }
 
-  const saveEmpleado = async (values, objEmpleado, maquinas, isEdit) => {    
+  const saveEmpleado = async (values, objEmpleado, maquinas, isEdit) => {
     let formData = new FormData()
     formData.append('nombre', values.nombre)
     formData.append('apellidos', values.apellidos)
@@ -88,8 +89,8 @@ export function AppProvider({ children }) {
       formData.append('fotografia', objEmpleado.fotografia)
     formData.append('departamento', values.departamento)
     formData.append('is_active', values.is_active)
-    values.fechaEntrada !== null && formData.append('fechaEntrada',values.fechaEntrada)
-    values.fechaAltaSeguro !== null && formData.append('fechaAltaSeguro',values.fechaAltaSeguro)
+    values.fechaEntrada !== null && formData.append('fechaEntrada', values.fechaEntrada)
+    values.fechaAltaSeguro !== null && formData.append('fechaAltaSeguro', values.fechaAltaSeguro)
 
     let maquinasIds = []
     maquinas.forEach(m => maquinasIds.push({ id: m.idMaquina }))
@@ -104,6 +105,7 @@ export function AppProvider({ children }) {
       //    Espero la respuesta para obtener el nuevo Id 
       const { message, empleado } = await response.json()
       notify(message)
+      //await getEmpleados()
       if (maquinas.length === 0) return
       if (response.ok) {
         //    Asigno las Maquinas 
@@ -130,6 +132,8 @@ export function AppProvider({ children }) {
         .then(response => response.json())
         .then(data => notify(data.message))
 
+
+      //await getEmpleados()
       if (maquinas.length === 0) return
 
       //    Asigno Sus nuevas maquinas
@@ -143,12 +147,14 @@ export function AppProvider({ children }) {
       })
       let data = await response.json()
       notify(data.message)
-
     }
+
+    //await getEmpleados()
   }
 
   const deleteEmpleados = async (listaEmpleados) => {
-    listaEmpleados.forEach(async (e) => {
+    for (let i = 0; i < listaEmpleados.length; i++) {
+      let e = listaEmpleados[i]
       if (e.isSelected) {
         let response = await fetch(apiEmpleadosUrl + e.idEmpleado, {
           method: 'DELETE',
@@ -163,7 +169,7 @@ export function AppProvider({ children }) {
         else
           notify(data.message, true)
       }
-    })
+    }
   }
 
   const getEmpleadoMaquinas = async (empId) => {
@@ -190,7 +196,6 @@ export function AppProvider({ children }) {
         'Authorization': 'Bearer ' + session.access
       }
     })
-    //console.log( 'getting maquinas ',response )
     if (response.status === 200) {
       let maquinas = await response.json()
       let formatData = maquinas.map((mqna) => ({
@@ -243,7 +248,8 @@ export function AppProvider({ children }) {
   }
 
   const deleteMaquinas = async (listaMaquinas) => {
-    listaMaquinas.forEach(async (e) => {
+    for (let i = 0; i < listaMaquinas.length; i++) {
+      let e = listaMaquinas[i]
       if (e.isSelected) {
         let response = await fetch(apiMaquinasUrl + e.idMaquina, {
           method: 'DELETE',
@@ -254,26 +260,25 @@ export function AppProvider({ children }) {
         let data = await response.json()
         if (response.ok) {
           notify(data.message)
-          return
-        }
-        notify(data.message, true)
+        } else
+          notify(data.message, true)
       }
-    })
+    }
   }
-
-
 
   return (
     <AppContext.Provider
       value={{
         fetchingEmpleados,
-        allEmpleados, getEmpleados, empleadosColumns,
+        allEmpleados,
+        getEmpleados,
+        empleadosColumns,
         saveEmpleado, deleteEmpleados,
 
         fetchingMaquinas,
         allMaquinas, getMaquinas, maquinasColumns,
         saveMaquina, deleteMaquinas,
-      
+
         getEmpleadoMaquinas,
         notify
       }}>

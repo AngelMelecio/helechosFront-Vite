@@ -91,7 +91,7 @@ const PaginaPerfil = () => {
                           <>
                             <button
                               onClick={() => saveChanges(atr.atribute)}
-                              className="normalButton w-full flex items-center p-1 rounded-md justify-center" >
+                              className="normal-button w-full flex items-center p-1 rounded-md justify-center" >
                               <ICONS.Save size='20px' />
                             </button>
                             <button

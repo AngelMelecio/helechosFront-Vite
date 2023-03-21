@@ -1,5 +1,5 @@
 
-const Input = ({ label, type, name, value, onChange, Icon = null, onBlur, errores, ...props }) => {
+const Input = ({ label, type, name, value = "", onChange, Icon = null, onBlur, errores, ...props }) => {
 
     let p = Icon !== null ? 'pl-9' : ''
     let cn_good = "flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500 " + p;
@@ -17,7 +17,7 @@ const Input = ({ label, type, name, value, onChange, Icon = null, onBlur, errore
                 <input
                     type={type}
                     name={name}
-                    value={ !dis ? value : '' }
+                    value={!dis ? (value != null ? value : '') : ''}
                     onChange={onChange}
                     className={errores ? cn_bad : cn_good}
                     onBlur={onBlur}

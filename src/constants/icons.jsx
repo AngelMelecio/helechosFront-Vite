@@ -30,7 +30,8 @@ import {
     AiOutlinePhone as Phone,
     AiOutlineUser as User,
     AiFillEdit as Edit,
-    AiOutlineSave as Save
+    AiOutlineSave as Save,
+    AiOutlinePrinter as Print,
 } from 'react-icons/ai'
 
 import {
@@ -109,5 +110,6 @@ export const ICONS = {
     Save,
     Person,
     UsersIdentity,
-    Active, Ghost
+    Active, Ghost,
+    Print,
 }
