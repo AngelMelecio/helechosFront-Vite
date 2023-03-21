@@ -52,12 +52,12 @@ export default function PaginaModelos() {
                   {isEdit ? 'Editar Modelo' : 'Nuevo Modelo'}
                 </p>
                 <div className="flex flex-row absolute right-0">
-                  <button className="bg-teal-500 py-1 px-5 mr-4 w-auto text-white normalButton  rounded-lg">
+                  <button className="bg-teal-500 py-1 px-5 mr-4 w-auto text-white normal-button  rounded-lg">
                     IMPRIMIR
                   </button>
                   <input
                     disabled={saving}
-                    className='bg-teal-500 py-1 w-auto px-5 text-white normalButton  rounded-lg'
+                    className='bg-teal-500 py-1 w-auto px-5 text-white normal-button  rounded-lg'
                         type="submit"
                     value={isEdit ? "GUARDAR" : "AGREGAR"}
                     form="frmModelos"
@@ -82,7 +82,7 @@ export default function PaginaModelos() {
                       { /* Imagen del Empleado */}
                       <input id='file' type="file" name='fotografia' accept='image/*' onChange={handleSelectImage} className='inputfile' />
                         <label
-                          className='absolute -bottom-2 -right-1 bg-teal-500 p-2 text-white normalButton rounded-full'
+                          className='absolute -bottom-2 -right-1 bg-teal-500 p-2 text-white normal-button rounded-full'
                           htmlFor='file' >
                           <ICONS.Upload style={{ color: 'white' }} size='18px' />
                         </label>

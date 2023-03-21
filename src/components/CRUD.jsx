@@ -1,20 +1,19 @@
-import { useRef } from "react"
-import { useEffect } from "react"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { ICONS } from "../constants/icons"
+import Loader from "./Loader/Loader"
 
-const Table = ({
-  allItems,
-  visibleItems, setVisibleItems,
-  fetching,
+const CRUD = ({
+  allElements,
+  elements,
+  setElements,
   columns,
   onAdd,
-  onDelete,
   onEdit,
-  onPrint=false,
-  filters = [{atr:'is_active'}]
+  onDelete,
+  onPrint,
 }) => {
 
+  //const [loading, setLoading] = useState(true)
 
   const [searchText, setSearchText] = useState('')
   const [sortParams, setSortParams] = useState({ attribute: null, criteria: null })
@@ -23,15 +22,9 @@ const Table = ({
   const someSelectedRef = useRef()
   const trashButtonRef = useRef()
 
-  useEffect(() => {
-    //console.log('CARGANDO TODO EN LA TABLA...  ')
-    //console.log('fetching: ', fetching)
-    setVisibleItems(allItems)
-  }, [allItems])
-
-  useEffect(() => {
-    hideShowOptions(isSelected())
-  }, [visibleItems])
+  useEffect(()=>{
+    someSelectedRef.current.checked = allElements.reduce( (or, e) => e.isSelected | or, 0 )
+  },[allElements])
 
   useEffect(() => {
     handleSearch()
@@ -39,61 +32,25 @@ const Table = ({
 
   const isSelected = () => {
     let sel = false
-    visibleItems?.forEach(e => {
+    elements?.forEach(e => {
       if (e.isSelected) sel = true
     })
     return sel
   }
 
-  const handleSearchButtonClick = () => {
-    if (searchText.length > 0) {
-      searchRef?.current?.blur()
-      setSearchText('')
-      setVisibleItems(sortItems())
-      return
-    }
-    searchRef?.current?.focus()
-  }
-
-  const handleSelection = (e) => {
-    setVisibleItems(prev => prev.map((empl, indx) => (
-      indx === Number(e.target.value) ?
-        { ...empl, isSelected: e.target.checked } :
-        { ...empl }
-    )))
-  }
-
-  const hideShowOptions = (a) => {
-    someSelectedRef.current.checked = a
-    someSelectedRef.current.disabled = !a
-  }
-
-  const handleSearch = () => {
-    let val = (searchRef?.current?.value).trim().toLowerCase()
-    let sortedItems = sortItems()
-    let newItems = [...sortedItems].filter(e => {
-      let E = JSON.stringify(e).toLowerCase()
-      return E.includes(val)
-    })
-    hideShowOptions(false)
-    setVisibleItems(newItems)
-  }
-
-
-
-  const sortItems = () => {
+  const sortElements = () => {
 
     if (sortParams.criteria === 0 || sortParams.criteria === null) {
-      return [...allItems]
+      return [...allElements]
     }
     else {
-      let newOrder = ([...allItems].sort((a, b) => {
+      let newOrder = ([...allElements].sort((a, b) => {
         let A = a[sortParams.attribute]
-        if( A === null ) A = ''
+        if (A === null) A = ''
         if (A != true && A != false)
           A = A?.toLowerCase()
         let B = b[sortParams.attribute]
-        if( B === null ) B = ''
+        if (B === null) B = ''
         if (B != true && B != false)
           B = B?.toLowerCase()
 
@@ -107,6 +64,37 @@ const Table = ({
     }
   }
 
+  const handleSearchButtonClick = () => {
+    if (searchText.length > 0) {
+      searchRef?.current?.blur()
+      setSearchText('')
+      setElements(sortElements())
+      return
+    }
+    searchRef?.current?.focus()
+  }
+
+  const handleSelection = (e) => {
+    let c = e.target.checked
+    let newElements = elements.map((element, indx) => (
+      indx === Number(e.target.value) ?
+        { ...element, isSelected: c } :
+        { ...element }
+    ))
+    setElements(newElements)
+    someSelectedRef.current.checked = newElements.reduce( (or, e) => e.isSelected | or, 0 )
+  }
+
+  const handleSearch = () => {
+    let val = (searchRef?.current?.value)
+    if (val) val = val.trim().toLowerCase()
+    let sortedElements = sortElements()
+    let newElements = [...sortedElements].filter(e => {
+      let E = JSON.stringify(e).toLowerCase()
+      return E.includes(val)
+    })
+    setElements(newElements)
+  }
 
   const onSortCriteriaChange = (attr) => {
     let newC
@@ -115,12 +103,12 @@ const Table = ({
     else
       newC = { attribute: attr, criteria: 1 }
     setSortParams(newC)
-    sortItems()
+    sortElements()
   }
 
-  const unSelecAll = () => {
-    setVisibleItems(prev => prev.map(item => ({ ...item, isSelected: false })))
-    hideShowOptions(false)
+  const handleSelectAll = (e) => {
+    let c = e.target.checked;
+    setElements(prev => prev.map(e => ({ ...e, isSelected: c })))
   }
 
   const CustomRow = ({ element, onClick }) => {
@@ -166,6 +154,7 @@ const Table = ({
   }
 
   return (
+
     <div id="tbl-page" className="flex flex-col h-full w-full bg-white">
       <div
         className="flex flex-row justify-between p-5"
@@ -178,12 +167,12 @@ const Table = ({
             className='bg-teal-500 text-white w-8 h-8 total-center normal-button rounded-lg'>
             <ICONS.Plus size='16px' />
           </button>
-          { onPrint && 
-          <button onClick={onPrint}
-          disabled={!isSelected()}
-          className={'total-center ml-4 w-8 h-8 normal-button rounded-lg'}>
-            <ICONS.Print size='22px'/>
-          </button>}
+          {onPrint &&
+            <button onClick={onPrint}
+              disabled={!isSelected()}
+              className={'total-center ml-4 w-8 h-8 normal-button rounded-lg'}>
+              <ICONS.Print size='22px' />
+            </button>}
           <button
             onClick={onDelete}
             disabled={!isSelected()}
@@ -221,60 +210,61 @@ const Table = ({
         id="table-container"
         className=" flex w-full h-full relative bg-gray-200 overflow-x-scroll">
         <div className="w-full">
-          <table className="customTable bg-white  w-full">
-            <thead className='text-center'>
-              <tr>
-                <th className="px-7 w-10">
-                  <div className="inp-container">
-                    <input
-                      onChange={unSelecAll}
-                      ref={someSelectedRef}
-                      type="checkbox"
-                      disabled />
-                    <label className="check"></label>
-                  </div>
-                </th>
+          {
+            <table className="customTable bg-white  w-full">
+              <thead className='text-center'>
+                <tr>
+                  <th className="px-7 w-10">
+                    <div className="inp-container">
+                      <input
+                        onChange={(e) => handleSelectAll(e)}
+                        ref={someSelectedRef}
+                        type="checkbox"
+                      />
+                      <label className="check"></label>
+                    </div>
+                  </th>
+                  {
+                    columns.map((c, i) =>
+                      <th className='p-2 font-medium text-teal-800' key={"C" + i} >
+                        {<div className="flex flex-row relative total-center text-center">
+                          <p className="px-6">{c.name} </p>
+                          <button
+                            onClick={() => onSortCriteriaChange(c.attribute)}
+                            className="absolute right-0 h-4 w-4 total-center">
+                            <ThIcon attribute={c.attribute} />
+                          </button>
+                        </div>}
+                      </th>)
+                  }
+                </tr>
+              </thead>
+              <tbody>
                 {
-                  columns.map((c, i) =>
-                    <th className='p-2 font-medium text-teal-800' key={"C" + i} >
-                      {<div className="flex flex-row relative total-center text-center">
-                        <p className="px-6">{c.name} </p>
-                        <button
-                          onClick={() => onSortCriteriaChange(c.attribute)}
-                          className="absolute right-0 h-4 w-4 total-center">
-                          <ThIcon attribute={c.attribute} />
-                        </button>
-                      </div>}
-                    </th>)
+                  elements?.map((e, i) =>
+                    <tr key={"E" + i} >
+                      <td className="px-7" >
+                        <div className="inp-container">
+                          <input
+                            value={i}
+                            className='inp-check'
+                            type="checkbox"
+                            onChange={handleSelection}
+                            checked={e?.isSelected}
+                          />
+                          <label className="check"></label>
+                        </div>
+                      </td>
+                      <CustomRow element={e} index={i} onClick={() => onEdit(e)} />
+                    </tr>
+                  )
                 }
-              </tr>
-            </thead>
-            <tbody>
-              {
-                visibleItems?.map((e, i) =>
-                  <tr key={"E" + i} >
-                    <td className="px-7" >
-                      <div className="inp-container">
-                        <input
-                          value={i}
-                          className='inp-check'
-                          type="checkbox"
-                          onChange={handleSelection}
-                          checked={e?.isSelected}
-                        />
-                        <label className="check"></label>
-                      </div>
-                    </td>
-                    <CustomRow element={e} index={i} onClick={() => onEdit(e)} />
-                  </tr>
-                )
-              }
-            </tbody>
-          </table>
+              </tbody>
+            </table>}
         </div>
       </div>
     </div>
+
   )
 }
-
-export default Table
+export default CRUD

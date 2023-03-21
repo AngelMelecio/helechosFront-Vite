@@ -77,7 +77,7 @@ const SelectorMaquinas = ({
             disabled={!someSelected(availableMaquinas)}
             onClick={passMaquinasDown}
             ref={downButtonRef}
-            className='bg-teal-500 text-white w-8 h-8 total-center normalButton rounded-lg m-1'
+            className='bg-teal-500 text-white w-8 h-8 total-center normal-button rounded-lg m-1'
           >
             <ICONS.Right size='22px' />
           </button>
@@ -85,7 +85,7 @@ const SelectorMaquinas = ({
             disabled={!someSelected(assignedMaquinas)}
             onClick={passMaquinasUp}
             ref={upButtonRef}
-            className='bg-teal-500 text-white w-8 h-8 total-center normalButton rounded-lg m-1'>
+            className='bg-teal-500 text-white w-8 h-8 total-center normal-button rounded-lg m-1'>
             <ICONS.Left size='22px' />
           </button>
         </div>

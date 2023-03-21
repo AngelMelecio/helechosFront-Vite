@@ -4,6 +4,7 @@
 
 :root {
   --teal600: #0d9488;
+  --teal500: #14b8a6;
   --teal400: #2dd4bf;
   --teal300: #6ee7b7;
   --rose500: #ef4444;
@@ -47,7 +48,8 @@
   width: 0.5rem;
   height: 11px;
 }
-.w-18{
+
+.w-18 {
   width: 4.5rem;
 }
 
@@ -62,6 +64,7 @@
   background: #0d9488;
   transition: 0.2s;
 }
+
 #appbar:hover::-webkit-scrollbar-thumb {
   background: #4c6e6c;
 }
@@ -91,14 +94,14 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-.customTable{
+.customTable {
   table-layout: auto;
   /*box-shadow: 0px 0px 10px -1px rgba(0,0,0,0.75);*/
-  width:100%;
+  width: 100%;
   border-collapse: collapse;
 }
 
-.inp-container{
+.inp-container {
   position: relative;
   display: flex;
   align-items: center;
@@ -106,14 +109,15 @@ input::-webkit-inner-spin-button {
   height: 15px;
   width: 15px;
 }
-.inp-container input[type="checkbox"]{
+
+.inp-container input[type="checkbox"] {
   cursor: pointer;
   width: 100%;
   height: 100%;
   opacity: 0;
 }
 
-.inp-container .check{
+.inp-container .check {
   display: block;
   position: absolute;
   align-items: center;
@@ -129,20 +133,21 @@ input::-webkit-inner-spin-button {
   transition: border 0s;
 }
 
-.inp-container input[type="checkbox"]:hover~.check{
+.inp-container input[type="checkbox"]:hover~.check {
   border: 1px solid #5eead4;
 }
-.inp-container input[type="checkbox"]:active~.check{
+
+.inp-container input[type="checkbox"]:active~.check {
   opacity: 60%;
   transition: 0s;
 }
 
-.inp-container input[type="checkbox"]:checked~.check{
-  background-color: #2dd4bf;  
+.inp-container input[type="checkbox"]:checked~.check {
+  background-color: #2dd4bf;
   border: 0;
 }
 
-.inp-container input[type="checkbox"]:checked~.check::after{
+.inp-container input[type="checkbox"]:checked~.check::after {
   display: block;
   content: "";
   position: absolute;
@@ -152,45 +157,49 @@ input::-webkit-inner-spin-button {
   clip-path: polygon(38% 61%, 73% 15%, 89% 28%, 42% 86%, 33% 86%, 8% 60%, 22% 46%);
 
 }
-.inp-container input[type="checkbox"]:checked:hover~.check{
-  background-color: #14b8a6;  
+
+.inp-container input[type="checkbox"]:checked:hover~.check {
+  background-color: #14b8a6;
 }
 
 .inp-container input[type="checkbox"]:disabled~.check,
 .inp-container input[type="checkbox"]:disabled:active~.check,
-.inp-container input[type="checkbox"]:disabled{
+.inp-container input[type="checkbox"]:disabled {
   background-color: #e5e7eb;
   border: 1px solid #d1d5db;
   opacity: 100%;
   cursor: default;
 }
 
-.customTable td, .customTable th {
+.customTable td,
+.customTable th {
   white-space: nowrap;
 }
-.customTable th{
+
+.customTable th {
   background-color: #f1f5f9;
-  cursor:default;
+  cursor: default;
 }
 
-#options-bar{
-  box-shadow: 0px -20px 8px -20px rgba(0, 0, 0, 0.171) inset;
+#options-bar {
+  
 }
 
-.customTable th .filter-button{
+.customTable th .filter-button {
   opacity: 0%;
   transition: 0.2s;
 }
-.customTable th:hover .filter-button{
+
+.customTable th:hover .filter-button {
   opacity: 100%;
   transition: 0.2s;
 }
-  
+
 
 
 .customTable tbody tr {
 
-  color:#334155;
+  color: #334155;
   font-size: medium;
   cursor: pointer;
   transition: 0.4s;
@@ -202,29 +211,66 @@ input::-webkit-inner-spin-button {
   background-color: #e2e8f0;
   transition: 0.2s;
 }
-.customTable thead th { 
-  position: sticky; 
-  top: 0; z-index: 1; 
+
+.customTable thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
-.normalButton {
-  cursor:pointer;
+.normal-button {
+  background-color: var(--teal500);
+  color: white;
+  cursor: pointer;
   transition: 0.2s;
 }
 
-.normalButton:hover {
+.normal-button:hover {
   color: white;
   background-color: var(--teal600);
   transition: 0.2s;
 }
 
-.normalButton:active {
+.normal-button:active {
   background-color: var(--teal400);
   transition: 0s;
 }
 
+.normal-button:disabled,
+.normal-button:disabled:hover,
+.normal-button:disabled:active {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+
+.trash-button {
+  background-color: #f43f5e;
+  color: white;
+  transition: 0.2s;
+}
+
+.trash-button:hover {
+  background-color: #e11d48;
+  transition: 0.2s;
+}
+
+.trash-button:active {
+  opacity: 60%;
+  transition: 0s;
+}
+
+.trash-button:disabled,
+.trash-button:disabled:active,
+.trash-button:disabled:hover {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
 .grayTrans {
-  background-color: #3f3f3f8e;
+  background-color: #3838388e;
   transition: 0.2s
 }
 
@@ -275,7 +321,7 @@ input::-webkit-inner-spin-button {
 
 .opacity-white:disabled,
 .opacity-white:disabled:hover,
-.opacity-white:disabled:active{
+.opacity-white:disabled:active {
   background-color: #f3f4f6;
   opacity: 100%;
   cursor: default;
@@ -313,92 +359,67 @@ input::-webkit-inner-spin-button {
 
 }
 
-
-.normalButton:disabled,
-.normalButton:disabled:hover,
-.normalButton:disabled:active {
-  background-color: #9ca3af;
-  cursor: not-allowed;
-}
-
-
-#search-input{
+#search-input {
   border: 1px solid white;
   transition: 0.2s;
 }
-#search-input:focus{
+
+#search-input:focus {
   border: 1px solid #cbd5e1;
   transition: 0.2s;
 }
 
-.trash-button{
-  background-color: #f43f5e;
-  color:white;
-  transition:0.2s;
-}
 
-.trash-button:hover{
-  background-color: #e11d48;
-  transition:0.2s;
-}
-.trash-button:active{
-  opacity: 60%;
-  transition:0s;
-}
-.neutral-button{
-  color:#374151;
+.neutral-button {
+  color: #374151;
   transition: 0.2s;
 }
 
-.neutral-button:hover{
-  background-color: #6b7280;
-  color:white;
+.neutral-button:hover {
+  background-color: #9ca3af;
+  color: white;
   transition: 0.2s;
 }
-.neutral-button:active{
+
+.neutral-button:active {
   opacity: 60%;
-  transition:0s;
+  transition: 0s;
 }
 
 
-
-.trash-button:disabled,
-.trash-button:disabled:active,
-.trash-button:disabled:hover{
-  background-color: #f3f4f6;
-  color: #9ca3af;
-}
-
-
-.modal{
+.modal {
   opacity: 0%;
   visibility: hidden;
   pointer-events: none;
+  z-index: 10;
   transition: visibility 0.3s, opacity 0.3s, pointer-events 0s;
 }
-.modal.visible{
+
+.modal.visible {
   opacity: 100%;
   visibility: visible;
   pointer-events: all;
   transition: visibility 0.3s, opacity 0.3s, pointer-events 0s;
 }
-.modal .modal-box{
+
+.modal .modal-box {
   transform: translateY(25px);
-  transition: 0.4s ;
+  transition: 0.4s;
 }
 
-.modal.visible .modal-box{
+.modal.visible .modal-box {
   transform: translateY(0);
   transition: 0.4s;
 }
 
 
-#login-box{
+#login-box {
   position: relative;
   background-color: white;
 
 }
-.login-box-shadow{
+
+.login-box-shadow {
   display: block;
   position: absolute;
   top: 0;
@@ -408,62 +429,72 @@ input::-webkit-inner-spin-button {
   height: 100%;
   background-color: #252f3dcc;
   /*border-radius: 1rem;*/
-  transform: translate(8px,8px);
+  transform: translate(8px, 8px);
 }
 
-.touchable-opacity:active{
+.touchable-opacity:active {
   opacity: 60%;
-  transition:0s;
+  transition: 0s;
 }
 
-.bg-login{
-  background: rgb(16,185,129);
-  background: linear-gradient(-3deg, rgba(16,185,129,1) 0%, rgba(13,148,136,1) 100%);
+.bg-login {
+  background: rgb(16, 185, 129);
+  background: linear-gradient(-3deg, rgba(16, 185, 129, 1) 0%, rgba(13, 148, 136, 1) 100%);
 }
 
-.palomita{
+.palomita {
   clip-path: polygon(33% 73%, 85% 4%, 100% 17%, 34% 100%, 0 69%, 14% 54%);
 }
 
-.profile-table{
+.profile-table {
   table-layout: auto;
   border-collapse: collapse;
   border-block: 2px solid #cbd5e1;
   width: 100%;
 }
 
-.profile-table tr{
+.profile-table tr {
   border-block: 1px solid #cbd5e1;
   transition: 0.2s;
 }
 
-.profile-table tr .filter-button{
+.profile-table tr .filter-button {
   opacity: 0%;
   transition: 0.2s;
 }
 
-.profile-table tr:hover .filter-button{
+.profile-table tr:hover .filter-button {
   opacity: 100%;
   transition: 0.2s;
 }
 
-#alert-box{
+#alert-box {
   opacity: 100%;
   transition: 0.2s;
 }
-#alert-box.hide{
+
+#alert-box.hide {
   visibility: hidden;
   opacity: 0;
   transform: translateY(-20px);
   transition: 0.2s;
 }
 
-.array-row:hover button{
+.array-row:hover button {
   opacity: 100%;
   transition: 0.2s;
 }
 
-.blurred{
+.blurred {
   filter: blur(2px);
 }
 
+.pdf-gray {
+  background: rgb(83, 87, 89);
+  background: linear-gradient(0deg, rgba(83, 87, 89, 1) 0%, rgba(50, 54, 57, 1) 65%, rgba(50, 54, 57, 1) 100%);
+}
+
+.n-2{
+  width: calc(100%/2);
+  min-width: 150px;
+}
