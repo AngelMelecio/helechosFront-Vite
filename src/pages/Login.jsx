@@ -2,7 +2,6 @@ import React from 'react'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import loginImg from '../imgs/logo.png'
-import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
 
 const apiLoginUrl = "http://127.0.0.1:8000/login/"
@@ -66,7 +65,7 @@ export default function Login({navigate}) {
 
             </div>
             <button 
-
+              type='submit  '
               className='w-full my-5 py-2 bg-teal-600 shadow-lg  hover:shadow-teal-600 hover:bg-slate-700 duration-200 text-white text-lg font-semibold rounded-lg touchable-opacity'>
               INGRESAR
               </button>

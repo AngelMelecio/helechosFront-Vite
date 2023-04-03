@@ -3,32 +3,28 @@ import { useEffect } from 'react'
 import DeleteModal from '../components/DeleteModal'
 import { useApp } from '../context/AppContext'
 import CRUD from '../components/CRUD'
-import FrmMaquinas from '../components/FrmMaquinas'
 import Loader from '../components/Loader/Loader'
 import { sleep } from '../constants/sleep'
+import FrmClientes from '../components/FrmClientes'
 
 const initobj = {
-  idMaquina: "",
-  numero: "",
-  linea: "0",
-  marca: "",
-  modelo: "",
-  ns: "",
-  fechaAdquisicion: "",
-  otros: "",
-  detalleAdquisicion: "",
-  departamento: "Seleccione"
+  idCliente: "",
+  nombre: "",
+  direccion: "",
+  correo: "",
+  contactos: [{"nombre":"","puesto":"","correo":"","telefono":"","nota":""}],
+  otro: ""
 }
 
-const PaginaMaquinas = () => {
+const PaginaClientes = () => {
 
   const {
-    fetchingMaquinas,
-    allMaquinas,
-    maquinasColumns,
-    getMaquinas,
-    saveMaquina,
-    deleteMaquinas
+    fetchingClientes,
+    allClientes,
+    clientesColumns,
+    getClientes,
+    saveClientes,
+    deleteClientes
   } = useApp()
 
   const modalContainerRef = useRef()
@@ -36,8 +32,8 @@ const PaginaMaquinas = () => {
   const [loading, setLoading] = useState(true)
   const [isEdit, setIsEdit] = useState(false)
 
-  const [objMaquina, setObjMaquina] = useState(initobj);
-  const [listaMaquinas, setListaMaquinas] = useState()
+  const [objCliente, setObjCliente] = useState(initobj);
+  const [listaClientes, setListaClientes] = useState()
 
   const [frmModalVisible, setFrmModalVisible] = useState(false)
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
@@ -46,7 +42,7 @@ const PaginaMaquinas = () => {
 
   async function handleGetData() {
     setLoading(true)
-    await getMaquinas()
+    await getClientes()
     setLoading(false)
   }
 
@@ -55,8 +51,8 @@ const PaginaMaquinas = () => {
   }, [])
 
   useEffect(()=>{
-    setListaMaquinas(allMaquinas)
-  },[allMaquinas])
+    setListaClientes(allClientes)
+  },[allClientes])
 
   const handleOpenModal = async (setState) => {
     setState(true)
@@ -66,23 +62,23 @@ const PaginaMaquinas = () => {
   }
   const handleCloseModal = async (setState) => {
     setIsEdit(false)
-    setObjMaquina(initobj)
+    setObjCliente(initobj)
     modalContainerRef.current.classList.remove('visible')
     document.getElementById("tbl-page").classList.remove('blurred')
     await sleep(150)
     setState(false)
   }
 
-  const handleDleteMaquinas = async () => {
+  const handleDleteClientes = async () => {
     setSaving(true)
-    await deleteMaquinas(listaMaquinas)
-    await getMaquinas()
+    await deleteClientes(listaClientes)
+    await getClientes()
     handleCloseModal(setDeleteModalVisible)
     setSaving(false)
   }
 
-  const handleEdit = async (mac) => {
-    setObjMaquina(mac)
+  const handleEdit = async (cliente) => {
+    setObjCliente(cliente)
     setIsEdit(true)
     handleOpenModal(setFrmModalVisible)
   }
@@ -92,10 +88,10 @@ const PaginaMaquinas = () => {
       {
         loading ? <Loader/> :
         <CRUD
-          allElements={allMaquinas}
-          elements={listaMaquinas}
-          setElements={setListaMaquinas}
-          columns={maquinasColumns}
+          allElements={allClientes}
+          elements={listaClientes}
+          setElements={setListaClientes}
+          columns={clientesColumns}
           onAdd={() => handleOpenModal(setFrmModalVisible)}
           onEdit={handleEdit}
           onDelete={() => handleOpenModal(setDeleteModalVisible)}
@@ -103,9 +99,9 @@ const PaginaMaquinas = () => {
       }
        <div className='modal absolute h-full w-full' ref={modalContainerRef}>
         {frmModalVisible &&
-          <FrmMaquinas
+          <FrmClientes
             onCloseModal={()=>handleCloseModal(setFrmModalVisible)}
-            maquina={objMaquina}
+            cliente={objCliente}
             isEdit={isEdit}
           />
 
@@ -113,14 +109,14 @@ const PaginaMaquinas = () => {
         {deleteModalVisible &&
           <DeleteModal
             onCancel={() => handleCloseModal(setDeleteModalVisible)}
-            onConfirm={handleDleteMaquinas}
-            elements={listaMaquinas}
-            representation={['numero', 'linea', 'marca', 'modelo']}
-            message='Las siguientes maquinas se eliminarán permanentemente:'
+            onConfirm={handleDleteClientes}
+            elements={listaClientes}
+            representation={['nombre', 'direccion', 'telefono', 'correo']}
+            message='Los siguientes clientes se eliminarán permanentemente:'
           />
         }
        </div>
     </>
   )
 }
-export default PaginaMaquinas
+export default PaginaClientes
