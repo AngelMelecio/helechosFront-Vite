@@ -11,7 +11,7 @@ const Input = ({ label, type, name, value = "", onChange, Icon = null, onBlur, e
     let opacity = dis ? 'opacity-50' : ''
 
     return (
-        <div className={'flex flex-col w-full mx-2 ' + opacity}>
+        <div className={'flex flex-col w-full mx-2 mt-2' + opacity}>
             <p className={'font-medium ' + labelColor}>{label}</p>
             <div className="total-center relative">
                 <input

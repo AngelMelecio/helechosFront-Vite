@@ -371,7 +371,11 @@ input::-webkit-inner-spin-button {
 
 
 .neutral-button {
-  color: #374151;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e2e8f0;
+  color: #4b5563;
   transition: 0.2s;
 }
 

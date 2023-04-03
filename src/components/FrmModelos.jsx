@@ -2,84 +2,12 @@ import { useFormik } from "formik"
 import { useEffect, useState } from "react"
 import { ICONS } from "../constants/icons"
 import Input from "./Input"
+import SelectorMateriales from "./Materiales/SelectorMateriales"
+import { useApp } from "../context/AppContext"
+import { sleep } from "../constants/sleep"
+import DynamicInput from "./DynamicInput"
 
-const puntoObj = {
-  no: '',
-  numeroPuntos: ''
-}
-
-const fibraObj = {
-  guiaHilos: '',
-  fibras: '',
-  calibre: '',
-  proveedor: '',
-  color: '',
-  hebras: '',
-  otro: ''
-}
-
-const initFichaTecnicaObj = {
-  nombre: '',
-  nombrePrograma: '',
-  fotografia: '',
-  cliente: '',
-  talla: '',
-
-  maquinaTejido: '',
-  tipoMaquinaTejido: '',
-  galga: '',
-  velocidadTejido: '',
-  tiempoBajada: '',
-
-  maquinaPlancha: '',
-  velocidadPlancha: '',
-  temperaturaPlancha: '',
-
-  numeroPuntos: [{ ...puntoObj }],
-  jalones: [],
-  economisadores: [],
-  otros: '',
-
-  pesoPoliester: '',
-  pesoMelt: '',
-  pesoLurex: '',
-
-  fibras: [{ ...fibraObj }],
-}
-
-const dumyFichaNormalAtr = {
-  nombre: 'ROCUP-24-25-08-22',
-  nombrePrograma: 'S19120122',
-  fotografia: '',
-  cliente: 'Flexi',
-  talla: '27',
-
-  maquinaTejido: '',
-  tipoMaquina: 'SF3-365-FL',
-  galga: '14',
-  velocidadTejido: '',
-  tiempoBajada: '65',
-
-  maquinaPlancha: 'ESP-32',
-  velocidadPlancha: '',
-  temperaturaPlancha: '',
-
-  numeroPuntos: [
-    { no: 1, puntos: 123 },
-    { no: 2, puntos: 232 },
-    { no: 3, puntos: 321 },
-  ],
-
-  jalones: [],
-  economisadores: [],
-  otros: '',
-
-  pesoPoliester: '12',
-  pesoMelt: '546',
-  pesoLurex: '648',
-}
-
-
+const puntoObj = { valor: '', posicion: '' }
 
 const FrmModelos = ({
   onCloseModal,
@@ -88,13 +16,18 @@ const FrmModelos = ({
   setIsEdit,
 }) => {
 
+  console.log(fichaTecnica)
+
+  const { getMateriales, allMateriales } = useApp()
   const [saving, setSaving] = useState(false)
   const [fichaTecnicaObj, setFichaTecnicaObj] = useState(fichaTecnica)
+
+
 
   const validate = (values) => {
     const errors = {}
     return errors
-  } 
+  }
 
   const formik = useFormik({
     initialValues: fichaTecnica, //initobj,
@@ -105,7 +38,7 @@ const FrmModelos = ({
   });
 
   useEffect(() => {
-    setFichaTecnicaObj(prev => ({ ...formik.values, fibras: [...prev.fibras], numeroPuntos: [...prev.numeroPuntos] }))
+    setFichaTecnicaObj(prev => ({ ...formik.values, materiales: [...prev.materiales], numeroPuntos: [...prev.numeroPuntos] }))
   }, [formik?.values])
 
 
@@ -133,7 +66,6 @@ const FrmModelos = ({
   const handleFocusFibra = (e, indx) => {
     if (indx === fichaTecnicaObj.fibras.length - 1) {
       setFichaTecnicaObj(prev => ({ ...prev, fibras: [...prev.fibras, { ...fibraObj }] }))
-      console.log(fichaTecnicaObj)
     }
   }
 
@@ -159,6 +91,28 @@ const FrmModelos = ({
       setFichaTecnicaObj(prev => ({ ...prev, numeroPuntos: [...prev.numeroPuntos, { ...puntoObj }] }))
     }
   }
+
+  const onPassMateriales = (availableMateriales) => {
+    let newMateriales = []
+    availableMateriales.forEach(m => {
+      if (m.count > 0) {
+        for (let i = 0; i < m.count; i++) {
+          newMateriales.push({
+            peso: "",
+            tipo: m.tipo,
+            color: m.color,
+            hebras: "",
+            calibre: "",
+            guiaHilos: "",
+            proveedor: m.proveedor,
+            idMaterial: m.idMaterial
+          })
+        }
+      }
+    })
+    setFichaTecnicaObj(prev => ({ ...prev, materiales: [...prev.materiales, ...newMateriales] }))
+  }
+
   const toUrl = (file) => {
     if (file instanceof File) {
       return URL.createObjectURL(file)
@@ -168,7 +122,33 @@ const FrmModelos = ({
   }
 
   const handleChange = (e) => {
-    setFichaTecnicaObj( prev => ({...prev, [e.target.name]:e.target.value }) )
+    setFichaTecnicaObj(prev => ({ ...prev, [e.target.name]: e.target.value }))
+  }
+
+  const handleSetRow = (event, indx, arrayName) => {
+    let newArray = [...fichaTecnicaObj[arrayName]]
+    newArray[indx][event.target.name] = event.target.value
+    setFichaTecnicaObj(prev => ({ ...prev, [arrayName]: newArray }))
+  }
+
+  const handleRowFocus = (indx, arrayName) => {
+    if (indx === fichaTecnicaObj[arrayName].length - 1) {
+      let Obj = {}
+      Object.keys(fichaTecnicaObj[arrayName][0]).forEach(key => Obj[key] = '')
+      setFichaTecnicaObj(prev => ({ ...prev, [arrayName]: [...prev[arrayName], { ...Obj }] }))
+    }
+  }
+
+  const handleDeleteRow = (indx, arrayName) => {
+    if (fichaTecnicaObj[arrayName].length === 1) {
+      let Obj = {}
+      fichaTecnicaObj[arrayName][0].keys().forEach(key => Obj[key] = '')
+      setFichaTecnicaObj(prev => ({ ...prev, [arrayName]: [{ ...Obj }] }))
+      return
+    }
+    let newArray = [...fichaTecnicaObj[arrayName]]
+    newArray.splice(indx, 1)
+    setFichaTecnicaObj(prev => ({ ...prev, [arrayName]: newArray }))
   }
 
   return (
@@ -231,36 +211,36 @@ const FrmModelos = ({
                   <div className='flex flex-row w-full'>
                     <Input
                       onChange={(e) => handleChange(e)}
-                      value={ fichaTecnicaObj.nombre }
+                      value={fichaTecnicaObj.nombre}
                       name='nombre' label="Nombre del Modelo" type='text' />
                     <Input
                       onChange={(e) => handleChange(e)}
-                      value={ fichaTecnicaObj.nombrePrograma }
+                      value={fichaTecnicaObj.nombrePrograma}
                       name='nombrePrograma' label="Nombre del Programa" type='text' />
                   </div>
                   <div className="flex flex-row w-full">
                     <div className="flex flex-row w-full">
                       <Input
                         onChange={(e) => handleChange(e)}
-                        value={ fichaTecnicaObj.cliente }
+                        value={fichaTecnicaObj.cliente}
                         name='cliente' label="Cliente" type='text' />
                       <Input
                         onChange={(e) => handleChange(e)}
-                        value={ fichaTecnicaObj.talla }
+                        value={fichaTecnicaObj.talla}
                         name='talla' label="Talla" type='text' />
                     </div>
                     <div className="flex flex-row w-full">
                       <Input
                         onChange={(e) => handleChange(e)}
-                        value={ fichaTecnicaObj.pesoPoliester }
+                        value={fichaTecnicaObj.pesoPoliester}
                         name='pesoPoliester' label="Peso Poliester" type='number' />
                       <Input
                         onChange={(e) => handleChange(e)}
-                        value={ fichaTecnicaObj.pesoMelt }
+                        value={fichaTecnicaObj.pesoMelt}
                         name='pesoMelt' label="Peso Melt" type='number' />
                       <Input
                         onChange={(e) => handleChange(e)}
-                        value={ fichaTecnicaObj.pesoLurex }
+                        value={fichaTecnicaObj.pesoLurex}
                         name='pesoLurex' label="Peso Lurex" type='number' />
                     </div>
                   </div>
@@ -275,25 +255,25 @@ const FrmModelos = ({
                     <div className="flex flex-row w-full">
                       <Input
                         onChange={(e) => handleChange(e)}
-                        value={ fichaTecnicaObj.maquinaTejido }
+                        value={fichaTecnicaObj.maquinaTejido}
                         name='maquinaTejido' label="Maquina Tejido" type='text' />
                       <Input
                         onChange={(e) => handleChange(e)}
-                        value={ fichaTecnicaObj.tipoMaquinaTejido }
+                        value={fichaTecnicaObj.tipoMaquinaTejido}
                         name='tipoMaquinaTejido' label="Tipo Maquina Tejido" type='text' />
                     </div>
                     <div className="flex flex-row w-full">
                       <Input
                         onChange={(e) => handleChange(e)}
-                        value={ fichaTecnicaObj.galga }
+                        value={fichaTecnicaObj.galga}
                         name='galga' label="Galga" type='text' />
                       <Input
                         onChange={(e) => handleChange(e)}
-                        value={ fichaTecnicaObj.velocidadTejido }
+                        value={fichaTecnicaObj.velocidadTejido}
                         name='velocidadTejido' label="Velocidad" type='text' />
                       <Input
                         onChange={(e) => handleChange(e)}
-                        value={ fichaTecnicaObj.tiempoBajada }
+                        value={fichaTecnicaObj.tiempoBajada}
                         name='tiempoBajada' label="Tiempo Bajada" type='text' />
                     </div>
                   </div>
@@ -308,21 +288,22 @@ const FrmModelos = ({
                     <div className="flex flex-row w-full">
                       <Input
                         onChange={(e) => handleChange(e)}
-                        value={ fichaTecnicaObj.maquinaPlancha }
+                        value={fichaTecnicaObj.maquinaPlancha}
                         name='maquinaPlancha' label="Maquina Plancha" type='text' />
                     </div>
                     <div className="flex flex-row w-full">
                       <Input
                         onChange={(e) => handleChange(e)}
-                        value={ fichaTecnicaObj.velocidadPlancha }
+                        value={fichaTecnicaObj.velocidadPlancha}
                         name='velocidadPlancha' label="Velocidad" type='text' />
                       <Input
                         onChange={(e) => handleChange(e)}
-                        value={ fichaTecnicaObj.temperaturaPlancha }
+                        value={fichaTecnicaObj.temperaturaPlancha}
                         name='temperaturaPlancha' label="Temperatura" type='text' />
                     </div>
                   </div>
                 </div>
+
                 <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                   <div className="absolute w-full total-center -top-3">
                     <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
@@ -330,146 +311,78 @@ const FrmModelos = ({
                     </div>
                   </div>
                   <div className="flex flex-row w-full">
-                    <div className='flex flex-col w-1/4 pr-2'>
-                      <table>
-                        <thead>
-                          <tr className="font-medium text-teal-800">
-                            <th>
-                              NO.
-                            </th>
-                            <th>
-                              PUNTOS
-                            </th>
-                            <th>
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {
-                            fichaTecnicaObj?.numeroPuntos?.map((p, i) =>
-                              <tr className="array-row" key={'P' + i} >
-                                <td>
-                                  <input
-                                    name='no'
-                                    onFocus={(e) => handleFocusPunto(e, i)}
-                                    value={p.no}
-                                    onChange={e => hanldeChangePunto(e, i)}
-                                    className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                    type="number" />
-                                </td>
-                                <td>
-                                  <input
-                                    name='numeroPuntos'
-                                    onFocus={(e) => handleFocusPunto(e, i)}
-                                    value={p.puntos}
-                                    onChange={e => hanldeChangePunto(e, i)}
-                                    className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                    type="number" />
-                                </td>
-                                <td>
-                                  <button
-                                    onClick={(e) => handleDeletePunto(e, i)}
-                                    className="p-1 opacity-0 trash-button rounded-md">
-                                    <ICONS.Trash />
-                                  </button>
-                                </td>
-                              </tr>
-                            )
-                          }
-                        </tbody>
-                      </table>
+                    <SelectorMateriales
+                      fichaTecnicaObj={fichaTecnicaObj}
+                      setFichaTecnicaObj={setFichaTecnicaObj}
+                      onPassMateriales={onPassMateriales}
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-row">
+                  <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
+                    <div className="absolute w-full total-center -top-3">
+                      <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
+                        NUMERO PUNTOS
+                      </div>
                     </div>
-                    <div className='flex flex-col w-full'>
-                      <table className="w-full">
-                        <thead>
-                          <tr className="font-medium text-teal-800">
-                            <th >GUIA_HILOS</th>
-                            <th >FIBRAS</th>
-                            <th>CALIBRE</th>
-                            <th>PROVEEDOR</th>
-                            <th>COLORES</th>
-                            <th>HEBRAS</th>
-                            <th>MELT</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {
-
-                            fichaTecnicaObj?.fibras?.map((f, i) => <tr key={'F' + i} className="array-row">
-                              <td>
-                                <input
-                                  onFocus={(e) => handleFocusFibra(e, i)}
-                                  name='guiaHilos'
-                                  value={f.guiaHilos}
-                                  onChange={(e) => handleChangeFibra(e, i)}
-                                  className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                  type="text" />
-                              </td>
-                              <td>
-                                <input
-                                  onFocus={(e) => handleFocusFibra(e, i)}
-                                  name='fibras'
-                                  value={f.fibras}
-                                  onChange={(e) => handleChangeFibra(e, i)}
-                                  className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                  type="text" />
-                              </td>
-                              <td>
-                                <input
-                                  onFocus={(e) => handleFocusFibra(e, i)}
-                                  name='calibre'
-                                  value={f.calibre}
-                                  onChange={(e) => handleChangeFibra(e, i)}
-                                  className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                  type="number" />
-                              </td>
-                              <td>
-                                <input
-                                  onFocus={(e) => handleFocusFibra(e, i)}
-                                  name='proveedor'
-                                  value={f.proveedor}
-                                  onChange={(e) => handleChangeFibra(e, i)}
-                                  className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                  type="text" />
-                              </td>
-                              <td>
-                                <input
-                                  onFocus={(e) => handleFocusFibra(e, i)}
-                                  name='color'
-                                  value={f.color}
-                                  onChange={(e) => handleChangeFibra(e, i)}
-                                  className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                  type="text" />
-                              </td>
-                              <td>
-                                <input
-                                  onFocus={(e) => handleFocusFibra(e, i)}
-                                  name='hebras'
-                                  value={f.hebras}
-                                  onChange={(e) => handleChangeFibra(e, i)}
-                                  className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                  type="number" />
-                              </td>
-                              <td>
-                                <input
-                                  onFocus={(e) => handleFocusFibra(e, i)}
-                                  name='otro'
-                                  value={f.otro}
-                                  onChange={(e) => handleChangeFibra(e, i)}
-                                  className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                  type="text" />
-                              </td>
-                              <td>
-                                <button
-                                  onClick={(e) => handleDeleteFibra(e, i)}
-                                  className="p-1 opacity-0 trash-button rounded-md">
-                                  <ICONS.Trash />
-                                </button>
-                              </td>
-                            </tr>)
-                          }
-                        </tbody>
-                      </table>
+                    <div className="flex flex-row h-80  justify-around">
+                      <div className="overflow-y-scroll">
+                        <DynamicInput
+                          arrayName='numeroPuntos'
+                          columns={[
+                            { name: 'Numero', atr: 'valor' },
+                            { name: 'Puntos', atr: 'posicion' }
+                          ]}
+                          elements={fichaTecnicaObj.numeroPuntos}
+                          setElements={handleSetRow}
+                          handleFocus={handleRowFocus}
+                          handleDeleteRow={handleDeleteRow}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
+                    <div className="absolute w-full total-center -top-3">
+                      <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
+                      ECONOMISADORES
+                      </div>
+                    </div>
+                    <div className="flex flex-row h-80  justify-around">
+                      <div className="overflow-y-scroll">
+                      <DynamicInput
+                        arrayName='economisadores'
+                        columns={[
+                          { name: 'Valor', atr: 'valor' },
+                          { name: 'Pos', atr: 'posicion' }
+                        ]}
+                        elements={fichaTecnicaObj.economisadores}
+                        setElements={handleSetRow}
+                        handleFocus={handleRowFocus}
+                        handleDeleteRow={handleDeleteRow}
+                      />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
+                    <div className="absolute w-full total-center -top-3">
+                      <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
+                        JALONES
+                      </div>
+                    </div>
+                    <div className="flex flex-row h-80  justify-around">
+                      <div className="overflow-y-scroll">
+                      <DynamicInput
+                        arrayName='jalones'
+                        columns={[
+                          { name: 'Valor', atr: 'valor' },
+                          { name: 'Pos', atr: 'posicion' }
+                        ]}
+                        elements={fichaTecnicaObj.jalones}
+                        setElements={handleSetRow}
+                        handleFocus={handleRowFocus}
+                        handleDeleteRow={handleDeleteRow}
+                      />
+                      </div>
                     </div>
                   </div>
                 </div>

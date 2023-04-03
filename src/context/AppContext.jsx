@@ -17,6 +17,8 @@ const apiMaquinasUrl = entorno + "/api/maquinas/"
 const apiClientesUrl = entorno + "/api/clientes/"
 const apiEmpleadoMaquinaUrl = entorno + "/api/empleados_maquina/"
 const apiEmpleadoMaquinasUrl = entorno + "/api/empleado_maquinas/"
+const apiMaterialesUrl = entorno + "/api/materiales/"
+const apiModelosUrl = entorno + "/api/modelos/"
 const imageEndPoint = entorno
 
 const empleadosColumns = [
@@ -76,6 +78,9 @@ export function AppProvider({ children }) {
   const [fetchingProveedores, setFetchingProveedores] = useState(false)
   const [allProveedores, setAllProveedores] = useState([])
   
+  const [allMateriales, setAllMateriales] = useState([])
+
+  const [allModelos, setAllModelos] = useState([])
 
   const getEmpleados = async () => {
     setFetchingEmpleados(true)
@@ -448,6 +453,34 @@ export function AppProvider({ children }) {
       }
     }
   }
+  
+  const getMateriales = async () => {
+    await fetch(apiMaterialesUrl, {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + session.access
+      }
+    }).then(response => response.json())
+      .then(data => {
+        let formatData = data.map((m) => ({ ...m, count:0 }))
+        setAllMateriales(formatData)
+      })
+  }
+
+  const getModelos = async () => {
+    await fetch(apiModelosUrl, {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": "Bearer " + session.access
+      }
+    }).then(response => response.json())
+      .then(data => {
+        setAllModelos(data)
+      })
+  }
+  
   return (
     <AppContext.Provider
       value={{
@@ -470,6 +503,11 @@ export function AppProvider({ children }) {
         saveProveedor, deleteProveedores,
 
         getEmpleadoMaquinas,
+
+        allMateriales, getMateriales,
+
+        allModelos, getModelos,
+        
         notify
       }}>
 
