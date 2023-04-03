@@ -11,8 +11,10 @@ export function useApp() {
   return useContext(AppContext)
 }
 
+const apiProveedoresUrl = entorno + "/api/proveedores/"
 const apiEmpleadosUrl = entorno + "/api/empleados/"
 const apiMaquinasUrl = entorno + "/api/maquinas/"
+const apiClientesUrl = entorno + "/api/clientes/"
 const apiEmpleadoMaquinaUrl = entorno + "/api/empleados_maquina/"
 const apiEmpleadoMaquinasUrl = entorno + "/api/empleado_maquinas/"
 const apiMaterialesUrl = entorno + "/api/materiales/"
@@ -43,21 +45,42 @@ const maquinasColumns = [
   { name: 'Departamento', attribute: 'departamento' },
 ]
 
+const clientesColumns = [
+  { name: 'Nombre', attribute: 'nombre' },
+  { name: 'Dirección', attribute: 'direccion' },
+  { name: 'Teléfono', attribute: 'telefono' },
+  { name: 'Correo', attribute: 'correo' },
+  { name: 'Otro', attribute: 'otro' },
+]
+
+const proveedoresColumns = [
+  { name: 'Nombre', attribute: 'nombre' },
+  { name: 'Dirección', attribute: 'direccion' },
+  { name: 'Teléfono', attribute: 'telefono' },
+  { name: 'Correo', attribute: 'correo' },
+  { name: 'Departamento', attribute: 'departamento' },
+  { name: 'Otro', attribute: 'otro' },
+]
+
 export function AppProvider({ children }) {
 
   const { session, notify } = useAuth()
 
   const [fetchingEmpleados, setFetchingEmpleados] = useState(false)
-
   const [allEmpleados, setAllEmpleados] = useState([])
-
-  const [allMateriales, setAllMateriales] = useState([])
-
-  const [allModelos, setAllModelos] = useState([])
 
   const [fetchingMaquinas, setFetchingMaquinas] = useState(false)
   const [allMaquinas, setAllMaquinas] = useState([])
 
+  const [fetchingClientes, setFetchingClientes] = useState(false)
+  const [allClientes, setAllClientes] = useState([])
+
+  const [fetchingProveedores, setFetchingProveedores] = useState(false)
+  const [allProveedores, setAllProveedores] = useState([])
+  
+  const [allMateriales, setAllMateriales] = useState([])
+
+  const [allModelos, setAllModelos] = useState([])
 
   const getEmpleados = async () => {
     setFetchingEmpleados(true)
@@ -272,6 +295,165 @@ export function AppProvider({ children }) {
     }
   }
 
+  const getClientes = async () => {
+    setFetchingClientes(true)
+    let response = await fetch(apiClientesUrl, {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + session.access
+      }
+    })
+    if (response.status === 200) {
+      let clientes = await response.json()
+      
+      let formatData = clientes.map((cliente) => ({
+        ...cliente,
+        isSelected: false,
+      }))
+      
+      setAllClientes(formatData)
+      return formatData
+    }
+    setAllClientes(false)
+  }
+
+  const saveCliente = async (values, isEdit) => {
+
+    let formData = new FormData()
+    formData.append('nombre', values.nombre)
+    formData.append('direccion', values.direccion)
+    formData.append('telefono', values.telefono)
+    formData.append('correo', values.correo)
+    formData.append('contactos', JSON.stringify(values.contactos))
+    formData.append('otro', values.otro)
+    
+
+    if (!isEdit) {
+      //Creacion de un nueva maquina 
+      await fetch(apiClientesUrl, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': 'Bearer ' + session.access
+        }
+      })
+        .then(response => response.json())
+        .then(data => notify(data.message))
+
+    } else {
+      //Actualizando los datos de la maquina
+      await fetch(apiClientesUrl + values.idCliente, {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          'Authorization': 'Bearer ' + session.access
+        }
+      })
+        .then(response => response.json())
+        .then(data => notify(data.message))
+    }
+  }
+
+  const deleteClientes = async (listaClientes) => {
+    for (let i = 0; i < listaClientes.length; i++) {
+      let e = listaClientes[i]
+      if (e.isSelected) {
+        let response = await fetch(apiClientesUrl + e.idCliente, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': 'Bearer ' + session.access
+          }
+        })
+        let data = await response.json()
+        if (response.ok) {
+          notify(data.message)
+        } else
+          notify(data.message, true)
+      }
+    }
+  }
+  
+  const getProveedores = async () => {
+    setFetchingProveedores(true)
+    let response = await fetch(apiProveedoresUrl, {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + session.access
+      }
+    })
+    if (response.status === 200) {
+      let proveedores = await response.json()
+      
+      let formatData = proveedores.map((proveedor) => ({
+        ...proveedor,
+        isSelected: false,
+      }))
+      
+      setAllProveedores(formatData)
+      return formatData
+    }
+    setAllProveedores(false)
+  }
+
+  const saveProveedor = async (values, isEdit) => {
+
+    let formData = new FormData()
+    formData.append('nombre', values.nombre)
+    formData.append('direccion', values.direccion)
+    formData.append('telefono', values.telefono)
+    formData.append('correo', values.correo)
+    formData.append('departamento', values.departamento)
+    formData.append('contactos', JSON.stringify(values.contactos))
+    formData.append('otro', values.otro)
+    
+
+    if (!isEdit) {
+      //Creacion de un nueva maquina 
+      await fetch(apiProveedoresUrl, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': 'Bearer ' + session.access
+        }
+      })
+        .then(response => response.json())
+        .then(data => notify(data.message))
+
+    } else {
+      //Actualizando los datos de la maquina
+      await fetch(apiProveedoresUrl + values.idProveedor, {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          'Authorization': 'Bearer ' + session.access
+        }
+      })
+        .then(response => response.json())
+        .then(data => notify(data.message))
+    }
+  }
+
+  const deleteProveedores = async (listaProveedores) => {
+    for (let i = 0; i < listaProveedores.length; i++) {
+      let e = listaProveedores[i]
+      if (e.isSelected) {
+        let response = await fetch(apiProveedoresUrl + e.idProveedor, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': 'Bearer ' + session.access
+          }
+        })
+        let data = await response.json()
+        if (response.ok) {
+          notify(data.message)
+        } else
+          notify(data.message, true)
+      }
+    }
+  }
+  
   const getMateriales = async () => {
     await fetch(apiMaterialesUrl, {
       method: 'GET',
@@ -298,8 +480,7 @@ export function AppProvider({ children }) {
         setAllModelos(data)
       })
   }
-      
-
+  
   return (
     <AppContext.Provider
       value={{
@@ -313,11 +494,20 @@ export function AppProvider({ children }) {
         allMaquinas, getMaquinas, maquinasColumns,
         saveMaquina, deleteMaquinas,
 
+        fetchingClientes,
+        allClientes, getClientes, clientesColumns,
+        saveCliente, deleteClientes,
+
+        fetchingProveedores,
+        allProveedores, getProveedores, proveedoresColumns,
+        saveProveedor, deleteProveedores,
+
+        getEmpleadoMaquinas,
+
         allMateriales, getMateriales,
 
         allModelos, getModelos,
-
-        getEmpleadoMaquinas,
+        
         notify
       }}>
 

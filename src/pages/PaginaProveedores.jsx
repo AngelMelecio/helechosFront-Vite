@@ -3,32 +3,30 @@ import { useEffect } from 'react'
 import DeleteModal from '../components/DeleteModal'
 import { useApp } from '../context/AppContext'
 import CRUD from '../components/CRUD'
-import FrmMaquinas from '../components/FrmMaquinas'
 import Loader from '../components/Loader/Loader'
 import { sleep } from '../constants/sleep'
+import FrmProveedores from '../components/FrmProveedores'
 
 const initobj = {
-  idMaquina: "",
-  numero: "",
-  linea: "0",
-  marca: "",
-  modelo: "",
-  ns: "",
-  fechaAdquisicion: "",
-  otros: "",
-  detalleAdquisicion: "",
-  departamento: "Seleccione"
+  idProveedor: "",
+  nombre: "",
+  direccion: "",
+  telefono: "",
+  correo: "",
+  departamento: "Seleccione",
+  contactos: [{"nombre":"","puesto":"","correo":"","telefono":"","nota":""}],
+  otro: ""
 }
 
-const PaginaMaquinas = () => {
+const PaginaProveedores = () => {
 
   const {
-    fetchingMaquinas,
-    allMaquinas,
-    maquinasColumns,
-    getMaquinas,
-    saveMaquina,
-    deleteMaquinas
+    fetchingProveedores,
+    allProveedores,
+    proveedoresColumns,
+    getProveedores,
+    saveProveedores,
+    deleteProveedores
   } = useApp()
 
   const modalContainerRef = useRef()
@@ -36,8 +34,8 @@ const PaginaMaquinas = () => {
   const [loading, setLoading] = useState(true)
   const [isEdit, setIsEdit] = useState(false)
 
-  const [objMaquina, setObjMaquina] = useState(initobj);
-  const [listaMaquinas, setListaMaquinas] = useState()
+  const [objProveedor, setObjProveedor] = useState(initobj);
+  const [listaProveedores, setListaProveedores] = useState()
 
   const [frmModalVisible, setFrmModalVisible] = useState(false)
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
@@ -46,7 +44,7 @@ const PaginaMaquinas = () => {
 
   async function handleGetData() {
     setLoading(true)
-    await getMaquinas()
+    await getProveedores()
     setLoading(false)
   }
 
@@ -55,8 +53,8 @@ const PaginaMaquinas = () => {
   }, [])
 
   useEffect(()=>{
-    setListaMaquinas(allMaquinas)
-  },[allMaquinas])
+    setListaProveedores(allProveedores)
+  },[allProveedores])
 
   const handleOpenModal = async (setState) => {
     setState(true)
@@ -66,23 +64,23 @@ const PaginaMaquinas = () => {
   }
   const handleCloseModal = async (setState) => {
     setIsEdit(false)
-    setObjMaquina(initobj)
+    setObjProveedor(initobj)
     modalContainerRef.current.classList.remove('visible')
     document.getElementById("tbl-page").classList.remove('blurred')
     await sleep(150)
     setState(false)
   }
 
-  const handleDleteMaquinas = async () => {
+  const handleDleteProveedores = async () => {
     setSaving(true)
-    await deleteMaquinas(listaMaquinas)
-    await getMaquinas()
+    await deleteProveedores(listaProveedores)
+    await getProveedores()
     handleCloseModal(setDeleteModalVisible)
     setSaving(false)
   }
 
-  const handleEdit = async (mac) => {
-    setObjMaquina(mac)
+  const handleEdit = async (proveedor) => {
+    setObjProveedor(proveedor)
     setIsEdit(true)
     handleOpenModal(setFrmModalVisible)
   }
@@ -92,10 +90,10 @@ const PaginaMaquinas = () => {
       {
         loading ? <Loader/> :
         <CRUD
-          allElements={allMaquinas}
-          elements={listaMaquinas}
-          setElements={setListaMaquinas}
-          columns={maquinasColumns}
+          allElements={allProveedores}
+          elements={listaProveedores}
+          setElements={setListaProveedores}
+          columns={proveedoresColumns}
           onAdd={() => handleOpenModal(setFrmModalVisible)}
           onEdit={handleEdit}
           onDelete={() => handleOpenModal(setDeleteModalVisible)}
@@ -103,9 +101,9 @@ const PaginaMaquinas = () => {
       }
        <div className='modal absolute h-full w-full' ref={modalContainerRef}>
         {frmModalVisible &&
-          <FrmMaquinas
+          <FrmProveedores
             onCloseModal={()=>handleCloseModal(setFrmModalVisible)}
-            maquina={objMaquina}
+            proveedor={objProveedor}
             isEdit={isEdit}
           />
 
@@ -113,14 +111,14 @@ const PaginaMaquinas = () => {
         {deleteModalVisible &&
           <DeleteModal
             onCancel={() => handleCloseModal(setDeleteModalVisible)}
-            onConfirm={handleDleteMaquinas}
-            elements={listaMaquinas}
-            representation={['numero', 'linea', 'marca', 'modelo']}
-            message='Las siguientes maquinas se eliminarán permanentemente:'
+            onConfirm={handleDleteProveedores}
+            elements={listaProveedores}
+            representation={['nombre']}
+            message='Los siguientes proveedores se eliminarán permanentemente:'
           />
         }
        </div>
     </>
   )
 }
-export default PaginaMaquinas
+export default PaginaProveedores
