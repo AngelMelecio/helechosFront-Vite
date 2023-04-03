@@ -70,10 +70,12 @@ import {
     RiArrowDownSLine as Down,
     RiArrowRightSLine as Right,
     RiArrowLeftSLine as Left,
-    RiGhost2Line as Ghost
+    RiGhost2Line as Ghost,
+    RiSubtractFill as Minus
 
 } from 'react-icons/ri'
     
+
 
 export const ICONS = {
     Lupa,
@@ -112,4 +114,5 @@ export const ICONS = {
     UsersIdentity,
     Active, Ghost,
     Print,
+    Minus,
 }

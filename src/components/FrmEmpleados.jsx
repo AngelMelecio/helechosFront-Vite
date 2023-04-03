@@ -16,10 +16,12 @@ const optionsDepartamento = [
   { value: 'Diseno', label: 'Diseño' },
   { value: 'Gerencia', label: 'Gerencia' }
 ]
+
 const optionsEstado = [
   { value: 'Activo', label: 'Activo' },
   { value: 'Inactivo', label: 'Inactivo' }
 ]
+
 
 const FrmEmpleados = ({
 
@@ -29,16 +31,20 @@ const FrmEmpleados = ({
 
 }) => {
 
+  const {
+    getEmpleadoMaquinas,
+    getMaquinas,
+    saveEmpleado,
+    getEmpleados
+  } = useApp()
+
   const [saving, setSaving] = useState(false)
   const [objEmpleado, setObjEmpleado] = useState(empleado)
 
   const [availableMaquinas, setAvailableMaquinas] = useState([])
   const [assignedMaquinas, setAssignedMaquinas] = useState([])
-  
-  const {getEmpleadoMaquinas, getMaquinas, saveEmpleado, getEmpleados} = useApp()
-  
+
   async function loadEmpleadoMaquinas() {
-    
     let maq = await getMaquinas()
     const assigned = await getEmpleadoMaquinas(objEmpleado.idEmpleado)
     const maquinasIds = assigned.message ? [] : assigned.map(a => a.idMaquina)
@@ -51,9 +57,8 @@ const FrmEmpleados = ({
       else
         newAvailable.push({ ...m, isChecked: false })
     })
-    setAvailableMaquinas(newAvailable)
+    setAvailableMaquinas( newAvailable )
     setAssignedMaquinas(newAssigned)
-
   }
 
   useEffect(() => {
@@ -86,12 +91,6 @@ const FrmEmpleados = ({
       errors.telefono = 'Ingresa 10 digitos';
     }
 
-    /*if (!values.ns) {
-      errors.ns = 'Ingresa el NSS';
-    } else if (values.ns.toString().length !== 11) {
-      errors.ns = 'NSS incorrecto';
-    }*/
-
     if (!values.fechaEntrada) {
       errors.fechaEntrada = 'Establece la fecha de contratación';
     }
@@ -103,6 +102,7 @@ const FrmEmpleados = ({
     }
     return errors;
   };
+
   const formik = useFormik({
     initialValues: empleado,
     validate,
@@ -136,7 +136,6 @@ const FrmEmpleados = ({
       <div className='modal-box h-full w-3/4 rounded-lg bg-white shadow-xl'  >
         <div className='w-full flex h-full flex-col '>
           <div className="z-10 py-2 px-4 flex w-full shadow-md ">
-
             <div className="flex flex-row w-full total-center relative h-10">
               {isEdit
                 ? <ICONS.UserEdit className='mt-1 mr-2' size='20px' style={{ color: '#115e59' }} />
@@ -159,12 +158,9 @@ const FrmEmpleados = ({
                 <ICONS.Cancel className='m-0' size='25px' />
               </button>
             </div>
-
           </div>
-
           <div className="flex w-full h-full ">
             {
-
               <form
                 id='frmEmpleados'
                 className='flex flex-col h-full w-full relative overflow-y-scroll'
@@ -185,7 +181,6 @@ const FrmEmpleados = ({
                       </label>
                     </div>
                   </div>
-
                   <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                     <div className="absolute w-full total-center -top-3">
                       <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
@@ -219,9 +214,7 @@ const FrmEmpleados = ({
                       />
                     </div>
                   </div>
-
                   {
-
                     <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                       <div className="absolute w-full total-center -top-3">
                         <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
@@ -236,16 +229,15 @@ const FrmEmpleados = ({
                         />
                         {
                           <CustomSelect
-                          name='Departamento'
-                          className='input z-[100]'
-                          onChange={value => formik.setFieldValue('departamento', value.value)}
-                          value={formik.values ? formik.values.departamento : ''}
-                          onBlur={formik.handleBlur}
-                          options={optionsDepartamento}
-                          label='Departamento'
-                          errores={formik.errors.departamento && formik.touched.departamento ? formik.errors.departamento : null}
-
-                        />}
+                            name='Departamento'
+                            className='input z-[100]'
+                            onChange={value => formik.setFieldValue('departamento', value.value)}
+                            value={formik.values ? formik.values.departamento : ''}
+                            onBlur={formik.handleBlur}
+                            options={optionsDepartamento}
+                            label='Departamento'
+                            errores={formik.errors.departamento && formik.touched.departamento ? formik.errors.departamento : null}
+                          />}
                         {<CustomSelect
                           name='Estado'
                           className='input z-[100]'
@@ -263,18 +255,14 @@ const FrmEmpleados = ({
                           onChange={formik.handleChange} onBlur={formik.handleBlur}
                           errores={formik.errors.fechaAltaSeguro && formik.touched.fechaAltaSeguro ? formik.errors.fechaAltaSeguro : null}
                         />
-
-
-                      <Input
+                        <Input
                           label='Seguro Social' type='number' name='ns' value={formik.values ? formik.values.ns : ''}
                           onChange={formik.handleChange} onBlur={formik.handleBlur}
                           errores={formik.errors.ns && formik.touched.ns ? formik.errors.ns : null}
                           Icon={ICONS.Add}
                         />
-                                            
                       </div>
                     </div>
-
                   }
                   <div className="mx-2 my-4 relative h-56 px-4 py-4 border-2 border-slate-300">
                     <div className="absolute w-full left-0 total-center -top-3">
@@ -289,14 +277,9 @@ const FrmEmpleados = ({
                       setAssignedMaquinas={setAssignedMaquinas}
                     />
                   </div>
-
-
                 </div>
               </form>
-
-
             }
-
           </div>
         </div>
       </div>
