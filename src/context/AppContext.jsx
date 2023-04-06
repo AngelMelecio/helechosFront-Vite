@@ -62,6 +62,15 @@ const proveedoresColumns = [
   { name: 'Otro', attribute: 'otro' },
 ]
 
+const materialesColumns = [
+  { name: 'Tipo', attribute: 'tipo' },
+  { name: 'Color', attribute: 'color' },
+  { name: 'Calibre', attribute: 'calibre' },
+  { name: 'Proveedor', attribute: 'nombreProveedor' },
+  { name: 'Teñida', attribute: 'tenida' },
+  { name: 'Código de color', attribute: 'codigoColor' },
+]
+
 export function AppProvider({ children }) {
 
   const { session, notify } = useAuth()
@@ -78,6 +87,7 @@ export function AppProvider({ children }) {
   const [fetchingProveedores, setFetchingProveedores] = useState(false)
   const [allProveedores, setAllProveedores] = useState([])
   
+  const [fetchingMateriales, setFetchingMateriales] = useState(false)
   const [allMateriales, setAllMateriales] = useState([])
 
   const [allModelos, setAllModelos] = useState([])
@@ -315,7 +325,7 @@ export function AppProvider({ children }) {
       setAllClientes(formatData)
       return formatData
     }
-    setAllClientes(false)
+    setFetchingClientes(false)
   }
 
   const saveCliente = async (values, isEdit) => {
@@ -394,7 +404,7 @@ export function AppProvider({ children }) {
       setAllProveedores(formatData)
       return formatData
     }
-    setAllProveedores(false)
+    setFetchingProveedores(false)
   }
 
   const saveProveedor = async (values, isEdit) => {
@@ -454,18 +464,86 @@ export function AppProvider({ children }) {
     }
   }
   
-  const getMateriales = async () => {
-    await fetch(apiMaterialesUrl, {
+  const getMateriales= async () => {
+    setFetchingMateriales(true)
+    let response = await fetch(apiMaterialesUrl, {
       method: 'GET',
       headers: {
         "Content-Type": "application/json",
         'Authorization': 'Bearer ' + session.access
       }
-    }).then(response => response.json())
-      .then(data => {
-        let formatData = data.map((m) => ({ ...m, count:0 }))
-        setAllMateriales(formatData)
+    })
+    if (response.status === 200) {
+      let materiales = await response.json()
+      
+      let formatData = materiales.map((material) => ({
+        ...material,
+        isSelected: false,
+        count: 0,
+        idProveedor:material.proveedor.idProveedor.toString(),
+        nombreProveedor:material.proveedor.nombre
+      }))
+      
+      setAllMateriales(formatData)
+      return formatData
+    }
+    setFetchingMateriales(false)
+  }
+
+  const saveMaterial = async (values, isEdit) => {
+
+    let formData = new FormData()
+    formData.append('tipo', values.tipo)
+    formData.append('color', values.color)
+    formData.append('codigoColor', values.codigoColor)
+    formData.append('calibre', values.calibre)
+    formData.append('proveedor', values.idProveedor)
+    formData.append('tenida', values.tenida)
+    
+
+    if (!isEdit) {
+      //Creacion de un nuevo Material 
+      await fetch(apiMaterialesUrl, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': 'Bearer ' + session.access
+        }
       })
+        .then(response => response.json())
+        .then(data => notify(data.message))
+
+    } else {
+      //Actualizando los datos del Material
+      await fetch(apiMaterialesUrl + values.idMaterial, {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          'Authorization': 'Bearer ' + session.access
+        }
+      })
+        .then(response => response.json())
+        .then(data => notify(data.message))
+    }
+  }
+
+  const deleteMateriales = async (listaMateriales) => {
+    for (let i = 0; i < listaMateriales.length; i++) {
+      let e = listaMateriales[i]
+      if (e.isSelected) {
+        let response = await fetch(apiMaterialesUrl + e.idMaterial, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': 'Bearer ' + session.access
+          }
+        })
+        let data = await response.json()
+        if (response.ok) {
+          notify(data.message)
+        } else
+          notify(data.message, true)
+      }
+    }
   }
 
   const getModelos = async () => {
@@ -502,10 +580,11 @@ export function AppProvider({ children }) {
         allProveedores, getProveedores, proveedoresColumns,
         saveProveedor, deleteProveedores,
 
+        fetchingMateriales,
+        allMateriales, getMateriales, materialesColumns,
+        saveMaterial, deleteMateriales,
+
         getEmpleadoMaquinas,
-
-        allMateriales, getMateriales,
-
         allModelos, getModelos,
         
         notify
