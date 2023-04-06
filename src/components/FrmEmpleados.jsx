@@ -63,6 +63,7 @@ const FrmEmpleados = ({
 
   useEffect(() => {
     loadEmpleadoMaquinas()
+
   }, [])
 
   //Validaciones 
@@ -123,6 +124,7 @@ const FrmEmpleados = ({
     setObjEmpleado({ ...objEmpleado, fotografia: e.target.files[0] })
   }
   const toUrl = (file) => {
+
     if (file instanceof File) {
       return URL.createObjectURL(file)
     }

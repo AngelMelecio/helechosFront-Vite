@@ -24,7 +24,7 @@ const CustomSelect = ({ name, className, onChange, value, onBlur, options, label
         </div>
 
 
-    )
+    )   
 }
 
 export default CustomSelect

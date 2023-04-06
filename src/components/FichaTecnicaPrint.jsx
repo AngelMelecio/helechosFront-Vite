@@ -29,7 +29,6 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
         let heb = data[i]?.fibras ? {...data[i].fibras} : {...fibraObj}
         PH.push({ ...noP,...heb }) 
     } 
-    console.log( PH )
     //setFormatData(data)
   }, [])
 
@@ -42,7 +41,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
       </View>
     )
   }
-  console.log(data)
+
   return (
     <>
       <div className='z-10 flex absolute h-full w-full grayTrans items-center justify-center '>

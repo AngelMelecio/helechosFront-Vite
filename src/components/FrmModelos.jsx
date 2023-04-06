@@ -6,6 +6,7 @@ import SelectorMateriales from "./Materiales/SelectorMateriales"
 import { useApp } from "../context/AppContext"
 import { sleep } from "../constants/sleep"
 import DynamicInput from "./DynamicInput"
+import CustomSelect from "./CustomSelect"
 
 const puntoObj = { valor: '', posicion: '' }
 
@@ -16,12 +17,21 @@ const FrmModelos = ({
   setIsEdit,
 }) => {
 
-  console.log(fichaTecnica)
+  const {
+    saveModelo,
+    getModelos,
+    getClientes,
+    allClientes,
+    getMaquinas,
+    allMaquinas
 
-  const { getMateriales, allMateriales } = useApp()
+  } = useApp()
   const [saving, setSaving] = useState(false)
   const [fichaTecnicaObj, setFichaTecnicaObj] = useState(fichaTecnica)
 
+  const [clientesOptions, setClientesOptions] = useState([])
+  const [maquinasTejidoOptions, setMaquinasTejidoOptions] = useState([])
+  const [maquinasPlanchaOptions, setMaquinasPlanchaOptions] = useState([])
 
 
   const validate = (values) => {
@@ -33,63 +43,64 @@ const FrmModelos = ({
     initialValues: fichaTecnica, //initobj,
     validate,
     onSubmit: values => {
-      console.log('quiero guardar: ', fichaTecnicaObj)
+      //console.log(fichaTecnicaObj)
+      handleSaveModelo()
     },
   });
 
+  async function loadOptions() {
+    await getClientes()
+    await getMaquinas()
+  }
+
   useEffect(() => {
-    setFichaTecnicaObj(prev => ({ ...formik.values, materiales: [...prev.materiales], numeroPuntos: [...prev.numeroPuntos] }))
+    loadOptions()
+  }, [])
+
+  useEffect(() => {
+    let newClientesOptions = [{value:'Seleccione', label:'Seleccione'}]
+    let newMaquinasTejidoOptions = [ {value:'Seleccione', label:'Seleccione'} ]
+    let newMaquinasPlanchaOptions = [ {value:'Seleccione', label:'Seleccione'} ]
+    
+    allClientes.forEach(c => {
+      newClientesOptions.push({ value: c.idCliente, label: c.nombre })
+    })
+    
+    allMaquinas.forEach(m => {
+      if (m.departamento === 'Tejido')
+        newMaquinasTejidoOptions.push({ value: m.idMaquina, label: m.numero + ' ' + m.linea + ' ' + m.marca })
+      else if (m.departamento === 'Plancha')
+        newMaquinasPlanchaOptions.push({ value: m.idMaquina, label: m.numero + ' ' + m.linea + ' ' + m.marca })
+    })
+
+    setClientesOptions(newClientesOptions)
+    setMaquinasTejidoOptions(newMaquinasTejidoOptions)
+    setMaquinasPlanchaOptions(newMaquinasPlanchaOptions)
+
+  }, [allClientes, allMaquinas])
+
+  useEffect(() => {
+    setFichaTecnicaObj(prev => (
+      {
+        ...prev,
+        materiales: [...prev.materiales],
+        numeroPuntos: [...prev.numeroPuntos],
+        economisadores: [...prev.economisadores]
+      }
+    ))
   }, [formik?.values])
 
-
-  const handleSelectImage = (e) => {
-    setFichaTecnicaObj(prev => ({ ...prev, fotografia: e.target.files[0] }))
+  const handleSaveModelo = async () => {
+    setSaving(true)
+    console.log(fichaTecnicaObj)
+    await saveModelo(fichaTecnicaObj, isEdit)
+    await getModelos()
+    onCloseModal()
+    setSaving(false)
   }
 
-  const handleDeleteFibra = (e, indx) => {
-    e.preventDefault()
-    if (fichaTecnicaObj.fibras.length === 1) {
-      setFichaTecnicaObj(prev => ({ ...prev, fibras: [{ ...fibraObj }] }))
-      return
-    }
-    let newFibras = [...fichaTecnicaObj.fibras]
-    newFibras.splice(indx, 1)
-    setFichaTecnicaObj(prev => ({ ...prev, fibras: newFibras }))
-  }
-
-  const handleChangeFibra = (e, indx) => {
-    let newFibras = [...fichaTecnicaObj.fibras]
-    newFibras[indx][e.target.name] = e.target.type == 'number' ? Number(e.target.value) : e.target.value
-    setFichaTecnicaObj(prev => ({ ...prev, fibras: newFibras }))
-  }
-
-  const handleFocusFibra = (e, indx) => {
-    if (indx === fichaTecnicaObj.fibras.length - 1) {
-      setFichaTecnicaObj(prev => ({ ...prev, fibras: [...prev.fibras, { ...fibraObj }] }))
-    }
-  }
-
-  const handleDeletePunto = (e, indx) => {
-    e.preventDefault()
-    if (fichaTecnicaObj.numeroPuntos.length === 1) {
-      setFichaTecnicaObj(prev => ({ ...prev, numeroPuntos: [{ ...puntoObj }] }))
-      return
-    }
-    let newPuntos = [...fichaTecnicaObj.numeroPuntos]
-    newPuntos.splice(indx, 1)
-    setFichaTecnicaObj(prev => ({ ...prev, numeroPuntos: newPuntos }))
-  }
-
-  const hanldeChangePunto = (e, indx) => {
-    let newPuntos = [...fichaTecnicaObj.numeroPuntos]
-    newPuntos[indx][e.target.name] = Number(e.target.value)
-    setFichaTecnicaObj(prev => ({ ...prev, numeroPuntos: newPuntos }))
-  }
-
-  const handleFocusPunto = (e, indx) => {
-    if (indx === fichaTecnicaObj.numeroPuntos.length - 1) {
-      setFichaTecnicaObj(prev => ({ ...prev, numeroPuntos: [...prev.numeroPuntos, { ...puntoObj }] }))
-    }
+  const handleSelectFile = (e) => {
+    setFichaTecnicaObj(prev => ({ ...prev, [e.target.name]: e.target.files[0] }))
   }
 
   const onPassMateriales = (availableMateriales) => {
@@ -122,7 +133,8 @@ const FrmModelos = ({
   }
 
   const handleChange = (e) => {
-    setFichaTecnicaObj(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    let val = e.target.type == 'number' ? Number(e.target.value) : e.target.value
+    setFichaTecnicaObj(prev => ({ ...prev, [e.target.name]: val }))
   }
 
   const handleSetRow = (event, indx, arrayName) => {
@@ -162,7 +174,7 @@ const FrmModelos = ({
                 : <ICONS.PersonPlus className='mt-1 mr-2' size='20px' style={{ color: '#115e59' }} />
               }
               <p className='font-semibold text-teal-800 text-2xl' >
-                {isEdit ? 'Editar Modelo' : 'Nuevo Modelo xd'}
+                {isEdit ? 'Editar Modelo' : 'Nuevo Modelo'}
               </p>
               <div className="flex flex-row absolute right-0">
                 <input
@@ -187,20 +199,63 @@ const FrmModelos = ({
               className='flex flex-col h-full w-full relative overflow-y-scroll'
               onSubmit={formik.handleSubmit}>
               <div className="absolute w-full flex flex-col  px-4">
-                <div className='flex flex-row w-full h-full p-2 total-center'>
+                <div className='flex flex-row w-full h-full p-2 items-center justify-around'>
                   <div className="flex relative w-full items-center justify-center foto text-center">
                     { /* Imagen del Modelo */}
                     {(toUrl(fichaTecnicaObj?.fotografia) !== null) && <img
                       className='object-cover foto'
                       src={toUrl(fichaTecnicaObj?.fotografia)}
                       alt='' />}
-                    <input id='file' type="file" name='fotografia' accept='image/*' onChange={handleSelectImage} className='inputfile' />
+                    <input id='file' type="file" name='fotografia' accept='image/*' onChange={handleSelectFile} className='inputfile' />
                     <label
-                      className='absolute -bottom-2 -right-1  p-2  normal-button rounded-full'
+                      className='absolute -bottom-2 -right-1 p-2 normal-button rounded-full'
                       htmlFor='file' >
                       <ICONS.Upload style={{ color: 'white' }} size='18px' />
                     </label>
                   </div>
+                  <div className="flex flex-col relative text-center">
+                    { /* Ficha tecnica */}
+                    <p className="text-start font-medium text-teal-800">Ficha Técnica</p>
+                    <div className="flex">
+                      <div className="flex w-28 bg-gray-200 rounded-l-lg">
+                        {(toUrl(fichaTecnicaObj?.archivoFichaTecnica) !== null) &&
+                          <a
+                            className="w-full normal-button rounded-l-lg total-center"
+                            target="_blank"
+                            href={toUrl(fichaTecnicaObj?.archivoFichaTecnica)}>
+                            <ICONS.PDF size="20px" />
+                          </a>}
+                        <input id='FichaFile' type="file" name='archivoFichaTecnica' onChange={handleSelectFile} className='inputfile' />
+                      </div>
+                      <label
+                        className='p-2 normal-button  rounded-r-lg'
+                        htmlFor='FichaFile' >
+                        <ICONS.Upload style={{ color: 'white' }} size='18px' />
+                      </label>
+                    </div>
+                  </div>
+                  <div className="flex flex-col relative text-center">
+                    { /* Archivo del Programa */}
+                    <p className="text-start font-medium text-teal-800">Archivo del Programa</p>
+                    <div className="flex">
+                      <div className="flex w-28 bg-gray-200 rounded-l-lg">
+                        {(toUrl(fichaTecnicaObj?.archivoPrograma) !== null) &&
+                          <a
+                            className="w-full normal-button rounded-l-lg total-center"
+                            target="_blank"
+                            href={toUrl(fichaTecnicaObj?.archivoPrograma)}>
+                            <ICONS.File size="20px" />
+                          </a>}
+                        <input id='ProgramaFile' type="file" name='archivoPrograma' onChange={handleSelectFile} className='inputfile' />
+                      </div>
+                      <label
+                        className='p-2 normal-button  rounded-r-lg'
+                        htmlFor='ProgramaFile' >
+                        <ICONS.Upload style={{ color: 'white' }} size='18px' />
+                      </label>
+                    </div>
+                  </div>
+
                 </div>
                 <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                   <div className="absolute w-full total-center -top-3">
@@ -220,10 +275,17 @@ const FrmModelos = ({
                   </div>
                   <div className="flex flex-row w-full">
                     <div className="flex flex-row w-full">
-                      <Input
-                        onChange={(e) => handleChange(e)}
-                        value={fichaTecnicaObj.cliente}
-                        name='cliente' label="Cliente" type='text' />
+
+                      <CustomSelect
+                        name='Cliente'
+                        className='input z-[100]'
+                        onChange={value => formik.setFieldValue('cliente', value.value)}
+                        value={formik?.values?.cliente}
+                        onBlur={formik.handleBlur}
+                        options={clientesOptions}
+                        label='CLiente'
+
+                      />
                       <Input
                         onChange={(e) => handleChange(e)}
                         value={fichaTecnicaObj.talla}
@@ -233,15 +295,15 @@ const FrmModelos = ({
                       <Input
                         onChange={(e) => handleChange(e)}
                         value={fichaTecnicaObj.pesoPoliester}
-                        name='pesoPoliester' label="Peso Poliester" type='number' />
+                        name='pesoPoliester' label="Peso Poliester" type='text' />
                       <Input
                         onChange={(e) => handleChange(e)}
                         value={fichaTecnicaObj.pesoMelt}
-                        name='pesoMelt' label="Peso Melt" type='number' />
+                        name='pesoMelt' label="Peso Melt" type='text' />
                       <Input
                         onChange={(e) => handleChange(e)}
                         value={fichaTecnicaObj.pesoLurex}
-                        name='pesoLurex' label="Peso Lurex" type='number' />
+                        name='pesoLurex' label="Peso Lurex" type='text' />
                     </div>
                   </div>
                 </div>
@@ -253,10 +315,15 @@ const FrmModelos = ({
                   </div>
                   <div className="flex flex-row w-full">
                     <div className="flex flex-row w-full">
-                      <Input
-                        onChange={(e) => handleChange(e)}
-                        value={fichaTecnicaObj.maquinaTejido}
-                        name='maquinaTejido' label="Maquina Tejido" type='text' />
+                      <CustomSelect
+                        name='maquinaTejido'
+                        className='input z-[90]'
+                        onChange={ value => formik.setFieldValue('maquinaTejido', value.value)}
+                        value={ formik?.values?.maquinaTejido }
+                        onBlur={formik.handleBlur}
+                        options={maquinasTejidoOptions}
+                        label='Máquina Tejido'
+                      />
                       <Input
                         onChange={(e) => handleChange(e)}
                         value={fichaTecnicaObj.tipoMaquinaTejido}
@@ -286,10 +353,15 @@ const FrmModelos = ({
                   </div>
                   <div className="flex flex-row w-full">
                     <div className="flex flex-row w-full">
-                      <Input
-                        onChange={(e) => handleChange(e)}
-                        value={fichaTecnicaObj.maquinaPlancha}
-                        name='maquinaPlancha' label="Maquina Plancha" type='text' />
+                      <CustomSelect
+                        name='maquinaPlancha'
+                        className='input z-[80]'
+                        onChange={ value => formik.setFieldValue('maquinaPlancha', value.value) }
+                        value={formik?.values?.maquinaPlancha}
+                        onBlur={formik.handleBlur}
+                        options={maquinasPlanchaOptions}
+                        label='Máquina de Plancha'
+                      />
                     </div>
                     <div className="flex flex-row w-full">
                       <Input
@@ -319,7 +391,7 @@ const FrmModelos = ({
                   </div>
                 </div>
                 <div className="flex flex-row">
-                  <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
+                  <div className="w-full relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                     <div className="absolute w-full total-center -top-3">
                       <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
                         NUMERO PUNTOS
@@ -341,29 +413,29 @@ const FrmModelos = ({
                       </div>
                     </div>
                   </div>
-                  <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
+                  <div className="w-full relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                     <div className="absolute w-full total-center -top-3">
                       <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                      ECONOMISADORES
+                        ECONOMISADORES
                       </div>
                     </div>
                     <div className="flex flex-row h-80  justify-around">
                       <div className="overflow-y-scroll">
-                      <DynamicInput
-                        arrayName='economisadores'
-                        columns={[
-                          { name: 'Valor', atr: 'valor' },
-                          { name: 'Pos', atr: 'posicion' }
-                        ]}
-                        elements={fichaTecnicaObj.economisadores}
-                        setElements={handleSetRow}
-                        handleFocus={handleRowFocus}
-                        handleDeleteRow={handleDeleteRow}
-                      />
+                        <DynamicInput
+                          arrayName='economisadores'
+                          columns={[
+                            { name: 'Valor', atr: 'valor' },
+                            { name: 'Pos', atr: 'posicion' }
+                          ]}
+                          elements={fichaTecnicaObj.economisadores}
+                          setElements={handleSetRow}
+                          handleFocus={handleRowFocus}
+                          handleDeleteRow={handleDeleteRow}
+                        />
                       </div>
                     </div>
                   </div>
-                  <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
+                  <div className="w-full relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                     <div className="absolute w-full total-center -top-3">
                       <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
                         JALONES
@@ -371,17 +443,17 @@ const FrmModelos = ({
                     </div>
                     <div className="flex flex-row h-80  justify-around">
                       <div className="overflow-y-scroll">
-                      <DynamicInput
-                        arrayName='jalones'
-                        columns={[
-                          { name: 'Valor', atr: 'valor' },
-                          { name: 'Pos', atr: 'posicion' }
-                        ]}
-                        elements={fichaTecnicaObj.jalones}
-                        setElements={handleSetRow}
-                        handleFocus={handleRowFocus}
-                        handleDeleteRow={handleDeleteRow}
-                      />
+                        <DynamicInput
+                          arrayName='jalones'
+                          columns={[
+                            { name: 'Valor', atr: 'valor' },
+                            { name: 'Pos', atr: 'posicion' }
+                          ]}
+                          elements={fichaTecnicaObj.jalones}
+                          setElements={handleSetRow}
+                          handleFocus={handleRowFocus}
+                          handleDeleteRow={handleDeleteRow}
+                        />
                       </div>
                     </div>
                   </div>

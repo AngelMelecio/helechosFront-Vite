@@ -199,7 +199,7 @@ const FrmClientes = ({
                               <input
                                 onFocus={(e) => handleFocusContacto(e, i)}
                                 name='nombre'
-                                value={c.nombre}
+                                value={ c.nombre ? c.nombre : '' }
                                 onChange={(e) => handleChangeContacto(e, i)}
                                 className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
                                 type="text" />
@@ -208,7 +208,7 @@ const FrmClientes = ({
                               <input
                                 onFocus={(e) => handleFocusContacto(e, i)}
                                 name='puesto'
-                                value={c.puesto}
+                                value={ c.puesto ? c.puesto : '' }
                                 onChange={(e) => handleChangeContacto(e, i)}
                                 className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
                                 type="text" />
@@ -217,7 +217,7 @@ const FrmClientes = ({
                               <input
                                 onFocus={(e) => handleFocusContacto(e, i)}
                                 name='correo'
-                                value={c.correo}
+                                value={ c.correo ? c.correo : '' }
                                 onChange={(e) => handleChangeContacto(e, i)}
                                 className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
                                 type="email" />
@@ -226,7 +226,7 @@ const FrmClientes = ({
                               <input
                                 onFocus={(e) => handleFocusContacto(e, i)}
                                 name='telefono'
-                                value={c.telefono}
+                                value={ c.telefono ? c.telefono : '' }
                                 onChange={(e) => handleChangeContacto(e, i)}
                                 className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
                                 type="number" />
@@ -235,7 +235,7 @@ const FrmClientes = ({
                               <input
                                 onFocus={(e) => handleFocusContacto(e, i)}
                                 name='nota'
-                                value={c.nota}
+                                value={ c.nota ? c.nota : '' }
                                 onChange={(e) => handleChangeContacto(e, i)}
                                 className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
                                 type="text" />

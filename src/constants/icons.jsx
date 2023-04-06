@@ -12,6 +12,12 @@ import { FaRegTrashAlt as Trash } from 'react-icons/fa'
 import {
     MdOutlineMail as Email
 } from 'react-icons/md'
+
+import{
+    ImFileOpenoffice as File,
+    ImFilePdf as PDF
+} from 'react-icons/im'
+
 import {
     RxCross2 as Cancel,
 } from 'react-icons/rx'
@@ -21,7 +27,7 @@ import {
     BsHouseDoor as House,
     BsPeopleFill as Worker,
     BsFilter as Filter,
-    BsFillCheckCircleFill as Active
+    BsFillCheckCircleFill as Active,
 
 } from 'react-icons/bs'
 
@@ -44,7 +50,8 @@ import {
     FaTruckMoving as Truck,
     FaKey as Admin,
     FaUser as Profile,
-    FaRegAddressCard as UsersIdentity
+    FaRegAddressCard as UsersIdentity,
+
 } from 'react-icons/fa'
 
 import {
@@ -62,7 +69,8 @@ import {
     GiChelseaBoot as Boot,
     GiRolledCloth as Cloth,
     GiCardboardBoxClosed as Box,
-    GiHandTruck as Diablito
+    GiHandTruck as Diablito,
+    GiConverseShoe as Shoe,
 } from 'react-icons/gi'
 
 import {
@@ -115,4 +123,7 @@ export const ICONS = {
     Active, Ghost,
     Print,
     Minus,
+    Shoe,
+    PDF,
+    File
 }

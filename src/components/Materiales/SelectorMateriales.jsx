@@ -36,7 +36,6 @@ const SelectorMateriales = ({
 
 
   const handleSearch = () => {
-    console.log(allMateriales)
     let val = searchRef.current.value.trim().toLowerCase()
     let newMateriales = allMateriales.filter(m =>
       Object.keys(m).some(k =>
@@ -80,8 +79,10 @@ const SelectorMateriales = ({
     }
   }
   const handleChangeMaterial = (e, indx) => {
+    
+    //console.log( e.target.type, e.target.value )
     let newMateriales = [...fichaTecnicaObj.materiales]
-    newMateriales[indx][e.target.name] = e.target.type == 'number' ? Number(e.target.value) : e.target.value
+    newMateriales[indx][e.target.name] =  e.target.value
     setFichaTecnicaObj(prev => ({ ...prev, materiales: newMateriales }))
   }
 
@@ -99,7 +100,8 @@ const SelectorMateriales = ({
             hebras: "",
             calibre: "",
             guiaHilo: "",
-            proveedor: m.proveedor,
+            proveedor: m.idProveedor,
+            nombreProveedor: m.nombreProveedor,
             idMaterial: m.idMaterial
           })
         }
@@ -182,7 +184,7 @@ const SelectorMateriales = ({
                           <button className="neutral-button rounded-full w-6 h-6" id='plus' type="button" onClick={(e) => handleChangeMaterialCount('plus', i)}> <ICONS.Plus size="11px" /></button>
                         </div>
                         <p className="pl-3">
-                          {m.tipo} - {m.color} - {m.proveedor}
+                          {m.tipo} - {m.color} - {m.nombreProveedor}
                         </p>
                       </div>
                     </div>)
@@ -198,11 +200,11 @@ const SelectorMateriales = ({
             <table className="w-full">
               <thead>
                 <tr className="font-medium text-teal-800">
-                  <Th>GUIA_HILOS</Th>
-                  <Th>FIBRAS</Th>
+                  <Th>GUIA HILOS</Th>
                   <Th>CALIBRE</Th>
                   <Th>PROVEEDOR</Th>
                   <Th>COLORES</Th>
+                  <Th>TIPO</Th>
                   <Th>HEBRAS</Th>
                   <Th>PESO</Th>
                 </tr>
@@ -215,17 +217,9 @@ const SelectorMateriales = ({
                       <td>
                         <input
                           name='guiaHilos'
-                          value={f.guiaHilos | ""}
+                          value={f.guiaHilos ? f.guiaHilos.value : ''}
                           className="flex w-full p-1 outline-none  duration-300 border focus:border-teal-500"
                           onChange={(e) => { handleChangeMaterial(e, i) }}
-                          type="text" />
-                      </td>
-
-                      <td>
-                        <input
-                          readOnly
-                          className="flex w-full p-1 outline-none border-0 duration-300 bg-transparent focus:border-teal-500"
-                          value={f.fibras}
                           type="text" />
                       </td>
                       <td>
@@ -240,7 +234,7 @@ const SelectorMateriales = ({
                         <input
                           readOnly
                           className="flex w-full p-1 outline-none border-0 duration-300 bg-transparent focus:border-teal-500"
-                          value={f.proveedor}
+                          value={f.nombreProveedor}
                           type="text" />
 
                       </td>
@@ -249,6 +243,14 @@ const SelectorMateriales = ({
                           readOnly
                           className="flex w-full p-1 outline-none border-0 duration-300 bg-transparent focus:border-teal-500"
                           value={f.color}
+                          type="text" />
+                      </td>
+                      <td>
+                        <input
+                          readOnly
+                          value={f.tipo}
+                          onChange={(e) => { handleChangeMaterial(e, i) }}
+                          className="flex w-full p-1 outline-none border-0 duration-300 bg-transparent focus:border-teal-500"
                           type="text" />
                       </td>
                       <td>

@@ -19,17 +19,18 @@ const initFichaTecnicaObj = {
   nombre: '',
   nombrePrograma: '',
   archivoPrograma:'',
+  archivoFichaTecnica:'',
   fotografia: '',
-  cliente: '',
+  cliente: 'Seleccione',
   talla: '',
 
-  maquinaTejido: '',
+  maquinaTejido: 'Seleccione',
   tipoMaquinaTejido: '',
   galga: '',
   velocidadTejido: '',
   tiempoBajada: '',
 
-  maquinaPlancha: '',
+  maquinaPlancha: 'Seleccione',
   velocidadPlancha: '',
   temperaturaPlancha: '',
   
@@ -38,9 +39,9 @@ const initFichaTecnicaObj = {
   pesoLurex: '',
 
   materiales: [],
-  numeroPuntos: [],
-  jalones: [],
-  economisadores: [],
+  numeroPuntos: [{valor:'',posicion:''}],
+  jalones: [{valor:'',posicion:''}],
+  economisadores: [{valor:'',posicion:''}],
   otros: '',
 }
 
@@ -48,7 +49,7 @@ export default function PaginaModelos() {
 
   const modalContainerRef = useRef()
 
-  const {allModelos, getModelos} = useApp()
+  const {allModelos, getModelos, deleteModelos} = useApp()
 
   const [loading, setLoading] = useState(true)
 
@@ -61,6 +62,8 @@ export default function PaginaModelos() {
   const [printModalVisible, setPrintModalVisible] = useState(false)
 
   const [isEdit, setIsEdit] = useState(false)
+  const [saving, setSaving] = useState(false)
+
 
   async function handleGetFichas() {
     setLoading(true)
@@ -90,11 +93,15 @@ export default function PaginaModelos() {
     await sleep(150)
     setState(false)
   }
-  const [saving, setSaving] = useState(false)
 
-  const handleSaveFicha = async (values) => {
-    console.log('quiero guardar')
+  const handleDeleteModelos = async()=>{
+    setSaving(true)
+    await deleteModelos( listaModelos )
+    await getModelos()
+    handleCloseModal( setDeleteModalVisible )
+    setSaving(false) 
   }
+
 
   const handleEdit = async (fich) => {
     setFichaTecnica(fich)
@@ -128,7 +135,7 @@ export default function PaginaModelos() {
         {deleteModalVisible &&
           <DeleteModal
             onCancel={() => handleCloseModal(setDeleteModalVisible)}
-            onConfirm={() => console.log('confirmo eliminacion')}
+            onConfirm={ handleDeleteModelos }
             elements={listaModelos}
             representation={['nombre']}
             message='Las siguientes fichas serán eliminadas de forma permanente'
