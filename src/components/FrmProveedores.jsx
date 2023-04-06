@@ -218,62 +218,62 @@ const FrmProveedores = ({
                       </thead>
                       <tbody>
                         {
-                          objProveedor ?
-                            objProveedor.contactos.map((c, i) => <tr key={'C' + i} className="array-row">
-                              <td>
-                                <input
-                                  onFocus={(e) => handleFocusContacto(e, i)}
-                                  name='nombre'
-                                  value={c.nombre}
-                                  onChange={(e) => handleChangeContacto(e, i)}
-                                  className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                  type="text" />
-                              </td>
-                              <td>
-                                <input
-                                  onFocus={(e) => handleFocusContacto(e, i)}
-                                  name='puesto'
-                                  value={c.puesto}
-                                  onChange={(e) => handleChangeContacto(e, i)}
-                                  className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                  type="text" />
-                              </td>
-                              <td>
-                                <input
-                                  onFocus={(e) => handleFocusContacto(e, i)}
-                                  name='correo'
-                                  value={c.correo}
-                                  onChange={(e) => handleChangeContacto(e, i)}
-                                  className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                  type="email" />
-                              </td>
-                              <td>
-                                <input
-                                  onFocus={(e) => handleFocusContacto(e, i)}
-                                  name='telefono'
-                                  value={c.telefono}
-                                  onChange={(e) => handleChangeContacto(e, i)}
-                                  className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                  type="number" />
-                              </td>
-                              <td>
-                                <input
-                                  onFocus={(e) => handleFocusContacto(e, i)}
-                                  name='nota'
-                                  value={c.nota}
-                                  onChange={(e) => handleChangeContacto(e, i)}
-                                  className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                  type="text" />
-                              </td>
-                              <td>
-                                <button
-                                  onClick={(e) => handleDeleteContacto(e, i)}
-                                  className="p-1 opacity-0 trash-button rounded-md">
-                                  <ICONS.Trash />
-                                </button>
-                              </td>
-                            </tr>)
-                            : null}
+                          objProveedor?
+                          objProveedor.contactos.map((c, i) => <tr key={'C' + i} className="array-row">
+                            <td>
+                              <input
+                                onFocus={(e) => handleFocusContacto(e, i)}
+                                name='nombre'
+                                value={c.nombre ? c.nombre : ''} 
+                                onChange={(e) => handleChangeContacto(e, i)}
+                                className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
+                                type="text" />
+                            </td>
+                            <td>
+                              <input
+                                onFocus={(e) => handleFocusContacto(e, i)}
+                                name='puesto'
+                                value={c.puesto ? c.puesto : ''} 
+                                onChange={(e) => handleChangeContacto(e, i)}
+                                className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
+                                type="text" />
+                            </td>
+                            <td>
+                              <input
+                                onFocus={(e) => handleFocusContacto(e, i)}
+                                name='correo'
+                                value={c.correo ? c.correo : ''} 
+                                onChange={(e) => handleChangeContacto(e, i)}
+                                className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
+                                type="email" />
+                            </td>
+                            <td>
+                              <input
+                                onFocus={(e) => handleFocusContacto(e, i)}
+                                name='telefono'
+                                value={c.telefono ? c.telefono : ''} 
+                                onChange={(e) => handleChangeContacto(e, i)}
+                                className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
+                                type="number" />
+                            </td>
+                            <td>
+                              <input
+                                onFocus={(e) => handleFocusContacto(e, i)}
+                                name='nota'
+                                value={c.nota ? c.nota : ''} 
+                                onChange={(e) => handleChangeContacto(e, i)}
+                                className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
+                                type="text" />
+                            </td>
+                            <td>
+                              <button
+                                onClick={(e) => handleDeleteContacto(e, i)}
+                                className="p-1 opacity-0 trash-button rounded-md">
+                                <ICONS.Trash />
+                              </button>
+                            </td>
+                          </tr>)
+                        :null}
                       </tbody>
                     </table>
                   </div>

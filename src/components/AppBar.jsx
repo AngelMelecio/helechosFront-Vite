@@ -46,7 +46,7 @@ const AppBar = () => {
           {session.usuario.is_staff && <Tab to={'/usuarios'} content={'USUARIOS'} Icon={ICONS.Admin} />}
           <Tab to={'/empleados'} content={'EMPLEADOS'} Icon={ICONS.Worker} />
           <Tab to={'/maquinas'} content={'MAQUINAS'} Icon={ICONS.Machine} />
-          <Tab to={'/modelos'} content={'MODELOS'} Icon={ICONS.Machine} />
+          <Tab to={'/modelos'} content={'MODELOS'} Icon={ICONS.Shoe} />
           <Tab to={'/clientes'} content={'CLIENTES'} Icon={ICONS.HandShake} />
           <Tab to={'/proveedores'} content={'PROVEEDORES'} Icon={ICONS.Truck} />
           <Tab to={'/materiales'} content={'MATERIALES'} Icon={ICONS.Cloth} />

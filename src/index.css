@@ -302,6 +302,12 @@ input::-webkit-inner-spin-button {
   border-radius: 50px;
   background-color: #e5e7eb;
 }
+.file{
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  background-color: #e5e7eb;
+}
 
 .opacity-white {
   background-color: white;

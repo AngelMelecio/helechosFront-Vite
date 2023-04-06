@@ -88,6 +88,7 @@ export function AppProvider({ children }) {
   const [allProveedores, setAllProveedores] = useState([])
   
   const [fetchingMateriales, setFetchingMateriales] = useState(false)
+
   const [allMateriales, setAllMateriales] = useState([])
 
   const [allModelos, setAllModelos] = useState([])
@@ -123,7 +124,6 @@ export function AppProvider({ children }) {
     formData.append('direccion', values.direccion)
     formData.append('telefono', values.telefono)
     formData.append('ns', values.ns)
-
     if ((objEmpleado.fotografia) instanceof File)
       formData.append('fotografia', objEmpleado.fotografia)
     formData.append('departamento', values.departamento)
@@ -144,7 +144,6 @@ export function AppProvider({ children }) {
       //    Espero la respuesta para obtener el nuevo Id 
       const { message, empleado } = await response.json()
       notify(message)
-      //await getEmpleados()
       if (maquinas.length === 0) return
       if (response.ok) {
         //    Asigno las Maquinas 
@@ -171,8 +170,6 @@ export function AppProvider({ children }) {
         .then(response => response.json())
         .then(data => notify(data.message))
 
-
-      //await getEmpleados()
       if (maquinas.length === 0) return
 
       //    Asigno Sus nuevas maquinas
@@ -187,8 +184,6 @@ export function AppProvider({ children }) {
       let data = await response.json()
       notify(data.message)
     }
-
-    //await getEmpleados()
   }
 
   const deleteEmpleados = async (listaEmpleados) => {
@@ -316,12 +311,12 @@ export function AppProvider({ children }) {
     })
     if (response.status === 200) {
       let clientes = await response.json()
-      
+
       let formatData = clientes.map((cliente) => ({
         ...cliente,
         isSelected: false,
       }))
-      
+
       setAllClientes(formatData)
       return formatData
     }
@@ -337,7 +332,7 @@ export function AppProvider({ children }) {
     formData.append('correo', values.correo)
     formData.append('contactos', JSON.stringify(values.contactos))
     formData.append('otro', values.otro)
-    
+
 
     if (!isEdit) {
       //Creacion de un nueva maquina 
@@ -383,7 +378,7 @@ export function AppProvider({ children }) {
       }
     }
   }
-  
+
   const getProveedores = async () => {
     setFetchingProveedores(true)
     let response = await fetch(apiProveedoresUrl, {
@@ -395,12 +390,12 @@ export function AppProvider({ children }) {
     })
     if (response.status === 200) {
       let proveedores = await response.json()
-      
+
       let formatData = proveedores.map((proveedor) => ({
         ...proveedor,
         isSelected: false,
       }))
-      
+
       setAllProveedores(formatData)
       return formatData
     }
@@ -410,14 +405,11 @@ export function AppProvider({ children }) {
   const saveProveedor = async (values, isEdit) => {
 
     let formData = new FormData()
-    formData.append('nombre', values.nombre)
-    formData.append('direccion', values.direccion)
-    formData.append('telefono', values.telefono)
-    formData.append('correo', values.correo)
-    formData.append('departamento', values.departamento)
-    formData.append('contactos', JSON.stringify(values.contactos))
-    formData.append('otro', values.otro)
-    
+    Object.keys(values).forEach(key => {
+      let val = values[key]
+      if (Array.isArray(values[key])) val = JSON.stringify(values[key])
+      formData.append(key + '', val)
+    })
 
     if (!isEdit) {
       //Creacion de un nueva maquina 
@@ -463,7 +455,7 @@ export function AppProvider({ children }) {
       }
     }
   }
-  
+
   const getMateriales= async () => {
     setFetchingMateriales(true)
     let response = await fetch(apiMaterialesUrl, {
@@ -546,6 +538,89 @@ export function AppProvider({ children }) {
     }
   }
 
+  const saveModelo = async (values, isEdit) => {
+
+    let formData = new FormData()
+
+    /*Object.keys(values).forEach(k => {
+      if (k !== 'idModelo') {
+        let val = Array.isArray(values[k]) ? JSON.stringify(values[k]) : (values[k] === null ? "" : values[k])
+        formData.append(k + '', val)
+      }
+    })*/
+
+    formData.append('nombre', values.nombre !== null ? values.nombre : '')
+    formData.append('nombrePrograma', values.nombrePrograma !== null ? values.nombrePrograma : '')
+    if ((values.archivoPrograma) instanceof File)
+      formData.append('archivoPrograma', values.archivoPrograma !== null ? values.archivoPrograma : '')
+    if ((values.archivoFichaTecnica) instanceof File)
+      formData.append('archivoFichaTecnica', values.archivoFichaTecnica !== null ? values.archivoFichaTecnica : '')
+    if ((values.fotografia) instanceof File)
+      formData.append('fotografia', values.fotografia !== null ? values.fotografia : '')
+    formData.append('cliente', values.cliente !== null ? values.cliente : '')
+    formData.append('talla', values.talla !== null ? values.talla : '')
+    formData.append('maquinaTejido', values.maquinaTejido !== null ? values.maquinaTejido : '')
+    formData.append('tipoMaquinaTejido', values.tipoMaquinaTejido !== null ? values.tipoMaquinaTejido : '')
+    formData.append('galga', values.galga !== null ? values.galga : '')
+    formData.append('velocidadTejido', values.velocidadTejido !== null ? values.velocidadTejido : '')
+    formData.append('tiempoBajada', values.tiempoBajada !== null ? values.tiempoBajada : '')
+    formData.append('maquinaPlancha', values.maquinaPlancha !== null ? values.maquinaPlancha : '')
+    formData.append('velocidadPlancha', values.velocidadPlancha !== null ? values.velocidadPlancha : '')
+    formData.append('temperaturaPlancha', values.temperaturaPlancha !== null ? values.temperaturaPlancha : '')
+    formData.append('pesoPoliester', values.pesoPoliester !== null ? values.pesoPoliester : '')
+    formData.append('pesoMelt', values.pesoMelt !== null ? values.pesoMelt : '')
+    formData.append('pesoLurex', values.pesoLurex !== null ? values.pesoLurex : '')
+    formData.append('materiales', JSON.stringify(values.materiales))
+    formData.append('numeroPuntos', JSON.stringify(values.numeroPuntos))
+    formData.append('jalones', JSON.stringify(values.jalones))
+    formData.append('economisadores', JSON.stringify(values.economisadores))
+    formData.append('otros', values.otros !== null ? values.otros : '')
+
+
+    if (!isEdit) {
+      await fetch(apiModelosUrl, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': 'Bearer ' + session.access
+        }
+      })
+        .then(response => response.json())
+        .then(data => notify(data.message))
+    }
+    else {
+      await fetch(apiModelosUrl + values.idModelo, {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          'Authorization': 'Bearer ' + session.access
+        }
+      })
+        .then(response => response.json())
+        .then(data => notify(data.message))
+    }
+  }
+
+  const deleteModelos = async (listaModelos) => {
+    for (let i = 0; i < listaModelos.length; i++) {
+      let e = listaModelos[i]
+      if (e.isSelected) {
+        let response = await fetch(apiModelosUrl + e.idModelo, {
+          method: 'DELETE',
+          headers: {
+            "authorization": "Bearer " + session.access
+          }
+        })
+        let data = await response.json()
+        if (response.ok) {
+          notify(data.message)
+        }
+        else
+          notify(data.message, true)
+      }
+    }
+  }
+
   const getModelos = async () => {
     await fetch(apiModelosUrl, {
       method: 'GET',
@@ -555,10 +630,20 @@ export function AppProvider({ children }) {
       }
     }).then(response => response.json())
       .then(data => {
-        setAllModelos(data)
+
+        let formatData = []
+        data.forEach((m) => {
+          formatData.push({
+            ...m,
+            fotografia: m.fotografia ? imageEndPoint + m.fotografia : '',
+            archivoPrograma: m.archivoPrograma ? imageEndPoint + m.archivoPrograma : '',
+            archivoFichaTecnica: m.archivoFichaTecnica ? imageEndPoint + m.archivoFichaTecnica : ''
+          })
+        })
+        setAllModelos(formatData)
       })
   }
-  
+
   return (
     <AppContext.Provider
       value={{
@@ -586,7 +671,8 @@ export function AppProvider({ children }) {
 
         getEmpleadoMaquinas,
         allModelos, getModelos,
-        
+        saveModelo, deleteModelos,
+
         notify
       }}>
 
