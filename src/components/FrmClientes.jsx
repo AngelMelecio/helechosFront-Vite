@@ -4,14 +4,6 @@ import { ICONS } from "../constants/icons";
 import { useApp } from "../context/AppContext";
 import Input from "./Input";
 
-const contactoObj = {
-  nombre: '',
-  puesto: '',
-  correo: '',
-  telefono: '',
-  otro: ''
-}
-
 const FrmClientes = ({
   isEdit,
   cliente,
@@ -20,12 +12,7 @@ const FrmClientes = ({
 
   const [saving, setSaving] = useState()
   const [objCliente, setObjCliente] = useState(cliente)
-
   const { saveCliente, getClientes } = useApp()
-
-
-
-
   const validate = values => {
     const errors = {};
 
@@ -38,7 +25,7 @@ const FrmClientes = ({
     }
 
     if (!values.telefono) {
-      errors.telefono = 'Ingresa el telefono';
+      errors.telefono = 'Ingresa el teléfono';
     } else if (values.telefono.toString().length !== 10) {
       errors.telefono = 'Ingresa 10 digitos';
     }
@@ -152,7 +139,7 @@ const FrmClientes = ({
                     />
                   </div>
                   <div className='flex flex-row'>
-                    <Input
+                  <Input
                       label='Teléfono' type='number' name='telefono' value={formik.values ? formik.values.telefono : ''}
                       onChange={formik.handleChange} onBlur={formik.handleBlur}
                       errores={formik.errors.telefono && formik.touched.telefono ? formik.errors.telefono : null}

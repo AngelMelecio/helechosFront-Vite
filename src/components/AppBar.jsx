@@ -49,6 +49,7 @@ const AppBar = () => {
           <Tab to={'/modelos'} content={'MODELOS'} Icon={ICONS.Shoe} />
           <Tab to={'/clientes'} content={'CLIENTES'} Icon={ICONS.HandShake} />
           <Tab to={'/proveedores'} content={'PROVEEDORES'} Icon={ICONS.Truck} />
+          <Tab to={'/materiales'} content={'MATERIALES'} Icon={ICONS.Cloth} />
           {
             /* 
             <Tab to={'/pedidos'} content={'PEDIDOS'} Icon={ICONS.Diablito} />
