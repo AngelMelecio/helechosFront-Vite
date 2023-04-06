@@ -9,6 +9,7 @@ import { AdminProvider } from "./context/AdminContext"
 import PaginaUsuarios from "./pages/PaginaUsuarios"
 import { useAuth } from "./context/AuthContext"
 import PaginaPerfil from "./pages/PaginaPerfil"
+import PaginaMateriales from "./pages/PaginaMateriales"
 import { ToastContainer } from "react-toastify"
 import PaginaModelos from "./pages/PaginaModelos"
 import PaginaProveedores from "./pages/PaginaProveedores"
@@ -38,7 +39,7 @@ const Main = () => {
                   <Route path="/maquinas" element={<PaginaMaquinas />} />
                   <Route path="/modelos" element={<PaginaModelos />} />
                   <Route path="/proveedores" element={<PaginaProveedores />} />
-                  
+                  <Route path="/Materiales" element={<PaginaMateriales />} />
                   <Route path="/clientes" element={<PaginaClientes />} />
                 </Routes>
               </div>
