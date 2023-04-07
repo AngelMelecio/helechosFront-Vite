@@ -8,6 +8,7 @@ import Th from "../Th";
 const SelectorMateriales = ({
   fichaTecnicaObj,
   setFichaTecnicaObj,
+  onPassMateriales
 }) => {
 
   const selectorContentRef = useRef()
@@ -32,6 +33,9 @@ const SelectorMateriales = ({
     let formated = allMateriales?.map(m => ({ ...m, count: 0 }))
     setAvailableMateriales(formated)
     setMaterialSearchText('')
+
+    console.log(allMateriales)
+
   }, [selectorVisible])
 
 
@@ -79,14 +83,14 @@ const SelectorMateriales = ({
     }
   }
   const handleChangeMaterial = (e, indx) => {
-    
+
     //console.log( e.target.type, e.target.value )
     let newMateriales = [...fichaTecnicaObj.materiales]
-    newMateriales[indx][e.target.name] =  e.target.value
+    newMateriales[indx][e.target.name] = e.target.value
     setFichaTecnicaObj(prev => ({ ...prev, materiales: newMateriales }))
   }
 
-  const onPassMateriales = () => {
+  /*const onPassMateriales = () => {
     handleCloseSelector()
 
     let newMateriales = []
@@ -111,7 +115,7 @@ const SelectorMateriales = ({
     let newAvMateriales = allMateriales.map(m => ({ ...m, count: 0 }))
     setAvailableMateriales(newAvMateriales)
     setFichaTecnicaObj(prev => ({ ...prev, materiales: [...prev.materiales, ...newMateriales] }))
-  }
+  }*/
 
   const handleDeleteMaterial = (e, indx) => {
     e.preventDefault()
@@ -167,7 +171,7 @@ const SelectorMateriales = ({
                   </div>
                   <button
                     disabled={!someMaterialSelected}
-                    onClick={onPassMateriales}
+                    onClick={() => {onPassMateriales(availableMateriales); handleCloseSelector()}}
                     type="button"
                     className={`flex items-center justify-center normal-button w-8 h-8 rounded-lg duration-500 `} >
                     <ICONS.Right size="25px" />
@@ -204,6 +208,7 @@ const SelectorMateriales = ({
                   <Th>CALIBRE</Th>
                   <Th>PROVEEDOR</Th>
                   <Th>COLORES</Th>
+                  <Th>TEÑIDA</Th>
                   <Th>TIPO</Th>
                   <Th>HEBRAS</Th>
                   <Th>PESO</Th>
@@ -238,11 +243,29 @@ const SelectorMateriales = ({
                           type="text" />
 
                       </td>
+                      <td className="flex">
+                        <div className="flex flex-row items-center w-full ">
+                          <input
+                            readOnly
+                            className="flex w-full p-1 outline-none border-0 duration-300 bg-transparent focus:border-teal-500"
+                            value={f.color}
+                            type="text" />
+                          <div className="w-12 px-2">
+                            <div style={{
+                              width: '20px',
+                              height: '20px',
+                              borderRadius: '10px',
+                              backgroundColor: `${f.codigoColor}`
+                            }}></div>
+                          </div>
+                        </div>
+                      </td>
                       <td>
                         <input
                           readOnly
+                          value={f.tenida}
+                          onChange={(e) => { handleChangeMaterial(e, i) }}
                           className="flex w-full p-1 outline-none border-0 duration-300 bg-transparent focus:border-teal-500"
-                          value={f.color}
                           type="text" />
                       </td>
                       <td>

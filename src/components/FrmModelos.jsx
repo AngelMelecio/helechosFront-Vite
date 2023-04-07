@@ -82,6 +82,7 @@ const FrmModelos = ({
   useEffect(() => {
     setFichaTecnicaObj(prev => (
       {
+        ...formik?.values,
         ...prev,
         materiales: [...prev.materiales],
         numeroPuntos: [...prev.numeroPuntos],
@@ -107,15 +108,18 @@ const FrmModelos = ({
     let newMateriales = []
     availableMateriales.forEach(m => {
       if (m.count > 0) {
+        console.log( m )
         for (let i = 0; i < m.count; i++) {
           newMateriales.push({
             peso: "",
             tipo: m.tipo,
             color: m.color,
+            codigoColor: m.codigoColor,
+            tenida: m.tenida,
             hebras: "",
-            calibre: "",
+            calibre: m.calibre,
             guiaHilos: "",
-            proveedor: m.proveedor,
+            nombreProveedor: m.nombreProveedor,
             idMaterial: m.idMaterial
           })
         }
@@ -168,10 +172,10 @@ const FrmModelos = ({
       <div className='modal-box h-full w-3/4 rounded-lg bg-white shadow-xl'  >
         <div className='w-full flex h-full flex-col'>
           <div className="z-10 py-2 px-4 flex w-full shadow-md ">
-            <div className="flex flex-row w-full total-center relative h-10">
+            <div className="flex flex-row w-full total-center relative h-10 ">
               {isEdit
-                ? <ICONS.UserEdit className='mt-1 mr-2' size='20px' style={{ color: '#115e59' }} />
-                : <ICONS.PersonPlus className='mt-1 mr-2' size='20px' style={{ color: '#115e59' }} />
+                ? <ICONS.Edit className='mt-1 mr-2' size='24px' style={{ color: '#115e59' }} />
+                : <ICONS.Plus className='mt-1 mr-2' size='20px' style={{ color: '#115e59' }} />
               }
               <p className='font-semibold text-teal-800 text-2xl' >
                 {isEdit ? 'Editar Modelo' : 'Nuevo Modelo'}
