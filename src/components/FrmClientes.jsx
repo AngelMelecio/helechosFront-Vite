@@ -13,6 +13,7 @@ const FrmClientes = ({
   const [saving, setSaving] = useState()
   const [objCliente, setObjCliente] = useState(cliente)
   const { saveCliente, getClientes } = useApp()
+  const contactoObj = [{"nombre":"","puesto":"","correo":"","telefono":"","nota":""}]
   const validate = values => {
     const errors = {};
 

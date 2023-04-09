@@ -21,16 +21,16 @@ const initFichaTecnicaObj = {
   archivoPrograma: '',
   archivoFichaTecnica: '',
   fotografia: '',
-  cliente: 'Seleccione',
+  cliente: '',
   talla: '',
 
-  maquinaTejido: 'Seleccione',
+  maquinaTejido: '',
   tipoMaquinaTejido: '',
   galga: '',
   velocidadTejido: '',
   tiempoBajada: '',
 
-  maquinaPlancha: 'Seleccione',
+  maquinaPlancha: '',
   velocidadPlancha: '',
   temperaturaPlancha: '',
 
@@ -43,6 +43,15 @@ const initFichaTecnicaObj = {
   jalones: [{ valor: '', posicion: '' }],
   economisadores: [{ valor: '', posicion: '' }],
   otros: '',
+
+  idCliente: 'Seleccione',
+  nombreCliente: '',
+
+  idMaquinaTejido: 'Seleccione',
+  nombreMaquinaTejido: '',
+
+  idMaquinaPlancha: 'Seleccione',
+  nombreMaquinaPlancha: ''
 }
 
 export default function PaginaModelos() {
