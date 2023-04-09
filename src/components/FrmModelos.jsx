@@ -24,8 +24,8 @@ const FrmModelos = ({
     allClientes,
     getMaquinas,
     allMaquinas
-
   } = useApp()
+
   const [saving, setSaving] = useState(false)
   const [fichaTecnicaObj, setFichaTecnicaObj] = useState(fichaTecnica)
 
@@ -40,10 +40,9 @@ const FrmModelos = ({
   }
 
   const formik = useFormik({
-    initialValues: fichaTecnica, //initobj,
+    initialValues: fichaTecnica, 
     validate,
     onSubmit: values => {
-      //console.log(fichaTecnicaObj)
       handleSaveModelo()
     },
   });
@@ -58,14 +57,14 @@ const FrmModelos = ({
   }, [])
 
   useEffect(() => {
-    let newClientesOptions = [{value:'Seleccione', label:'Seleccione'}]
-    let newMaquinasTejidoOptions = [ {value:'Seleccione', label:'Seleccione'} ]
-    let newMaquinasPlanchaOptions = [ {value:'Seleccione', label:'Seleccione'} ]
-    
+    let newClientesOptions = [{ value: 'Seleccione', label: 'Seleccione' }]
+    let newMaquinasTejidoOptions = [{ value: 'Seleccione', label: 'Seleccione' }]
+    let newMaquinasPlanchaOptions = [{ value: 'Seleccione', label: 'Seleccione' }]
+
     allClientes.forEach(c => {
       newClientesOptions.push({ value: c.idCliente, label: c.nombre })
     })
-    
+
     allMaquinas.forEach(m => {
       if (m.departamento === 'Tejido')
         newMaquinasTejidoOptions.push({ value: m.idMaquina, label: m.numero + ' ' + m.linea + ' ' + m.marca })
@@ -83,7 +82,9 @@ const FrmModelos = ({
     setFichaTecnicaObj(prev => (
       {
         ...formik?.values,
-        ...prev,
+        fotografia: prev.fotografia,
+        archivoFichaTecnica: prev.archivoFichaTecnica,
+        archivoPrograma: prev.archivoPrograma,
         materiales: [...prev.materiales],
         numeroPuntos: [...prev.numeroPuntos],
         economisadores: [...prev.economisadores]
@@ -93,7 +94,6 @@ const FrmModelos = ({
 
   const handleSaveModelo = async () => {
     setSaving(true)
-    console.log(fichaTecnicaObj)
     await saveModelo(fichaTecnicaObj, isEdit)
     await getModelos()
     onCloseModal()
@@ -108,7 +108,6 @@ const FrmModelos = ({
     let newMateriales = []
     availableMateriales.forEach(m => {
       if (m.count > 0) {
-        console.log( m )
         for (let i = 0; i < m.count; i++) {
           newMateriales.push({
             peso: "",
@@ -136,11 +135,6 @@ const FrmModelos = ({
     return file
   }
 
-  const handleChange = (e) => {
-    let val = e.target.type == 'number' ? Number(e.target.value) : e.target.value
-    setFichaTecnicaObj(prev => ({ ...prev, [e.target.name]: val }))
-  }
-
   const handleSetRow = (event, indx, arrayName) => {
     let newArray = [...fichaTecnicaObj[arrayName]]
     newArray[indx][event.target.name] = event.target.value
@@ -157,9 +151,6 @@ const FrmModelos = ({
 
   const handleDeleteRow = (indx, arrayName) => {
     if (fichaTecnicaObj[arrayName].length === 1) {
-      let Obj = {}
-      fichaTecnicaObj[arrayName][0].keys().forEach(key => Obj[key] = '')
-      setFichaTecnicaObj(prev => ({ ...prev, [arrayName]: [{ ...Obj }] }))
       return
     }
     let newArray = [...fichaTecnicaObj[arrayName]]
@@ -269,12 +260,12 @@ const FrmModelos = ({
                   </div>
                   <div className='flex flex-row w-full'>
                     <Input
-                      onChange={(e) => handleChange(e)}
-                      value={fichaTecnicaObj.nombre}
+                      onChange={formik.handleChange}
+                      value={formik.values ? formik.values.nombre : ''}
                       name='nombre' label="Nombre del Modelo" type='text' />
                     <Input
-                      onChange={(e) => handleChange(e)}
-                      value={fichaTecnicaObj.nombrePrograma}
+                      onChange={formik.handleChange}
+                      value={formik.values ? formik.values.nombrePrograma : ''}
                       name='nombrePrograma' label="Nombre del Programa" type='text' />
                   </div>
                   <div className="flex flex-row w-full">
@@ -291,22 +282,22 @@ const FrmModelos = ({
 
                       />
                       <Input
-                        onChange={(e) => handleChange(e)}
-                        value={fichaTecnicaObj.talla}
+                        onChange={formik.handleChange}
+                        value={formik.values ? formik.values.talla : ''}
                         name='talla' label="Talla" type='text' />
                     </div>
                     <div className="flex flex-row w-full">
                       <Input
-                        onChange={(e) => handleChange(e)}
-                        value={fichaTecnicaObj.pesoPoliester}
+                        onChange={formik.handleChange}
+                        value={formik.values ? formik.values.pesoPoliester : ''}
                         name='pesoPoliester' label="Peso Poliester" type='text' />
                       <Input
-                        onChange={(e) => handleChange(e)}
-                        value={fichaTecnicaObj.pesoMelt}
+                        onChange={formik.handleChange}
+                        value={formik.values ? formik.values.pesoMelt : ''}
                         name='pesoMelt' label="Peso Melt" type='text' />
                       <Input
-                        onChange={(e) => handleChange(e)}
-                        value={fichaTecnicaObj.pesoLurex}
+                        onChange={formik.handleChange}
+                        value={formik.values ? formik.values.pesoLurex : ''}
                         name='pesoLurex' label="Peso Lurex" type='text' />
                     </div>
                   </div>
@@ -322,29 +313,29 @@ const FrmModelos = ({
                       <CustomSelect
                         name='maquinaTejido'
                         className='input z-[90]'
-                        onChange={ value => formik.setFieldValue('maquinaTejido', value.value)}
-                        value={ formik?.values?.maquinaTejido }
+                        onChange={value => formik.setFieldValue('maquinaTejido', value.value)}
+                        value={formik?.values?.maquinaTejido}
                         onBlur={formik.handleBlur}
                         options={maquinasTejidoOptions}
                         label='Máquina Tejido'
                       />
                       <Input
-                        onChange={(e) => handleChange(e)}
-                        value={fichaTecnicaObj.tipoMaquinaTejido}
+                        onChange={formik.handleChange}
+                        value={formik.values ? formik.values.tipoMaquinaTejido : ''}
                         name='tipoMaquinaTejido' label="Tipo Maquina Tejido" type='text' />
                     </div>
                     <div className="flex flex-row w-full">
                       <Input
-                        onChange={(e) => handleChange(e)}
-                        value={fichaTecnicaObj.galga}
+                        onChange={formik.handleChange}
+                        value={formik.values ? formik.values.galga : ''}
                         name='galga' label="Galga" type='text' />
                       <Input
-                        onChange={(e) => handleChange(e)}
-                        value={fichaTecnicaObj.velocidadTejido}
+                        onChange={formik.handleChange}
+                        value={formik.values ? formik.values.velocidadTejido: ''}
                         name='velocidadTejido' label="Velocidad" type='text' />
                       <Input
-                        onChange={(e) => handleChange(e)}
-                        value={fichaTecnicaObj.tiempoBajada}
+                        onChange={formik.handleChange}
+                        value={formik.values ? formik.values.tiempoBajada:''}
                         name='tiempoBajada' label="Tiempo Bajada" type='text' />
                     </div>
                   </div>
@@ -360,7 +351,7 @@ const FrmModelos = ({
                       <CustomSelect
                         name='maquinaPlancha'
                         className='input z-[80]'
-                        onChange={ value => formik.setFieldValue('maquinaPlancha', value.value) }
+                        onChange={value => formik.setFieldValue('maquinaPlancha', value.value)}
                         value={formik?.values?.maquinaPlancha}
                         onBlur={formik.handleBlur}
                         options={maquinasPlanchaOptions}
@@ -369,12 +360,12 @@ const FrmModelos = ({
                     </div>
                     <div className="flex flex-row w-full">
                       <Input
-                        onChange={(e) => handleChange(e)}
-                        value={fichaTecnicaObj.velocidadPlancha}
+                        onChange={formik.handleChange}
+                        value={formik.values ? formik.values.velocidadPlancha : ''}
                         name='velocidadPlancha' label="Velocidad" type='text' />
                       <Input
-                        onChange={(e) => handleChange(e)}
-                        value={fichaTecnicaObj.temperaturaPlancha}
+                        onChange={formik.handleChange}
+                        value={formik.values ? formik.values.temperaturaPlancha : ''}
                         name='temperaturaPlancha' label="Temperatura" type='text' />
                     </div>
                   </div>

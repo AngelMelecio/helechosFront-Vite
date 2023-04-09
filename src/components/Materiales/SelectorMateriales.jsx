@@ -83,39 +83,10 @@ const SelectorMateriales = ({
     }
   }
   const handleChangeMaterial = (e, indx) => {
-
-    //console.log( e.target.type, e.target.value )
     let newMateriales = [...fichaTecnicaObj.materiales]
     newMateriales[indx][e.target.name] = e.target.value
     setFichaTecnicaObj(prev => ({ ...prev, materiales: newMateriales }))
   }
-
-  /*const onPassMateriales = () => {
-    handleCloseSelector()
-
-    let newMateriales = []
-    availableMateriales.forEach(m => {
-      if (m.count > 0) {
-        for (let i = 0; i < m.count; i++) {
-          newMateriales.push({
-            peso: "",
-            tipo: m.tipo,
-            color: m.color,
-            hebras: "",
-            calibre: "",
-            guiaHilo: "",
-            proveedor: m.idProveedor,
-            nombreProveedor: m.nombreProveedor,
-            idMaterial: m.idMaterial
-          })
-        }
-      }
-    })
-
-    let newAvMateriales = allMateriales.map(m => ({ ...m, count: 0 }))
-    setAvailableMateriales(newAvMateriales)
-    setFichaTecnicaObj(prev => ({ ...prev, materiales: [...prev.materiales, ...newMateriales] }))
-  }*/
 
   const handleDeleteMaterial = (e, indx) => {
     e.preventDefault()
@@ -214,7 +185,7 @@ const SelectorMateriales = ({
                   <Th>PESO</Th>
                 </tr>
               </thead>
-              <tbody>
+            <tbody>
                 {
                   //  ASSIGNED MATERIALES 
                   fichaTecnicaObj?.materiales?.map((f, i) =>
@@ -222,7 +193,7 @@ const SelectorMateriales = ({
                       <td>
                         <input
                           name='guiaHilos'
-                          value={f.guiaHilos ? f.guiaHilos.value : ''}
+                          value={f.guiaHilos ? f.guiaHilos : ''}
                           className="flex w-full p-1 outline-none  duration-300 border focus:border-teal-500"
                           onChange={(e) => { handleChangeMaterial(e, i) }}
                           type="text" />
