@@ -18,8 +18,8 @@ import { useApp } from '../context/AppContext';
 const initFichaTecnicaObj = {
   nombre: '',
   nombrePrograma: '',
-  archivoPrograma:'',
-  archivoFichaTecnica:'',
+  archivoPrograma: '',
+  archivoFichaTecnica: '',
   fotografia: '',
   cliente: 'Seleccione',
   talla: '',
@@ -33,15 +33,15 @@ const initFichaTecnicaObj = {
   maquinaPlancha: 'Seleccione',
   velocidadPlancha: '',
   temperaturaPlancha: '',
-  
+
   pesoPoliester: '',
   pesoMelt: '',
   pesoLurex: '',
 
   materiales: [],
-  numeroPuntos: [{valor:'',posicion:''}],
-  jalones: [{valor:'',posicion:''}],
-  economisadores: [{valor:'',posicion:''}],
+  numeroPuntos: [{ valor: '', posicion: '' }],
+  jalones: [{ valor: '', posicion: '' }],
+  economisadores: [{ valor: '', posicion: '' }],
   otros: '',
 }
 
@@ -49,7 +49,7 @@ export default function PaginaModelos() {
 
   const modalContainerRef = useRef()
 
-  const {allModelos, getModelos, deleteModelos} = useApp()
+  const { allModelos, getModelos, deleteModelos } = useApp()
 
   const [loading, setLoading] = useState(true)
 
@@ -85,6 +85,7 @@ export default function PaginaModelos() {
     document.getElementById("tbl-page").classList.add('blurred')
     modalContainerRef.current.classList.add('visible')
   }
+  
   const handleCloseModal = async (setState) => {
     setIsEdit(false)
     setFichaTecnica(initFichaTecnicaObj)
@@ -94,14 +95,13 @@ export default function PaginaModelos() {
     setState(false)
   }
 
-  const handleDeleteModelos = async()=>{
+  const handleDeleteModelos = async () => {
     setSaving(true)
-    await deleteModelos( listaModelos )
+    await deleteModelos(listaModelos)
     await getModelos()
-    handleCloseModal( setDeleteModalVisible )
-    setSaving(false) 
+    handleCloseModal(setDeleteModalVisible)
+    setSaving(false)
   }
-
 
   const handleEdit = async (fich) => {
     setFichaTecnica(fich)
@@ -125,7 +125,7 @@ export default function PaginaModelos() {
       }
       <div className='modal absolute h-full w-full' ref={modalContainerRef}>
         {frmModalVisible &&
-          <FrmModelos  
+          <FrmModelos
             onCloseModal={() => handleCloseModal(setFrmModalVisible)}
             fichaTecnica={fichaTecnica}
             isEdit={isEdit}
@@ -135,7 +135,7 @@ export default function PaginaModelos() {
         {deleteModalVisible &&
           <DeleteModal
             onCancel={() => handleCloseModal(setDeleteModalVisible)}
-            onConfirm={ handleDeleteModelos }
+            onConfirm={handleDeleteModelos}
             elements={listaModelos}
             representation={['nombre']}
             message='Las siguientes fichas serán eliminadas de forma permanente'

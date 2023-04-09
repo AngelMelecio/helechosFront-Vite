@@ -3,18 +3,19 @@ import { useEffect, useState } from "react";
 import { ICONS } from "../constants/icons";
 
 const puntoObj = {
-  no: '',
-  numeroPuntos: ''
+  posicion: '',
+  valor: ''
 }
 
-const fibraObj = {
-  guiaHilos: '',
-  fibras: '',
-  calibre: '',
-  proveedor: '',
+const materialObj = {
+  peso: '',
+  tipo: '',
   color: '',
   hebras: '',
-  otro: ''
+  calibre: '',
+  guiaHilo: '',
+  proveedor: '',
+  idMaterial: ''
 }
 
 const FichaTecnicaPrint = ({ data, onCloseModal }) => {
@@ -23,18 +24,27 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
   const [puntosHebras, setPuntosHebras] = useState([])
 
   useEffect(() => {
-    let PH = []
-    for( let i = 0; i<18 ; i++ ){
-        let noP = data[i]?.numeroPuntos ? {...data[i].numeroPuntos} : {...puntoObj}
-        let heb = data[i]?.fibras ? {...data[i].fibras} : {...fibraObj}
-        PH.push({ ...noP,...heb }) 
-    } 
-    //setFormatData(data)
+    let newData = []
+    data.map(ficha => {
+      if (ficha.isSelected) {
+        let puntosMateriales = []
+        for (let i = 0; i < Math.max(ficha.materiales.length, ficha.numeroPuntos.length); i++) {
+          let puntoMaterial = { ...puntoObj, ...materialObj }
+          if (ficha.materiales.length > i)
+            puntoMaterial = { ...puntoMaterial, ...ficha.materiales[i] }
+          if (ficha.numeroPuntos.length > i)
+            puntoMaterial = { ...puntoMaterial, ...ficha.numeroPuntos[i] }
+          puntosMateriales.push(puntoMaterial)
+        }
+        newData.push({ ...ficha, puntosMateriales: puntosMateriales })
+      }
+    })
+    setFormatData(newData)
   }, [])
 
   const Casilla = ({ col, info }) => {
     return (
-      <View style={[styles[col], styles.totalCenter, styles.pv5 ]} >
+      <View style={[styles[col], styles.totalCenter, styles.pv5, {border:'1px solid black'} ]} >
         <Text style={[styles.tCenter,]}>
           {info}
         </Text>
@@ -63,14 +73,17 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
               <PDFViewer className="w-full z-10 h-full">
                 <Document>
                   {
-                    data?.map((fich,i) => fich.isSelected &&
-                      <Page key={'Page'+i}size='A4' orientation="landscape" style={styles.body}>
-                        <View style={[styles.p5 ]}>
-                          <View styles={[ styles.border, styles.w100 ]}>
+                    formatData?.map((fich, i) => fich.isSelected &&
+                      <Page key={'Page' + i} size='A4' orientation="landscape" style={styles.body}>
+                        <View style={[styles.p5, { height: '100%' }]}>
+                          
+                          <View style={[styles.pv5]}>
                             <Text style={[styles.w100, styles.tCenter]} >
                               TEJIDOS HELECHO
                             </Text>
+                          </View>
 
+                          <View style={{ border: '2px solid black' }}>
                             <View style={[styles.row, styles.underline, { backgroundColor: '#e2e8f0' }]}>
                               <Casilla col='w25' info="NOMBRE"></Casilla>
                               <Casilla col='w25' info="NOMBRE DEL PROGRAMA"></Casilla>
@@ -101,7 +114,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                               <Casilla col='colW' info="TEMPERATURA"></Casilla>
                             </View>
                             <View style={[styles.row, styles.underline]}>
-                            <Casilla col='w25' info={fich.maquinaTejido}></Casilla>
+                              <Casilla col='w25' info={fich.maquinaTejido}></Casilla>
                               <Casilla col='colW2' info={fich.tipoMaquinaTejido}></Casilla>
                               <Casilla col='colW' info={fich.galga}></Casilla>
                               <Casilla col='colW' info={fich.velocidadTejido}></Casilla>
@@ -110,42 +123,31 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                               <Casilla col='colW' info={fich.velocidadPlancha}></Casilla>
                               <Casilla col='colW' info={fich.temperaturaPlancha}></Casilla>
                             </View>
-
-                            <View style={[styles.row, styles.w100]}>
-                              <View style={[styles.colW2, styles.col]}>
-                                <View style={[styles.w100, styles.row, styles.underline, { backgroundColor: '#e2e8f0' }]}>
-                                  <Casilla col='w100' info='NO.' />
-                                  <Casilla col='w100' info='PUNTOS' />
-                                </View>
-                                {fich.numeroPuntos?.map((p, i) => <View key={'ptos' + i} style={[styles.w100, styles.row, styles.underline]}>
-                                  <Casilla col='w100' info={p.no} />
-                                  <Casilla col='w100' info={p.puntos} />
-                                </View>)
-                                }
-
-                              </View>
-                              <View style={[styles.w80,]}>
-                                <View style={[styles.w100, styles.row, styles.underline, { backgroundColor: '#e2e8f0' }]}>
-                                  <Casilla col='w20' info='GUIA HILOS' />
-                                  <Casilla col='w10' info='FIBRAS' />
-                                  <Casilla col='w10' info='CALIBRE' />
-                                  <Casilla col='w20' info='PROVEEDOR' />
-                                  <Casilla col='w20' info='COLORES' />
-                                  <Casilla col='w10' info='HEBRAS' />
-                                  <Casilla col='w10' info='MELT' />
-                                </View>
-                                {fich.fibras?.map((f, i) => <View key={'fibras' + i} style={[styles.w100, styles.row, styles.underline]}>
-                                  <Casilla col='w20' info={f.guiaHilos} />
-                                  <Casilla col='w10' info={f.fibras} />
-                                  <Casilla col='w10' info={f.calibre} />
-                                  <Casilla col='w20' info={f.proveedor} />
-                                  <Casilla col='w20' info={f.color} />
-                                  <Casilla col='w10' info={f.hebras} />
-                                  <Casilla col='w10' info={f.melt} />
-                                </View>)}
-
-                              </View>
+                            <View style={[styles.row, styles.underline, { backgroundColor: '#e2e8f0' }]}>
+                              <Casilla col='colW' info='NO.' />
+                              <Casilla col='colW' info='PUNTOS' />
+                              <Casilla col='colW' info='GUIA HILOS' />
+                              <Casilla col='colW2' info='HEBRAS' />
+                              <Casilla col='colW' info='CALIBRE' />
+                              <Casilla col='colW2' info='PROVEEDOR' />
+                              <Casilla col='colW2' info='COLORES' />
+                              <Casilla col='colW' info='TIPO' />
+                              <Casilla col='colW' info='PESO' />
                             </View>
+
+                            {fich?.puntosMateriales?.map((f, i) =>
+                              <View key={'puntosM' + i} style={[styles.w100, styles.row, styles.underline]}>
+                                <Casilla col='colW' info={f.posicion} />
+                                <Casilla col='colW' info={f.valor} />
+                                <Casilla col='colW' info={f.guiaHilos} />
+                                <Casilla col='colW2' info={f.hebras} />
+                                <Casilla col='colW' info={f.calibre} />
+                                <Casilla col='colW2' info={f.proveedor} />
+                                <Casilla col='colW2' info={f.color} />
+                                <Casilla col='colW' info={f.tipo} />
+                                <Casilla col='colW' info={f.peso} />
+                              </View>)}
+
                           </View>
                         </View>
                       </Page>
@@ -173,7 +175,8 @@ const styles = StyleSheet.create({
     paddingVertical: '5px'
   },
   border: {
-    border: '1px solid #333333'
+    border: '3px solid black',
+    backgroundColor: '#dc2626',
   },
   col: {
     display: 'flex',
@@ -192,14 +195,14 @@ const styles = StyleSheet.create({
 
   },
   underline: {
-    borderBottom: '1px solid black'
+    //borderBottom: '1px solid black'
   },
   flexCol: {
     display: 'flex',
     flexDirection: 'column',
   },
   p5: {
-    padding: '20px',
+    padding: '25px',
   },
   tCenter: {
     textAlign: 'center',

@@ -24,8 +24,8 @@ const FrmModelos = ({
     allClientes,
     getMaquinas,
     allMaquinas
-
   } = useApp()
+
   const [saving, setSaving] = useState(false)
   const [fichaTecnicaObj, setFichaTecnicaObj] = useState(fichaTecnica)
 
@@ -74,10 +74,9 @@ const FrmModelos = ({
   };
 
   const formik = useFormik({
-    initialValues: fichaTecnica, //initobj,
+    initialValues: fichaTecnica, 
     validate,
     onSubmit: values => {
-      //console.log(fichaTecnicaObj)
       handleSaveModelo()
     },
   });
@@ -129,7 +128,6 @@ const FrmModelos = ({
 
   const handleSaveModelo = async () => {
     setSaving(true)
-    console.log(fichaTecnicaObj)
     await saveModelo(fichaTecnicaObj, isEdit)
     await getModelos()
     onCloseModal()
@@ -144,7 +142,6 @@ const FrmModelos = ({
     let newMateriales = []
     availableMateriales.forEach(m => {
       if (m.count > 0) {
-        console.log(m)
         for (let i = 0; i < m.count; i++) {
           newMateriales.push({
             peso: "",
@@ -188,9 +185,6 @@ const FrmModelos = ({
 
   const handleDeleteRow = (indx, arrayName) => {
     if (fichaTecnicaObj[arrayName].length === 1) {
-      let Obj = {}
-      fichaTecnicaObj[arrayName][0].keys().forEach(key => Obj[key] = '')
-      setFichaTecnicaObj(prev => ({ ...prev, [arrayName]: [{ ...Obj }] }))
       return
     }
     let newArray = [...fichaTecnicaObj[arrayName]]
@@ -413,12 +407,12 @@ const FrmModelos = ({
                     </div>
                     <div className="flex flex-row w-full">
                       <Input
-                        onChange={(e) => handleChange(e)}
-                        value={fichaTecnicaObj.velocidadPlancha}
+                        onChange={formik.handleChange}
+                        value={formik.values ? formik.values.velocidadPlancha : ''}
                         name='velocidadPlancha' label="Velocidad" type='text' />
                       <Input
-                        onChange={(e) => handleChange(e)}
-                        value={fichaTecnicaObj.temperaturaPlancha}
+                        onChange={formik.handleChange}
+                        value={formik.values ? formik.values.temperaturaPlancha : ''}
                         name='temperaturaPlancha' label="Temperatura" type='text' />
                     </div>
                   </div>

@@ -225,7 +225,7 @@ const FrmEmpleados = ({
                       </div>
                       <div className='flex flex-row'>
                         <Input
-                          label='Fecha de Contratación' type='date' name='fechaEntrada' value={formik.values ? formik.values.fechaEntrada : ''}
+                          label='Fecha de Contratación' type='date' name='fechaEntrada' value={ formik.values ? formik.values.fechaEntrada : ''}
                           onChange={formik.handleChange} onBlur={formik.handleBlur}
                           errores={formik.errors.fechaEntrada && formik.touched.fechaEntrada ? formik.errors.fechaEntrada : null}
                         />
