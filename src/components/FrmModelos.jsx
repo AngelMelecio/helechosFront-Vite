@@ -43,18 +43,18 @@ const FrmModelos = ({
     if (!values.nombrePrograma) {
       errors.nombrePrograma = 'Ingresa el nombre del programa';
     }
-    if (!values.cliente) {
-      errors.cliente = 'Selecciona un cliente';
-    } else if (values.cliente === "Seleccione") {
-      errors.cliente = 'Selecciona un cliente';
+    if (!values.idCliente) {
+      errors.idCliente = 'Selecciona un cliente';
+    } else if (values.idCliente === "Seleccione") {
+      errors.idCliente = 'Selecciona un cliente';
     }
     if (!values.talla) {
       errors.talla = 'Ingresa la talla';
     }
-    if (!values.maquinaTejido) {
-      errors.maquinaTejido = 'Selecciona una maquina ';
-    } else if (values.maquinaTejido === "Seleccione") {
-      errors.maquinaTejido = 'Selecciona una maquina';
+    if (!values.idMaquinaTejido) {
+      errors.idMaquinaTejido = 'Selecciona una maquina ';
+    } else if (values.idMaquinaTejido === "Seleccione") {
+      errors.idMaquinaTejido = 'Selecciona una maquina';
     }
     if (!values.tipoMaquinaTejido) {
       errors.tipoMaquinaTejido = 'Ingresa el tipo de la maquina';
@@ -62,10 +62,10 @@ const FrmModelos = ({
     if (!values.galga) {
       errors.galga = 'Ingresa la galga';
     }
-    if (!values.maquinaPlancha) {
-      errors.maquinaPlancha = 'Selecciona una maquina ';
-    } else if (values.maquinaPlancha === "Seleccione") {
-      errors.maquinaPlancha = 'Selecciona una maquina';
+    if (!values.idMaquinaPlancha) {
+      errors.idMaquinaPlancha = 'Selecciona una maquina ';
+    } else if (values.idMaquinaPlancha === "Seleccione") {
+      errors.idMaquinaPlancha = 'Selecciona una maquina';
     }
 
 
@@ -96,14 +96,14 @@ const FrmModelos = ({
     let newMaquinasPlanchaOptions = [{ value: 'Seleccione', label: 'Seleccione' }]
 
     allClientes.forEach(c => {
-      newClientesOptions.push({ value: c.idCliente, label: c.nombre })
+      newClientesOptions.push({ value: c.idCliente.toString(), label: c.nombre })
     })
 
     allMaquinas.forEach(m => {
       if (m.departamento === 'Tejido')
-        newMaquinasTejidoOptions.push({ value: m.idMaquina, label: m.numero + ' ' + m.linea + ' ' + m.marca })
+        newMaquinasTejidoOptions.push({ value: m.idMaquina.toString(), label: 'Línea: '+m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca })
       else if (m.departamento === 'Plancha')
-        newMaquinasPlanchaOptions.push({ value: m.idMaquina, label: m.numero + ' ' + m.linea + ' ' + m.marca })
+        newMaquinasPlanchaOptions.push({ value: m.idMaquina.toString(), label: m.numero + ' ' + m.linea + ' ' + m.marca })
     })
 
     setClientesOptions(newClientesOptions)
@@ -127,6 +127,7 @@ const FrmModelos = ({
   }, [formik?.values]) 
 
   const handleSaveModelo = async () => {
+    console.log(fichaTecnicaObj)
     setSaving(true)
     await saveModelo(fichaTecnicaObj, isEdit)
     await getModelos()
@@ -308,14 +309,14 @@ const FrmModelos = ({
                     <div className="flex flex-row w-full">
 
                       <CustomSelect
-                        name='Cliente'
+                        name='idCliente'
                         className='input z-[100]'
-                        onChange={value => formik.setFieldValue('cliente', value.value)}
-                        value={formik.values.cliente}
+                        onChange={value => formik.setFieldValue('idCliente', value.value)}
+                        value={formik.values.idCliente}
                         onBlur={formik.handleBlur}
                         options={clientesOptions}
-                        label='CLiente'
-                        errores={formik.errors.cliente && formik.touched.cliente ? formik.errors.cliente : null}
+                        label='Cliente'
+                        errores={formik.errors.idCliente && formik.touched.idCliente ? formik.errors.idCliente : null}
                       />
                       <Input
                         label='Talla' type='text' name='talla' value={formik.values.talla}
@@ -352,14 +353,14 @@ const FrmModelos = ({
                   <div className="flex flex-row w-full">
                     <div className="flex flex-row w-full">
                       <CustomSelect
-                        name='maquinaTejido'
+                        name='idMaquinaTejido'
                         className='input z-[90]'
-                        onChange={value => formik.setFieldValue('maquinaTejido', value.value)}
-                        value={formik.values.maquinaTejido}
+                        onChange={value => formik.setFieldValue('idMaquinaTejido', value.value)}
+                        value={formik.values.idMaquinaTejido}
                         onBlur={formik.handleBlur}
                         options={maquinasTejidoOptions}
                         label='Máquina Tejido'
-                        errores={formik.errors.maquinaTejido && formik.touched.maquinaTejido ? formik.errors.maquinaTejido : null}
+                        errores={formik.errors.idMaquinaTejido && formik.touched.idMaquinaTejido ? formik.errors.idMaquinaTejido : null}
                       />
                       <Input
                         label='Tipo Maquina Tejido' type='text' name='tipoMaquinaTejido' value={formik.values.tipoMaquinaTejido}
@@ -395,25 +396,27 @@ const FrmModelos = ({
                   <div className="flex flex-row w-full">
                     <div className="flex flex-row w-full">
                       <CustomSelect
-                        name='maquinaPlancha'
+                        name='idMaquinaPlancha'
                         className='input z-[80]'
-                        onChange={value => formik.setFieldValue('maquinaPlancha', value.value)}
-                        value={formik?.values?.maquinaPlancha}
+                        onChange={value => formik.setFieldValue('idMaquinaPlancha', value.value)}
+                        value={formik?.values?.idMaquinaPlancha}
                         onBlur={formik.handleBlur}
                         options={maquinasPlanchaOptions}
                         label='Máquina de Plancha'
-                        errores={formik.errors.maquinaPlancha && formik.touched.maquinaPlancha ? formik.errors.maquinaPlancha : null}
+                        errores={formik.errors.idMaquinaPlancha && formik.touched.idMaquinaPlancha ? formik.errors.idMaquinaPlancha : null}
                       />
                     </div>
                     <div className="flex flex-row w-full">
                       <Input
-                        onChange={formik.handleChange}
-                        value={formik.values ? formik.values.velocidadPlancha : ''}
-                        name='velocidadPlancha' label="Velocidad" type='text' />
+                        label='Velocidad' type='text' name='velocidadPlancha' value={formik.values.velocidadPlancha}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur}
+                        errores={formik.errors.velocidadPlancha && formik.touched.velocidadPlancha ? formik.errors.velocidadPlancha : null}
+                      />
                       <Input
-                        onChange={formik.handleChange}
-                        value={formik.values ? formik.values.temperaturaPlancha : ''}
-                        name='temperaturaPlancha' label="Temperatura" type='text' />
+                        label='Temperatura' type='text' name='temperaturaPlancha' value={formik.values.temperaturaPlancha}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur}
+                        errores={formik.errors.temperaturaPlancha && formik.touched.temperaturaPlancha ? formik.errors.temperaturaPlancha : null}
+                      />
                     </div>
                   </div>
                 </div>

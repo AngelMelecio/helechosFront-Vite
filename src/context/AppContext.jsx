@@ -557,14 +557,14 @@ export function AppProvider({ children }) {
       formData.append('archivoFichaTecnica', values.archivoFichaTecnica !== null ? values.archivoFichaTecnica : '')
     if ((values.fotografia) instanceof File)
       formData.append('fotografia', values.fotografia !== null ? values.fotografia : '')
-    formData.append('cliente', values.cliente !== null ? values.cliente : '')
+    formData.append('cliente', values.idCliente !== null ? values.idCliente : '')
     formData.append('talla', values.talla !== null ? values.talla : '')
-    formData.append('maquinaTejido', values.maquinaTejido !== null ? values.maquinaTejido : '')
+    formData.append('maquinaTejido', values.idMaquinaTejido !== null ? values.idMaquinaTejido : '')
     formData.append('tipoMaquinaTejido', values.tipoMaquinaTejido !== null ? values.tipoMaquinaTejido : '')
     formData.append('galga', values.galga !== null ? values.galga : '')
     formData.append('velocidadTejido', values.velocidadTejido !== null ? values.velocidadTejido : '')
     formData.append('tiempoBajada', values.tiempoBajada !== null ? values.tiempoBajada : '')
-    formData.append('maquinaPlancha', values.maquinaPlancha !== null ? values.maquinaPlancha : '')
+    formData.append('maquinaPlancha', values.idMaquinaPlancha !== null ? values.idMaquinaPlancha : '')
     formData.append('velocidadPlancha', values.velocidadPlancha !== null ? values.velocidadPlancha : '')
     formData.append('temperaturaPlancha', values.temperaturaPlancha !== null ? values.temperaturaPlancha : '')
     formData.append('pesoPoliester', values.pesoPoliester !== null ? values.pesoPoliester : '')
@@ -637,7 +637,15 @@ export function AppProvider({ children }) {
             ...m,
             fotografia: m.fotografia ? imageEndPoint + m.fotografia : '',
             archivoPrograma: m.archivoPrograma ? imageEndPoint + m.archivoPrograma : '',
-            archivoFichaTecnica: m.archivoFichaTecnica ? imageEndPoint + m.archivoFichaTecnica : ''
+            archivoFichaTecnica: m.archivoFichaTecnica ? imageEndPoint + m.archivoFichaTecnica : '',
+            idCliente: m.cliente.idCliente.toString(),
+            nombreCliente: m.cliente.nombre,
+
+            idMaquinaTejido: m.maquinaTejido.idMaquina.toString(),
+            nombreMaquinaTejido: 'Línea: '+m.maquinaTejido.linea+' Número: '+m.maquinaTejido.numero,
+
+            idMaquinaPlancha: m.maquinaPlancha.idMaquina.toString(),
+            nombreMaquinaPlancha: 'Línea: '+m.maquinaPlancha.linea+' Número: '+m.maquinaPlancha.numero,
           })
         })
         setAllModelos(formatData)
