@@ -16,6 +16,7 @@ const apiEmpleadosUrl = entorno + "/api/empleados/"
 const apiMaquinasUrl = entorno + "/api/maquinas/"
 const apiClientesUrl = entorno + "/api/clientes/"
 const apiEmpleadoMaquinaUrl = entorno + "/api/empleados_maquina/"
+const apiModeloMaterialUrl = entorno + "/api/modelo_material/"
 const apiEmpleadoMaquinasUrl = entorno + "/api/empleado_maquinas/"
 const apiMaterialesUrl = entorno + "/api/materiales/"
 const apiModelosUrl = entorno + "/api/modelos/"
@@ -79,6 +80,8 @@ export function AppProvider({ children }) {
   const [allEmpleados, setAllEmpleados] = useState([])
 
   const [fetchingMaquinas, setFetchingMaquinas] = useState(false)
+  const [fetchingModelos, setFetchingModelos] = useState(false)
+
   const [allMaquinas, setAllMaquinas] = useState([])
 
   const [fetchingClientes, setFetchingClientes] = useState(false)
@@ -204,6 +207,21 @@ export function AppProvider({ children }) {
           notify(data.message, true)
       }
     }
+  }
+
+  const getModeloMaterial = async (idModelo) => {
+    let response = await fetch(apiModeloMaterialUrl + idModelo, {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + session.access
+      }
+    })
+    if (response.status === 200) {
+      let assigned = await response.json()
+      return assigned
+    }
+    return []
   }
 
   const getEmpleadoMaquinas = async (empId) => {
@@ -539,16 +557,13 @@ export function AppProvider({ children }) {
   }
 
   const saveModelo = async (values, isEdit) => {
-
-    let formData = new FormData()
-
     /*Object.keys(values).forEach(k => {
       if (k !== 'idModelo') {
         let val = Array.isArray(values[k]) ? JSON.stringify(values[k]) : (values[k] === null ? "" : values[k])
         formData.append(k + '', val)
       }
     })*/
-
+    let formData = new FormData()
     formData.append('nombre', values.nombre !== null ? values.nombre : '')
     formData.append('nombrePrograma', values.nombrePrograma !== null ? values.nombrePrograma : '')
     if ((values.archivoPrograma) instanceof File)
@@ -570,34 +585,62 @@ export function AppProvider({ children }) {
     formData.append('pesoPoliester', values.pesoPoliester !== null ? values.pesoPoliester : '')
     formData.append('pesoMelt', values.pesoMelt !== null ? values.pesoMelt : '')
     formData.append('pesoLurex', values.pesoLurex !== null ? values.pesoLurex : '')
-    formData.append('materiales', JSON.stringify(values.materiales))
+    //formData.append('materiales', JSON.stringify(values.materiales))
     formData.append('numeroPuntos', JSON.stringify(values.numeroPuntos))
     formData.append('jalones', JSON.stringify(values.jalones))
     formData.append('economisadores', JSON.stringify(values.economisadores))
     formData.append('otros', values.otros !== null ? values.otros : '')
 
-
+    let materialesmm = values.materiales
     if (!isEdit) {
-      await fetch(apiModelosUrl, {
+      //    Creacion de un Nuevo Modelo 
+      let response = await fetch(apiModelosUrl, {
         method: 'POST',
         body: formData,
-        headers: {
-          'Authorization': 'Bearer ' + session.access
-        }
+        headers: { 'Authorization': 'Bearer ' + session.access }
       })
-        .then(response => response.json())
-        .then(data => notify(data.message))
+      //    Espero la respuesta para obtener el nuevo Id 
+      const { message, modelo } = await response.json()
+      notify(message)
+      if (materialesmm.length === 0) return
+      if (response.ok) {
+        //    Asigno los materiales 
+        let response2 = await fetch(apiModeloMaterialUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + session.access
+          },
+          body: JSON.stringify({ idModelo: modelo.idModelo, materiales: materialesmm }),
+        })
+        let error = response2.ok ? false : true
+        let data = await response2.json()
+        notify(data.message, error)
+      }
     }
     else {
+      //    Actualizo los datos del Modelo
       await fetch(apiModelosUrl + values.idModelo, {
         method: 'PUT',
         body: formData,
-        headers: {
-          'Authorization': 'Bearer ' + session.access
-        }
+        headers: { 'Authorization': 'Bearer ' + session.access }
       })
         .then(response => response.json())
         .then(data => notify(data.message))
+
+      if (materialesmm.length === 0) return
+
+      //    Asigno Sus nuevas maquinas
+      let response = await fetch(apiModeloMaterialUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + session.access
+        },
+        body: JSON.stringify({ idModelo: values.idModelo, materiales: materialesmm }),
+      })
+      let data = await response.json()
+      notify(data.message)
     }
   }
 
@@ -635,6 +678,7 @@ export function AppProvider({ children }) {
         data.forEach((m) => {
           formatData.push({
             ...m,
+            isSelected: false,
             fotografia: m.fotografia ? imageEndPoint + m.fotografia : '',
             archivoPrograma: m.archivoPrograma ? imageEndPoint + m.archivoPrograma : '',
             archivoFichaTecnica: m.archivoFichaTecnica ? imageEndPoint + m.archivoFichaTecnica : '',
@@ -677,9 +721,12 @@ export function AppProvider({ children }) {
         allMateriales, getMateriales, materialesColumns,
         saveMaterial, deleteMateriales,
 
-        getEmpleadoMaquinas,
+        getEmpleadoMaquinas, 
+
+        fetchingModelos,
         allModelos, getModelos,
         saveModelo, deleteModelos,
+        getModeloMaterial,
 
         notify
       }}>

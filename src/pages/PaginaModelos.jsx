@@ -16,6 +16,7 @@ import { sleep } from '../constants/sleep';
 import { useApp } from '../context/AppContext';
 
 const initFichaTecnicaObj = {
+  idModelo: 0,
   nombre: '',
   nombrePrograma: '',
   archivoPrograma: '',
