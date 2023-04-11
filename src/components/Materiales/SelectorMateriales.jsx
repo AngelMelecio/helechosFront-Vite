@@ -33,9 +33,6 @@ const SelectorMateriales = ({
     let formated = allMateriales?.map(m => ({ ...m, count: 0 }))
     setAvailableMateriales(formated)
     setMaterialSearchText('')
-
-    console.log(allMateriales)
-
   }, [selectorVisible])
 
 
