@@ -127,7 +127,7 @@ const FrmModelos = ({
   }, [formik?.values]) 
 
   const handleSaveModelo = async () => {
-    console.log(fichaTecnicaObj)
+    //console.log(fichaTecnicaObj)
     setSaving(true)
     await saveModelo(fichaTecnicaObj, isEdit)
     await getModelos()
