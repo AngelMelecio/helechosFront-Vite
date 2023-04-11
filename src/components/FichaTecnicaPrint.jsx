@@ -2,9 +2,16 @@ import { Document, Page, PDFViewer, Text, View, StyleSheet } from "@react-pdf/re
 import { useEffect, useState } from "react";
 import { ICONS } from "../constants/icons";
 
+const jalonEconomisadorObj = {
+  posicionP: '',
+  valorP: '',
+  posicionE: '',
+  valorE: ''
+}
+
 const puntoObj = {
   posicion: '',
-  valor: ''
+  valor: '',
 }
 
 const materialObj = {
@@ -28,30 +35,86 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
     data.map(ficha => {
       if (ficha.isSelected) {
         let puntosMateriales = []
-        for (let i = 0; i < Math.max(ficha.materiales.length, ficha.numeroPuntos.length); i++) {
+        for (let i = 0; i < 33; i++) {
           let puntoMaterial = { ...puntoObj, ...materialObj }
-          if (ficha.materiales.length > i)
+          if (i < ficha.materiales.length)
             puntoMaterial = { ...puntoMaterial, ...ficha.materiales[i] }
-          if (ficha.numeroPuntos.length > i)
+          if (i < ficha.numeroPuntos.length)
             puntoMaterial = { ...puntoMaterial, ...ficha.numeroPuntos[i] }
+
+          if (i >= 15 && i < ficha.jalones.length + 15) {
+            puntoMaterial = { ...puntoMaterial, ...ficha.jalones[i - 15] }
+          }
+          if (i >= 24 && i < ficha.economisadores.length + 24) {
+            puntoMaterial = { ...puntoMaterial, ...ficha.economisadores[i - 24] }
+          }
           puntosMateriales.push(puntoMaterial)
         }
-        newData.push({ ...ficha, puntosMateriales: puntosMateriales })
+        puntosMateriales[14].posicion = "JALON"
+        puntosMateriales[23].posicion = "Econom."
+
+        newData.push({
+          ...ficha,
+          cliente: ficha.cliente.nombre,
+          maquinaTejido: (
+            'Línea: ' + ficha.maquinaTejido.linea +
+            ' Número: ' + ficha.maquinaTejido.numero +
+            ' Marca: ' + ficha.maquinaTejido.marca),
+          maquinaPlancha: (
+            'Línea: ' + ficha.maquinaPlancha.linea +
+            ' Número: ' + ficha.maquinaPlancha.numero +
+            ' Marca: ' + ficha.maquinaPlancha.marca),
+          puntosMateriales: puntosMateriales,
+        })
       }
     })
     setFormatData(newData)
   }, [])
 
-  const Casilla = ({ col, info }) => {
+  const Casilla = (props) => {
+    let estyles = [
+      styles[props.col],
+      {
+        padding: '2px',
+        borderBottom: '1px solid gray',
+        borderRight: '1px solid gray',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        ...props.style
+      }
+    ]
     return (
-      <View style={[styles[col], styles.totalCenter, styles.pv5, {border:'1px solid black'} ]} >
-        <Text style={[styles.tCenter,]}>
-          {info}
-        </Text>
+      <View
+        style={estyles} >
+        <View style={{ width: '100%', }}>
+          <Text style={[styles.tCenter,]}>
+            {props.info}
+          </Text>
+        </View>
       </View>
     )
   }
-
+  const B = ({ children }) => <Text style={[{ fontWeight: '200', fontSize: '11' }]}>{children}</Text>
+  const P = ({ children }) => <Text style={[{ fontWeight: 'normal', fontSize: '9' }]}>{children}</Text>
+  const Row = (props) => {
+    let estilos = {
+      display: 'flex',
+      flexDirection: 'row',
+      width: '100%',
+      alignItems: 'center',
+      ...props.style
+    }
+    return <View style={estilos}>{props.children}</View>
+  }
+  const Col = (props) => {
+    let estilos = {
+      display: 'flex',
+      flexDirection: 'column',
+      ...props.style
+    }
+    return <View style={estilos}>{props.children}</View>
+  }
   return (
     <>
       <div className='z-10 flex absolute h-full w-full grayTrans items-center justify-center '>
@@ -74,17 +137,103 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                 <Document>
                   {
                     formatData?.map((fich, i) => fich.isSelected &&
-                      <Page key={'Page' + i} size='A4' orientation="landscape" style={styles.body}>
-                        <View style={[styles.p5, { height: '100%' }]}>
-                          
-                          <View style={[styles.pv5]}>
-                            <Text style={[styles.w100, styles.tCenter]} >
+                      <Page key={'Page' + i} size='A4' style={styles.body}>
+                        <View style={[styles.p5, {}]}>
+
+                          <View style={{}}>
+                            <Text style={[styles.w100, styles.tCenter, { fontWeight: 'bold', fontSize: '15', letterSpacing: '12px' }]} >
                               TEJIDOS HELECHO
                             </Text>
                           </View>
 
-                          <View style={{ border: '2px solid black' }}>
-                            <View style={[styles.row, styles.underline, { backgroundColor: '#e2e8f0' }]}>
+                          <View style={[styles.row, styles.w100, { lineHeight: '1.3px' }]}>
+                            <View style={[styles.row, styles.w100, { paddingVertical: '5px', paddingHorizontal: '10px' }]}>
+                              <Col>
+                                <Row>
+                                  <B>MODELO:  </B>
+                                  <P>{fich.nombre}</P>
+                                </Row>
+                                <Row>
+                                  <B>NOMBRE DEL PROGRAMA:  </B>
+                                  <P>{fich.nombrePrograma}</P>
+                                </Row>
+                                <Row>
+                                  <B>CLIENTE:  </B>
+                                  <P>{fich.cliente}</P>
+                                </Row>
+                                <Text>{"\n"}</Text>
+                                <Row>
+                                  <B>MAQUINA TEJIDO</B>
+                                </Row>
+                                <Row><P>{fich.maquinaTejido}</P></Row>
+                                <Row style={{ justifyContent: 'space-around' }}>
+                                  <Row>
+                                    <B>TIPO:  </B>
+                                    <P>{fich.tipoMaquinaTejido}</P>
+                                  </Row>
+                                  <Row>
+                                    <B>GALGA:  </B>
+                                    <P>{fich.galga}</P>
+                                  </Row>
+                                  <Row>
+                                    <B>VELOCIDAD:  </B>
+                                    <P>{fich.velocidadTejido}</P>
+                                  </Row>
+                                </Row>
+                              </Col>
+                            </View>
+                            <View style={[styles.row, styles.w100, { paddingVertical: '5px', paddingHorizontal: '10px' }]}>
+                              <Col>
+                                <Row>
+                                  <Row>
+                                    <B>TALLA: </B>
+                                    <P>{fich.talla}</P>
+                                  </Row>
+                                  <Row style={{ justifyContent: 'flex-end' }}>
+                                    <B>ID:  </B>
+                                    <P>{fich.idModelo}</P>
+                                  </Row>
+                                </Row>
+                                <Row>
+                                  <B>PESO</B>
+                                </Row>
+                                <Row >
+                                  <Row style={{ justifyContent: 'flex-start' }}>
+                                    <B>Poliester:  </B>
+                                    <P>{fich.pesoPoliester}</P>
+                                  </Row>
+                                  <Row style={{ justifyContent: 'center' }}>
+                                    <B>Melt:  </B>
+                                    <P>{fich.pesoMelt}</P>
+                                  </Row>
+                                  <Row style={{ justifyContent: 'flex-end' }}>
+                                    <B>Lurex:  </B>
+                                    <P>{fich.pesoLurex}</P>
+                                  </Row>
+                                </Row>
+                                <Text>{"\n"}</Text>
+                                <Row>
+                                  <B>MAQUINA PLANCHA</B>
+                                </Row>
+                                <Row><P>{fich.maquinaPlancha}</P></Row>
+                                <Row >
+                                  <Row>
+                                    <B>TEMPERATURA:  </B>
+                                    <P>{fich.temperaturaPlancha}</P>
+                                  </Row>
+                                  <Row style={{ justifyContent: 'flex-end' }}>
+                                    <B>VELOCIDAD:  </B>
+                                    <P>{fich.velocidadPlancha}</P>
+                                  </Row>
+                                </Row>
+                              </Col>
+                            </View>
+                          </View>
+
+
+                          <View style={{ border: '1px solid black' }}>
+                            {/*
+                            <View style={[styles.row, { backgroundColor: '#e2e8f0' }]}>
                               <Casilla col='w25' info="NOMBRE"></Casilla>
                               <Casilla col='w25' info="NOMBRE DEL PROGRAMA"></Casilla>
                               <Casilla col='colW2' info="CLIENTE"></Casilla>
@@ -93,7 +242,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                               <Casilla col='colW' info="PESO MELT"></Casilla>
                               <Casilla col='colW' info="PESO LUREX"></Casilla>
                             </View>
-                            <View style={[styles.row, styles.underline]}>
+                            <View style={[styles.row]}>
                               <Casilla col='w25' info={fich.nombre}></Casilla>
                               <Casilla col='w25' info={fich.nombrePrograma} ></Casilla>
                               <Casilla col='colW2' info={fich.cliente}></Casilla>
@@ -103,7 +252,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                               <Casilla col='colW' info={fich.pesoLurex}></Casilla>
                             </View>
 
-                            <View style={[styles.row, styles.underline, { backgroundColor: '#e2e8f0' }]}>
+                            <View style={[styles.row, { backgroundColor: '#e2e8f0' }]}>
                               <Casilla col='w25' info="MAQUINA TEJIDO"></Casilla>
                               <Casilla col='colW2' info="TIPO MAQUINA TEJIDO"></Casilla>
                               <Casilla col='colW' info="GALGA"></Casilla>
@@ -113,7 +262,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                               <Casilla col='colW' info="VELOCIDAD PLANCHA"></Casilla>
                               <Casilla col='colW' info="TEMPERATURA"></Casilla>
                             </View>
-                            <View style={[styles.row, styles.underline]}>
+                            <View style={[styles.row]}>
                               <Casilla col='w25' info={fich.maquinaTejido}></Casilla>
                               <Casilla col='colW2' info={fich.tipoMaquinaTejido}></Casilla>
                               <Casilla col='colW' info={fich.galga}></Casilla>
@@ -123,30 +272,60 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                               <Casilla col='colW' info={fich.velocidadPlancha}></Casilla>
                               <Casilla col='colW' info={fich.temperaturaPlancha}></Casilla>
                             </View>
-                            <View style={[styles.row, styles.underline, { backgroundColor: '#e2e8f0' }]}>
+                            
+                            
+                          <View style={[styles.colW2]}>
+                            <Col style={{backgroundColor:'#3e3'}}>
+                              <Row>
+                                <Casilla col='w100' info="NO." />
+                                <Casilla col='w100' info="PUNTOS" />
+                              </Row>
+                              <Text>asd</Text>
+
+                            </Col>
+                          </View>
+                          */}
+
+
+                            <View style={[styles.row, { backgroundColor: '#e2e8f0' }]}>
                               <Casilla col='colW' info='NO.' />
                               <Casilla col='colW' info='PUNTOS' />
                               <Casilla col='colW' info='GUIA HILOS' />
-                              <Casilla col='colW2' info='HEBRAS' />
+                              <Casilla col='colW2' info='TIPO' />
                               <Casilla col='colW' info='CALIBRE' />
                               <Casilla col='colW2' info='PROVEEDOR' />
                               <Casilla col='colW2' info='COLORES' />
-                              <Casilla col='colW' info='TIPO' />
+                              <Casilla col='colW' info='HEBRAS' />
                               <Casilla col='colW' info='PESO' />
                             </View>
 
                             {fich?.puntosMateriales?.map((f, i) =>
-                              <View key={'puntosM' + i} style={[styles.w100, styles.row, styles.underline]}>
-                                <Casilla col='colW' info={f.posicion} />
-                                <Casilla col='colW' info={f.valor} />
+                              <View key={'puntosM' + i} style={[styles.w100, styles.row, { height: '17px', fontSize: '9' }]}>
+
+                                <Casilla
+                                  style={(i == 14 || i == 23) && { backgroundColor: '#e2e8f0' }}
+                                  col='colW'
+                                  info={f.posicion} />
+
+                                <Casilla 
+                                  style={(i == 14 || i == 23) && { backgroundColor: '#e2e8f0' }}
+                                  col='colW' info={f.valor} />
+
                                 <Casilla col='colW' info={f.guiaHilos} />
-                                <Casilla col='colW2' info={f.hebras} />
+                                <Casilla col='colW2' info={f.tipo} />
                                 <Casilla col='colW' info={f.calibre} />
-                                <Casilla col='colW2' info={f.proveedor} />
+                                <Casilla col='colW2' info={f.nombreProveedor} />
                                 <Casilla col='colW2' info={f.color} />
-                                <Casilla col='colW' info={f.tipo} />
+                                <Casilla col='colW' info={f.hebras} />
                                 <Casilla col='colW' info={f.peso} />
                               </View>)}
+
+                            {
+                              /*<View style={[styles.row]}>
+                                <Casilla col='w25' info='JALONES' />
+                                <Casilla col='w25' info='ECONOMISADORES' />
+                              </View>*/
+                            }
 
                           </View>
                         </View>
@@ -175,7 +354,7 @@ const styles = StyleSheet.create({
     paddingVertical: '5px'
   },
   border: {
-    border: '3px solid black',
+    border: '1px solid gray',
     backgroundColor: '#dc2626',
   },
   col: {
@@ -202,7 +381,11 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   p5: {
-    padding: '25px',
+    paddingVertical: '10px',
+    paddingHorizontal: '20px',
+  },
+  px2: {
+    padding: '10px'
   },
   tCenter: {
     textAlign: 'center',
