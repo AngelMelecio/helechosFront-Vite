@@ -23,7 +23,8 @@ const FrmModelos = ({
     getClientes,
     allClientes,
     getMaquinas,
-    allMaquinas
+    allMaquinas,
+    getModeloMaterial
   } = useApp()
 
   const [saving, setSaving] = useState(false)
@@ -77,7 +78,15 @@ const FrmModelos = ({
     initialValues: fichaTecnica, 
     validate,
     onSubmit: values => {
-      handleSaveModelo()
+      //console.log(fichaTecnicaObj)
+      values.numeroPuntos=fichaTecnicaObj.numeroPuntos
+      values.jalones=fichaTecnicaObj.jalones
+      values.economisadores=fichaTecnicaObj.economisadores
+      values.materiales=fichaTecnicaObj.materiales
+      values.fotografia= fichaTecnicaObj.fotografia,
+      values.archivoFichaTecnica= fichaTecnicaObj.archivoFichaTecnica,
+      values.archivoPrograma= fichaTecnicaObj.archivoPrograma,
+      handleSaveModelo(values)
     },
   });
 
@@ -86,7 +95,33 @@ const FrmModelos = ({
     await getMaquinas()
   }
 
+  async function loadMateriales(){
+    var formatedMaterials=[]    
+    if(fichaTecnicaObj.idModelo!==0){
+      var moma= await getModeloMaterial(fichaTecnicaObj.idModelo)
+      if(moma.length>0){
+        moma.map((mm) => {
+          formatedMaterials.push({
+            peso: mm.peso,
+            tipo: mm.material.tipo,
+            color: mm.material.color,
+            codigoColor: mm.material.codigoColor,
+            tenida: mm.material.tenida,
+            hebras: mm.hebras,
+            calibre: mm.material.calibre,
+            guiaHilos: mm.guiaHilos,
+            nombreProveedor: mm.material.proveedor.nombre,
+            idMaterial: mm.material.idMaterial
+          })
+        });
+      }
+    }
+    
+    setFichaTecnicaObj((prev)=>{return ({...prev,materiales:formatedMaterials})})
+  }
+
   useEffect(() => {
+    loadMateriales()
     loadOptions()
   }, [])
 
@@ -103,7 +138,7 @@ const FrmModelos = ({
       if (m.departamento === 'Tejido')
         newMaquinasTejidoOptions.push({ value: m.idMaquina.toString(), label: 'Línea: '+m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca })
       else if (m.departamento === 'Plancha')
-        newMaquinasPlanchaOptions.push({ value: m.idMaquina.toString(), label: m.numero + ' ' + m.linea + ' ' + m.marca })
+        newMaquinasPlanchaOptions.push({ value: m.idMaquina.toString(), label: 'Línea: '+m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca })
     })
 
     setClientesOptions(newClientesOptions)
@@ -112,24 +147,18 @@ const FrmModelos = ({
 
   }, [allClientes, allMaquinas])
 
-  useEffect(() => {
+  /*useEffect(() => {
     setFichaTecnicaObj(prev => (
       {
         ...formik?.values,
-        fotografia: prev.fotografia,
-        archivoFichaTecnica: prev.archivoFichaTecnica,
-        archivoPrograma: prev.archivoPrograma,
-        materiales: [...prev.materiales],
-        numeroPuntos: [...prev.numeroPuntos],
-        economisadores: [...prev.economisadores]
+        
       }
     ))
-  }, [formik?.values]) 
+  }, [formik?.values]) */
 
-  const handleSaveModelo = async () => {
-    //console.log(fichaTecnicaObj)
+  const handleSaveModelo = async (values) => {
     setSaving(true)
-    await saveModelo(fichaTecnicaObj, isEdit)
+    await saveModelo(values, isEdit)
     await getModelos()
     onCloseModal()
     setSaving(false)
@@ -145,14 +174,14 @@ const FrmModelos = ({
       if (m.count > 0) {
         for (let i = 0; i < m.count; i++) {
           newMateriales.push({
-            peso: "",
+            peso: "1.00",
             tipo: m.tipo,
             color: m.color,
             codigoColor: m.codigoColor,
             tenida: m.tenida,
-            hebras: "",
+            hebras: "1",
             calibre: m.calibre,
-            guiaHilos: "",
+            guiaHilos: "L",
             nombreProveedor: m.nombreProveedor,
             idMaterial: m.idMaterial
           })
