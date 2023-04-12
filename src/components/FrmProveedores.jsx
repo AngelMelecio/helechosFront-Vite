@@ -58,6 +58,12 @@ const FrmProveedores = ({
       errors.correo = 'Correo invalido';
     }
 
+    if (!values.rfc) {
+      errors.rfc = 'Ingresa el RFC';
+    } else if (values.rfc.toString().length !== 13) {
+      errors.rfc = 'Ingresa 13 digitos';
+    }
+
     if (!values.departamento) {
       errors.departamento = 'Selecciona un departamento';
     } else if (values.departamento === "Seleccione") {
@@ -182,9 +188,9 @@ const FrmProveedores = ({
                   </div>
                   <div className='flex flex-row'>
                     <Input
-                      label='Otros' type='text' name='otro' value={formik.values.otro}
+                      label='RFC' type='text' name='rfc' value={formik.values.rfc}
                       onChange={formik.handleChange} onBlur={formik.handleBlur}
-                      errores={formik.errors.otro && formik.touched.otro ? formik.errors.otro : null}
+                      errores={formik.errors.rfc && formik.touched.rfc ? formik.errors.rfc : null}
                     />
                     <CustomSelect
                       name='Departamento'
@@ -195,6 +201,13 @@ const FrmProveedores = ({
                       options={optionsDepartamento}
                       label='Departamento'
                       errores={formik.errors.departamento && formik.touched.departamento ? formik.errors.departamento : null}
+                    />
+                  </div>
+                  <div className='flex flex-row'>
+                    <Input
+                      label='Otros' type='text' name='otro' value={formik.values.otro}
+                      onChange={formik.handleChange} onBlur={formik.handleBlur}
+                      errores={formik.errors.otro && formik.touched.otro ? formik.errors.otro : null}
                     />
                   </div>
                 </div>
