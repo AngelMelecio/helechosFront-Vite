@@ -2,13 +2,6 @@ import { Document, Page, PDFViewer, Text, View, StyleSheet } from "@react-pdf/re
 import { useEffect, useState } from "react";
 import { ICONS } from "../constants/icons";
 
-const jalonEconomisadorObj = {
-  posicionP: '',
-  valorP: '',
-  posicionE: '',
-  valorE: ''
-}
-
 const puntoObj = {
   posicion: '',
   valor: '',
@@ -25,45 +18,46 @@ const materialObj = {
   idMaterial: ''
 }
 
+const MAXROW = 34
+const STARTJALON = 21
+const STARTECON = 28
+
 const FichaTecnicaPrint = ({ data, onCloseModal }) => {
 
   const [formatData, setFormatData] = useState([])
-  const [puntosHebras, setPuntosHebras] = useState([])
 
   useEffect(() => {
+
+    /* 
+        Se Combinan (puntos, jalones, economisadores) U (materiales) en una sola lista
+    */
+
+
     let newData = []
     data.map(ficha => {
       if (ficha.isSelected) {
         let puntosMateriales = []
-        for (let i = 0; i < 33; i++) {
+        for (let i = 0; i < MAXROW; i++) {
           let puntoMaterial = { ...puntoObj, ...materialObj }
           if (i < ficha.materiales.length)
             puntoMaterial = { ...puntoMaterial, ...ficha.materiales[i] }
           if (i < ficha.numeroPuntos.length)
             puntoMaterial = { ...puntoMaterial, ...ficha.numeroPuntos[i] }
 
-          if (i >= 15 && i < ficha.jalones.length + 15) {
-            puntoMaterial = { ...puntoMaterial, ...ficha.jalones[i - 15] }
+          if (i >= STARTJALON && i < ficha.jalones.length + STARTJALON) {
+            puntoMaterial = { ...puntoMaterial, ...ficha.jalones[i - STARTJALON] }
           }
-          if (i >= 24 && i < ficha.economisadores.length + 24) {
-            puntoMaterial = { ...puntoMaterial, ...ficha.economisadores[i - 24] }
+          if (i >= STARTECON && i < ficha.economisadores.length + STARTECON) {
+            puntoMaterial = { ...puntoMaterial, ...ficha.economisadores[i - STARTECON] }
           }
           puntosMateriales.push(puntoMaterial)
         }
-        puntosMateriales[14].posicion = "JALON"
-        puntosMateriales[23].posicion = "Econom."
+        puntosMateriales[STARTJALON - 1].posicion = "JALON"
+        puntosMateriales[STARTECON - 1].posicion = "Econom."
 
         newData.push({
           ...ficha,
           cliente: ficha.cliente.nombre,
-          maquinaTejido: (
-            'Línea: ' + ficha.maquinaTejido.linea +
-            ' Número: ' + ficha.maquinaTejido.numero +
-            ' Marca: ' + ficha.maquinaTejido.marca),
-          maquinaPlancha: (
-            'Línea: ' + ficha.maquinaPlancha.linea +
-            ' Número: ' + ficha.maquinaPlancha.numero +
-            ' Marca: ' + ficha.maquinaPlancha.marca),
           puntosMateriales: puntosMateriales,
         })
       }
@@ -71,6 +65,10 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
     setFormatData(newData)
   }, [])
 
+
+  /*
+      Componentes con estilos preestablecidos
+  */
   const Casilla = (props) => {
     let estyles = [
       styles[props.col],
@@ -95,8 +93,11 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
       </View>
     )
   }
-  const B = ({ children }) => <Text style={[{ fontWeight: '200', fontSize: '11' }]}>{children}</Text>
-  const P = ({ children }) => <Text style={[{ fontWeight: 'normal', fontSize: '9' }]}>{children}</Text>
+
+  const B = ({ children }) => <Text style={[{ fontWeight: '200', fontSize: '9' }]}>{children}</Text>
+
+  const P = ({ children }) => <Text style={[{ fontWeight: 'normal', fontSize: '12' }]}>{children}</Text>
+
   const Row = (props) => {
     let estilos = {
       display: 'flex',
@@ -107,6 +108,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
     }
     return <View style={estilos}>{props.children}</View>
   }
+
   const Col = (props) => {
     let estilos = {
       display: 'flex',
@@ -115,6 +117,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
     }
     return <View style={estilos}>{props.children}</View>
   }
+
   return (
     <>
       <div className='z-10 flex absolute h-full w-full grayTrans items-center justify-center '>
@@ -150,25 +153,33 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                             <View style={[styles.row, styles.w100, { paddingVertical: '5px', paddingHorizontal: '10px' }]}>
                               <Col>
                                 <Row>
-                                  <B>MODELO:  </B>
+                                  <B>Modelo:  </B>
                                   <P>{fich.nombre}</P>
                                 </Row>
                                 <Row>
-                                  <B>NOMBRE DEL PROGRAMA:  </B>
+                                  <B>Nombre del Programa:  </B>
                                   <P>{fich.nombrePrograma}</P>
                                 </Row>
                                 <Row>
-                                  <B>CLIENTE:  </B>
+                                  <B>Cliente:  </B>
                                   <P>{fich.cliente}</P>
                                 </Row>
                                 <Text>{"\n"}</Text>
                                 <Row>
-                                  <B>MAQUINA TEJIDO</B>
+                                  <B>Máquina Tejido</B>
                                 </Row>
-                                <Row><P>{fich.maquinaTejido}</P></Row>
+                                <Row>
+                                  <B>Línea: </B>
+                                  <P>{fich.maquinaTejido.linea}  </P>
+                                  <B>Número: </B>
+                                  <P>{fich.maquinaTejido.numero}  </P>
+                                  <B>Marca: </B>
+                                  <P>{fich.maquinaTejido.marca}</P>
+
+                                </Row>
                                 <Row style={{ justifyContent: 'space-around' }}>
                                   <Row>
-                                    <B>TIPO:  </B>
+                                    <B>Tipo:  </B>
                                     <P>{fich.tipoMaquinaTejido}</P>
                                   </Row>
                                   <Row>
@@ -176,7 +187,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                                     <P>{fich.galga}</P>
                                   </Row>
                                   <Row>
-                                    <B>VELOCIDAD:  </B>
+                                    <B>Velocidad:  </B>
                                     <P>{fich.velocidadTejido}</P>
                                   </Row>
                                 </Row>
@@ -186,7 +197,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                               <Col>
                                 <Row>
                                   <Row>
-                                    <B>TALLA: </B>
+                                    <B>Talla: </B>
                                     <P>{fich.talla}</P>
                                   </Row>
                                   <Row style={{ justifyContent: 'flex-end' }}>
@@ -195,7 +206,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                                   </Row>
                                 </Row>
                                 <Row>
-                                  <B>PESO</B>
+                                  <B>Peso</B>
                                 </Row>
                                 <Row >
                                   <Row style={{ justifyContent: 'flex-start' }}>
@@ -213,16 +224,23 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                                 </Row>
                                 <Text>{"\n"}</Text>
                                 <Row>
-                                  <B>MAQUINA PLANCHA</B>
+                                  <B>Máquina Plancha</B>
                                 </Row>
-                                <Row><P>{fich.maquinaPlancha}</P></Row>
+                                <Row>
+                                  <B>Línea: </B>
+                                  <P>{fich.maquinaPlancha.linea}  </P>
+                                  <B>Número:  </B>
+                                  <P>{fich.maquinaPlancha.numero}  </P>
+                                  <B>Marca: </B>
+                                  <P>{fich.maquinaPlancha.marca}</P>
+                                </Row>
                                 <Row >
                                   <Row>
-                                    <B>TEMPERATURA:  </B>
+                                    <B>Temperatura:  </B>
                                     <P>{fich.temperaturaPlancha}</P>
                                   </Row>
                                   <Row style={{ justifyContent: 'flex-end' }}>
-                                    <B>VELOCIDAD:  </B>
+                                    <B>Velocidad:  </B>
                                     <P>{fich.velocidadPlancha}</P>
                                   </Row>
                                 </Row>
@@ -230,85 +248,29 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                             </View>
                           </View>
 
-
-                          <View style={{ border: '1px solid black' }}>
-                            {/*
+                          <View style={{ borderLeft: '1px solid gray', borderTop: '1px solid black' }}>
                             <View style={[styles.row, { backgroundColor: '#e2e8f0' }]}>
-                              <Casilla col='w25' info="NOMBRE"></Casilla>
-                              <Casilla col='w25' info="NOMBRE DEL PROGRAMA"></Casilla>
-                              <Casilla col='colW2' info="CLIENTE"></Casilla>
-                              <Casilla col='colW' info="TALLA"></Casilla>
-                              <Casilla col='colW' info="PESO POLIESTER"></Casilla>
-                              <Casilla col='colW' info="PESO MELT"></Casilla>
-                              <Casilla col='colW' info="PESO LUREX"></Casilla>
-                            </View>
-                            <View style={[styles.row]}>
-                              <Casilla col='w25' info={fich.nombre}></Casilla>
-                              <Casilla col='w25' info={fich.nombrePrograma} ></Casilla>
-                              <Casilla col='colW2' info={fich.cliente}></Casilla>
-                              <Casilla col='colW' info={fich.talla}></Casilla>
-                              <Casilla col='colW' info={fich.pesoPoliester}></Casilla>
-                              <Casilla col='colW' info={fich.pesoMelt}></Casilla>
-                              <Casilla col='colW' info={fich.pesoLurex}></Casilla>
-                            </View>
-
-                            <View style={[styles.row, { backgroundColor: '#e2e8f0' }]}>
-                              <Casilla col='w25' info="MAQUINA TEJIDO"></Casilla>
-                              <Casilla col='colW2' info="TIPO MAQUINA TEJIDO"></Casilla>
-                              <Casilla col='colW' info="GALGA"></Casilla>
-                              <Casilla col='colW' info="VELOCIDAD"></Casilla>
-                              <Casilla col='colW' info="TIEMPO BAJADA"></Casilla>
-                              <Casilla col='colW2' info="MAQUINA PLANCHA"></Casilla>
-                              <Casilla col='colW' info="VELOCIDAD PLANCHA"></Casilla>
-                              <Casilla col='colW' info="TEMPERATURA"></Casilla>
-                            </View>
-                            <View style={[styles.row]}>
-                              <Casilla col='w25' info={fich.maquinaTejido}></Casilla>
-                              <Casilla col='colW2' info={fich.tipoMaquinaTejido}></Casilla>
-                              <Casilla col='colW' info={fich.galga}></Casilla>
-                              <Casilla col='colW' info={fich.velocidadTejido}></Casilla>
-                              <Casilla col='colW' info={fich.tiempoBajada}></Casilla>
-                              <Casilla col='colW2' info={fich.maquinaPlancha}></Casilla>
-                              <Casilla col='colW' info={fich.velocidadPlancha}></Casilla>
-                              <Casilla col='colW' info={fich.temperaturaPlancha}></Casilla>
-                            </View>
-                            
-                            
-                          <View style={[styles.colW2]}>
-                            <Col style={{backgroundColor:'#3e3'}}>
-                              <Row>
-                                <Casilla col='w100' info="NO." />
-                                <Casilla col='w100' info="PUNTOS" />
-                              </Row>
-                              <Text>asd</Text>
-
-                            </Col>
-                          </View>
-                          */}
-
-
-                            <View style={[styles.row, { backgroundColor: '#e2e8f0' }]}>
-                              <Casilla col='colW' info='NO.' />
-                              <Casilla col='colW' info='PUNTOS' />
-                              <Casilla col='colW' info='GUIA HILOS' />
-                              <Casilla col='colW2' info='TIPO' />
-                              <Casilla col='colW' info='CALIBRE' />
-                              <Casilla col='colW2' info='PROVEEDOR' />
-                              <Casilla col='colW2' info='COLORES' />
-                              <Casilla col='colW' info='HEBRAS' />
-                              <Casilla col='colW' info='PESO' />
+                              <Casilla col='colW' info='No.' />
+                              <Casilla col='colW' info='Puntos' />
+                              <Casilla col='colW' info='Guía Hilos' />
+                              <Casilla col='colW2' info='Tipo' />
+                              <Casilla col='colW' info='Calibre' />
+                              <Casilla col='colW2' info='Proveedor' />
+                              <Casilla col='colW2' info='Colores' />
+                              <Casilla col='colW' info='Hebras' />
+                              <Casilla col='colW' info='Peso' />
                             </View>
 
                             {fich?.puntosMateriales?.map((f, i) =>
                               <View key={'puntosM' + i} style={[styles.w100, styles.row, { height: '17px', fontSize: '9' }]}>
 
                                 <Casilla
-                                  style={(i == 14 || i == 23) && { backgroundColor: '#e2e8f0' }}
+                                  style={(i == STARTJALON - 1 || i == STARTECON - 1) && { backgroundColor: '#e2e8f0' }}
                                   col='colW'
                                   info={f.posicion} />
 
-                                <Casilla 
-                                  style={(i == 14 || i == 23) && { backgroundColor: '#e2e8f0' }}
+                                <Casilla
+                                  style={(i == STARTJALON - 1 || i == STARTECON - 1) && { backgroundColor: '#e2e8f0' }}
                                   col='colW' info={f.valor} />
 
                                 <Casilla col='colW' info={f.guiaHilos} />
@@ -319,26 +281,16 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                                 <Casilla col='colW' info={f.hebras} />
                                 <Casilla col='colW' info={f.peso} />
                               </View>)}
-
-                            {
-                              /*<View style={[styles.row]}>
-                                <Casilla col='w25' info='JALONES' />
-                                <Casilla col='w25' info='ECONOMISADORES' />
-                              </View>*/
-                            }
-
                           </View>
                         </View>
                       </Page>
                     )}
                 </Document>
               </PDFViewer>
-
             </div>
           </div>
         </div>
       </div>
-
     </>
   )
 }
@@ -372,9 +324,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
 
-  },
-  underline: {
-    //borderBottom: '1px solid black'
   },
   flexCol: {
     display: 'flex',
@@ -424,7 +373,6 @@ const styles = StyleSheet.create({
     transition: '0.2s',
     justifyContent: 'center',
     alignItems: 'center',
-    //    z-10 flex absolute h-full w-full grayTrans items-center justify-center
   }
 })
 

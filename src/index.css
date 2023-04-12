@@ -508,3 +508,24 @@ input::-webkit-inner-spin-button {
   width: calc(100%/2);
   min-width: 150px;
 }
+
+.array-row::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  opacity: 0%;
+  pointer-events: none;
+  /*
+  background-color: #ff7d817b;
+  */
+  border:'1px solid #ff7d817b';
+  height: 100%;
+  width: 100%;
+  transition: 0.3s;
+}
+
+.array-row:has( .vanish:active )::after{
+  opacity: 100%;
+  transition: 0.1s;
+}
+
