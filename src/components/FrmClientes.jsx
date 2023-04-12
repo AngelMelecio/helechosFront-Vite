@@ -30,6 +30,11 @@ const FrmClientes = ({
     } else if (values.telefono.toString().length !== 10) {
       errors.telefono = 'Ingresa 10 digitos';
     }
+    if (!values.rfc) {
+      errors.rfc = 'Ingresa el RFC';
+    } else if (values.rfc.toString().length !== 13) {
+      errors.rfc = 'Ingresa 13 digitos';
+    }
 
     if (!values.correo) {
       errors.correo = 'Ingresa el correo';
@@ -154,6 +159,11 @@ const FrmClientes = ({
                     />
                   </div>
                   <div className='flex flex-row'>
+                    <Input
+                      label='RFC' type='text' name='rfc' value={formik.values.rfc}
+                      onChange={formik.handleChange} onBlur={formik.handleBlur}
+                      errores={formik.errors.rfc && formik.touched.rfc ? formik.errors.rfc : null}
+                    />
                     <Input
                       label='Otros' type='text' name='otro' value={formik.values.otro}
                       onChange={formik.handleChange} onBlur={formik.handleBlur}

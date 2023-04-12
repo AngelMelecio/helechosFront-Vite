@@ -48,6 +48,7 @@ const maquinasColumns = [
 
 const clientesColumns = [
   { name: 'Nombre', attribute: 'nombre' },
+  { name: 'RFC', attribute: 'rfc' },
   { name: 'Dirección', attribute: 'direccion' },
   { name: 'Teléfono', attribute: 'telefono' },
   { name: 'Correo', attribute: 'correo' },
@@ -56,6 +57,7 @@ const clientesColumns = [
 
 const proveedoresColumns = [
   { name: 'Nombre', attribute: 'nombre' },
+  { name: 'RFC', attribute: 'rfc' },
   { name: 'Dirección', attribute: 'direccion' },
   { name: 'Teléfono', attribute: 'telefono' },
   { name: 'Correo', attribute: 'correo' },
@@ -219,7 +221,24 @@ export function AppProvider({ children }) {
     })
     if (response.status === 200) {
       let assigned = await response.json()
-      return assigned
+      let materialesformated =[]
+      if(assigned.length>0){
+        assigned.map((mm) => {
+          materialesformated.push({
+            peso: mm.peso,
+            tipo: mm.material.tipo,
+            color: mm.material.color,
+            codigoColor: mm.material.codigoColor,
+            tenida: mm.material.tenida,
+            hebras: mm.hebras,
+            calibre: mm.material.calibre,
+            guiaHilos: mm.guiaHilos,
+            nombreProveedor: mm.material.proveedor.nombre,
+            idMaterial: mm.material.idMaterial
+          })
+        });
+      }
+      return materialesformated
     }
     return []
   }
@@ -346,6 +365,7 @@ export function AppProvider({ children }) {
     let formData = new FormData()
     formData.append('nombre', values.nombre)
     formData.append('direccion', values.direccion)
+    formData.append('rfc', values.rfc)
     formData.append('telefono', values.telefono)
     formData.append('correo', values.correo)
     formData.append('contactos', JSON.stringify(values.contactos))
@@ -673,9 +693,10 @@ export function AppProvider({ children }) {
       }
     }).then(response => response.json())
       .then(data => {
-
+        
         let formatData = []
-        data.forEach((m) => {
+        data.forEach(async (m) => {
+          
           formatData.push({
             ...m,
             isSelected: false,
@@ -690,9 +711,12 @@ export function AppProvider({ children }) {
 
             idMaquinaPlancha: m.maquinaPlancha.idMaquina.toString(),
             nombreMaquinaPlancha: 'Línea: '+m.maquinaPlancha.linea+' Número: '+m.maquinaPlancha.numero,
+
+            materiales: await getModeloMaterial(m.idModelo)
           })
         })
         setAllModelos(formatData)
+        console.log(formatData)
       })
   }
 

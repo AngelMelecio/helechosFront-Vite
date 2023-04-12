@@ -82,7 +82,7 @@ export default function PaginaModelos() {
   }
 
   useEffect(() => {
-    handleGetFichas()
+      handleGetFichas()
   }, [])
 
   useEffect(() => {

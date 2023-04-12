@@ -96,32 +96,14 @@ const FrmModelos = ({
   }
 
   async function loadMateriales(){
-    var formatedMaterials=[]    
-    if(fichaTecnicaObj.idModelo!==0){
-      var moma= await getModeloMaterial(fichaTecnicaObj.idModelo)
-      if(moma.length>0){
-        moma.map((mm) => {
-          formatedMaterials.push({
-            peso: mm.peso,
-            tipo: mm.material.tipo,
-            color: mm.material.color,
-            codigoColor: mm.material.codigoColor,
-            tenida: mm.material.tenida,
-            hebras: mm.hebras,
-            calibre: mm.material.calibre,
-            guiaHilos: mm.guiaHilos,
-            nombreProveedor: mm.material.proveedor.nombre,
-            idMaterial: mm.material.idMaterial
-          })
-        });
-      }
-    }
     
-    setFichaTecnicaObj((prev)=>{return ({...prev,materiales:formatedMaterials})})
+    var materialesformated = await getModeloMaterial(fichaTecnicaObj.idModelo)
+    
+    setFichaTecnicaObj((prev)=>{return ({...prev,materiales:materialesformated})})
   }
 
   useEffect(() => {
-    loadMateriales()
+    //loadMateriales()
     loadOptions()
   }, [])
 
