@@ -45,7 +45,7 @@ const DynamicInput = ({
                 <button
                   onClick={() => handleDeleteRow(i, arrayName)}
                   type="button"
-                  className="p-1 opacity-0 trash-button rounded-md">
+                  className="p-1 opacity-0 trash-button rounded-md vanish">
                   <ICONS.Trash />
                 </button>
               </td>
