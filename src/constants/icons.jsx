@@ -10,7 +10,8 @@ import {
 
 import { FaRegTrashAlt as Trash } from 'react-icons/fa'
 import {
-    MdOutlineMail as Email
+    MdOutlineMail as Email,
+    MdOutlineFileCopy as Copy,
 } from 'react-icons/md'
 
 import{
@@ -125,5 +126,6 @@ export const ICONS = {
     Minus,
     Shoe,
     PDF,
-    File
+    File,
+    Copy
 }
