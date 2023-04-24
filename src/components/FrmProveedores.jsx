@@ -1,9 +1,9 @@
-import { useFormik } from "formik";
+import { useFormik, FormikProvider } from "formik";
 import { useState } from "react";
 import { ICONS } from "../constants/icons";
 import { useApp } from "../context/AppContext";
 import CustomSelect from "./CustomSelect";
-
+import DynamicInput from "./DynamicInput"
 import Input from "./Input";
 
 const contactoObj = {
@@ -77,7 +77,6 @@ const FrmProveedores = ({
     initialValues: proveedor,
     validate,
     onSubmit: values => {
-      values.contactos = objProveedor.contactos
       handleSaveProveedores(values);
     },
   });
@@ -143,156 +142,103 @@ const FrmProveedores = ({
             </div>
           </div>
           <div className="flex w-full h-full ">
-            <form
-              id='frmProveedores'
-              className='flex flex-col h-full w-full relative overflow-y-scroll'
-              onSubmit={formik.handleSubmit}>
-              <div className="absolute w-full flex flex-col  px-4">
-                <div className='flex flex-row w-full h-full p-2 total-center'>
-                  <div className="flex relative w-full items-center justify-center text-center">
-                    <ICONS.Truck className='' size='100px' style={{ color: '#115e59' }} />
-                  </div>
-                </div>
-                <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-                  <div className="absolute w-full total-center -top-3">
-                    <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                      DATOS PROVEEDOR
+            <FormikProvider value={formik}>
+              <form
+                id='frmProveedores'
+                className='flex flex-col h-full w-full relative overflow-y-scroll'
+                onSubmit={formik.handleSubmit}>
+                <div className="absolute w-full flex flex-col  px-4">
+                  <div className='flex flex-row w-full h-full p-2 total-center'>
+                    <div className="flex relative w-full items-center justify-center text-center">
+                      <ICONS.Truck className='' size='100px' style={{ color: '#115e59' }} />
                     </div>
                   </div>
-                  <div className='flex flex-row'>
-                    <Input
-                      label='Nombre' type='text' name='nombre' value={formik.values.nombre}
-                      onChange={formik.handleChange} onBlur={formik.handleBlur}
-                      errores={formik.errors.nombre && formik.touched.nombre ? formik.errors.nombre : null}
-                    />
-                    <Input
-                      label='Dirección' type='text' name='direccion' value={formik.values ? formik.values.direccion : ''}
-                      onChange={formik.handleChange} onBlur={formik.handleBlur}
-                      errores={formik.errors.direccion && formik.touched.direccion ? formik.errors.direccion : null}
-                      Icon={ICONS.House}
-                    />
-                  </div>
-                  <div className='flex flex-row'>
-                    <Input
-                      label='Teléfono' type='number' name='telefono' value={formik.values ? formik.values.telefono : ''}
-                      onChange={formik.handleChange} onBlur={formik.handleBlur}
-                      errores={formik.errors.telefono && formik.touched.telefono ? formik.errors.telefono : null}
-                      Icon={ICONS.Phone}
-                    />
-                    <Input
-                      label='Correo' type='text' name='correo' value={formik.values.correo}
-                      onChange={formik.handleChange} onBlur={formik.handleBlur}
-                      errores={formik.errors.correo && formik.touched.correo ? formik.errors.correo : null}
-                      Icon={ICONS.Email}
-                    />
-                  </div>
-                  <div className='flex flex-row'>
-                    <Input
-                      label='RFC' type='text' name='rfc' value={formik.values.rfc}
-                      onChange={formik.handleChange} onBlur={formik.handleBlur}
-                      errores={formik.errors.rfc && formik.touched.rfc ? formik.errors.rfc : null}
-                    />
-                    <CustomSelect
-                      name='Departamento'
-                      className='input'
-                      onChange={value => formik.setFieldValue('departamento', value.value)}
-                      value={formik.values.departamento}
-                      onBlur={formik.handleBlur}
-                      options={optionsDepartamento}
-                      label='Departamento'
-                      errores={formik.errors.departamento && formik.touched.departamento ? formik.errors.departamento : null}
-                    />
-                  </div>
-                  <div className='flex flex-row'>
-                    <Input
-                      label='Otros' type='text' name='otro' value={formik.values.otro}
-                      onChange={formik.handleChange} onBlur={formik.handleBlur}
-                      errores={formik.errors.otro && formik.touched.otro ? formik.errors.otro : null}
-                    />
-                  </div>
-                </div>
-                <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-                  <div className="absolute w-full total-center -top-3">
-                    <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                      CONTACTOS
+                  <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
+                    <div className="absolute w-full total-center -top-3">
+                      <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
+                        DATOS PROVEEDOR
+                      </div>
+                    </div>
+                    <div className='flex flex-row'>
+                      <Input
+                        label='Nombre' type='text' name='nombre' value={formik.values.nombre}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur}
+                        errores={formik.errors.nombre && formik.touched.nombre ? formik.errors.nombre : null}
+                      />
+                      <Input
+                        label='Dirección' type='text' name='direccion' value={formik.values ? formik.values.direccion : ''}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur}
+                        errores={formik.errors.direccion && formik.touched.direccion ? formik.errors.direccion : null}
+                        Icon={ICONS.House}
+                      />
+                    </div>
+                    <div className='flex flex-row'>
+                      <Input
+                        label='Teléfono' type='number' name='telefono' value={formik.values ? formik.values.telefono : ''}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur}
+                        errores={formik.errors.telefono && formik.touched.telefono ? formik.errors.telefono : null}
+                        Icon={ICONS.Phone}
+                      />
+                      <Input
+                        label='Correo' type='text' name='correo' value={formik.values.correo}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur}
+                        errores={formik.errors.correo && formik.touched.correo ? formik.errors.correo : null}
+                        Icon={ICONS.Email}
+                      />
+                    </div>
+                    <div className='flex flex-row'>
+                      <Input
+                        label='RFC' type='text' name='rfc' value={formik.values.rfc}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur}
+                        errores={formik.errors.rfc && formik.touched.rfc ? formik.errors.rfc : null}
+                      />
+                      <CustomSelect
+                        name='Departamento'
+                        className='input'
+                        onChange={value => formik.setFieldValue('departamento', value.value)}
+                        value={formik.values.departamento}
+                        onBlur={formik.handleBlur}
+                        options={optionsDepartamento}
+                        label='Departamento'
+                        errores={formik.errors.departamento && formik.touched.departamento ? formik.errors.departamento : null}
+                      />
+                    </div>
+                    <div className='flex flex-row'>
+                      <Input
+                        label='Otros' type='text' name='otro' value={formik.values.otro}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur}
+                        errores={formik.errors.otro && formik.touched.otro ? formik.errors.otro : null}
+                      />
                     </div>
                   </div>
-
-                  <div className='flex flex-col w-full' >
-                    <table className="w-full">
-                      <thead>
-                        <tr className="font-medium text-teal-800">
-                          <th>Nombre</th>
-                          <th>Puesto</th>
-                          <th>Correo</th>
-                          <th>Teléfono</th>
-                          <th>Nota</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {
-                          objProveedor?
-                          objProveedor.contactos.map((c, i) => <tr key={'C' + i} className="array-row">
-                            <td>
-                              <input
-                                onFocus={(e) => handleFocusContacto(e, i)}
-                                name='nombre'
-                                value={c.nombre ? c.nombre : ''} 
-                                onChange={(e) => handleChangeContacto(e, i)}
-                                className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                type="text" />
-                            </td>
-                            <td>
-                              <input
-                                onFocus={(e) => handleFocusContacto(e, i)}
-                                name='puesto'
-                                value={c.puesto ? c.puesto : ''} 
-                                onChange={(e) => handleChangeContacto(e, i)}
-                                className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                type="text" />
-                            </td>
-                            <td>
-                              <input
-                                onFocus={(e) => handleFocusContacto(e, i)}
-                                name='correo'
-                                value={c.correo ? c.correo : ''} 
-                                onChange={(e) => handleChangeContacto(e, i)}
-                                className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                type="email" />
-                            </td>
-                            <td>
-                              <input
-                                onFocus={(e) => handleFocusContacto(e, i)}
-                                name='telefono'
-                                value={c.telefono ? c.telefono : ''} 
-                                onChange={(e) => handleChangeContacto(e, i)}
-                                className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                type="number" />
-                            </td>
-                            <td>
-                              <input
-                                onFocus={(e) => handleFocusContacto(e, i)}
-                                name='nota'
-                                value={c.nota ? c.nota : ''} 
-                                onChange={(e) => handleChangeContacto(e, i)}
-                                className="flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500"
-                                type="text" />
-                            </td>
-                            <td>
-                              <button
-                                onClick={(e) => handleDeleteContacto(e, i)}
-                                className="p-1 opacity-0 trash-button rounded-md">
-                                <ICONS.Trash />
-                              </button>
-                            </td>
-                          </tr>)
-                        :null}
-                      </tbody>
-                    </table>
+                  <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
+                    <div className="absolute w-full total-center -top-3">
+                      <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
+                        CONTACTOS
+                      </div>
+                    </div>
+                    <div className="flex flex-row w-full  justify-around">
+                      <div className="overflow-y-scroll">
+                        <DynamicInput
+                          columns={[
+                            { name: 'Nombre', atr: 'nombre' },
+                            { name: 'Puesto', atr: 'puesto' },
+                            { name: 'Correo', atr: 'correo' },
+                            { name: 'Teléfono', atr: 'telefono' },
+                            { name: 'Nota', atr: 'nota' }
+                          ]}
+                          elements={formik.values.contactos}
+                          arrayName={'contactos'}
+                          handleChange={formik.handleChange}
+                          clearObject={{ nombre: '', puesto: '', correo: '', telefono: '', nota: '' }}
+                        >
+                        </DynamicInput>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </form>
+              </form>
+            </FormikProvider>
           </div>
         </div>
       </div>
