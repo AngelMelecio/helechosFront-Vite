@@ -17,9 +17,11 @@ const apiMaquinasUrl = entorno + "/api/maquinas/"
 const apiClientesUrl = entorno + "/api/clientes/"
 const apiEmpleadoMaquinaUrl = entorno + "/api/empleados_maquina/"
 const apiModeloMaterialUrl = entorno + "/api/modelo_material/"
+const apiFichaMaterialesUrl = entorno + "/api/fichas_tecnicas_materiales/"
 const apiEmpleadoMaquinasUrl = entorno + "/api/empleado_maquinas/"
 const apiMaterialesUrl = entorno + "/api/materiales/"
 const apiModelosUrl = entorno + "/api/modelos/"
+const apiFichasUrl = entorno + "/api/fichas_tecnicas/"
 const imageEndPoint = entorno
 
 const empleadosColumns = [
@@ -91,7 +93,9 @@ export function AppProvider({ children }) {
 
   const [fetchingProveedores, setFetchingProveedores] = useState(false)
   const [allProveedores, setAllProveedores] = useState([])
-  
+
+  const [allFichas, setAllFichas] = useState([])
+
   const [fetchingMateriales, setFetchingMateriales] = useState(false)
 
   const [allMateriales, setAllMateriales] = useState([])
@@ -211,8 +215,8 @@ export function AppProvider({ children }) {
     }
   }
 
-  const getModeloMaterial = async (idModelo) => {
-    let response = await fetch(apiModeloMaterialUrl + idModelo, {
+  const getFichaMateriales = async (idFicha) => {
+    let response = await fetch(apiFichaMaterialesUrl + idFicha, {
       method: 'GET',
       headers: {
         "Content-Type": "application/json",
@@ -221,10 +225,12 @@ export function AppProvider({ children }) {
     })
     if (response.status === 200) {
       let assigned = await response.json()
-      let materialesformated =[]
-      if(assigned.length>0){
-        assigned.map((mm) => {
+      let materialesformated = []
+      if (assigned.length > 0) {
+        for (let i = 0; i < assigned.length; i++) {
+          let mm = assigned[i]
           materialesformated.push({
+            id: mm.id,
             peso: mm.peso,
             tipo: mm.material.tipo,
             color: mm.material.color,
@@ -236,7 +242,7 @@ export function AppProvider({ children }) {
             nombreProveedor: mm.material.proveedor.nombre,
             idMaterial: mm.material.idMaterial
           })
-        });
+        }
       }
       return materialesformated
     }
@@ -494,7 +500,7 @@ export function AppProvider({ children }) {
     }
   }
 
-  const getMateriales= async () => {
+  const getMateriales = async () => {
     setFetchingMateriales(true)
     let response = await fetch(apiMaterialesUrl, {
       method: 'GET',
@@ -505,15 +511,15 @@ export function AppProvider({ children }) {
     })
     if (response.status === 200) {
       let materiales = await response.json()
-      
+
       let formatData = materiales.map((material) => ({
         ...material,
         isSelected: false,
         count: 0,
-        idProveedor:material.proveedor.idProveedor.toString(),
-        nombreProveedor:material.proveedor.nombre
+        idProveedor: material.proveedor.idProveedor.toString(),
+        nombreProveedor: material.proveedor.nombre
       }))
-      
+
       setAllMateriales(formatData)
       return formatData
     }
@@ -529,7 +535,7 @@ export function AppProvider({ children }) {
     formData.append('calibre', values.calibre)
     formData.append('proveedor', values.idProveedor)
     formData.append('tenida', values.tenida)
-    
+
 
     if (!isEdit) {
       //Creacion de un nuevo Material 
@@ -576,15 +582,30 @@ export function AppProvider({ children }) {
     }
   }
 
-  const saveModelo = async (values, isEdit) => {
-    /*Object.keys(values).forEach(k => {
-      if (k !== 'idModelo') {
-        let val = Array.isArray(values[k]) ? JSON.stringify(values[k]) : (values[k] === null ? "" : values[k])
-        formData.append(k + '', val)
+  const saveFichaMateriales = async (fichaMateriales) => {
+    let response = await fetch(apiFichaMaterialesUrl, {
+      method: 'POST',
+      body: JSON.stringify(fichaMateriales),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + session.access
       }
-    })*/
+    })
+    let data = await response.json()
+    if (response.ok) {
+      notify(data.message)
+    }
+    else
+      notify(data.message, true)
+  }
+
+  const saveModelo = async (values, isEdit) => {
+
     let formData = new FormData()
     formData.append('nombre', values.nombre !== null ? values.nombre : '')
+    formData.append('cliente', values.idCliente !== null ? values.idCliente : '')
+
+    /*
     formData.append('nombrePrograma', values.nombrePrograma !== null ? values.nombrePrograma : '')
     if ((values.archivoPrograma) instanceof File)
       formData.append('archivoPrograma', values.archivoPrograma !== null ? values.archivoPrograma : '')
@@ -592,7 +613,6 @@ export function AppProvider({ children }) {
       formData.append('archivoFichaTecnica', values.archivoFichaTecnica !== null ? values.archivoFichaTecnica : '')
     if ((values.fotografia) instanceof File)
       formData.append('fotografia', values.fotografia !== null ? values.fotografia : '')
-    formData.append('cliente', values.idCliente !== null ? values.idCliente : '')
     formData.append('talla', values.talla !== null ? values.talla : '')
     formData.append('maquinaTejido', values.idMaquinaTejido !== null ? values.idMaquinaTejido : '')
     formData.append('tipoMaquinaTejido', values.tipoMaquinaTejido !== null ? values.tipoMaquinaTejido : '')
@@ -610,8 +630,8 @@ export function AppProvider({ children }) {
     formData.append('jalones', JSON.stringify(values.jalones))
     formData.append('economisadores', JSON.stringify(values.economisadores))
     formData.append('otros', values.otros !== null ? values.otros : '')
+    */
 
-    let materialesmm = values.materiales
     if (!isEdit) {
       //    Creacion de un Nuevo Modelo 
       let response = await fetch(apiModelosUrl, {
@@ -621,21 +641,11 @@ export function AppProvider({ children }) {
       })
       //    Espero la respuesta para obtener el nuevo Id 
       const { message, modelo } = await response.json()
-      notify(message)
-      if (materialesmm.length === 0) return
       if (response.ok) {
-        //    Asigno los materiales 
-        let response2 = await fetch(apiModeloMaterialUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + session.access
-          },
-          body: JSON.stringify({ idModelo: modelo.idModelo, materiales: materialesmm }),
-        })
-        let error = response2.ok ? false : true
-        let data = await response2.json()
-        notify(data.message, error)
+        notify(message)
+      }
+      else {
+        notify(message, true)
       }
     }
     else {
@@ -648,19 +658,6 @@ export function AppProvider({ children }) {
         .then(response => response.json())
         .then(data => notify(data.message))
 
-      if (materialesmm.length === 0) return
-
-      //    Asigno Sus nuevas maquinas
-      let response = await fetch(apiModeloMaterialUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + session.access
-        },
-        body: JSON.stringify({ idModelo: values.idModelo, materiales: materialesmm }),
-      })
-      let data = await response.json()
-      notify(data.message)
     }
   }
 
@@ -693,32 +690,124 @@ export function AppProvider({ children }) {
       }
     }).then(response => response.json())
       .then(data => {
-        
         let formatData = []
-        data.forEach(async (m) => {
-          
+        data.forEach(m => {
           formatData.push({
             ...m,
+            //idModelo: m.idModelo,
+            //nombre: m.nombre,
+            idCliente: m.cliente.idCliente + '',
             isSelected: false,
-            fotografia: m.fotografia ? imageEndPoint + m.fotografia : '',
-            archivoPrograma: m.archivoPrograma ? imageEndPoint + m.archivoPrograma : '',
-            archivoFichaTecnica: m.archivoFichaTecnica ? imageEndPoint + m.archivoFichaTecnica : '',
-            idCliente: m.cliente.idCliente.toString(),
-            nombreCliente: m.cliente.nombre,
-
-            idMaquinaTejido: m.maquinaTejido.idMaquina.toString(),
-            nombreMaquinaTejido: 'Línea: '+m.maquinaTejido.linea+' Número: '+m.maquinaTejido.numero,
-
-            idMaquinaPlancha: m.maquinaPlancha.idMaquina.toString(),
-            nombreMaquinaPlancha: 'Línea: '+m.maquinaPlancha.linea+' Número: '+m.maquinaPlancha.numero,
-
-            materiales: await getModeloMaterial(m.idModelo)
           })
         })
         setAllModelos(formatData)
-        console.log(formatData)
+
+        /*
+            fotografia: m.fotografia ? imageEndPoint + m.fotografia : '',
+            archivoPrograma: m.archivoPrograma ? imageEndPoint + m.archivoPrograma : '',
+            archivoFichaTecnica: m.archivoFichaTecnica ? imageEndPoint + m.archivoFichaTecnica : '',
+            nombreCliente: m.cliente.nombre,
+
+            idMaquinaTejido: m.maquinaTejido.idMaquina.toString(),
+            nombreMaquinaTejido: 'Línea: ' + m.maquinaTejido.linea + ' Número: ' + m.maquinaTejido.numero,
+
+            idMaquinaPlancha: m.maquinaPlancha.idMaquina.toString(),
+            nombreMaquinaPlancha: 'Línea: ' + m.maquinaPlancha.linea + ' Número: ' + m.maquinaPlancha.numero,
+          })
+        })
+        return formatData
+        */
       })
+
   }
+
+  const getFichas = async (idModelo) => {
+    let response = await fetch(apiFichasUrl + idModelo + "", {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": "Bearer " + session.access
+      }
+    })
+
+    if (response.ok) {
+      let data = await response.json()
+      let formatData = []
+      data.forEach(f => {
+        formatData.push({
+          ...f,
+          maquinaTejido: f.maquinaTejido + '',
+          maquinaPlancha: f.maquinaPlancha + '',
+          fotografia: f.fotografia ? imageEndPoint + f.fotografia : ''
+        })
+      })
+
+      return formatData
+    }
+  }
+
+  const saveFicha = async (values, materiales, isEdit = false) => {
+    let formData = new FormData()
+
+    Object.keys(values).forEach(key => {
+      if (key === 'fotografia' || key.includes('archivo')) {
+        if (!(values[key] instanceof File)) return
+      }
+      if (values[key] !== '' && values[key] !== null && values[key] !== undefined)
+        formData.append(key, values[key])
+    })
+
+    if (!isEdit) {
+      let response = await fetch(apiFichasUrl, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          "authorization": "Bearer " + session.access
+        }
+      })
+      if (response.ok) {
+        let data = await response.json()
+        notify(data.message)
+        await saveFichaMateriales( {idFichaTecnica: data.ficha.idFichaTecnica, materiales:materiales} )
+      }
+      else {
+        notify('Error al guardar la ficha', true)
+      }
+    } 
+    else {
+      let response = await fetch(apiFichasUrl + values.idFichaTecnica, {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          "authorization": "Bearer " + session.access
+        }
+      })
+      let data = await response.json()
+      if (response.ok) {
+        notify(data.message)
+        await saveFichaMateriales( {idFichaTecnica: values.idFichaTecnica, materiales:materiales} )
+      }
+      else {
+        notify(data.message, true)
+      }
+    }
+  }
+
+  const deleteFicha = async (idFicha) => {
+    let response = await fetch(apiFichasUrl + idFicha, {
+      method: 'DELETE',
+      headers: {
+        "authorization": "Bearer " + session.access
+      }
+    })
+    let data = await response.json()
+    if (response.ok) {
+      notify(data.message)
+    }
+    else
+      notify(data.message, true)
+  }
+
 
   return (
     <AppContext.Provider
@@ -745,12 +834,17 @@ export function AppProvider({ children }) {
         allMateriales, getMateriales, materialesColumns,
         saveMaterial, deleteMateriales,
 
-        getEmpleadoMaquinas, 
+        getEmpleadoMaquinas,
 
         fetchingModelos,
         allModelos, getModelos,
         saveModelo, deleteModelos,
-        getModeloMaterial,
+        getFichaMateriales,
+
+        allFichas, getFichas,
+        saveFicha, deleteFicha,
+
+        saveFichaMateriales,
 
         notify
       }}>

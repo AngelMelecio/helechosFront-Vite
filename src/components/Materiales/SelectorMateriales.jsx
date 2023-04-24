@@ -2,12 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { ICONS } from "../../constants/icons";
 import { sleep } from "../../constants/sleep";
 import { useApp } from "../../context/AppContext";
-import Input from '../Input'
 import Th from "../Th";
 
 const SelectorMateriales = ({
   fichaTecnicaObj,
-  setFichaTecnicaObj,
   onPassMateriales
 }) => {
 
@@ -28,6 +26,9 @@ const SelectorMateriales = ({
     loadData()
   }, [])
 
+  useEffect(()=>{
+    calcularPesos( fichaTecnicaObj?.values?.materiales )
+  },[fichaTecnicaObj?.values?.materiales])
 
   useEffect(() => {
     let formated = allMateriales?.map(m => ({ ...m, count: 0 }))
@@ -79,20 +80,41 @@ const SelectorMateriales = ({
       setAvailableMateriales(newVal)
     }
   }
+
   const handleChangeMaterial = (e, indx) => {
-    let newMateriales = [...fichaTecnicaObj.materiales]
+    let newMateriales = [...fichaTecnicaObj.values.materiales]
     newMateriales[indx][e.target.name] = e.target.value
-    setFichaTecnicaObj(prev => ({ ...prev, materiales: newMateriales }))
+    fichaTecnicaObj.setValues(prev => ({ ...prev, materiales: newMateriales }))
+  }
+
+  const calcularPesos = (materiales) =>{
+    let newPesoPoliester = 0
+      let newPesoLurex = 0
+      let newPesoMelt = 0
+      materiales?.forEach( m => {
+        switch(m.tipo){
+          case 'Poliester':
+            newPesoPoliester += Number(m.peso)
+            break
+          case 'Lurex':
+            newPesoLurex += Number(m.peso)
+            break
+          case 'Melting':
+            newPesoMelt += Number(m.peso)
+            break
+        }        
+      })
+      fichaTecnicaObj.setFieldValue('pesoPoliester', newPesoPoliester )
+      fichaTecnicaObj.setFieldValue('pesoLurex', newPesoLurex )
+      fichaTecnicaObj.setFieldValue('pesoMelt', newPesoMelt )
   }
 
   const handleDeleteMaterial = (e, indx) => {
     e.preventDefault()
-
-    let newMateriales = [...fichaTecnicaObj.materiales]
+    let newMateriales = [...fichaTecnicaObj.values.materiales]
     newMateriales.splice(indx, 1)
-    setFichaTecnicaObj(prev => ({ ...prev, materiales: newMateriales }))
+    fichaTecnicaObj.setValues(prev => ({ ...prev, materiales: newMateriales }))
   }
-
 
   let sel_width = selectorVisible ? 'w-full' : 'w-10'
   let addButtonClass = selectorVisible ? 'neutral-button' : 'normal-button'
@@ -139,7 +161,7 @@ const SelectorMateriales = ({
                   </div>
                   <button
                     disabled={!someMaterialSelected}
-                    onClick={() => {onPassMateriales(availableMateriales); handleCloseSelector()}}
+                    onClick={() => {onPassMateriales(availableMateriales); handleCloseSelector();}}
                     type="button"
                     className={`flex items-center justify-center normal-button w-8 h-8 rounded-lg duration-500 `} >
                     <ICONS.Right size="25px" />
@@ -172,20 +194,20 @@ const SelectorMateriales = ({
             <table className="w-full">
               <thead>
                 <tr className="font-medium text-teal-800">
-                  <Th>GUIA HILOS</Th>
-                  <Th>CALIBRE</Th>
-                  <Th>PROVEEDOR</Th>
-                  <Th>COLORES</Th>
-                  <Th>TEÑIDA</Th>
-                  <Th>TIPO</Th>
-                  <Th>HEBRAS</Th>
-                  <Th>PESO</Th>
+                  <Th>Guía Hilos</Th>
+                  <Th>calibre</Th>
+                  <Th>Proveedor</Th>
+                  <Th>Colores</Th>
+                  <Th>Teñida</Th>
+                  <Th>Tipo</Th>
+                  <Th>Hebras</Th>
+                  <Th>Peso</Th>
                 </tr>
               </thead>
             <tbody>
                 {
                   //  ASSIGNED MATERIALES 
-                  fichaTecnicaObj?.materiales?.map((f, i) =>
+                  fichaTecnicaObj?.values?.materiales?.map((f, i) =>
                     <tr key={'F' + i} className="array-row border border-transparent relative hover:bg-slate-200 duration-200">
                       <td>
                         <input
