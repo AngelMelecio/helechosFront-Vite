@@ -529,3 +529,18 @@ input::-webkit-inner-spin-button {
   transition: 0.1s;
 }
 
+.hidden-button{
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0%;
+  transition: 0.2s;
+}
+
+.hover-show:hover .hidden-button{
+  visibility: visible;
+  pointer-events: all;
+  opacity: 100%;
+  transition: 0.2s;
+}
+
+

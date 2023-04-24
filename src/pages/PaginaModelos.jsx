@@ -1,13 +1,7 @@
 import React, { useRef } from 'react';
-import ReactDOM from 'react-dom';
-import { useFormik } from "formik";
 import { useState } from "react";
 import FichaTecnicaPrint from "../components/FichaTecnicaPrint";
-import Input from "../components/Input";
-import { ICONS } from "../constants/icons";
-import { createRef } from "react";
 import { useEffect } from 'react';
-import Table from '../components/Table';
 import FrmModelos from '../components/FrmModelos';
 import Loader from '../components/Loader/Loader';
 import CRUD from '../components/CRUD';
@@ -15,14 +9,17 @@ import DeleteModal from '../components/DeleteModal';
 import { sleep } from '../constants/sleep';
 import { useApp } from '../context/AppContext';
 
+const initModeloObj= {
+  idModelo:'',
+  nombre:'',
+  idCliente: 'Seleccione',
+}
+
 const initFichaTecnicaObj = {
-  idModelo: 0,
+  modelo:'',
   nombre: '',
-  nombrePrograma: '',
-  archivoPrograma: '',
-  archivoFichaTecnica: '',
-  fotografia: '',
-  cliente: '',
+  archivoPrograma: null,
+  fotografia: null,
   talla: '',
 
   maquinaTejido: '',
@@ -35,18 +32,15 @@ const initFichaTecnicaObj = {
   velocidadPlancha: '',
   temperaturaPlancha: '',
 
-  pesoPoliester: '',
-  pesoMelt: '',
-  pesoLurex: '',
+  pesoPoliester: 0,
+  pesoMelt: 0,
+  pesoLurex: 0,
 
   materiales: [],
   numeroPuntos: [{ valor: '', posicion: '' }],
   jalones: [{ valor: '', posicion: '' }],
   economisadores: [{ valor: '', posicion: '' }],
   otros: '',
-
-  idCliente: 'Seleccione',
-  nombreCliente: '',
 
   idMaquinaTejido: 'Seleccione',
   nombreMaquinaTejido: '',
@@ -63,7 +57,7 @@ export default function PaginaModelos() {
 
   const [loading, setLoading] = useState(true)
 
-  const [fichaTecnica, setFichaTecnica] = useState(initFichaTecnicaObj)
+  const [modelo, setModelo] = useState(initModeloObj)
 
   const [listaModelos, setListaModelos] = useState([])
 
@@ -75,14 +69,14 @@ export default function PaginaModelos() {
   const [saving, setSaving] = useState(false)
 
 
-  async function handleGetFichas() {
+  async function handleGetModelos() {
     setLoading(true)
     await getModelos()
     setLoading(false)
   }
 
   useEffect(() => {
-      handleGetFichas()
+      handleGetModelos()
   }, [])
 
   useEffect(() => {
@@ -98,7 +92,7 @@ export default function PaginaModelos() {
   
   const handleCloseModal = async (setState) => {
     setIsEdit(false)
-    setFichaTecnica(initFichaTecnicaObj)
+    setModelo(initModeloObj)
     modalContainerRef.current.classList.remove('visible')
     document.getElementById("tbl-page").classList.remove('blurred')
     await sleep(150)
@@ -113,8 +107,8 @@ export default function PaginaModelos() {
     setSaving(false)
   }
 
-  const handleEdit = async (fich) => {
-    setFichaTecnica(fich)
+  const handleEdit = async (mod) => {
+    setModelo(mod)
     handleOpenModal(setFrmModalVisible)
     setIsEdit(true)
   }
@@ -137,9 +131,10 @@ export default function PaginaModelos() {
         {frmModalVisible &&
           <FrmModelos
             onCloseModal={() => handleCloseModal(setFrmModalVisible)}
-            fichaTecnica={fichaTecnica}
+            Modelo={modelo}
             isEdit={isEdit}
             setIsEdit={setIsEdit}
+            initFichaObj={initFichaTecnicaObj}
           />
         }
         {deleteModalVisible &&
