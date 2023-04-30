@@ -6,6 +6,7 @@ import CRUD from '../components/CRUD'
 import Loader from '../components/Loader/Loader'
 import { sleep } from '../constants/sleep'
 import FrmMateriales from '../components/FrmMateriales'
+import AppBar from '../components/AppBar'
 
 const initobj = {
   idMaterial: "",
@@ -53,9 +54,9 @@ const PaginaMateriales = () => {
     handleGetData()
   }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     setListaMateriales(allMateriales)
-  },[allMateriales])
+  }, [allMateriales])
 
   const handleOpenModal = async (setState) => {
     setState(true)
@@ -89,21 +90,21 @@ const PaginaMateriales = () => {
   return (
     <>
       {
-        loading ? <Loader/> :
-        <CRUD
-          allElements={allMateriales}
-          elements={listaMateriales}
-          setElements={setListaMateriales}
-          columns={materialesColumns}
-          onAdd={() => handleOpenModal(setFrmModalVisible)}
-          onEdit={handleEdit}
-          onDelete={() => handleOpenModal(setDeleteModalVisible)}
-        />
+        loading ? <Loader /> :
+          <CRUD
+            allElements={allMateriales}
+            elements={listaMateriales}
+            setElements={setListaMateriales}
+            columns={materialesColumns}
+            onAdd={() => handleOpenModal(setFrmModalVisible)}
+            onEdit={handleEdit}
+            onDelete={() => handleOpenModal(setDeleteModalVisible)}
+          />
       }
-       <div className='modal absolute h-full w-full' ref={modalContainerRef}>
+      <div className='modal absolute h-full w-full' ref={modalContainerRef}>
         {frmModalVisible &&
           <FrmMateriales
-            onCloseModal={()=>handleCloseModal(setFrmModalVisible)}
+            onCloseModal={() => handleCloseModal(setFrmModalVisible)}
             material={objMaterial}
             isEdit={isEdit}
           />
@@ -114,11 +115,12 @@ const PaginaMateriales = () => {
             onCancel={() => handleCloseModal(setDeleteModalVisible)}
             onConfirm={handleDleteMateriales}
             elements={listaMateriales}
-            representation={['color','tenida']}
+            representation={['color', 'tenida']}
             message='Los siguientes materiales se eliminarán permanentemente:'
           />
         }
-       </div>
+      </div>
+
     </>
   )
 }

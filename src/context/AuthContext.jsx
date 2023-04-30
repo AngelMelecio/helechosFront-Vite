@@ -12,6 +12,7 @@ const apiLoginUrl = entorno+"/login/"
 const apiRefreshTokenUrl = entorno+"/api/token/refresh/"
 
 const AuthContext = React.createContext()
+
 export function useAuth() {
   return useContext(AuthContext)
 }

@@ -1,6 +1,6 @@
 import AppBar from "./components/AppBar"
-import PaginaEmpleados from "./pages/PaginaEmpleados"
-import { Route, Routes, Navigate } from 'react-router-dom'
+import PaginaEmpleados from "./pages/Empleados/PaginaEmpleados"
+import { Route, Routes, Navigate, Router } from 'react-router-dom'
 import PaginaMaquinas from "./pages/PaginaMaquinas"
 import PaginaClientes from "./pages/PaginaClientes"
 import Login from "./pages/Login"
@@ -11,42 +11,42 @@ import { useAuth } from "./context/AuthContext"
 import PaginaPerfil from "./pages/PaginaPerfil"
 import PaginaMateriales from "./pages/PaginaMateriales"
 import { ToastContainer } from "react-toastify"
-import PaginaModelos from "./pages/PaginaModelos"
+import PaginaModelos from "./pages/Modelos/PaginaModelos"
 import PaginaProveedores from "./pages/PaginaProveedores"
 import FichaTecnicaPrint from "./components/FichaTecnicaPrint"
+import DetailEmpleado from "./pages/Empleados/DetailEmpleado"
+import { EmpleadosProvider } from "./pages/Empleados/hooks/useEmpleados"
+import DetailModelo from "./pages/Modelos/DetailModelo"
 
 const Main = () => {
 
   const navigate = useNavigate()
   const { session } = useAuth()
 
-
   return (
-    <div className="flex w-screen relative h-screen overflow-hidden  ">
+    <>
       {session ?
         <>
           <AdminProvider>
-            <div className="flex w-18 realtive overflow-hidden">
+            <div className="flex w-full h-screen">
               <AppBar />
-            </div>
-            <div id='page' className="flex w-full h-screen relative">
-              <div className="flex absolute w-full h-full ">
-                <Routes>
-                  <Route exact path="*" element={<Navigate replace to="/perfil" />} />
-                  <Route path="/perfil" element={<PaginaPerfil />} />
-                  {session.usuario.is_staff && <Route path="/usuarios" element={<PaginaUsuarios />} />}
-                  <Route path="/empleados" element={<PaginaEmpleados />} />
-                  <Route path="/maquinas" element={<PaginaMaquinas />} />
-                  <Route path="/modelos" element={<PaginaModelos />} />
-                  <Route path="/proveedores" element={<PaginaProveedores />} />
-                  <Route path="/Materiales" element={<PaginaMateriales />} />
-                  <Route path="/clientes" element={<PaginaClientes />} />
-                </Routes>
-              </div>
+              <Routes>
+                <Route exact path="*" element={<Navigate replace to="/perfil" />} />
+                <Route path="/perfil" element={<PaginaPerfil />} />
+                {session.usuario.is_staff && <Route path="/usuarios" element={<PaginaUsuarios />} />}
+                <Route path="/empleados" element={<PaginaEmpleados />} />
+                <Route path="/empleados/:id" element={<DetailEmpleado />} />
+                <Route path="/maquinas" element={<PaginaMaquinas />} />
+                <Route path="/modelos" element={<PaginaModelos />} />
+                <Route path="/modelos/:id" element={<DetailModelo />} />
+                <Route path="/proveedores" element={<PaginaProveedores />} />
+                <Route path="/Materiales" element={<PaginaMateriales />} />
+                <Route path="/clientes" element={<PaginaClientes />} />
+              </Routes>
             </div>
           </AdminProvider>
         </>
-        :
+        : // Si no hay session
         <>
           <Routes>
             <Route exact path="*" element={<Navigate replace to="/login" />} />
@@ -54,7 +54,7 @@ const Main = () => {
           </Routes>
         </>
       }
-    </div>
+    </>
 
   )
 }

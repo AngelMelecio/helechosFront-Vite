@@ -13,6 +13,7 @@ import { ICONS } from "../constants/icons"
 import { sleep } from "../constants/sleep"
 import { useAdmin } from "../context/AdminContext"
 import { useAuth } from "../context/AuthContext"
+import AppBar from "../components/AppBar"
 
 const apiUserUrl = 'http://localhost:8000/users/'
 
@@ -108,7 +109,7 @@ const PaginaUsuarios = () => {
           onDelete={() => handleOpenModal(setDeleteModalVisible)}
         />
       }
-      <div className='modal absolute h-full w-full' ref={modalContainerRef}>
+      {<div className='modal absolute h-full w-full' ref={modalContainerRef}>
         {frmModalVisible &&
           <FrmUsuarios
             onCloseModal={() => handleCloseModal(setFrmModalVisible)}
@@ -125,7 +126,7 @@ const PaginaUsuarios = () => {
             message='Los siguientes usuarios se eliminarán permanentemente:'
           />
         }
-      </div>
+      </div>}
     </>
   )
 }

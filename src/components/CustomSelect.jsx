@@ -27,7 +27,7 @@ const CustomSelect = ({ name, className, onChange, value, onBlur, options, label
     
     return (
         <div className="flex flex-col w-full mx-2 mt-2">
-            <p className='text-teal-800 font-medium'>{label}</p>
+            <p className='text-teal-800 font-normal'>{label}</p>
             <div className={(errores ? cn_bad : cn_good)}>
                 <Select
                     name={name}
