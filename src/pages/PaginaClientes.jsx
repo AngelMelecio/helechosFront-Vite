@@ -20,11 +20,9 @@ const initobj = {
 const PaginaClientes = () => {
 
   const {
-    fetchingClientes,
     allClientes,
     clientesColumns,
     getClientes,
-    saveClientes,
     deleteClientes
   } = useApp()
 
@@ -34,7 +32,7 @@ const PaginaClientes = () => {
   const [isEdit, setIsEdit] = useState(false)
 
   const [objCliente, setObjCliente] = useState(initobj);
-  const [listaClientes, setListaClientes] = useState()
+  const [listaClientes, setListaClientes] = useState([])
 
   const [frmModalVisible, setFrmModalVisible] = useState(false)
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
@@ -104,6 +102,7 @@ const PaginaClientes = () => {
             onCloseModal={() => handleCloseModal(setFrmModalVisible)}
             cliente={objCliente}
             isEdit={isEdit}
+            setIsEdit={setIsEdit}
           />
 
         }
