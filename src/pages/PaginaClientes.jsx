@@ -6,14 +6,15 @@ import CRUD from '../components/CRUD'
 import Loader from '../components/Loader/Loader'
 import { sleep } from '../constants/sleep'
 import FrmClientes from '../components/FrmClientes'
+import AppBar from '../components/AppBar'
 
 const initobj = {
-  idCliente: 0,
-  nombre: '',
-  direccion: '',
-  correo: '',
-  contactos: [{nombre:'',puesto:'',correo:'',telefono:'',nota:''}],
-  otro: ''
+  idCliente: "",
+  nombre: "",
+  direccion: "",
+  correo: "",
+  contactos: [{ "nombre": "", "puesto": "", "correo": "", "telefono": "", "nota": "" }],
+  otro: ""
 }
 
 const PaginaClientes = () => {
@@ -48,9 +49,9 @@ const PaginaClientes = () => {
     handleGetData()
   }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     setListaClientes(allClientes)
-  },[allClientes])
+  }, [allClientes])
 
   const handleOpenModal = async (setState) => {
     setState(true)
@@ -84,21 +85,21 @@ const PaginaClientes = () => {
   return (
     <>
       {
-        loading ? <Loader/> :
-        <CRUD
-          allElements={allClientes}
-          elements={listaClientes}
-          setElements={setListaClientes}
-          columns={clientesColumns}
-          onAdd={() => handleOpenModal(setFrmModalVisible)}
-          onEdit={handleEdit}
-          onDelete={() => handleOpenModal(setDeleteModalVisible)}
-        />
+        loading ? <Loader /> :
+          <CRUD
+            allElements={allClientes}
+            elements={listaClientes}
+            setElements={setListaClientes}
+            columns={clientesColumns}
+            onAdd={() => handleOpenModal(setFrmModalVisible)}
+            onEdit={handleEdit}
+            onDelete={() => handleOpenModal(setDeleteModalVisible)}
+          />
       }
-       <div className='modal absolute h-full w-full' ref={modalContainerRef}>
+      <div className='modal absolute h-full w-full' ref={modalContainerRef}>
         {frmModalVisible &&
           <FrmClientes
-            onCloseModal={()=>handleCloseModal(setFrmModalVisible)}
+            onCloseModal={() => handleCloseModal(setFrmModalVisible)}
             cliente={objCliente}
             isEdit={isEdit}
             setIsEdit={setIsEdit}
@@ -114,7 +115,7 @@ const PaginaClientes = () => {
             message='Los siguientes clientes se eliminarán permanentemente:'
           />
         }
-       </div>
+      </div>
     </>
   )
 }

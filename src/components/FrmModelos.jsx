@@ -11,6 +11,7 @@ import SelectorClientes from './Materiales/SelectorClientes'
 import { useRef } from "react"
 import FichasModal from "./FichasModal"
 import ModelosFormik from "./Modelos/ModelosFormik"
+import PesosList from "./Modelos/PesosList"
 
 
 
@@ -64,6 +65,8 @@ const FrmModelos = ({
       economisadores: JSON.stringify(fichaFormik.values.economisadores),
       numeroPuntos: JSON.stringify(fichaFormik.values.numeroPuntos)
     }
+    if (!values.idFichaTecnica) values.fechaCreacion = new Date().toISOString().slice(0, 10)
+
     let newMateriales = fichaFormik.values.materiales.map(m => ({
       idMaterial: m.idMaterial,
       guiaHilos: m.guiaHilos,
@@ -71,8 +74,7 @@ const FrmModelos = ({
       peso: Number(m.peso),
     }))
     //console.log( values )
-
-    await saveFicha( values, newMateriales, values.idFichaTecnica ? true : false )
+    await saveFicha(values, newMateriales, values.idFichaTecnica ? true : false)
     loadFichas()
     setTheresChanges(false)
   }
@@ -271,7 +273,7 @@ const FrmModelos = ({
   }
 
   const handleCopyFicha = (indx) => {
-    fichaFormik.setValues( {...fichasModeloList[indx], idFichaTecnica:undefined } )
+    fichaFormik.setValues({ ...fichasModeloList[indx], idFichaTecnica: undefined })
     handleGetFichaMateriales(fichasModeloList[indx].idFichaTecnica)
     setSelectedFichaIndx(fichasModeloList.length)
     let copy = { ...fichasModeloList[indx] }
@@ -324,7 +326,7 @@ const FrmModelos = ({
               isEdit={isEdit}
               clientesOptions={clientesOptions}
               onCloseModal={onCloseModal}
-            /> 
+            />
             <div id="modal-body" className="flex w-full h-full ">
               <div className="flex flex-col w-72 h-full " >
                 <div className="flex w-full px-2 py-4 items-center border-b-2 relative">
@@ -349,7 +351,7 @@ const FrmModelos = ({
                             flex w-full p-3 items-center relative border-b-2 cursor-pointer` }>
 
                           <p className="pl-5 font-medium">{ficha.nombre !== '' ? ficha.nombre : 'Nueva Ficha'}</p>
-                          {indx === selectedFichaIndx && <>
+                          { indx === selectedFichaIndx && <>
                             <button
                               onClick={e => {
                                 e.stopPropagation();
@@ -534,26 +536,9 @@ const FrmModelos = ({
                           DATOS DE LOS HILOS
                         </div>
                       </div>
-                      <div className="w-100 flex justify-end pr-10">
-                        <div className="flex flex-col w-1/3  border mb-2">
-                          <div className="total-center font-bold text-teal-800 bg-slate-100">Peso</div>
-                          <div className="flex flex-row justify-between p-1">
-                            <div className="total-center flex flex-col px-2">
-                              <p className="font-semibold text-teal-800">Poliester</p>
-                              <p>{fichaFormik?.values?.pesoPoliester}</p>
-                            </div>
-                            <div className="total-center flex flex-col px-2">
-                              <p className="font-semibold text-teal-800">Melt</p>
-                              <p>{fichaFormik?.values?.pesoMelt}</p>
-                            </div>
-                            <div className="total-center flex flex-col px-2">
-                              <p className="font-semibold text-teal-800">Lurex</p>
-                              <p>{fichaFormik?.values?.pesoLurex}</p>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
+                      <PesosList
+                        materiales={fichaFormik?.values?.materiales}
+                      />
                       <div className="flex flex-row w-full">
                         <SelectorMateriales
                           fichaTecnicaObj={fichaFormik}
@@ -648,7 +633,6 @@ const FrmModelos = ({
             onCancel={() => {
               handleCloseModal(setSaveFichaModalVisible)
               handleSaveFicha()
-
               if (pendingCreation) {
                 AddFicha(); return;
               }

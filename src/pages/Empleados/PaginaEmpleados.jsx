@@ -1,12 +1,13 @@
 import React, { useRef, useState } from 'react'
 import { useEffect } from 'react'
-import DeleteModal from '../components/DeleteModal'
-import { useApp } from '../context/AppContext'
-import CRUD from '../components/CRUD'
-import Loader from '../components/Loader/Loader'
-import FrmEmpleados from '../components/FrmEmpleados'
-import { sleep } from '../constants/sleep'
-import AppBar from '../components/AppBar'
+import DeleteModal from '../../components/DeleteModal'
+import { useApp } from '../../context/AppContext'
+import CRUD from '../../components/CRUD'
+import Loader from '../../components/Loader/Loader'
+import FrmEmpleados from '../../components/FrmEmpleados'
+import { sleep } from '../../constants/sleep'
+import AppBar from '../../components/AppBar'
+import { useEmpleados } from './hooks/useEmpleados'
 
 const initobj = {
   idEmpleado: "",
@@ -26,9 +27,11 @@ const initErrors = {}
 
 const PaginaEmpleados = () => {
 
+  const { allEmpleados, loading, refreshEmpleados } = useEmpleados()
+
   const {
     empleadosColumns, getEmpleados, fetchingEmpleados,
-    allEmpleados, deleteEmpleados,
+    deleteEmpleados,
     getMaquinas
   } = useApp()
 
@@ -36,7 +39,6 @@ const PaginaEmpleados = () => {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
 
   const [saving, setSaving] = useState(false)
-  const [loading, setLoading] = useState(true)
   const [isEdit, setIsEdit] = useState(false)
 
   const [objEmpleado, setObjEmpleado] = useState(initobj)
@@ -47,20 +49,14 @@ const PaginaEmpleados = () => {
   const [shown, setShown] = React.useState(false);
   const switchShown = () => setShown(!shown);
 
-  async function handleGetData() {
-    setLoading(true)
-    await getEmpleados()
-    setLoading(false)
-  }
-
+  
   useEffect(() => {
-    handleGetData()
+    refreshEmpleados()
   }, [])
 
   useEffect(() => {
     setListaEmpleados(allEmpleados)
   }, [allEmpleados])
-
 
   const handleDeleteEmpleados = async () => {
     setSaving(true)
@@ -93,38 +89,38 @@ const PaginaEmpleados = () => {
 
   return (
     <>
-      <div className="w-full relative overflow-hidden">
-        {
-          loading ? <Loader /> :
-            <CRUD
-              title='Empleados'
-              allElements={allEmpleados}
-              elements={listaEmpleados}
-              setElements={setListaEmpleados}
-              columns={empleadosColumns}
-              onAdd={() => handleOpenModal(setFrmModalVisible)}
-              onEdit={handleEdit}
-              onDelete={() => handleOpenModal(setDeleteModalVisible)}
-            />
+      {
+          <CRUD
+            title='EMPLEADOS'
+            path='empleados'
+            idName='idEmpleado'
+            loading={loading}
+            allElements={allEmpleados}
+            elements={listaEmpleados}
+            setElements={setListaEmpleados}
+            columns={empleadosColumns}
+            onAdd={() => handleOpenModal(setFrmModalVisible)}
+            onEdit={handleEdit}
+            onDelete={() => handleOpenModal(setDeleteModalVisible)}
+          />
+      }
+      <div className='modal absolute h-full w-full' ref={modalContainerRef}>
+        {frmModalVisible &&
+          <FrmEmpleados
+            onCloseModal={() => handleCloseModal(setFrmModalVisible)}
+            empleado={objEmpleado}
+            isEdit={isEdit}
+          />
         }
-        <div className='modal absolute h-full w-full' ref={modalContainerRef}>
-          {frmModalVisible &&
-            <FrmEmpleados
-              onCloseModal={() => handleCloseModal(setFrmModalVisible)}
-              empleado={objEmpleado}
-              isEdit={isEdit}
-            />
-          }
-          {deleteModalVisible &&
-            <DeleteModal
-              onCancel={() => handleCloseModal(setDeleteModalVisible)}
-              onConfirm={handleDeleteEmpleados}
-              elements={listaEmpleados}
-              representation={['nombre']}
-              message='Las siguientes fichas serán eliminadas de forma permanente'
-            />
-          }
-        </div>
+        {deleteModalVisible &&
+          <DeleteModal
+            onCancel={() => handleCloseModal(setDeleteModalVisible)}
+            onConfirm={handleDeleteEmpleados}
+            elements={listaEmpleados}
+            representation={['nombre']}
+            message='Las siguientes fichas serán eliminadas de forma permanente'
+          />
+        }
       </div>
     </>
   )

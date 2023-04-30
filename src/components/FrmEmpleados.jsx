@@ -93,7 +93,7 @@ const FrmEmpleados = ({
     }
 
     if (!values.fechaEntrada) {
-      errors.fechaEntrada = 'Establece la fecha de contratación';
+      errors.fechaEntrada = 'Establece la fec. de contratación';
     }
 
     if (!values.departamento) {
@@ -253,7 +253,7 @@ const FrmEmpleados = ({
                       </div>
                       <div className='flex flex-row'>
                         <Input
-                          label='Fecha de registro en el seguro' type='date' name='fechaAltaSeguro' value={formik.values ? formik.values.fechaAltaSeguro : ''}
+                          label='Fec. de registro en el seguro' type='date' name='fechaAltaSeguro' value={formik.values ? formik.values.fechaAltaSeguro : ''}
                           onChange={formik.handleChange} onBlur={formik.handleBlur}
                           errores={formik.errors.fechaAltaSeguro && formik.touched.fechaAltaSeguro ? formik.errors.fechaAltaSeguro : null}
                         />

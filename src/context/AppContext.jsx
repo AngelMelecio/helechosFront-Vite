@@ -696,7 +696,7 @@ export function AppProvider({ children }) {
             ...m,
             //idModelo: m.idModelo,
             //nombre: m.nombre,
-            idCliente: m.cliente.idCliente + '',
+            idCliente: m.cliente?.idCliente + '',
             isSelected: false,
           })
         })

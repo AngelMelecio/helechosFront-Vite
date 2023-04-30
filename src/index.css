@@ -56,6 +56,7 @@
 /* Track */
 #appbar::-webkit-scrollbar-track {
   background: #0d9488;
+  transition: 0.2s;
 }
 
 
@@ -66,14 +67,40 @@
 }
 
 #appbar:hover::-webkit-scrollbar-thumb {
-  background: #4c6e6c;
+  /*background: #4c6e6c;*/
+  background: #08776ebb;
+  transition: 0.2s;
+  transition-delay: 1s;
 }
 
 /* Handle on hover */
 #appbar::-webkit-scrollbar-thumb:hover {
-  background: #425f5d
+  /*background: #425f5d;*/
+  background: #0b6b63d8;
 }
 
+#appbar{
+  transition: 0.2s;
+}
+
+#appbar:hover{
+  width: 15rem;
+  transition: 0.3s;
+  transition-delay: 0.4s;
+}
+
+#appbar .appbar-content {
+  opacity: 0%;
+  transition: 0.3s;
+  visibility: hidden;
+}
+
+#appbar:hover .appbar-content {
+  opacity: 100%;
+  transition: 0.6s;
+  transition-delay: 0.5s;
+  visibility: visible;
+}
 
 body {
   margin: 0;
@@ -177,12 +204,8 @@ input::-webkit-inner-spin-button {
 }
 
 .customTable th {
-  background-color: #f1f5f9;
+  background-color: #f0fdfa;
   cursor: default;
-}
-
-#options-bar {
-  
 }
 
 .customTable th .filter-button {
@@ -204,11 +227,11 @@ input::-webkit-inner-spin-button {
   cursor: pointer;
   transition: 0.4s;
   border-collapse: collapse;
-  border-bottom: 1px solid #cbd5e1;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .customTable tbody tr:hover {
-  background-color: #e2e8f0;
+  background-color: #f1f5f9;
   transition: 0.2s;
 }
 
@@ -220,6 +243,7 @@ input::-webkit-inner-spin-button {
 
 .normal-button {
   background-color: var(--teal500);
+  font-weight: 600;
   color: white;
   cursor: pointer;
   transition: 0.2s;
@@ -349,24 +373,8 @@ input::-webkit-inner-spin-button {
   z-index: -1;
 }
 
-#appbar .appbar-content {
-  opacity: 0%;
-  transition: 0.3s;
-}
-
-.appbar-content {
-  visibility: hidden;
-}
-
-#appbar:hover .appbar-content {
-  opacity: 100%;
-  transition: 0.6s;
-  visibility: visible;
-
-}
 
 #search-input {
-  border: 1px solid white;
   transition: 0.2s;
 }
 

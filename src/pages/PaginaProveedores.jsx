@@ -6,6 +6,7 @@ import CRUD from '../components/CRUD'
 import Loader from '../components/Loader/Loader'
 import { sleep } from '../constants/sleep'
 import FrmProveedores from '../components/FrmProveedores'
+import AppBar from '../components/AppBar'
 
 const initobj = {
   idProveedor: "",
@@ -14,7 +15,7 @@ const initobj = {
   telefono: "",
   correo: "",
   departamento: "Seleccione",
-  contactos: [{"nombre":"","puesto":"","correo":"","telefono":"","nota":""}],
+  contactos: [{ "nombre": "", "puesto": "", "correo": "", "telefono": "", "nota": "" }],
   otro: ""
 }
 
@@ -52,9 +53,9 @@ const PaginaProveedores = () => {
     handleGetData()
   }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     setListaProveedores(allProveedores)
-  },[allProveedores])
+  }, [allProveedores])
 
   const handleOpenModal = async (setState) => {
     setState(true)
@@ -88,21 +89,21 @@ const PaginaProveedores = () => {
   return (
     <>
       {
-        loading ? <Loader/> :
-        <CRUD
-          allElements={allProveedores}
-          elements={listaProveedores}
-          setElements={setListaProveedores}
-          columns={proveedoresColumns}
-          onAdd={() => handleOpenModal(setFrmModalVisible)}
-          onEdit={handleEdit}
-          onDelete={() => handleOpenModal(setDeleteModalVisible)}
-        />
+        loading ? <Loader /> :
+          <CRUD
+            allElements={allProveedores}
+            elements={listaProveedores}
+            setElements={setListaProveedores}
+            columns={proveedoresColumns}
+            onAdd={() => handleOpenModal(setFrmModalVisible)}
+            onEdit={handleEdit}
+            onDelete={() => handleOpenModal(setDeleteModalVisible)}
+          />
       }
-       <div className='modal absolute h-full w-full' ref={modalContainerRef}>
+      <div className='modal absolute h-full w-full' ref={modalContainerRef}>
         {frmModalVisible &&
           <FrmProveedores
-            onCloseModal={()=>handleCloseModal(setFrmModalVisible)}
+            onCloseModal={() => handleCloseModal(setFrmModalVisible)}
             proveedor={objProveedor}
             isEdit={isEdit}
           />
@@ -117,7 +118,7 @@ const PaginaProveedores = () => {
             message='Los siguientes proveedores se eliminarán permanentemente:'
           />
         }
-       </div>
+      </div>
     </>
   )
 }

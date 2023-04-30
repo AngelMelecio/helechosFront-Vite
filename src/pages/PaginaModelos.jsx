@@ -54,9 +54,7 @@ export default function PaginaModelos() {
   const modalContainerRef = useRef()
 
   const { allModelos, getModelos, deleteModelos } = useApp()
-
   const [loading, setLoading] = useState(true)
-
   const [modelo, setModelo] = useState(initModeloObj)
 
   const [listaModelos, setListaModelos] = useState([])

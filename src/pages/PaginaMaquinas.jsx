@@ -6,6 +6,7 @@ import CRUD from '../components/CRUD'
 import FrmMaquinas from '../components/FrmMaquinas'
 import Loader from '../components/Loader/Loader'
 import { sleep } from '../constants/sleep'
+import AppBar from '../components/AppBar'
 
 const initobj = {
   idMaquina: "",
@@ -54,9 +55,9 @@ const PaginaMaquinas = () => {
     handleGetData()
   }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     setListaMaquinas(allMaquinas)
-  },[allMaquinas])
+  }, [allMaquinas])
 
   const handleOpenModal = async (setState) => {
     setState(true)
@@ -89,37 +90,37 @@ const PaginaMaquinas = () => {
 
   return (
     <>
-      {
-        loading ? <Loader/> :
-        <CRUD
-          allElements={allMaquinas}
-          elements={listaMaquinas}
-          setElements={setListaMaquinas}
-          columns={maquinasColumns}
-          onAdd={() => handleOpenModal(setFrmModalVisible)}
-          onEdit={handleEdit}
-          onDelete={() => handleOpenModal(setDeleteModalVisible)}
-        />
-      }
-       <div className='modal absolute h-full w-full' ref={modalContainerRef}>
-        {frmModalVisible &&
-          <FrmMaquinas
-            onCloseModal={()=>handleCloseModal(setFrmModalVisible)}
-            maquina={objMaquina}
-            isEdit={isEdit}
-          />
+        {
+          loading ? <Loader /> :
+            <CRUD
+              allElements={allMaquinas}
+              elements={listaMaquinas}
+              setElements={setListaMaquinas}
+              columns={maquinasColumns}
+              onAdd={() => handleOpenModal(setFrmModalVisible)}
+              onEdit={handleEdit}
+              onDelete={() => handleOpenModal(setDeleteModalVisible)}
+            />
+        }
+        <div className='modal absolute h-full w-full' ref={modalContainerRef}>
+          {frmModalVisible &&
+            <FrmMaquinas
+              onCloseModal={() => handleCloseModal(setFrmModalVisible)}
+              maquina={objMaquina}
+              isEdit={isEdit}
+            />
 
-        }
-        {deleteModalVisible &&
-          <DeleteModal
-            onCancel={() => handleCloseModal(setDeleteModalVisible)}
-            onConfirm={handleDleteMaquinas}
-            elements={listaMaquinas}
-            representation={['numero', 'linea', 'marca', 'modelo']}
-            message='Las siguientes maquinas se eliminarán permanentemente:'
-          />
-        }
-       </div>
+          }
+          {deleteModalVisible &&
+            <DeleteModal
+              onCancel={() => handleCloseModal(setDeleteModalVisible)}
+              onConfirm={handleDleteMaquinas}
+              elements={listaMaquinas}
+              representation={['numero', 'linea', 'marca', 'modelo']}
+              message='Las siguientes maquinas se eliminarán permanentemente:'
+            />
+          }
+        </div>
     </>
   )
 }
