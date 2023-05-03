@@ -94,13 +94,13 @@ const PaginaModelos = () => {
         {deleteModalVisible &&
           <DeleteModal
             onCancel={() => handleCloseModal(setDeleteModalVisible)}
-            onConfirm={()=>{}}
+            onConfirm={() => { }}
             elements={listaModelos}
             representation={['nombre']}
             message='Las siguientes fichas serán eliminadas de forma permanente'
           />
         }
-        
+
       </div>
     </>
   )

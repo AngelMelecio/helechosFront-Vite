@@ -12,46 +12,99 @@ export function useClientes() {
     return useContext(ClientesContext)
 }
 
+function formatClientes(clientes){
+    let formatData = clientes.map((clie)=>({
+        ...clie,
+        isSelected: false,
+    }))
+    return formatData
+}
+
 export function ClientesProvider({ children }) {
 
-    const { session } = useAuth()
+    const { session ,notify} = useAuth()
+
     const [allClientes, setAllClientes] = useState([])
     const [loading, setLoading] = useState(true)
+    const [errors, setErrors] = useState(false)
+
+    function getCliente(id) {
+        let cliente = allClientes.find(e => e.idCliente + '' === id + '')
+        return cliente
+    }
 
     async function getClientes() {
         let options = {
             method: 'GET',
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization': 'Bearer ' + session.access
-            }
+            headers: {'Authorization': 'Bearer ' + session.access}
         }
         const clientes = await fetchAPI(API_CLIENTES_URL, options)
-        let formatData = clientes.map((cliente) => ({
-            ...cliente,
-            isSelected: false,
-        }))
-        return formatData
+        return formatClientes(clientes)
     }
 
     async function refreshClientes() {
         try {
             setLoading(true)
-            let clientes = await getClientes()
+            const clientes = await getClientes()
             setAllClientes(clientes)
         } catch (e) {
-            console.log(e)
+            setErrors(err)
         } finally {
             setLoading(false)
         }
     }
+
+    const postCliente = async (values, method) => {
+        let Keys=[
+            'nombre',
+            'direccion',
+            'rfc',
+            'telefono',
+            'correo',
+            'contactos',
+            'contactos',
+            'otros',
+        ]
+        let formData = new FormData()
+        Keys.forEach(k => {
+            if(k === 'contacos'){formData.append(k,values[k]? JSONN.stringify(values[k]):'')}
+            formData.append(k,values[k]? values[k]:'')
+        })
+        const options = {
+            method: method,
+            headers: {'Authorization': 'Bearer ' + session.access},
+            body: formData
+        }
+        let {clientes,message} = await fetchAPI(API_CLIENTES_URL + (method==='PUT'? values.idCliente:''), options)
+        return{message}
+        //return formatClientes(clientes)
+      }
+
+    
+
+    async function saveCliente({values, method}) {
+        try {
+          setLoading(true)
+          const {message} = await postCliente(values, method)
+          notify(message)
+        } catch (err) {
+          console.log(err)
+          setErrors(err)
+          notify('Error al guardar cliente', true)
+        } finally {
+          setLoading(false)
+        }
+      }
 
     return (
         <ClientesContext.Provider
             value={{
                 allClientes,
                 loading,
-                refreshClientes
+                errors,
+                refreshClientes,
+                getCliente,
+                saveCliente
             }}
         >
             {children}
