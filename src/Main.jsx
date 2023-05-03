@@ -2,7 +2,7 @@ import AppBar from "./components/AppBar"
 import PaginaEmpleados from "./pages/Empleados/PaginaEmpleados"
 import { Route, Routes, Navigate, Router } from 'react-router-dom'
 import PaginaMaquinas from "./pages/PaginaMaquinas"
-import PaginaClientes from "./pages/PaginaClientes"
+import PaginaClientes from "./pages/Clientes/PaginaClientes"
 import Login from "./pages/Login"
 import { useNavigate } from "react-router-dom"
 import { AdminProvider } from "./context/AdminContext"
@@ -17,6 +17,7 @@ import FichaTecnicaPrint from "./components/FichaTecnicaPrint"
 import DetailEmpleado from "./pages/Empleados/DetailEmpleado"
 import { EmpleadosProvider } from "./pages/Empleados/hooks/useEmpleados"
 import DetailModelo from "./pages/Modelos/DetailModelo"
+import DetailCliente from "./pages/Clientes/DetailCliente"
 
 const Main = () => {
 
@@ -42,6 +43,7 @@ const Main = () => {
                 <Route path="/proveedores" element={<PaginaProveedores />} />
                 <Route path="/Materiales" element={<PaginaMateriales />} />
                 <Route path="/clientes" element={<PaginaClientes />} />
+                <Route path="/clientes/:id" element={<DetailCliente />} />
               </Routes>
             </div>
           </AdminProvider>

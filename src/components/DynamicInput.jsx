@@ -11,15 +11,6 @@ const DynamicInput = ({
   clearObject,
 }) => {
   const [confirmationIndex, setConfirmationIndex] = useState(null);
-
-  const toggleConfirmation = (index) => {
-
-  };
-
-  const handleDelete = (index) => {
-
-  };
-
   return (
     <FieldArray
       name={arrayName}
@@ -63,7 +54,7 @@ const DynamicInput = ({
                             setConfirmationIndex(index);
                           }
                         }}
-                        className="m-1 p-2 trash-button rounded-r-lg"
+                        className="m-1 p-2 rounded-r-lg bg-gray-200 text-zinc-700	"
                       >
                         <ICONS.Trash />
                       </button>
