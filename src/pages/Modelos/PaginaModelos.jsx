@@ -3,7 +3,7 @@ import useModelos from "./hooks/useModelos"
 import { useState } from "react"
 import { useEffect } from "react"
 import CRUD from "../../components/CRUD"
-import { sleep } from "../../constants/sleep"
+import { sleep } from "../../constants/functions"
 import DeleteModal from "../../components/DeleteModal"
 
 const initModeloObj = {

@@ -25,7 +25,7 @@
 }
 
 ::-webkit-scrollbar {
-  width: 11px;
+  width: 0.75rem;
   height: 11px;
 }
 
@@ -409,7 +409,7 @@ input::-webkit-inner-spin-button {
   opacity: 0%;
   visibility: hidden;
   pointer-events: none;
-  z-index: 10;
+  z-index: 100;
   transition: visibility 0.3s, opacity 0.3s, pointer-events 0s;
 }
 
@@ -551,4 +551,8 @@ input::-webkit-inner-spin-button {
   transition: 0.2s;
 }
 
+
+.screen {
+  height: 100vh;
+}
 

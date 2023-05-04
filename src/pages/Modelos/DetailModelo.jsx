@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useFichas } from './hooks/useFichas';
 import Loader from '../../components/Loader/Loader';
 import SectionFichas from './components/SectionFichas';
-import { sleep } from '../../constants/sleep';
+import { sleep } from '../../constants/functions';
 import FichasModal from '../../components/FichasModal';
 
 let initModelo = {
@@ -26,12 +26,14 @@ const DetailModelo = () => {
 
   const modalRef = useRef()
   const [modalVisible, setModalVisible] = useState(false)
+  const [pageScrollBottom, setPageScrollBottom] = useState(false)
 
-  const [onSaveChanges, setOnSaveChanges] = useState( ()=>{} )
-  const [onDiscardChanges, setOnDiscardChanges] = useState( ()=>{} )
+  const [onSaveChanges, setOnSaveChanges] = useState(() => { })
+  const [onDiscardChanges, setOnDiscardChanges] = useState(() => { })
   const [modalMessage, setModalMessage] = useState('')
   const [modalCancelText, setModalCancelText] = useState('')
   const [modalConfirmText, setModalConfirmText] = useState('')
+
 
   const handleOpenModal = async (setState) => {
     setState(true)
@@ -45,23 +47,25 @@ const DetailModelo = () => {
     setState(false)
   }
 
-  const handleRefreshFichas = () => {
-    refreshFichas({ idModelo: id })
-  }
-
   useEffect(() => {
-    console.log('DETALLES DEL MODELO:', id)
-    handleRefreshFichas()
+    console.log('EFFECTO DETALLE MODELO, id:', id )
+    refreshFichas({ idModelo: id })
   }, [id])
-  
-  useEffect(()=>{
-    console.log('EFECTO DETALLES MODELO')
-  },[])
+
+  const pageRef = useRef()
+
+  const handleScroll = (e) => { 
+    setPageScrollBottom( Math.ceil( pageRef.current.scrollTop + pageRef.current.clientHeight) >=
+      pageRef.current.scrollHeight )
+  }
 
   return (
     <>
-      <div className="w-full relative overflow-y-scroll h-full">
-        <div id="tbl-page" className="flex flex-col w-full h-full bg-slate-100 relative px-8 py-5">
+      <div 
+      ref={ pageRef }
+      onScroll={handleScroll}
+      className="w-full relative overflow-y-scroll h-full">
+        <div id="tbl-page" className="flex flex-col w-full bg-slate-100 relative px-8 py-5">
           <div className="flex pb-4 ">
             <button
               onClick={() => navigate(-1)}
@@ -76,25 +80,28 @@ const DetailModelo = () => {
               isEdit={id !== '0'}
             />
           </div>
-          <p className="pt-8 pb-4 font-bold text-3xl pl-3 text-teal-700">
-            Fichas Tecnicas
-          </p>
-          <div className="flex flex-col relative bg-white rounded-lg shadow-lg">
-            {loadingFichas ? <Loader />
-              :
-              <SectionFichas
-                fichas={fichas}
-                openModal={ () => handleOpenModal(setModalVisible) }
-                closeModal={ () => handleCloseModal(setModalVisible) }  
-                setOnSaveChanges={setOnSaveChanges}
-                setOnDiscardChanges={setOnDiscardChanges}
-                setModalMessage={setModalMessage}
-                setModalCancelText={setModalCancelText}
-                setModalConfirmText={setModalConfirmText}
-                refreshFichas={handleRefreshFichas}
-              />
-            }
+          <div className='flex flex-col screen'>
+            <p className="pt-8 pb-4 font-bold text-3xl pl-3 text-teal-700">
+              Fichas Tecnicas
+            </p>
+            <div className="flex flex-col relative h-full bg-white rounded-lg shadow-lg">
+              { loadingFichas ? <Loader />
+                :
+                <SectionFichas
+                  fichas={fichas}
+                  openModal={ () => handleOpenModal(setModalVisible) }
+                  closeModal={ () => handleCloseModal(setModalVisible) }  
+                  setOnSaveChanges={setOnSaveChanges}
+                  setOnDiscardChanges={setOnDiscardChanges}
+                  setModalMessage={setModalMessage}
+                  setModalCancelText={setModalCancelText}
+                  setModalConfirmText={setModalConfirmText}
+                  scrollForm={pageScrollBottom}
+                />
+              }
+            </div>
           </div>
+
         </div>
       </div>
       <div className='modal absolute h-full w-full' ref={modalRef}>
@@ -108,6 +115,8 @@ const DetailModelo = () => {
           />
         }
       </div>
+
+      
     </>
   )
 }

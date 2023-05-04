@@ -4,7 +4,7 @@ import { ICONS } from "../constants/icons"
 import Input from "./Input"
 import SelectorMateriales from "./Materiales/SelectorMateriales"
 import { useApp } from "../context/AppContext"
-import { sleep } from "../constants/sleep"
+import { sleep } from "../constants/functions"
 import DynamicInput from "./DynamicInput"
 import CustomSelect from "./CustomSelect"
 import SelectorClientes from './Materiales/SelectorClientes'

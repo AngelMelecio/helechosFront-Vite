@@ -5,7 +5,7 @@ import { useApp } from '../context/AppContext'
 import CRUD from '../components/CRUD'
 import Loader from '../components/Loader/Loader'
 import FrmEmpleados from '../components/FrmEmpleados'
-import { sleep } from '../constants/sleep'
+import { sleep } from '../constants/functions'
 import AppBar from '../components/AppBar'
 
 const initobj = {
