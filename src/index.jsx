@@ -9,6 +9,7 @@ import { EmpleadosProvider } from './pages/Empleados/hooks/useEmpleados';
 import { ModelosProvider } from './pages/Modelos/hooks/useModelos';
 import { ClientesProvider } from './pages/Clientes/hooks/useClientes';
 import { FichasProvider } from './pages/Modelos/hooks/useFichas';
+import { MaquinasProvider } from './pages/Maquinas/hooks/useMaquinas';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -16,13 +17,15 @@ ReactDOM.render(
       <AuthProvider>
         <AppProvider>
           <EmpleadosProvider>
-            <ModelosProvider>
-              <FichasProvider>
-                <ClientesProvider>
-                  <Main />
-                </ClientesProvider>
-              </FichasProvider>
-            </ModelosProvider>
+            <MaquinasProvider>
+              <ModelosProvider>
+                <FichasProvider>
+                  <ClientesProvider>
+                    <Main />
+                  </ClientesProvider>
+                </FichasProvider>
+              </ModelosProvider>
+            </MaquinasProvider>
           </EmpleadosProvider>
         </AppProvider>
       </AuthProvider>

@@ -6,7 +6,7 @@ import FrmModelos from '../components/FrmModelos';
 import Loader from '../components/Loader/Loader';
 import CRUD from '../components/CRUD';
 import DeleteModal from '../components/DeleteModal';
-import { sleep } from '../constants/sleep';
+import { sleep } from '../constants/functions';
 import { useApp } from '../context/AppContext';
 
 const initModeloObj= {

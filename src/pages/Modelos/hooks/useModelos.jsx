@@ -1,7 +1,7 @@
 import React,{ useEffect, useState } from "react"
 import { entorno } from "../../../constants/entornos"
 import { useAuth } from "../../../context/AuthContext"
-import { sleep } from "../../../constants/sleep"
+import { sleep } from "../../../constants/functions"
 import { fetchAPI } from "../../../services/fetchApiService"
 import { useContext } from "react"
 

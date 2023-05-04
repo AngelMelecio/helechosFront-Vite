@@ -4,7 +4,7 @@ import DeleteModal from '../components/DeleteModal'
 import { useApp } from '../context/AppContext'
 import CRUD from '../components/CRUD'
 import Loader from '../components/Loader/Loader'
-import { sleep } from '../constants/sleep'
+import { sleep } from '../constants/functions'
 import FrmClientes from '../components/FrmClientes'
 import AppBar from '../components/AppBar'
 

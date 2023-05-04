@@ -6,6 +6,7 @@ import { useContext } from "react";
 
 const API_FICHAS_URL = "api/fichas_tecnicas/"
 const API_FICHAS_MATERIALES_URL = "api/fichas_tecnicas_materiales/"
+const API_FICHA_MATERIALES_URL = "api/fichas_tecnicas_materiales/"
 
 const FichasContext = React.createContext('FichasContext')
 
@@ -19,6 +20,7 @@ export function FichasProvider({ children }) {
     const [fichas, setFichas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+    const [loadingMateriales, setLoadingMateriales] = useState(true)
 
     async function getFichas(idModelo) {
         let options = {
@@ -68,6 +70,26 @@ export function FichasProvider({ children }) {
         return ficha
     }
 
+    async function getFichaMateriales(idFicha) {
+        if( !idFicha ) return []
+        let options = {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': 'Bearer ' + session.access
+            }
+        }
+        try{
+            setLoadingMateriales(true)
+            const {materiales, message} = await fetchAPI(API_FICHA_MATERIALES_URL + idFicha, options)
+            return materiales
+        }catch(err){
+            setError(err)
+        }finally{
+            setLoadingMateriales(false)
+        }
+    }
+
     async function saveFichaMateriales(fichaMateriales) {
         let options = {
             method: 'POST',
@@ -82,12 +104,14 @@ export function FichasProvider({ children }) {
     }
 
 
-    async function refreshFichas({idModelo}) {
+    async function refreshFichas({ idModelo }) {
         try {
             setLoading(true)
-            if( idModelo !== '0' ){
+            if (idModelo !== '0') {
                 const fichas = await getFichas(idModelo)
                 setFichas(fichas)
+            } else {
+                setFichas([])
             }
         } catch (err) {
             setError(err)
@@ -96,13 +120,16 @@ export function FichasProvider({ children }) {
         }
     }
 
+
     return (
         <FichasContext.Provider
             value={{
                 fichas,
-                loading,
+                loading, setLoading,
                 error,
-                refreshFichas
+                refreshFichas,
+                loadingMateriales,
+                getFichaMateriales
             }}
         >
             {children}
