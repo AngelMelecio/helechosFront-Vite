@@ -1,7 +1,8 @@
 import { useFormik } from "formik";
-import { useState, useEffect } from "react";
+import { useState, useNavigate } from "react";
 import { ICONS } from "../../constants/icons";
 import { useMateriales } from "./hooks/useMateriales";
+import { useProveedores } from "../../pages/Proveedores/hooks/useProveedores";
 import Input from "../../components/Input";
 import CustomSelect from "../../components/CustomSelect";
 import React from 'react'
@@ -22,10 +23,12 @@ const initobj = {
 
 const DetailMaterial = () => {
 
-  const [saving, setSaving] = useState()
-  const [optionsProveedor, setOptionsProveedor] = useState([])
-  const [objMaterial, setObjMaterial] = useState(material)
-  const { saveMaterial, getMateriales, getProveedores, allProveedores } = useApp()
+
+  const { getMaterial, saveMaterial, loading} = useMateriales()
+  const { getProveedores, allProveedores} = useProveedores()
+  const navigate = useNavigate()
+  const { id } = useParams();
+  const isEdit = (id !== '0')
   const [sketchPickerColor, setSketchPickerColor] = useState(material.codigoColor);
   const [displaySketchPickerColor, setDisplaySketchPickerColor] = useState(false)
 

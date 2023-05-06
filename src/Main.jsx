@@ -42,8 +42,6 @@ const Main = () => {
                 <Route path="/maquinas" element={<PaginaMaquinas />} />
                 <Route path="/modelos" element={<PaginaModelos />} />
                 <Route path="/modelos/:id" element={<DetailModelo />} />
-                {/*<Route path="/proveedores" element={<PaginaProveedores />} />
-                   <Route path="/proveedores/:id" element={<PaginaProveedores />} />*/}
                 <Route path="/materiales" element={<PaginaMateriales />} />
                 <Route path="/materiales/:id" element={<DetailMaterial />} />
                 <Route path="/clientes" element={<PaginaClientes />} />

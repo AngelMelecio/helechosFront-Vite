@@ -3,7 +3,6 @@ import { useAuth } from "../../../context/AuthContext";
 import { useState } from "react";
 import { useContext } from "react";
 import { fetchAPI } from "../../../services/fetchApiService";
-import { formatPostcssSourceMap } from "vite";
 
 const API_PROVEEDORES_URL = "api/proveedores/"
 
@@ -93,7 +92,7 @@ export function ProveedoresProvider({ children }) {
             if (e.isSelected) { 
                 try {
                     setLoading(true)
-                    const { message } = await fetchAPI(API_MATERIALES_URL + e.idProveedor, options)
+                    const { message } = await fetchAPI(API_PROVEEDORES_URL + e.idProveedor, options)
                     notify(message)
                 } catch (err) {
                     console.log(err)
