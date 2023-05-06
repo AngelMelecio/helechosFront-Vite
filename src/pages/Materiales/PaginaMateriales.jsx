@@ -1,41 +1,44 @@
 import React, { useRef, useState } from 'react'
 import { useEffect } from 'react'
 import DeleteModal from '../../components/DeleteModal'
-import { useApp } from '../../context/AppContext'
 import CRUD from '../../components/CRUD'
 import Loader from '../../components/Loader/Loader'
 import { sleep } from '../../constants/functions'
-import FrmClientes from '../../components/FrmClientes'
-import { useClientes } from './hooks/useClientes'
-const initobj = {
-    idCliente: "",
-    nombre: "",
-    direccion: "",
-    correo: "",
-    contactos: [{ "nombre": "", "puesto": "", "correo": "", "telefono": "", "nota": "" }],
-    otro: ""
-}
+import FrmMateriales from '../../components/FrmMateriales'
+import { useMateriales } from './hooks/useMateriales'
 
-const PaginaClientes = () => {
+const initobj = {
+    idMaterial: "",
+    tipo: "Seleccione",
+    color: "",
+    calibre: "Seleccione",
+    proveedor: "Seleccione",
+    tenida: "",
+    codigoColor: "#ffffff",
+    idProveedor: "Seleccione",
+    nombreProveedor: ""
+  }
+
+const PaginaMateriales = () => {
 
 
     const modalContainerRef = useRef()
-    const { allClientes, loading, refreshClientes, deleteClientes} = useClientes()
-    const [listaClientes, setListaClientes] = useState([])
+    const { allMateriales, loading, refreshMateriales, deleteMateriales} = useMateriales()
+    const [listaMateriales, setListaMateriales] = useState([])
     const [isEdit, setIsEdit] = useState(false)
-    const [objCliente, setObjCliente] = useState(initobj)
+    const [objMaterial, setObjMaterial] = useState(initobj)
     const [saving, setSaving] = useState(false)
 
     const [frmModalVisible, setFrmModalVisible] = useState(false)
     const [deleteModalVisible, setDeleteModalVisible] = useState(false)
 
     useEffect(() => {
-        refreshClientes()
+        refreshMateriales()
     }, [])
 
     useEffect(() => {
-        setListaClientes(allClientes)
-    }, [allClientes])
+        setListaMateriales(allMateriales)
+    }, [allMateriales])
 
     const handleOpenModal = async (setState) => {
         setState(true)
@@ -45,23 +48,23 @@ const PaginaClientes = () => {
     }
     const handleCloseModal = async (setState) => {
         setIsEdit(false)
-        setObjCliente(initobj)
+        setObjMaterial(initobj)
         modalContainerRef.current.classList.remove('visible')
         document.getElementById("tbl-page").classList.remove('blurred')
         await sleep(150)
         setState(false)
     }
 
-    const handleDleteClientes = async () => {
+    const handleDleteMateriales = async () => {
         setSaving(true)
-        await deleteClientes(listaClientes)
-        await refreshClientes()
+        await deleteMateriales(listaMateriales)
+        await refreshMateriales()
         handleCloseModal(setDeleteModalVisible)
         setSaving(false)
     }
 
-    const handleEdit = async (cliente) => {
-        setObjCliente(cliente)
+    const handleEdit = async (material) => {
+        setObjMaterial(material)
         setIsEdit(true)
         handleOpenModal(setFrmModalVisible)
     }
@@ -71,21 +74,21 @@ const PaginaClientes = () => {
             {
                 loading ? <Loader /> :
                     <CRUD
-                        title='Clientes'
-                        idName='idCliente'
-                        path='clientes'
+                        title='Materiales'
+                        idName='idMaterial'
+                        path='materiales'
                         loading={loading}
-                        allElements={allClientes}
-                        elements={listaClientes}
-                        setElements={setListaClientes}
+                        allElements={allMateriales}
+                        elements={listaMateriales}
+                        setElements={setListaMateriales}
                         columns={[
-                            { name: 'Nombre', attribute: 'nombre' },
-                            { name: 'RFC', attribute: 'rfc' },
-                            { name: 'Dirección', attribute: 'direccion' },
-                            { name: 'Teléfono', attribute: 'telefono' },
-                            { name: 'Correo', attribute: 'correo' },
-                            { name: 'Otro', attribute: 'otro' },
-                        ]}
+                            { name: 'Tipo', attribute: 'tipo' },
+                            { name: 'Color', attribute: 'color' },
+                            { name: 'Calibre', attribute: 'calibre' },
+                            { name: 'Proveedor', attribute: 'nombreProveedor' },
+                            { name: 'Teñida', attribute: 'tenida' },
+                            { name: 'Código de color', attribute: 'codigoColor' },
+                          ]}
                         onAdd={() => handleOpenModal(setFrmModalVisible)}
                         onEdit={handleEdit}
                         onDelete={() => handleOpenModal(setDeleteModalVisible)}
@@ -93,9 +96,9 @@ const PaginaClientes = () => {
             }
             <div className='modal absolute h-full w-full' ref={modalContainerRef}>
                 {frmModalVisible &&
-                    <FrmClientes
+                    <FrmMateriales
                         onCloseModal={() => handleCloseModal(setFrmModalVisible)}
-                        cliente={objCliente}
+                        material={objMaterial}
                         isEdit={isEdit}
                         setIsEdit={setIsEdit}
                     />
@@ -104,14 +107,14 @@ const PaginaClientes = () => {
                 {deleteModalVisible &&
                     <DeleteModal
                         onCancel={() => handleCloseModal(setDeleteModalVisible)}
-                        onConfirm={handleDleteClientes}
-                        elements={listaClientes}
-                        representation={['nombre', 'direccion', 'telefono', 'correo']}
-                        message='Los siguientes clientes se eliminarán permanentemente:'
+                        onConfirm={handleDleteMateriales}
+                        elements={listaMateriales}
+                        representation={['color', 'tenida']}
+                        message='Los siguientes materiales se eliminarán permanentemente:'
                     />
                 }
             </div>
         </>
     )
 }
-export default PaginaClientes
+export default PaginaMateriales

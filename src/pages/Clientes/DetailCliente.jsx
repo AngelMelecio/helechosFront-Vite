@@ -1,6 +1,5 @@
 
 import DynamicInput from "../../components/DynamicInput"
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useClientes } from "./hooks/useClientes";
 import { ICONS } from "../../constants/icons";

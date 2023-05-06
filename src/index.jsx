@@ -10,6 +10,8 @@ import { ModelosProvider } from './pages/Modelos/hooks/useModelos';
 import { ClientesProvider } from './pages/Clientes/hooks/useClientes';
 import { FichasProvider } from './pages/Modelos/hooks/useFichas';
 import { MaquinasProvider } from './pages/Maquinas/hooks/useMaquinas';
+import { MaterialesProvider } from './pages/Materiales/hooks/useMateriales';
+import { ProveedoresProvider } from './pages/Proveedores/hooks/useProveedores';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -19,11 +21,15 @@ ReactDOM.render(
           <EmpleadosProvider>
             <MaquinasProvider>
               <ModelosProvider>
-                <FichasProvider>
-                  <ClientesProvider>
-                    <Main />
-                  </ClientesProvider>
-                </FichasProvider>
+                <ProveedoresProvider>
+                  <MaterialesProvider>
+                    <FichasProvider>
+                      <ClientesProvider>
+                        <Main />
+                      </ClientesProvider>
+                    </FichasProvider>
+                  </MaterialesProvider>
+                </ProveedoresProvider>
               </ModelosProvider>
             </MaquinasProvider>
           </EmpleadosProvider>
