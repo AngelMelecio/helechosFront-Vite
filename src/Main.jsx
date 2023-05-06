@@ -9,10 +9,12 @@ import { AdminProvider } from "./context/AdminContext"
 import PaginaUsuarios from "./pages/PaginaUsuarios"
 import { useAuth } from "./context/AuthContext"
 import PaginaPerfil from "./pages/PaginaPerfil"
-import PaginaMateriales from "./pages/PaginaMateriales"
+import PaginaMateriales from "./pages/Materiales/PaginaMateriales"
+import DetailMaterial from "./pages/Materiales/DetailMaterial"
 import { ToastContainer } from "react-toastify"
 import PaginaModelos from "./pages/Modelos/PaginaModelos"
-import PaginaProveedores from "./pages/PaginaProveedores"
+//import PaginaProveedores from "./pages/Proveedores/PaginaProveedores"
+//import DetailProveedor from "./pages/Proveedores/DetailProveedor"
 import FichaTecnicaPrint from "./components/FichaTecnicaPrint"
 import DetailEmpleado from "./pages/Empleados/DetailEmpleado"
 import { EmpleadosProvider } from "./pages/Empleados/hooks/useEmpleados"
@@ -40,8 +42,10 @@ const Main = () => {
                 <Route path="/maquinas" element={<PaginaMaquinas />} />
                 <Route path="/modelos" element={<PaginaModelos />} />
                 <Route path="/modelos/:id" element={<DetailModelo />} />
-                <Route path="/proveedores" element={<PaginaProveedores />} />
-                <Route path="/Materiales" element={<PaginaMateriales />} />
+                {/*<Route path="/proveedores" element={<PaginaProveedores />} />
+                   <Route path="/proveedores/:id" element={<PaginaProveedores />} />*/}
+                <Route path="/materiales" element={<PaginaMateriales />} />
+                <Route path="/materiales/:id" element={<DetailMaterial />} />
                 <Route path="/clientes" element={<PaginaClientes />} />
                 <Route path="/clientes/:id" element={<DetailCliente />} />
               </Routes>
