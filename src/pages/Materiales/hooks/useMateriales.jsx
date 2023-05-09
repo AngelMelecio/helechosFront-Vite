@@ -51,8 +51,29 @@ export function MaterialesProvider({ children }) {
     const [errors, setErrors] = useState(false)
 
     function getMaterial(id) {
-        let material = allMateriales.find(e => e.idMaterial + '' === id + '')
-        return material
+        if (allMateriales.length !== 0) {
+            let material = allMateriales.find(e => e.idMaterial + '' === id + '')
+            return material
+        }
+    }
+    async function findMaterial(id) {
+
+        try {
+            setLoading(true)
+            let options = {
+                method: 'GET',
+                headers: { 'Authorization': 'Bearer ' + session.access }
+            }
+            let mat = await fetchAPI(API_MATERIALES_URL + id, options)
+            return formatMateriales([mat])[0]
+        } catch (err) {
+            console.log(err)
+            setErrors(err)
+            notify('Error al buscar el material', true)
+
+        } finally {
+            setLoading(false)
+        }
     }
 
     async function getMateriales() {
@@ -105,11 +126,11 @@ export function MaterialesProvider({ children }) {
         ]
         let formData = new FormData()
         Keys.forEach(k => {
-            if(k==="proveedor")
+            if (k === "proveedor")
                 formData.append(k, values["idProveedor"] ? values["idProveedor"] : '')
             else
                 formData.append(k, values[k] ? values[k] : '')
-            
+
         })
         let options = {
             method: method,
@@ -123,8 +144,8 @@ export function MaterialesProvider({ children }) {
     const deleteMateriales = async (listaMateriales) => {
         for (let i = 0; i < listaMateriales.length; i++) {
             let e = listaMateriales[i]
-            const options = {method: 'DELETE', headers: {'Authorization': 'Bearer ' + session.access}}
-            if (e.isSelected) { 
+            const options = { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + session.access } }
+            if (e.isSelected) {
                 try {
                     setLoading(true)
                     const { message } = await fetchAPI(API_MATERIALES_URL + e.idMaterial, options)
@@ -164,7 +185,9 @@ export function MaterialesProvider({ children }) {
                 getMaterial,
                 getFichaMateriales, loadingFichaMateriales,
                 saveMaterial,
-                deleteMateriales
+                deleteMateriales,
+                findMaterial,
+                setLoading
             }}
         >
             {children}

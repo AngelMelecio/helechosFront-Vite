@@ -29,8 +29,29 @@ export function ClientesProvider({ children }) {
     const [errors, setErrors] = useState(false)
 
     function getCliente(id) {
-        let cliente = allClientes.find(e => e.idCliente + '' === id + '')
-        return cliente
+        if(allClientes.length!==0){
+            let cliente = allClientes.find(e => e.idCliente + '' === id + '')
+            return cliente
+        }
+        
+    }
+
+    async function findCliente(id) {
+        try {
+            setLoading(true)
+            let options = {
+                method: 'GET',
+                headers: { 'Authorization': 'Bearer ' + session.access }
+            }
+            let clie = await fetchAPI(API_CLIENTES_URL + id, options)
+            return formatClientes([clie])[0]
+        } catch (err) {
+            console.log(err)
+            setErrors(err)
+            notify('Error al buscar el cliente', true)
+        } finally {
+            setLoading(false)
+        }
     }
 
     async function getClientes() {
@@ -126,7 +147,9 @@ export function ClientesProvider({ children }) {
                 refreshClientes,
                 getCliente,
                 saveCliente,
-                deleteClientes
+                deleteClientes,
+                findCliente,
+                setLoading
             }}
         >
             {children}
