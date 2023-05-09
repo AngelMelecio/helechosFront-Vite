@@ -35,21 +35,11 @@ const PaginaEmpleados = () => {
     getMaquinas
   } = useApp()
 
-  const [frmModalVisible, setFrmModalVisible] = useState(false)
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
-
-  const [saving, setSaving] = useState(false)
-  const [isEdit, setIsEdit] = useState(false)
-
-  const [objEmpleado, setObjEmpleado] = useState(initobj)
   const [listaEmpleados, setListaEmpleados] = useState([])
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
 
   const modalContainerRef = useRef()
 
-  const [shown, setShown] = React.useState(false);
-  const switchShown = () => setShown(!shown);
-
-  
   useEffect(() => {
     refreshEmpleados()
   }, [])
@@ -73,45 +63,30 @@ const PaginaEmpleados = () => {
     modalContainerRef.current.classList.add('visible')
   }
   const handleCloseModal = async (setState) => {
-    setIsEdit(false)
-    setObjEmpleado(initobj)
     modalContainerRef.current.classList.remove('visible')
     document.getElementById("tbl-page").classList.remove('blurred')
     await sleep(150)
     setState(false)
   }
 
-  const handleEdit = async (emp) => {
-    setObjEmpleado(emp)
-    setIsEdit(true)
-    handleOpenModal(setFrmModalVisible)
-  }
-
   return (
     <>
       {
-          <CRUD
-            title='EMPLEADOS'
-            path='empleados'
-            idName='idEmpleado'
-            loading={loading}
-            allElements={allEmpleados}
-            elements={listaEmpleados}
-            setElements={setListaEmpleados}
-            columns={empleadosColumns}
-            onAdd={() => handleOpenModal(setFrmModalVisible)}
-            onEdit={handleEdit}
-            onDelete={() => handleOpenModal(setDeleteModalVisible)}
-          />
+        <CRUD
+          title='EMPLEADOS'
+          path='empleados'
+          idName='idEmpleado'
+          loading={loading}
+          allElements={allEmpleados}
+          elements={listaEmpleados}
+          setElements={setListaEmpleados}
+          columns={empleadosColumns}
+          //onAdd={() => handleOpenModal(setFrmModalVisible)}
+          //onEdit={handleEdit}
+          onDelete={() => handleOpenModal(setDeleteModalVisible)}
+        />
       }
       <div className='modal absolute h-full w-full' ref={modalContainerRef}>
-        {frmModalVisible &&
-          <FrmEmpleados
-            onCloseModal={() => handleCloseModal(setFrmModalVisible)}
-            empleado={objEmpleado}
-            isEdit={isEdit}
-          />
-        }
         {deleteModalVisible &&
           <DeleteModal
             onCancel={() => handleCloseModal(setDeleteModalVisible)}

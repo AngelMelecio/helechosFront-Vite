@@ -18,10 +18,10 @@ const DetailModelo = () => {
 
   const navigate = useNavigate()
   const { id } = useParams();
-  const { allModelos } = useModelos()
+  const [modelo, setModelo] = useState(null)
+  const { allModelos, getModelo, loading: loadingModelo } = useModelos()
   const { fichas, refreshFichas, loading: loadingFichas } = useFichas()
 
-  const modelo = (id === '0' ? initModelo : allModelos.find(m => m.idModelo + '' === id))
   const isEdit = id !== '0'
 
   const modalRef = useRef()
@@ -47,24 +47,26 @@ const DetailModelo = () => {
     setState(false)
   }
 
-  useEffect(() => {
-    console.log('EFFECTO DETALLE MODELO, id:', id )
+  useEffect(async () => {
+    console.log('EFFECTO\n DETALLE MODELO, id:', id)
     refreshFichas({ idModelo: id })
+    const mod = (id === '0' ? initModelo : await getModelo(id))
+    setModelo(mod)
   }, [id])
 
   const pageRef = useRef()
 
-  const handleScroll = (e) => { 
-    setPageScrollBottom( Math.ceil( pageRef.current.scrollTop + pageRef.current.clientHeight) >=
-      pageRef.current.scrollHeight )
+  const handleScroll = (e) => {
+    setPageScrollBottom(Math.ceil(pageRef.current.scrollTop + pageRef.current.clientHeight) >=
+      pageRef.current.scrollHeight)
   }
 
   return (
     <>
-      <div 
-      ref={ pageRef }
-      onScroll={handleScroll}
-      className="w-full relative overflow-y-scroll h-full">
+      <div
+        ref={pageRef}
+        onScroll={handleScroll}
+        className="w-full relative overflow-y-scroll h-full">
         <div id="tbl-page" className="flex flex-col w-full bg-slate-100 relative px-8 py-5">
           <div className="flex pb-4 ">
             <button
@@ -75,22 +77,23 @@ const DetailModelo = () => {
             </p>
           </div>
           <div className="flex flex-col bg-white rounded-lg shadow-lg">
-            <FrmModelos
-              modelo={modelo ? modelo : initModelo}
-              isEdit={id !== '0'}
-            />
+            {loadingModelo || modelo === null ? <Loader /> :
+              <FrmModelos
+                modelo={modelo !== null ? modelo : initModelo}
+                isEdit={isEdit}
+              />}
           </div>
           <div className='flex flex-col screen'>
             <p className="pt-8 pb-4 font-bold text-3xl pl-3 text-teal-700">
               Fichas Tecnicas
             </p>
             <div className="flex flex-col relative h-full bg-white rounded-lg shadow-lg">
-              { loadingFichas ? <Loader />
+              {loadingFichas ? <Loader />
                 :
                 <SectionFichas
                   fichas={fichas}
-                  openModal={ () => handleOpenModal(setModalVisible) }
-                  closeModal={ () => handleCloseModal(setModalVisible) }  
+                  openModal={() => handleOpenModal(setModalVisible)}
+                  closeModal={() => handleCloseModal(setModalVisible)}
                   setOnSaveChanges={setOnSaveChanges}
                   setOnDiscardChanges={setOnDiscardChanges}
                   setModalMessage={setModalMessage}
@@ -116,7 +119,7 @@ const DetailModelo = () => {
         }
       </div>
 
-      
+
     </>
   )
 }

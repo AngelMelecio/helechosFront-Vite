@@ -48,7 +48,7 @@ const initFichaTecnicaObj = {
 
 const PaginaModelos = () => {
   const modalContainerRef = useRef()
-  const { allModelos, loading, refreshModelos } = useModelos()
+  const { allModelos, loading, refreshModelos, deleteModelos } = useModelos()
   const [listaModelos, setListaModelos] = useState([])
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
 
@@ -60,6 +60,15 @@ const PaginaModelos = () => {
     setListaModelos(allModelos)
   }, [allModelos])
 
+  async function handleDelete(){
+    await deleteModelos(
+      listaModelos
+      .filter(m => m.isSelected)
+      .map(m => m.idModelo)
+    )
+    handleCloseModal( setDeleteModalVisible )
+    refreshModelos()
+  }
 
   const handleOpenModal = async (setState) => {
     setState(true)
@@ -94,7 +103,7 @@ const PaginaModelos = () => {
         {deleteModalVisible &&
           <DeleteModal
             onCancel={() => handleCloseModal(setDeleteModalVisible)}
-            onConfirm={() => { }}
+            onConfirm={ handleDelete}
             elements={listaModelos}
             representation={['nombre']}
             message='Las siguientes fichas serán eliminadas de forma permanente'

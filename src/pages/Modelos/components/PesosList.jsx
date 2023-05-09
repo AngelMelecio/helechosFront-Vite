@@ -5,10 +5,7 @@ const PesosList = ({ materiales }) => {
 
   const [variety, setVariety] = useState([])
 
-  useEffect(() => {
-
-    console.log('EFFECTO PESOS, llegan:', materiales)
-
+  useEffect(() => {   
     let diferent = []
     materiales?.forEach(material => {
       if (!diferent.includes(material.tipo)) {

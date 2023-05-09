@@ -1,12 +1,12 @@
 import AppBar from "./components/AppBar"
 import PaginaEmpleados from "./pages/Empleados/PaginaEmpleados"
 import { Route, Routes, Navigate, Router } from 'react-router-dom'
-import PaginaMaquinas from "./pages/PaginaMaquinas"
+import PaginaMaquinas from "./pages/Maquinas/PaginaMaquinas"
 import PaginaClientes from "./pages/Clientes/PaginaClientes"
 import Login from "./pages/Login"
 import { useNavigate } from "react-router-dom"
 import { AdminProvider } from "./context/AdminContext"
-import PaginaUsuarios from "./pages/PaginaUsuarios"
+import PaginaUsuarios from "./pages/Usuarios/PaginaUsuarios"
 import { useAuth } from "./context/AuthContext"
 import PaginaPerfil from "./pages/PaginaPerfil"
 import PaginaMateriales from "./pages/Materiales/PaginaMateriales"
@@ -20,6 +20,8 @@ import DetailEmpleado from "./pages/Empleados/DetailEmpleado"
 import { EmpleadosProvider } from "./pages/Empleados/hooks/useEmpleados"
 import DetailModelo from "./pages/Modelos/DetailModelo"
 import DetailCliente from "./pages/Clientes/DetailCliente"
+import DetailMaquina from "./pages/Maquinas/DetailMaquina"
+import DetailUsuario from "./pages/Usuarios/DetailUsuario"
 
 const Main = () => {
 
@@ -36,10 +38,14 @@ const Main = () => {
               <Routes>
                 <Route exact path="*" element={<Navigate replace to="/perfil" />} />
                 <Route path="/perfil" element={<PaginaPerfil />} />
-                {session.usuario.is_staff && <Route path="/usuarios" element={<PaginaUsuarios />} />}
+                {session.usuario.is_staff && 
+                  <Route path="/usuarios" element={<PaginaUsuarios />} />}
+                {session.usuario.is_staff && 
+                  <Route path="/usuarios/:id" element={<DetailUsuario />} />}
                 <Route path="/empleados" element={<PaginaEmpleados />} />
                 <Route path="/empleados/:id" element={<DetailEmpleado />} />
                 <Route path="/maquinas" element={<PaginaMaquinas />} />
+                <Route path="/maquinas/:id" element={<DetailMaquina />} />
                 <Route path="/modelos" element={<PaginaModelos />} />
                 <Route path="/modelos/:id" element={<DetailModelo />} />
                 <Route path="/materiales" element={<PaginaMateriales />} />

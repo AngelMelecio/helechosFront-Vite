@@ -5,22 +5,53 @@ import { useState } from "react"
 import useModelos from "../hooks/useModelos"
 import { useEffect } from "react"
 import { useClientes } from "../../Clientes/hooks/useClientes"
+import { useNavigate } from "react-router-dom"
 
 const FrmModelos = ({ modelo, isEdit }) => {
 
+  const navigate = useNavigate()
+
   const [clientesOptions, setClientesOptions] = useState([])
+  const [theresChanges, setTheresChanges] = useState(false)
   const { allClientes, refreshClientes } = useClientes()
+  const { saveModelo, setLoading } = useModelos()
+
+  const validate = values => {
+    const errors = {}
+    if (!values.nombre) {
+      errors.nombre = 'Ingresa un nombre para el modelo';
+    }
+
+    if (!values.idCliente) {
+      errors.idCliente = 'Selecciona un cliente';
+    }
+    else if (values.idCliente === "Seleccione") {
+      errors.idCliente = 'Selecciona un cliente';
+    }
+    return errors
+  }
 
   let modeloFormik = useFormik({
     initialValues: modelo,
-    onSubmit: values => {
-      console.log(values)
+    validate,
+    onSubmit: async (values) => {
+      await saveModelo({
+        modelo: values,
+        method: values.idModelo ? 'PUT' : 'POST'
+      })
+      navigate("/modelos/")
     }
   })
 
   useEffect(() => {
     refreshClientes()
+    return () => setLoading(true)
   }, [])
+
+  useEffect(()=>{
+    console.log('EFFECTO FrmModelos modelo',modelo)
+    modeloFormik.setValues(modelo)
+  },[modelo])
 
   useEffect(() => {
     let newClientesOptions = [{ value: 'Seleccione', label: 'Seleccione' }]
@@ -30,12 +61,18 @@ const FrmModelos = ({ modelo, isEdit }) => {
     setClientesOptions(newClientesOptions)
   }, [allClientes])
 
+  const handleChange = (e) => {
+    modeloFormik.setFieldValue(e.target.name, e.target.value)
+    setTheresChanges(true)
+  }
+
   return (
-    <form 
-    id='frmModelos' 
-    onSubmit={modeloFormik.handleSubmit} 
-    className="xl:px-32 px-7 py-4 flex flex-col">
+    <form
+      id='frmModelos'
+      onSubmit={modeloFormik.handleSubmit}
+      className="xl:px-32 px-7 py-4 flex flex-col">
       <input
+        disabled={!theresChanges}
         className='py-1 px-5 mr-2 text-white normal-button self-end rounded-lg'
         type="submit"
         value={isEdit ? "GUARDAR MODELO" : "AGREGAR MODELO"}
@@ -50,13 +87,13 @@ const FrmModelos = ({ modelo, isEdit }) => {
         <div className='flex flex-row w-full'>
           <Input
             label='Nombre del modelo' type='text' name='nombre' value={modeloFormik.values.nombre}
-            onChange={modeloFormik.handleChange} onBlur={modeloFormik.handleBlur}
+            onChange={handleChange} onBlur={modeloFormik.handleBlur}
             errores={modeloFormik.errors.nombre && modeloFormik.touched.nombre ? modeloFormik.errors.nombre : null}
           />
           <CustomSelect
             name='idCliente'
             className='input z-10'
-            onChange={value => modeloFormik.setFieldValue('idCliente', value.value)}
+            onChange={(value) => handleChange({ target: { name: 'idCliente', value: value.value } })}
             value={modeloFormik.values.idCliente}
             onBlur={modeloFormik.handleBlur}
             options={clientesOptions}
