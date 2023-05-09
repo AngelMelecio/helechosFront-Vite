@@ -13,7 +13,7 @@ export function useProveedores() {
 }
 
 function formatProveedores(proveedores) {
-    let formatData = proveedores.map(([prov]) => ({
+    let formatData = proveedores.map((prov) => ({
         ...prov,
         isSelected: false
     }))
@@ -29,8 +29,29 @@ export function ProveedoresProvider({ children }) {
     const [errors, setErrors] = useState(false)
 
     function getProveedor(id) {
-        let proveedor = allProveedores.find(e => e.idProveedor + '' === id + '')
-        return proveedor
+        if (allProveedores.length !== 0) {
+            let proveedor = allProveedores.find(e => e.idProveedor + '' === id + '')
+            return proveedor
+        }
+    }
+
+    async function findProveedor(id) {
+
+        try {
+            setLoading(true)
+            let options = {
+                method: 'GET',
+                headers: { 'Authorization': 'Bearer ' + session.access }
+            }
+            let prov = await fetchAPI(API_PROVEEDORES_URL + id, options)
+            return formatProveedores([prov])[0]
+        } catch (err) {
+            console.log(err)
+            setErrors(err)
+            notify('Error al buscar el proveedor', true)
+        } finally {
+            setLoading(false)
+        }
     }
 
     async function getProveedores() {
@@ -49,7 +70,7 @@ export function ProveedoresProvider({ children }) {
             setLoading(true)
             const proveedores = await getProveedores()
             setAllProveedores(proveedores)
-        } catch (e) {
+        } catch (err) {
             setErrors(err)
         } finally {
             setLoading(false)
@@ -70,11 +91,11 @@ export function ProveedoresProvider({ children }) {
         ]
         let formData = new FormData()
         Keys.forEach(k => {
-            if(k==="contactos")
+            if (k === "contactos")
                 formData.append(k, values[k] ? JSON.stringify(values[k]) : '')
             else
                 formData.append(k, values[k] ? values[k] : '')
-            
+
         })
         const options = {
             method: method,
@@ -88,8 +109,8 @@ export function ProveedoresProvider({ children }) {
     const deleteProveedores = async (listaProveedores) => {
         for (let i = 0; i < listaProveedores.length; i++) {
             let e = listaProveedores[i]
-            const options = {method: 'DELETE', headers: {'Authorization': 'Bearer ' + session.access}}
-            if (e.isSelected) { 
+            const options = { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + session.access } }
+            if (e.isSelected) {
                 try {
                     setLoading(true)
                     const { message } = await fetchAPI(API_PROVEEDORES_URL + e.idProveedor, options)
@@ -128,7 +149,9 @@ export function ProveedoresProvider({ children }) {
                 refreshProveedores,
                 getProveedor,
                 saveProveedor,
-                deleteProveedores
+                deleteProveedores,
+                findProveedor,
+                setLoading
             }}
         >
             {children}

@@ -1,6 +1,7 @@
 
 import DynamicInput from "../../components/DynamicInput"
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { useClientes } from "./hooks/useClientes";
 import { ICONS } from "../../constants/icons";
 import { useFormik, FormikProvider } from "formik";
@@ -16,12 +17,10 @@ const initobj = {
 }
 
 const DetailCliente = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const { id } = useParams();
-
-    const isEdit = (id !== '0')
-    const { getCliente, saveCliente, loading } = useClientes()
-
+    const isEdit = (id !== '0');
+    const { getCliente, saveCliente, loading , findCliente, allClientes, setLoading} = useClientes();
 
     const validate = values => {
         const errors = {};
@@ -50,15 +49,25 @@ const DetailCliente = () => {
     };
 
     const formik = useFormik({
-        initialValues: id !== '0' ? getCliente(id) : initobj,
+        initialValues: id !== '0' ? (allClientes.length ? getCliente(id) : initobj) : initobj,
         validate,
         onSubmit: async (values) => {
             console.log("PUT/POST")
             await saveCliente({ values: values, method: isEdit ? 'PUT' : 'POST' })
-            navigate(-1)
+            navigate(("/clientes"))
             //handleSaveClientes(values);
         },
     });
+
+    useEffect(() => {
+        if (id !== '0' && !allClientes.length) {
+          (async () => {
+            const mate = await findCliente(id);
+            formik.setValues(mate);
+            setLoading(false)
+          })();
+        }
+      }, [id]);
 
     const handleChange = (e) => {
         //console.log(e.target.name, e.target.value)
@@ -73,7 +82,7 @@ const DetailCliente = () => {
                             onClick={() => navigate(-1)}
                             className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
                         <p className="font-bold text-3xl pl-3 text-teal-700">
-                            {isEdit ? `Detalles del Cliente` : "Nuevo Cliente"}
+                            {isEdit ? `Detalles del cliente` : "Nuevo cliente"}
                         </p>
                     </div>
                     <div className="flex flex-col bg-white h-full rounded-t-lg relative shadow-lg">

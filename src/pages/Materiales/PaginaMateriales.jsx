@@ -28,7 +28,6 @@ const PaginaMateriales = () => {
     const [isEdit, setIsEdit] = useState(false)
     const [objMaterial, setObjMaterial] = useState(initobj)
     const [saving, setSaving] = useState(false)
-
     const [frmModalVisible, setFrmModalVisible] = useState(false)
     const [deleteModalVisible, setDeleteModalVisible] = useState(false)
 
@@ -86,7 +85,7 @@ const PaginaMateriales = () => {
                             { name: 'Color', attribute: 'color' },
                             { name: 'Calibre', attribute: 'calibre' },
                             { name: 'Proveedor', attribute: 'nombreProveedor' },
-                            { name: 'Teñida', attribute: 'tenida' },
+                            { name: 'Teñida / Calidad', attribute: 'tenida' },
                             { name: 'Código de color', attribute: 'codigoColor' },
                           ]}
                         onAdd={() => handleOpenModal(setFrmModalVisible)}

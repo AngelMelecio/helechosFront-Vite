@@ -46,13 +46,10 @@ const AppBar = () => {
               <Tab to={'/modelos'} content={'MODELOS'} Icon={ICONS.Shoe} />
               <Tab to={'/clientes'} content={'CLIENTES'} Icon={ICONS.HandShake} />
               <Tab to={'/proveedores'} content={'PROVEEDORES'} Icon={ICONS.Truck} />
-              <Tab to={'/materiales'} content={'MATERIALES'} Icon={ICONS.Cloth} />
+              <Tab to={'/materiales'} content={'MATERIALES'} Icon={ICONS.Thread} />
               {
                 /* 
-                <Tab to={'/pedidos'} content={'PEDIDOS'} Icon={ICONS.Diablito} />
-                <Tab to={'/modelos'} content={'MODELOS'} Icon={ICONS.Cloth} />
-                
-                <Tab to={'/provedores'} content={'PROVEDORES'} Icon={ICONS.Truck} />
+                <Tab to={'/pedidos'} content={'PEDIDOS'} Icon={ICONS.Diablito} />                
                 <Tab to={'/produccion'} content={'PRODUCCION'} Icon={ICONS.Boot} />
               */
               }

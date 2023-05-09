@@ -86,6 +86,8 @@ import {
 } from 'react-icons/ri'
     
 
+import { TbNeedleThread as Thread } from 'react-icons/tb';
+
 
 export const ICONS = {
     Lupa,
@@ -129,5 +131,6 @@ export const ICONS = {
     PDF,
     File,
     Done,
-    Copy
+    Copy,
+    Thread
 }

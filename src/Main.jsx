@@ -13,8 +13,8 @@ import PaginaMateriales from "./pages/Materiales/PaginaMateriales"
 import DetailMaterial from "./pages/Materiales/DetailMaterial"
 import { ToastContainer } from "react-toastify"
 import PaginaModelos from "./pages/Modelos/PaginaModelos"
-//import PaginaProveedores from "./pages/Proveedores/PaginaProveedores"
-//import DetailProveedor from "./pages/Proveedores/DetailProveedor"
+import PaginaProveedores from "./pages/Proveedores/PaginaProveedores"
+import DetailProveedor from "./pages/Proveedores/DetailProveedor"
 import FichaTecnicaPrint from "./components/FichaTecnicaPrint"
 import DetailEmpleado from "./pages/Empleados/DetailEmpleado"
 import { EmpleadosProvider } from "./pages/Empleados/hooks/useEmpleados"
@@ -45,6 +45,8 @@ const Main = () => {
                 <Route path="/materiales" element={<PaginaMateriales />} />
                 <Route path="/materiales/:id" element={<DetailMaterial />} />
                 <Route path="/clientes" element={<PaginaClientes />} />
+                <Route path="/proveedores" element={<PaginaProveedores />} />
+                <Route path="/proveedores/:id" element={<DetailProveedor />} />
                 <Route path="/clientes/:id" element={<DetailCliente />} />
               </Routes>
             </div>
