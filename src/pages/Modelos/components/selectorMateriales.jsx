@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { ICONS } from "../../constants/icons";
-import { sleep } from "../../constants/functions";
-import { useApp } from "../../context/AppContext";
-import Th from "../Th";
+import { useMateriales } from '../../Materiales/hooks/useMateriales'
+import Loader from '../../../components/Loader/Loader'
+import { ICONS } from "../../../constants/icons";
+import { sleep } from "../../../constants/functions";
+
+const Th = ({ children }) => <th className="sticky top-0 z-10 bg-slate-100">{children}</th>
 
 const SelectorMateriales = ({
   fichaTecnicaObj,
@@ -12,15 +14,18 @@ const SelectorMateriales = ({
   const selectorContentRef = useRef()
   const searchRef = useRef()
 
-  
-  const { allMateriales, getMateriales } = useApp()
+  const {
+    allMateriales,
+    refreshMateriales,
+    loading,
+  } = useMateriales()
 
   const [availableMateriales, setAvailableMateriales] = useState([])
   const [selectorVisible, setSelectorVisible] = useState(false)
   const [materialSearchText, setMaterialSearchText] = useState('')
 
   async function loadData() {
-    await getMateriales()
+    await refreshMateriales()
   }
 
   useEffect(() => {
@@ -135,58 +140,62 @@ const SelectorMateriales = ({
 
           </div>
           <div ref={selectorContentRef} className="modal  w-full h-full overflow-scroll ">
-            {selectorVisible &&
-              <div>
-                <div className={`flex flex-row py-2 modal w-full h-full ${selectorVisible ? "visible" : ""}`}>
-                  <div className="flex relative w-full items-center">
-                    <input
-                      className='w-full h-full pr-10 rounded-2xl py-1 pl-3 outline-none bg-gray-100'
-                      ref={searchRef}
-                      onChange={(e) => {
-                        setMaterialSearchText(e.target.value)
-                        handleSearch()
-                      }}
-                      value={materialSearchText}
-                      type="text"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleSearchButtonClick}
-                      className='h-6 w-6 absolute right-1 total-center opacity-white rounded-2xl'>
-                      {
-                        materialSearchText.length > 0 ?
-                          <ICONS.Cancel size='18px' style={{ color: '#4b5563' }} /> :
-                          <ICONS.Lupa size='13px' style={{ color: '#4b5563' }} />
-                      }
-                    </button>
-                  </div>
-                  <button
-                    disabled={!someMaterialSelected}
-                    onClick={() => {onPassMateriales(availableMateriales); handleCloseSelector();}}
-                    type="button"
-                    className={`flex items-center justify-center normal-button w-8 h-8 rounded-lg duration-500 `} >
-                    <ICONS.Right size="25px" />
-                  </button>
-                </div>
+            { loading ? <Loader/> :
+              <>
                 {
-                  availableMateriales?.map((m, i) =>
-                    <div className={`w-full flex flex-row border border-transparent border-b-slate-300`} key={'M' + i}>
-                      <div className={`duration-200 w-4 ${m.count && " bg-teal-400"}`}></div>
-                      <div className="w-full flex flex-row p-2">
-                        <div className="flex flex-row control items-center">
-                          <button className="neutral-button rounded-full w-6 h-6" id='sub' type="button" onClick={(e) => handleChangeMaterialCount('sub', i)}> <ICONS.Minus /></button>
-                          <p className="px-2 text-lg">{m.count}</p>
-                          <button className="neutral-button rounded-full w-6 h-6" id='plus' type="button" onClick={(e) => handleChangeMaterialCount('plus', i)}> <ICONS.Plus size="11px" /></button>
-                        </div>
-                        <p className="pl-3">
-                          {m.tipo} - {m.color} - {m.nombreProveedor}
-                        </p>
+                  selectorVisible &&
+                  <div>
+                    <div className={`flex flex-row py-2 modal w-full h-full ${selectorVisible ? "visible" : ""}`}>
+                      <div className="flex relative w-full items-center">
+                        <input
+                          className='w-full h-full pr-10 rounded-2xl py-1 pl-3 outline-none bg-gray-100'
+                          ref={searchRef}
+                          onChange={(e) => {
+                            setMaterialSearchText(e.target.value)
+                            handleSearch()
+                          }}
+                          value={materialSearchText}
+                          type="text"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleSearchButtonClick}
+                          className='h-6 w-6 absolute right-1 total-center opacity-white rounded-2xl'>
+                          {
+                            materialSearchText.length > 0 ?
+                              <ICONS.Cancel size='18px' style={{ color: '#4b5563' }} /> :
+                              <ICONS.Lupa size='13px' style={{ color: '#4b5563' }} />
+                          }
+                        </button>
                       </div>
-                    </div>)
+                      <button
+                        disabled={!someMaterialSelected}
+                        onClick={() => { onPassMateriales(availableMateriales); handleCloseSelector(); }}
+                        type="button"
+                        className={`flex items-center justify-center normal-button w-8 h-8 rounded-lg duration-500 `} >
+                        <ICONS.Right size="25px" />
+                      </button>
+                    </div>
+                    {
+                      availableMateriales?.map((m, i) =>
+                        <div className={`w-full flex flex-row border border-transparent border-b-slate-300`} key={'M' + i}>
+                          <div className={`duration-200 w-4 ${m.count && " bg-teal-400"}`}></div>
+                          <div className="w-full flex flex-row p-2">
+                            <div className="flex flex-row control items-center">
+                              <button className="neutral-button rounded-full w-6 h-6" id='sub' type="button" onClick={(e) => handleChangeMaterialCount('sub', i)}> <ICONS.Minus /></button>
+                              <p className="px-2 text-lg">{m.count}</p>
+                              <button className="neutral-button rounded-full w-6 h-6" id='plus' type="button" onClick={(e) => handleChangeMaterialCount('plus', i)}> <ICONS.Plus size="11px" /></button>
+                            </div>
+                            <p className="pl-3">
+                              {m.tipo} - {m.color} - {m.nombreProveedor}
+                            </p>
+                          </div>
+                        </div>)
 
+                    }
+                  </div>
                 }
-              </div>
-
+              </>
             }
           </div>
         </div>
@@ -205,7 +214,7 @@ const SelectorMateriales = ({
                   <Th>Peso</Th>
                 </tr>
               </thead>
-            <tbody>
+              <tbody>
                 {
                   //  ASSIGNED MATERIALES 
                   fichaTecnicaObj?.values?.materiales?.map((f, i) =>

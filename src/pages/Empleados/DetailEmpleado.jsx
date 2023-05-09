@@ -94,8 +94,8 @@ const DetailEmpleado = () => {
   const formik = useFormik({
     initialValues: id !== '0' ? getEmpleado(id) : initobj,
     validate,
-    onSubmit: async(values) => {
-      await saveEmpleado({ values: values, mauqinas:[], method: isEdit ? 'PUT' : 'POST' })
+    onSubmit: async (values) => {
+      await saveEmpleado({ values: values, mauqinas: [], method: isEdit ? 'PUT' : 'POST' })
       navigate(-1)
       //handleSaveEmpleado(values);
     },
@@ -104,11 +104,11 @@ const DetailEmpleado = () => {
     formik.setValues(prev => ({ ...prev, fotografia: e.target.files[0] }))
   }
 
-  const handleChange = (e) =>{
+  const handleChange = (e) => {
     //console.log(e.target.name, e.target.value)
-    formik.setFieldValue( e.target.name, e.target.value)
+    formik.setFieldValue(e.target.name, e.target.value)
   }
-  
+
   /*
   useEffect(() => {
     
@@ -132,13 +132,7 @@ const DetailEmpleado = () => {
           </div>
           <div className="flex flex-col bg-white h-full rounded-t-lg relative shadow-lg">
             <div className='w-full flex h-full flex-col '>
-              <input
-                disabled={loading}
-                className='bg-teal-500 p-1 w-40 text-white normal-button absolute right-10 z-10 top-5 rounded-lg'
-                type="submit"
-                value={isEdit ? "GUARDAR" : "AGREGAR"}
-                form="frmEmpleados"
-              />
+
 
               <div className="flex w-full h-full ">
                 {
@@ -147,19 +141,38 @@ const DetailEmpleado = () => {
                     className='flex flex-col h-full w-full relative overflow-y-scroll'
                     onSubmit={formik.handleSubmit}>
                     <div className="absolute w-full flex flex-col  px-4">
-                      <div className='flex flex-row w-full h-full p-7 total-center'>
-                        <div className="flex relative w-full items-center justify-center foto text-center">
-                          {(toUrl(formik?.values?.fotografia) !== null) ? <img
-                            className='object-cover foto'
-                            src={toUrl(formik?.values?.fotografia)}
-                            alt='' />
-                            : <ICONS.Person className='' size='80px' style={{ color: '#115e59' }} />}
-                          <input id='file' type="file" name='fotografia' accept='image/*' onChange={handleSelectImage} className='inputfile' />
-                          <label
-                            className='absolute -bottom-2 -right-1 bg-teal-500 p-2 text-white normal-button rounded-full'
-                            htmlFor='file' >
-                            <ICONS.Upload style={{ color: 'white' }} size='18px' />
-                          </label>
+                      <div className="flex w-full justify-end pt-3">
+                        <input
+                          disabled={loading}
+                          className='bg-teal-500 p-1 w-40 text-white normal-button  right-5 z-10 top-5 rounded-lg'
+                          type="submit"
+                          value={isEdit ? "GUARDAR" : "AGREGAR"}
+                          form="frmEmpleados"
+                        />
+                      </div>
+                      <div className="flex w-full">
+
+                        <div className="relative px-2 py-4 w-full border-2 mx-2 my-4 border-slate-300">
+                          <div className="absolute w-full total-center -top-3">
+                            <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
+                              FOTOGRAFIA
+                            </div>
+                          </div>
+                          <div className='flex flex-row w-full h-full total-center'>
+                            <div className="flex relative w-full items-center justify-center foto text-center">
+                              {(toUrl(formik?.values?.fotografia) !== null) ? <img
+                                className='object-cover foto'
+                                src={toUrl(formik?.values?.fotografia)}
+                                alt='' />
+                                : <ICONS.Person className='' size='80px' style={{ color: '#115e59' }} />}
+                              <input id='file' type="file" name='fotografia' accept='image/*' onChange={handleSelectImage} className='inputfile' />
+                              <label
+                                className='absolute -bottom-2 -right-1 bg-teal-500 p-2 text-white normal-button rounded-full'
+                                htmlFor='file' >
+                                <ICONS.Upload style={{ color: 'white' }} size='18px' />
+                              </label>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       <div className="flex w-full flex-col xl:flex-row">

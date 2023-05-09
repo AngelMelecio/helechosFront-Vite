@@ -47,6 +47,7 @@ export function MaterialesProvider({ children }) {
 
     const [allMateriales, setAllMateriales] = useState([])
     const [loading, setLoading] = useState(true)
+    const [loadingFichaMateriales, setLoadingFichaMateriales] = useState(true)
     const [errors, setErrors] = useState(false)
 
     function getMaterial(id) {
@@ -89,8 +90,16 @@ export function MaterialesProvider({ children }) {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + session.access }
         }
-        const materialesFicha = await fetchAPI(API_FICHA_MATERIALES_URL + idFicha, options)
-        return formatMaterialesFicha(materialesFicha)
+        try{
+            setLoadingFichaMateriales(true)
+            if( idFicha === undefined ) return []
+            const {materiales, message} = await fetchAPI(API_FICHA_MATERIALES_URL+idFicha, options)
+            return formatMaterialesFicha(materiales)
+        }catch(e){
+            console.log(e)
+        }finally{
+            setLoadingFichaMateriales(false)
+        }
     }
 
     async function refreshMateriales() {
@@ -174,7 +183,7 @@ export function MaterialesProvider({ children }) {
                 errors,
                 refreshMateriales,
                 getMaterial,
-                getFichaMateriales,
+                getFichaMateriales, loadingFichaMateriales,
                 saveMaterial,
                 deleteMateriales,
                 findMaterial,

@@ -2,6 +2,9 @@ import { useEffect, useState } from "react"
 import { ICONS } from "../../../constants/icons"
 import { useFichas } from "../hooks/useFichas"
 import FrmFichas from "./FrmFichas"
+import { useFormik } from "formik"
+import { useMateriales } from "../../Materiales/hooks/useMateriales"
+import { useParams } from "react-router-dom"
 
 const initFichaObj = {
   modelo: '',
@@ -19,10 +22,6 @@ const initFichaObj = {
   maquinaPlancha: '',
   velocidadPlancha: '',
   temperaturaPlancha: '',
-
-  pesoPoliester: 0,
-  pesoMelt: 0,
-  pesoLurex: 0,
 
   materiales: [],
   numeroPuntos: [{ valor: '', posicion: '' }],
@@ -49,11 +48,23 @@ const SectionFichas = ({
   scrollForm
 }) => {
 
+  const { id } = useParams();
 
   const [fichasList, setFichasList] = useState(fichas)
   const [selectedFichaIndx, setSelectedFichaIndx] = useState(null)
   const [theresChanges, setTheresChanges] = useState(false)
-  const { loading, refreshFichas, setLoading } = useFichas()
+
+  const {
+    loading,
+    refreshFichas,
+    setLoading,
+    deleteFicha : deleteFichaAPI,
+  } = useFichas()
+
+  const {
+    getFichaMateriales,
+  } = useMateriales()
+
 
   const dummySave = () => {
     console.log('dummy save')
@@ -86,7 +97,7 @@ const SectionFichas = ({
   const handleAddFicha = () => {
     if (theresChanges) {
       setModalMessage('Hay cambios sin guardar, ¿Desea descartarlos?')
-      setModalCancelText('Guardar')
+      setModalCancelText('Permanecer')
       setModalConfirmText('Descartar')
       setOnDiscardChanges(() => () => {
         addFicha()
@@ -94,10 +105,7 @@ const SectionFichas = ({
         setTheresChanges(false)
       })
       setOnSaveChanges(() => () => {
-        dummySave()
-        addFicha()
         closeModal()
-        setTheresChanges(false)
       })
       openModal()
       return
@@ -136,22 +144,42 @@ const SectionFichas = ({
       deleteFicha(indx)
   }
 
-  const deleteFicha = (indx) => {
+  const deleteFicha = async(indx) => {
     if (fichasList[indx].idFichaTecnica) {
-      console.log('dummy delete')
-      refreshFichas()
+      await deleteFichaAPI(fichasList[indx].idFichaTecnica)
+      //console.log(fichasList[indx])
+      refreshFichas({ idModelo:fichasList[indx].modelo })
     }
     else {
       let newFichas = [...fichasList]
       newFichas.splice(indx, 1)
       setFichasList(newFichas)
+      setSelectedFichaIndx(null)
     }
   }
 
   useEffect(() => {
-    console.log('EFFECTO SEC. FICHAS, fichas: ', fichas)
+    console.log('EFFECTO\n SEC. FICHAS, fichas: ')
+    console.table(fichas)
     return () => { setLoading(true) }
   }, [])
+
+  const handleCopyFicha = async (indx) => {
+    let materiales = await getFichaMateriales( fichasList[indx].idFichaTecnica )
+    setFichasList(prev => [
+      ...prev,
+      {
+        ...fichasList[indx],
+        nombre: prev[indx].nombre + ' Copia',
+        idFichaTecnica: undefined,
+        fotografia:'',
+        archivoPrograma: null,
+        materiales: materiales,
+        copied: true
+      }
+    ])
+    setSelectedFichaIndx(fichasList.length)
+  }
 
   return (
     <div id="frm-ficha" className="flex w-full relative h-full">
@@ -160,8 +188,9 @@ const SectionFichas = ({
         <div className="flex flex-col w-full h-full overflow-hidden">
           <div className="p-3 pr-6">
             <button
+              disabled={id==='0'}
               onClick={handleAddFicha}
-              className="flex items-center duration-200 border-gray-300 text-teal-800 border rounded-sm w-full p-3 hover:border-teal-500  ">
+              className="flex items-center duration-200 border-gray-300 text-teal-800 border rounded-sm w-full p-3 hover:border-teal-500  disabled:border-gray-300 disabled:text-gray-400">
               <ICONS.Plus></ICONS.Plus>
               <p className="ml-2 font-semibold">Nueva Ficha</p>
             </button>
@@ -203,18 +232,21 @@ const SectionFichas = ({
       </div>
       {/* Formulario Fichas */
         selectedFichaIndx !== null ?
-        <FrmFichas
-          ficha={ fichasList[selectedFichaIndx] }
-          scrollForm={scrollForm}
-          theresChanges={theresChanges}
-          setTheresChanges={setTheresChanges}
-        />
-        :
-        <div className="flex justify-center items-center w-full total-center bg-gray-200 h-full">
-          <p className="italic font-semibold text-gray-600 ">
-            Selecciona o crea una ficha ...
-          </p>
-        </div>
+          <FrmFichas
+            ficha={fichasList[selectedFichaIndx]}
+            scrollForm={scrollForm}
+            theresChanges={theresChanges}
+            setTheresChanges={setTheresChanges}
+          />
+          :
+          <div className="flex justify-center items-center w-full total-center bg-gray-200 h-full">
+            <p className="italic font-semibold text-gray-600 ">
+              {
+                id === '0' ? <>Guarde un modelo antes de crear fichas...</> : <>Selecciona o crea una ficha ...</>
+                
+              }
+            </p>
+          </div>
       }
     </div>
   )

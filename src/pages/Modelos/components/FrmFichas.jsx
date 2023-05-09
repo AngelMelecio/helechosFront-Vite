@@ -2,7 +2,7 @@ import { useFormik } from "formik"
 import { useEffect } from "react"
 import Input from "../../../components/Input";
 import CustomSelect from "../../../components/CustomSelect";
-import SelectorMateriales from "../../../components/Materiales/SelectorMateriales";
+import SelectorMateriales from "../components/selectorMateriales";
 import { toUrl } from "../../../constants/functions";
 import { ICONS } from "../../../constants/icons";
 import PesosList from "./PesosList";
@@ -11,6 +11,8 @@ import { useMaquinas } from "../../Maquinas/hooks/useMaquinas";
 import { useState } from "react";
 import Loader from "../../../components/Loader/Loader";
 import { useFichas } from "../hooks/useFichas";
+import { useMateriales } from "../../Materiales/hooks/useMateriales";
+import { useParams } from "react-router-dom";
 
 const FrmFichas = ({
   ficha,
@@ -19,33 +21,38 @@ const FrmFichas = ({
   setTheresChanges,
 }) => {
 
+  const {id} = useParams()
   const formRef = useRef(null)
 
   const { allMaquinas, refreshMaquinas } = useMaquinas()
   const [tejidoOptions, setTejidoOptions] = useState([])
   const [planchaOptions, setPlanchaOptions] = useState([])
 
-  const { loadingMateriales, getFichaMateriales } = useFichas()
+  const {
+    getFichaMateriales,
+    loadingFichaMateriales
+  } = useMateriales()
+
+  const {saveFicha} = useFichas()
 
   useEffect(() => {
     refreshMaquinas()
   }, [])
 
+  // Cargamos las opciones de las maquinas
   useEffect(() => {
     setTejidoOptions(
-      allMaquinas.map(m =>
-        m.departamento === 'Tejido' &&
-        ({ value: m.idMaquina.toString(), label: 'Línea: ' + m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca })
-      )
+      allMaquinas
+        .filter(m => (m.departamento === 'Tejido'))
+        .map(m => ({ value: m.idMaquina.toString(), label: 'Línea: ' + m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca }))
     )
     setPlanchaOptions(
-      allMaquinas.map(m =>
-        m.departamento === 'Placha' &&
-        ({ value: m.idMaquina.toString(), label: 'Línea: ' + m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca })
-      )
+      allMaquinas
+        .filter(m => (m.departamento === 'Plancha'))
+        .map(m => ({ value: m.idMaquina.toString(), label: 'Línea: ' + m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca }))
     )
-
   }, [allMaquinas])
+
 
   // Cuando no queremos scroll en el Form lo regresamos hasta arriba
   useEffect(() => {
@@ -54,16 +61,17 @@ const FrmFichas = ({
     }
   }, [scrollForm])
 
+
+  // Cargamos los materiales de la ficha
   useEffect(async () => {
-    
     fichaFormik.setValues(ficha)
-    let materiales = await getFichaMateriales(ficha.idFichaTecnica)
-    fichaFormik.setFieldValue('materiales', materiales)
+    console.log('EFFECTO\n FRM FICHA ficha:', ficha)
+    if (!ficha.copied ) {
+      let materiales = await getFichaMateriales(ficha.idFichaTecnica)
+      fichaFormik.setFieldValue('materiales', materiales)
+    }
     
-    console.log('EFFECTO FRM FICHA ficha:', ficha, " materiales:", materiales)
-
-
-  }, [ficha])
+  }, [ficha.idFichaTecnica])
 
   const validate = values => {
     const errors = {};
@@ -93,8 +101,16 @@ const FrmFichas = ({
   const fichaFormik = useFormik({
     initialValues: ficha,
     validate,
-    onSubmit: values => {
-      console.log(values)
+    onSubmit: async(values) => {
+      //console.log(values)
+      await saveFicha({
+        values:{
+          ...values,
+          modelo:id,
+        }, 
+        materiales:values.materiales, 
+        method: ficha.idFichaTecnica ? 'PUT' : 'POST'
+      })
     }
   })
 
@@ -131,6 +147,7 @@ const FrmFichas = ({
     fichaFormik.setValues(prev => ({ ...prev, materiales: [...prev.materiales, ...newMateriales] }))
     setTheresChanges(true)
   }
+
 
   return (
     <div
@@ -295,7 +312,7 @@ const FrmFichas = ({
                 DATOS DE LOS HILOS
               </div>
             </div>
-            {!loadingMateriales ?
+            {fichaFormik?.values?.materiales && !loadingFichaMateriales ?
               <>
                 <PesosList
                   materiales={fichaFormik?.values?.materiales}
