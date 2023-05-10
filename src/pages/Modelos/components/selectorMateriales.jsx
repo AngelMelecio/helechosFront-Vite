@@ -121,6 +121,14 @@ const SelectorMateriales = ({
     newMateriales.splice(indx, 1)
     fichaTecnicaObj.setValues(prev => ({ ...prev, materiales: newMateriales }))
   }
+  const swapMaterials = (index1, index2) => {
+    const newMateriales = [...fichaTecnicaObj.values.materiales];
+    const temp = newMateriales[index1];
+    newMateriales[index1] = newMateriales[index2];
+    newMateriales[index2] = temp;
+    fichaTecnicaObj.setValues(prev => ({ ...prev, materiales: newMateriales }));
+  };
+
 
   let sel_width = selectorVisible ? 'w-full' : 'w-10'
   let addButtonClass = selectorVisible ? 'neutral-button' : 'normal-button'
@@ -204,6 +212,7 @@ const SelectorMateriales = ({
             <table className="w-full">
               <thead>
                 <tr className="font-medium text-teal-800">
+                  <Th></Th>
                   <Th>Guía Hilos</Th>
                   <Th>calibre</Th>
                   <Th>Proveedor</Th>
@@ -219,6 +228,23 @@ const SelectorMateriales = ({
                   //  ASSIGNED MATERIALES 
                   fichaTecnicaObj?.values?.materiales?.map((f, i) =>
                     <tr key={'F' + i} className="array-row border border-transparent relative hover:bg-slate-200 duration-200">
+                      <td className="bg-white flex justify-self-auto">
+                        <div className="flex justify-between">
+                          {/*Implementa en estos botones el swap*/}
+                          <button
+                            onClick={(e) => { e.preventDefault(); i > 0 && swapMaterials(i, i - 1) }}
+                            className="neutral-button mr-0.5 mb-1 rounded-full w-8 h-8 bg-gray-300 text-zinc-800 opacity-0 flex justify-center ">
+                            <ICONS.Up />
+                          </button>
+
+                          <button
+                            onClick={(e) => { e.preventDefault(); i < fichaTecnicaObj.values.materiales.length - 1 && swapMaterials(i, i + 1) }}
+                            className="neutral-button ml-0.5 mb-1 rounded-full w-8 h-8 bg-gray-300 text-zinc-800 opacity-0 flex justify-center">
+                            <ICONS.Down />
+                          </button>
+
+                        </div>
+                      </td>
                       <td>
                         <input
                           name='guiaHilos'
