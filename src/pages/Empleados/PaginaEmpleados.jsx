@@ -23,17 +23,27 @@ const initobj = {
   departamento: "Seleccione",
 }
 
-const initErrors = {}
+const empleadosColumns = [
+  { name: 'Nombre', attribute: 'nombre' },
+  { name: 'Apellidos', attribute: 'apellidos' },
+  { name: 'Dirección', attribute: 'direccion' },
+  { name: 'Seguro Social', attribute: 'ns' },
+  { name: 'Fecha de Contratación', attribute: 'fechaEntrada' },
+  { name: 'Fecha Alta de Seguro', attribute: 'fechaAltaSeguro' },
+  { name: 'Estado', attribute: 'estado' },
+  { name: 'Teléfono', attribute: 'telefono' },
+  { name: 'Departamento', attribute: 'departamento' },
+]
 
 const PaginaEmpleados = () => {
 
-  const { allEmpleados, loading, refreshEmpleados } = useEmpleados()
-
   const {
-    empleadosColumns, getEmpleados, fetchingEmpleados,
+    allEmpleados,
+    refreshEmpleados,
+    loading,
     deleteEmpleados,
-    getMaquinas
-  } = useApp()
+
+  } = useEmpleados()
 
   const [listaEmpleados, setListaEmpleados] = useState([])
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
@@ -49,11 +59,13 @@ const PaginaEmpleados = () => {
   }, [allEmpleados])
 
   const handleDeleteEmpleados = async () => {
-    setSaving(true)
-    await deleteEmpleados(listaEmpleados)
-    await getEmpleados()
+    await deleteEmpleados(
+      listaEmpleados
+        .filter(e => e.isSelected)
+        .map(e => e.idEmpleado)
+    )
     handleCloseModal(setDeleteModalVisible)
-    setSaving(false)
+    await refreshEmpleados()
   }
 
   const handleOpenModal = async (setState) => {
@@ -73,7 +85,7 @@ const PaginaEmpleados = () => {
     <>
       {
         <CRUD
-          title='EMPLEADOS'
+          title='Empleados'
           path='empleados'
           idName='idEmpleado'
           loading={loading}

@@ -11,11 +11,38 @@ export function useMaquinas() {
     return useContext(MaquinasContext)
 }
 
+function formatMaquinas(maquinas) {
+    return maquinas.map((mqna) => ({
+        ...mqna,
+        isSelected: false,
+    }))
+}
+
 export function MaquinasProvider({ children }) {
 
     const { session } = useAuth()
     const [allMaquinas, setAllMaquinas] = useState([])
     const [loading, setLoading] = useState(true)
+
+    async function getMaquina(id) {
+        let options = {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': 'Bearer ' + session.access
+            }
+        }
+        try{
+            setLoading(true)
+            let maquina = await fetchAPI(API_MAQUINAS_URL + id, options)
+            return formatMaquinas([maquina])[0]
+        }catch(err){
+            console.log(err)
+        }
+        finally{
+            setLoading(false)
+        }
+    }
 
     async function getMaquinas() {
         let options = {
@@ -26,11 +53,7 @@ export function MaquinasProvider({ children }) {
             }
         }
         let maquinas = await fetchAPI(API_MAQUINAS_URL, options)
-        let formatData = maquinas.map((mqna) => ({
-            ...mqna,
-            isSelected: false,
-        }))
-        return formatData
+        return formatMaquinas(maquinas)
     }
 
     async function refreshMaquinas() {
@@ -49,8 +72,9 @@ export function MaquinasProvider({ children }) {
         <MaquinasContext.Provider
             value={{
                 allMaquinas,
-                loading,
+                loading, setLoading,
                 refreshMaquinas,
+                getMaquina,
             }}
         >
             {children}

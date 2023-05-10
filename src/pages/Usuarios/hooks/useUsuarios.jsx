@@ -27,6 +27,25 @@ export function UsuariosProvider({ children }) {
   const [allUsuarios, setAllUsuarios] = useState([])
   const [loading, setLoading] = useState(true)
 
+  async function getUsuario(id) {
+    let options = {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + session?.access
+      }
+    }
+    try{
+      setLoading(true)
+      let usuario = await fetchAPI(API_USUARIOS_URL + id, options)
+      return formatUsuarios([usuario])[0]
+    }catch(err){
+      console.log(err)
+    }finally{
+      setLoading(false)
+    }
+  }
+
   async function getUsuarios() {
     let options = {
       method: 'GET',
@@ -57,6 +76,8 @@ export function UsuariosProvider({ children }) {
         allUsuarios,
         loading,
         refreshUsuarios,
+        getUsuario,
+        setLoading
       }}
     >
       {children}

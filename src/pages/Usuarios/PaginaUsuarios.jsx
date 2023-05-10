@@ -18,6 +18,7 @@ const PaginaUsuarios = () => {
   const {
     allUsuarios,
     loading,
+    setLoading, 
     refreshUsuarios,
   } = useUsuarios()
 
@@ -42,7 +43,7 @@ const PaginaUsuarios = () => {
     <>
       {
         <CRUD
-          title='USUARIOS'
+          title='Usuarios'
           path='usuarios'
           idName='id'
           loading={loading}
