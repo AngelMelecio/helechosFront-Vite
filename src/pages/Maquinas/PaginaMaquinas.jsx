@@ -48,7 +48,7 @@ const PaginaMaquinas = () => {
       {
         loading ? <Loader /> :
           <CRUD
-            title='MAQUINAS'
+            title='Máquinas'
             path='maquinas'
             idName='idMaquina'
             loading={loading}
