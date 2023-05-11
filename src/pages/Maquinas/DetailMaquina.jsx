@@ -42,8 +42,8 @@ const DetailMaquina = () => {
   const navigate = useNavigate()
   const { id } = useParams();
   const isEdit = (id !== '0')
+  const { getMaquina, saveMaquina, loading , findMaquina, allMaquinas, setLoading} = useMaquinas();
 
-  const { loading, setLoading, getMaquina } = useMaquinas()
 
   const validate = values => {
     const errors = {};
@@ -78,22 +78,29 @@ const DetailMaquina = () => {
   };
 
   const formik = useFormik({
-    initialValues: null,
-    validate,
-    onSubmit: values => {
-      console.log('Guardando:', values)
-      //handleSaveUsuario(values)
-    },
+    initialValues: id !== '0' ? (allMaquinas.length ? getMaquina(id) : initMaquina) : initMaquina,
+        validate,
+        onSubmit: async (values) => {
+            console.log("PUT/POST")
+            await saveMaquina({ values: values, method: isEdit ? 'PUT' : 'POST' })
+            navigate(("/maquinas"))
+            //handleSaveMaquinas(values);
+        },
   });
 
   useEffect(() => {
       return () => setLoading(true)
   },[])
 
-  useEffect(async()=>{
-    const usr = ( id === '0' ? initMaquina : await getMaquina(id))
-    formik.setValues(usr)
-  },[id])
+  useEffect(() => {
+    if (id !== '0' && !allMaquinas.length) {
+        (async () => {
+            const maquina = await findMaquina(id);
+            formik.setValues(maquina);
+            setLoading(false)
+        })();
+    }
+}, [id]);
 
   return (
     <>
@@ -104,7 +111,7 @@ const DetailMaquina = () => {
               onClick={() => navigate(-1)}
               className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
             <p className="font-bold text-3xl pl-3 text-teal-700">
-              {isEdit ? `Detalles de la Máquina` : "Nueva Máquina"}
+              {isEdit ? `Detalles de la máquina` : "Nueva máquina"}
             </p>
           </div>
           <div className="flex flex-col bg-white h-full rounded-t-lg relative shadow-lg">

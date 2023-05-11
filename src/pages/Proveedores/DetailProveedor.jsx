@@ -86,8 +86,8 @@ const DetailProveedor = () => {
     useEffect(() => {
         if (id !== '0' && !allProveedores.length) {
             (async () => {
-                const mate = await findProveedor(id);
-                formik.setValues(mate);
+                const proveedor = await findProveedor(id);
+                formik.setValues(proveedor);
                 setLoading(false)
             })();
         }

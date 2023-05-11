@@ -37,12 +37,12 @@ export function ClientesProvider({ children }) {
     }
 
     async function findCliente(id) {
+        let options = {
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + session.access }
+        }
         try {
             setLoading(true)
-            let options = {
-                method: 'GET',
-                headers: { 'Authorization': 'Bearer ' + session.access }
-            }
             let clie = await fetchAPI(API_CLIENTES_URL + id, options)
             return formatClientes([clie])[0]
         } catch (err) {
