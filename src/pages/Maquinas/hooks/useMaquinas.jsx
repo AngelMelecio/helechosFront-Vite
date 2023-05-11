@@ -20,11 +20,22 @@ function formatMaquinas(maquinas) {
 
 export function MaquinasProvider({ children }) {
 
-    const { session } = useAuth()
+    const { session,notify } = useAuth()
     const [allMaquinas, setAllMaquinas] = useState([])
     const [loading, setLoading] = useState(true)
+    const [errors, setErrors] = useState(false)
 
-    async function getMaquina(id) {
+
+    
+    function getMaquina(id) {
+        if(allMaquinas.length!==0){
+            let maquia = allMaquinas.find(e => e.idMaquina + '' === id + '')
+            return maquia
+        }
+        
+    }
+
+    async function findMaquina(id) {
         let options = {
             method: 'GET',
             headers: {
@@ -68,13 +79,79 @@ export function MaquinasProvider({ children }) {
         }
     }
 
+    const postMaquina = async (values, method) => {
+        console.log('POST: ', values)
+        let Keys = [
+            'numero',
+            'linea',
+            'marca',
+            'modelo',
+            'ns',
+            'otros',
+            'fechaAdquisicion',
+            'detalleAdquisicion',
+            'departamento'
+        ]
+        let formData = new FormData()
+        Keys.forEach(k => {
+            formData.append(k, values[k] ? values[k] : '')
+        })
+        const options = {
+            method: method,
+            headers: { 'Authorization': 'Bearer ' + session.access },
+            body: formData
+        }
+        let { maquina, message } = await fetchAPI(API_MAQUINAS_URL + (method === 'PUT' ? values.idMaquina : ''), options)
+        return { message }
+        //return formatMaquinas(maquina)
+    }
+
+    const deleteMaquinas = async (listaMaquinas) => {
+        for (let i = 0; i < listaMaquinas.length; i++) {
+            let e = listaMaquinas[i]
+            const options = {method: 'DELETE', headers: {'Authorization': 'Bearer ' + session.access}}
+            if (e.isSelected) { 
+                try {
+                    setLoading(true)
+                    const { message } = await fetchAPI(API_MAQUINAS_URL + e.idMaquina, options)
+                    notify(message)
+                } catch (err) {
+                    console.log(err)
+                    setErrors(err)
+                    notify('Error al eliminar la maquina', true)
+                } finally {
+                    setLoading(false)
+                }
+            }
+        }
+    }
+
+    async function saveMaquina({ values, method }) {
+        try {
+            setLoading(true)
+            const { message } = await postMaquina(values, method)
+            notify(message)
+        } catch (err) {
+            console.log(err)
+            setErrors(err)
+            notify('Error al guardar la maquina', true)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <MaquinasContext.Provider
             value={{
                 allMaquinas,
-                loading, setLoading,
+                loading, 
+                errors,
                 refreshMaquinas,
                 getMaquina,
+                saveMaquina,
+                deleteMaquinas,
+                findMaquina,
+                setLoading
             }}
         >
             {children}

@@ -4,29 +4,15 @@ import DeleteModal from '../../components/DeleteModal'
 import CRUD from '../../components/CRUD'
 import Loader from '../../components/Loader/Loader'
 import { sleep } from '../../constants/functions'
-import FrmProveedores from '../../components/FrmProveedores'
 import { useProveedores } from './hooks/useProveedores'
 
-const initobj = {
-    idProveedor: "",
-    nombre: "",
-    direccion: "",
-    telefono: "",
-    correo: "",
-    departamento: "Seleccione",
-    contactos: [{ "nombre": "", "puesto": "", "correo": "", "telefono": "", "nota": "" }],
-    otro: ""
-}
 
 const PaginaProveedores = () => {
-    const modalContainerRef = useRef()
     const { allProveedores, loading, refreshProveedores, deleteProveedores } = useProveedores()
+    const modalContainerRef = useRef()
     const [listaProveedores, setListaProveedores] = useState([])
-    const [isEdit, setIsEdit] = useState(false)
-    const [objProveedor, setObjProveedor] = useState(initobj);
-    const [saving, setSaving] = useState(false)
-    const [frmModalVisible, setFrmModalVisible] = useState(false)
     const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+    const [saving, setSaving] = useState(false)
 
     useEffect(() => {
         refreshProveedores()
@@ -43,26 +29,18 @@ const PaginaProveedores = () => {
         modalContainerRef.current.classList.add('visible')
     }
     const handleCloseModal = async (setState) => {
-        setIsEdit(false)
-        setObjProveedor(initobj)
         modalContainerRef.current.classList.remove('visible')
         document.getElementById("tbl-page").classList.remove('blurred')
         await sleep(150)
         setState(false)
     }
 
-    const handleDleteProveedores = async () => {
+    const handleDeleteProveedores = async () => {
         setSaving(true)
         await deleteProveedores(listaProveedores)
         await refreshProveedores()
         handleCloseModal(setDeleteModalVisible)
         setSaving(false)
-    }
-
-    const handleEdit = async (proveedor) => {
-        setObjProveedor(proveedor)
-        setIsEdit(true)
-        handleOpenModal(setFrmModalVisible)
     }
 
     return (
@@ -86,25 +64,14 @@ const PaginaProveedores = () => {
                             { name: 'Departamento', attribute: 'departamento' },
                             { name: 'Otro', attribute: 'otro' },
                           ]}
-                        onAdd={() => handleOpenModal(setFrmModalVisible)}
-                        onEdit={handleEdit}
                         onDelete={() => handleOpenModal(setDeleteModalVisible)}
                     />
             }
             <div className='modal absolute h-full w-full' ref={modalContainerRef}>
-                {frmModalVisible &&
-                    <FrmProveedores
-                        onCloseModal={() => handleCloseModal(setFrmModalVisible)}
-                        proveedor={objProveedor}
-                        isEdit={isEdit}
-                        setIsEdit={setIsEdit}
-                    />
-
-                }
                 {deleteModalVisible &&
                     <DeleteModal
                         onCancel={() => handleCloseModal(setDeleteModalVisible)}
-                        onConfirm={handleDleteProveedores}
+                        onConfirm={handleDeleteProveedores}
                         elements={listaProveedores}
                         representation={['nombre', 'rfc']}
                         message='Los siguientes proveedores se eliminarán permanentemente:'
