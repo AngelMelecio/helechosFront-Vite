@@ -90,7 +90,7 @@ const PaginaClientes = () => {
                         onDelete={() => handleOpenModal(setDeleteModalVisible)}
                     />
             }
-            <div className='modal absolute h-full w-full' ref={modalContainerRef}>
+            <div className='modal absolute pointer-events-none z-50 pointer-events-none z-50 h-full w-full' ref={modalContainerRef}>
                 {frmModalVisible &&
                     <FrmClientes
                         onCloseModal={() => handleCloseModal(setFrmModalVisible)}

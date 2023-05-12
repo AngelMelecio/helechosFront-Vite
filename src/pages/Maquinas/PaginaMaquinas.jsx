@@ -56,12 +56,10 @@ const PaginaMaquinas = () => {
             elements={listaMaquinas}
             setElements={setListaMaquinas}
             columns={maquinasColumns}
-            //onAdd={() => handleOpenModal(setFrmModalVisible)}
-            //onEdit={handleEdit}
             onDelete={() => handleOpenModal(setDeleteModalVisible)}
           />
       }
-      <div className='modal absolute h-full w-full' ref={modalContainerRef}>
+      <div className='modal absolute pointer-events-none z-50 h-full w-full' ref={modalContainerRef}>
         {deleteModalVisible &&
           <DeleteModal
             onCancel={() => handleCloseModal(setDeleteModalVisible)}
