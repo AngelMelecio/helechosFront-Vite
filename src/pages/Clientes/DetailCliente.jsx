@@ -20,7 +20,7 @@ const DetailCliente = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const isEdit = (id !== '0');
-    const { getCliente, saveCliente, loading , findCliente, allClientes, setLoading} = useClientes();
+    const { getCliente, saveCliente, loading, findCliente, allClientes, setLoading } = useClientes();
 
     const validate = values => {
         const errors = {};
@@ -61,13 +61,13 @@ const DetailCliente = () => {
 
     useEffect(() => {
         if (id !== '0' && !allClientes.length) {
-          (async () => {
-            const mate = await findCliente(id);
-            formik.setValues(mate);
-            setLoading(false)
-          })();
+            (async () => {
+                const cliente = await findCliente(id);
+                formik.setValues(cliente);
+                setLoading(false)
+            })();
         }
-      }, [id]);
+    }, [id]);
 
     const handleChange = (e) => {
         //console.log(e.target.name, e.target.value)
@@ -116,7 +116,7 @@ const DetailCliente = () => {
                                                 </div>
                                                 <div className='flex flex-row'>
                                                     <Input
-                                                        label='Nombre' type='text' name='nombre' value={formik.values ? formik.values.nombre: ''}
+                                                        label='Nombre' type='text' name='nombre' value={formik.values ? formik.values.nombre : ''}
                                                         onChange={handleChange} onBlur={formik.handleBlur}
                                                         errores={formik.errors.nombre && formik.touched.nombre ? formik.errors.nombre : null}
                                                     />
@@ -148,7 +148,7 @@ const DetailCliente = () => {
                                                         errores={formik.errors.rfc && formik.touched.rfc ? formik.errors.rfc : null}
                                                     />
                                                     <Input
-                                                        label='Otros' type='text' name='otro' value={formik.values ?formik.values.otro : ''}
+                                                        label='Otros' type='text' name='otro' value={formik.values ? formik.values.otro : ''}
                                                         onChange={handleChange} onBlur={formik.handleBlur}
                                                         errores={formik.errors.otro && formik.touched.otro ? formik.errors.otro : null}
                                                     />
@@ -170,7 +170,7 @@ const DetailCliente = () => {
                                                                 { name: 'Teléfono', atr: 'telefono' },
                                                                 { name: 'Nota', atr: 'nota' }
                                                             ]}
-                                                            elements={formik.values ? formik.values.contactos: [{ nombre: '', puesto: '', correo: '', telefono: '', nota: '' }]}
+                                                            elements={formik.values ? formik.values.contactos : [{ nombre: '', puesto: '', correo: '', telefono: '', nota: '' }]}
                                                             arrayName={'contactos'}
                                                             handleChange={formik.handleChange}
                                                             clearObject={{ nombre: '', puesto: '', correo: '', telefono: '', nota: '' }}

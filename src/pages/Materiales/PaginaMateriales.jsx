@@ -4,32 +4,15 @@ import DeleteModal from '../../components/DeleteModal'
 import CRUD from '../../components/CRUD'
 import Loader from '../../components/Loader/Loader'
 import { sleep } from '../../constants/functions'
-import FrmMateriales from '../../components/FrmMateriales'
 import { useMateriales } from './hooks/useMateriales'
 
-const initobj = {
-    idMaterial: "",
-    tipo: "Seleccione",
-    color: "",
-    calibre: "Seleccione",
-    proveedor: "Seleccione",
-    tenida: "",
-    codigoColor: "#ffffff",
-    idProveedor: "Seleccione",
-    nombreProveedor: ""
-  }
 
 const PaginaMateriales = () => {
-
-
-    const modalContainerRef = useRef()
     const { allMateriales, loading, refreshMateriales, deleteMateriales} = useMateriales()
+    const modalContainerRef = useRef()
     const [listaMateriales, setListaMateriales] = useState([])
-    const [isEdit, setIsEdit] = useState(false)
-    const [objMaterial, setObjMaterial] = useState(initobj)
-    const [saving, setSaving] = useState(false)
-    const [frmModalVisible, setFrmModalVisible] = useState(false)
     const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+    const [saving, setSaving] = useState(false)
 
     useEffect(() => {
         refreshMateriales()
@@ -46,15 +29,13 @@ const PaginaMateriales = () => {
         modalContainerRef.current.classList.add('visible')
     }
     const handleCloseModal = async (setState) => {
-        setIsEdit(false)
-        setObjMaterial(initobj)
         modalContainerRef.current.classList.remove('visible')
         document.getElementById("tbl-page").classList.remove('blurred')
         await sleep(150)
         setState(false)
     }
 
-    const handleDleteMateriales = async () => {
+    const handleDeleteMateriales = async () => {
         setSaving(true)
         await deleteMateriales(listaMateriales)
         await refreshMateriales()
@@ -62,12 +43,7 @@ const PaginaMateriales = () => {
         setSaving(false)
     }
 
-    const handleEdit = async (material) => {
-        setObjMaterial(material)
-        setIsEdit(true)
-        handleOpenModal(setFrmModalVisible)
-    }
-
+   
     return (
         <>
             {
@@ -88,25 +64,14 @@ const PaginaMateriales = () => {
                             { name: 'Teñida / Calidad', attribute: 'tenida' },
                             { name: 'Código de color', attribute: 'codigoColor' },
                           ]}
-                        onAdd={() => handleOpenModal(setFrmModalVisible)}
-                        onEdit={handleEdit}
                         onDelete={() => handleOpenModal(setDeleteModalVisible)}
                     />
             }
-            <div className='modal absolute pointer-events-none z-50 h-full w-full' ref={modalContainerRef}>
-                {frmModalVisible &&
-                    <FrmMateriales
-                        onCloseModal={() => handleCloseModal(setFrmModalVisible)}
-                        material={objMaterial}
-                        isEdit={isEdit}
-                        setIsEdit={setIsEdit}
-                    />
-
-                }
+            <div className='modal absolute h-full w-full' ref={modalContainerRef}>
                 {deleteModalVisible &&
                     <DeleteModal
                         onCancel={() => handleCloseModal(setDeleteModalVisible)}
-                        onConfirm={handleDleteMateriales}
+                        onConfirm={handleDeleteMateriales}
                         elements={listaMateriales}
                         representation={['color', 'tenida']}
                         message='Los siguientes materiales se eliminarán permanentemente:'

@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
 import { useAuth } from '../../../context/AuthContext'
+import { useContext } from "react";
 import { fetchAPI } from '../../../services/fetchApiService'
 
 const API_USUARIOS_URL = 'users/'
@@ -26,8 +27,17 @@ export function UsuariosProvider({ children }) {
 
   const [allUsuarios, setAllUsuarios] = useState([])
   const [loading, setLoading] = useState(true)
+  const [errors, setErrors] = useState(false)
 
-  async function getUsuario(id) {
+
+  function getUsuario(id) {
+    if(allUsuarios.length!==0){
+        let usuario = allUsuarios.find(e => e.idUsuario + '' === id + '')
+        return usuario
+    }
+    
+}
+  async function findUsuario(id) {
     let options = {
       method: 'GET',
       headers: {
@@ -35,13 +45,15 @@ export function UsuariosProvider({ children }) {
         'Authorization': 'Bearer ' + session?.access
       }
     }
-    try{
+    try {
       setLoading(true)
       let usuario = await fetchAPI(API_USUARIOS_URL + id, options)
       return formatUsuarios([usuario])[0]
-    }catch(err){
+    } catch (err) {
       console.log(err)
-    }finally{
+      setErrors(err)
+      notify('Error al buscar al usuario', true)
+    } finally {
       setLoading(false)
     }
   }
@@ -69,6 +81,70 @@ export function UsuariosProvider({ children }) {
       setLoading(false)
     }
   }
+
+  const postUsuario = async (values, method) => {
+    console.log('POST: ', values)
+    let Keys = [
+        'nombre',
+        'apellidos',
+        'correo',
+        'usuario',
+        'estado',
+        'tipo',
+        'contrasenia',
+    ]
+    let formData = new FormData()
+    Keys.forEach(k => {
+        if (k === 'contactos')
+            formData.append(k, values[k] ? JSON.stringify(values[k]) : '')
+        else
+            formData.append(k, values[k] ? values[k] : '')
+    })
+    const options = {
+        method: method,
+        headers: { 'Authorization': 'Bearer ' + session.access },
+        body: formData
+    }
+    let { usuarios, message } = await fetchAPI(API_USUARIOS_URL + (method === 'PUT' ? values.idUsuario : ''), options)
+    return { message }
+    //return formatUsuarios(Usuarios)
+}
+
+const deleteUsuarios = async (listaUsuarios) => {
+    for (let i = 0; i < listaUsuarios.length; i++) {
+        let e = listaUsuarios[i]
+        const options = {method: 'DELETE', headers: {'Authorization': 'Bearer ' + session.access}}
+        if (e.isSelected) { 
+            try {
+                setLoading(true)
+                const { message } = await fetchAPI(API_USUARIOS_URL + e.idUsuario, options)
+                notify(message)
+            } catch (err) {
+                console.log(err)
+                setErrors(err)
+                notify('Error al eliminar el Usuario', true)
+            } finally {
+                setLoading(false)
+            }
+        }
+    }
+}
+
+
+async function saveUsuario({ values, method }) {
+    try {
+        setLoading(true)
+        const { message } = await postUsuario(values, method)
+        notify(message)
+    } catch (err) {
+        console.log(err)
+        setErrors(err)
+        notify('Error al guardar usuario', true)
+    } finally {
+        setLoading(false)
+    }
+}
+
 
   return (
     <UsuariosContext.Provider

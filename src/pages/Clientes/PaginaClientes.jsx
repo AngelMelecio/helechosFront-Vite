@@ -4,28 +4,16 @@ import DeleteModal from '../../components/DeleteModal'
 import CRUD from '../../components/CRUD'
 import Loader from '../../components/Loader/Loader'
 import { sleep } from '../../constants/functions'
-import FrmClientes from '../../components/FrmClientes'
 import { useClientes } from './hooks/useClientes'
-const initobj = {
-    idCliente: "",
-    nombre: "",
-    direccion: "",
-    correo: "",
-    contactos: [{ "nombre": "", "puesto": "", "correo": "", "telefono": "", "nota": "" }],
-    otro: ""
-}
+
 
 const PaginaClientes = () => {
 
+    const { allClientes, loading, refreshClientes, deleteClientes} = useClientes()
 
     const modalContainerRef = useRef()
-    const { allClientes, loading, refreshClientes, deleteClientes} = useClientes()
     const [listaClientes, setListaClientes] = useState([])
-    const [isEdit, setIsEdit] = useState(false)
-    const [objCliente, setObjCliente] = useState(initobj)
     const [saving, setSaving] = useState(false)
-
-    const [frmModalVisible, setFrmModalVisible] = useState(false)
     const [deleteModalVisible, setDeleteModalVisible] = useState(false)
 
     useEffect(() => {
@@ -43,15 +31,13 @@ const PaginaClientes = () => {
         modalContainerRef.current.classList.add('visible')
     }
     const handleCloseModal = async (setState) => {
-        setIsEdit(false)
-        setObjCliente(initobj)
         modalContainerRef.current.classList.remove('visible')
         document.getElementById("tbl-page").classList.remove('blurred')
         await sleep(150)
         setState(false)
     }
 
-    const handleDleteClientes = async () => {
+    const handleDeleteClientes = async () => {
         setSaving(true)
         await deleteClientes(listaClientes)
         await refreshClientes()
@@ -59,11 +45,6 @@ const PaginaClientes = () => {
         setSaving(false)
     }
 
-    const handleEdit = async (cliente) => {
-        setObjCliente(cliente)
-        setIsEdit(true)
-        handleOpenModal(setFrmModalVisible)
-    }
 
     return (
         <>
@@ -85,27 +66,16 @@ const PaginaClientes = () => {
                             { name: 'Correo', attribute: 'correo' },
                             { name: 'Otro', attribute: 'otro' },
                         ]}
-                        onAdd={() => handleOpenModal(setFrmModalVisible)}
-                        onEdit={handleEdit}
                         onDelete={() => handleOpenModal(setDeleteModalVisible)}
                     />
             }
-            <div className='modal absolute pointer-events-none z-50 pointer-events-none z-50 h-full w-full' ref={modalContainerRef}>
-                {frmModalVisible &&
-                    <FrmClientes
-                        onCloseModal={() => handleCloseModal(setFrmModalVisible)}
-                        cliente={objCliente}
-                        isEdit={isEdit}
-                        setIsEdit={setIsEdit}
-                    />
-
-                }
+            <div className='modal absolute h-full w-full' ref={modalContainerRef}>
                 {deleteModalVisible &&
                     <DeleteModal
                         onCancel={() => handleCloseModal(setDeleteModalVisible)}
-                        onConfirm={handleDleteClientes}
+                        onConfirm={handleDeleteClientes}
                         elements={listaClientes}
-                        representation={['nombre', 'direccion', 'telefono', 'correo']}
+                        representation={['nombre', 'rfc']}
                         message='Los siguientes clientes se eliminarán permanentemente:'
                     />
                 }
