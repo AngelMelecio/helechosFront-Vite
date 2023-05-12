@@ -107,7 +107,7 @@ const DetailModelo = () => {
 
         </div>
       </div>
-      <div className='modal absolute h-full w-full' ref={modalRef}>
+      <div className='modal absolute pointer-events-none z-50 h-full w-full' ref={modalRef}>
         {modalVisible &&
           <FichasModal
             onCancel={onSaveChanges}

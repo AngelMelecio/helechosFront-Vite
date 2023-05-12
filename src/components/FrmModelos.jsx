@@ -627,7 +627,7 @@ const FrmModelos = ({
         </div>
       </div>
 
-      <div className='modal absolute h-full w-full' ref={saveFichaModalContainerRef}>
+      <div className='modal absolute pointer-events-none z-50 h-full w-full' ref={saveFichaModalContainerRef}>
         {saveFichaModalVisible &&
           <FichasModal
             onCancel={() => {

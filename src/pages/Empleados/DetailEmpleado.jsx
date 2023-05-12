@@ -8,7 +8,9 @@ import { useFormik } from "formik";
 import Input from "../../components/Input";
 import CustomSelect from "../../components/CustomSelect";
 import Loader from "../../components/Loader/Loader";
-import { toUrl } from "../../constants/functions";
+import { sleep, toUrl } from "../../constants/functions";
+import SelectorMaquinas from "./components/SelectorMaquinas";
+import { useMaquinas } from "../Maquinas/hooks/useMaquinas";
 
 const initobj = {
   idEmpleado: "",
@@ -17,8 +19,8 @@ const initobj = {
   direccion: "",
   telefono: "",
   ns: "",
-  fechaEntrada: "",
-  fechaAltaSeguro: "",
+  fechaEntrada: null,
+  fechaAltaSeguro: null,
   is_active: true,
   fotografia: "",
   departamento: "Seleccione",
@@ -36,8 +38,8 @@ const optionsDepartamento = [
 ]
 
 const optionsEstado = [
-  { value: 'Activo', label: 'Activo' },
-  { value: 'Inactivo', label: 'Inactivo' }
+  { value: true, label: 'Activo' },
+  { value: false, label: 'Inactivo' }
 ]
 
 const DetailEmpleado = () => {
@@ -46,12 +48,19 @@ const DetailEmpleado = () => {
   const { id } = useParams();
 
   const isEdit = (id !== '0')
+  const [assignedMaquinas, setAssignedMaquinas] = useState([])
 
   const {
     getEmpleado,
     saveEmpleado,
     loading
   } = useEmpleados()
+
+  const {
+    allMaquinas,
+    refreshMaquinas,
+    loading: loadingMaquinas,
+  } = useMaquinas()
 
   const validate = values => {
     const errors = {};
@@ -93,17 +102,21 @@ const DetailEmpleado = () => {
     initialValues: null,
     validate,
     onSubmit: async (values) => {
-      await saveEmpleado({
+      //console.log(values)
+     await saveEmpleado({
         values: values,
-        mauqinas: [],
+        maquinas: assignedMaquinas.map(m => ({ id: m.idMaquina })),
         method: isEdit ? 'PUT' : 'POST'
       })
+      //await sleep(1000)
       navigate('/empleados/')
+
     },
   });
 
   useEffect(async () => {
     formik.setValues(id !== '0' ? await getEmpleado(id) : initobj)
+    refreshMaquinas()
   }, [id])
 
   const handleSelectImage = (e) => {
@@ -118,6 +131,9 @@ const DetailEmpleado = () => {
     <>
       <div className="w-full relative overflow-hidden">
         <div id="tbl-page" className="flex flex-col h-full w-full bg-slate-100 absolute px-8 py-5">
+          {/**
+           * HEADER
+           */}
           <div className="flex pb-4 ">
             <button
               onClick={() => navigate('/empleados')}
@@ -129,7 +145,7 @@ const DetailEmpleado = () => {
           <div className="flex flex-col bg-white h-full rounded-t-lg relative shadow-lg">
             <div className='w-full flex h-full flex-col '>
               <div className="flex w-full h-full ">
-                {loading || formik.values === null ? <Loader /> :
+                {formik.values === null ? <Loader /> :
                   <form
                     id='frmEmpleados'
                     className='flex flex-col h-full w-full relative overflow-y-scroll'
@@ -145,7 +161,9 @@ const DetailEmpleado = () => {
                         />
                       </div>
                       <div className="flex w-full">
-
+                        {/**
+                         * FOTOGRAFIA
+                         */}
                         <div className="relative px-2 py-4 w-full border-2 mx-2 my-4 border-slate-300">
                           <div className="absolute w-full total-center -top-3">
                             <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
@@ -170,6 +188,9 @@ const DetailEmpleado = () => {
                         </div>
                       </div>
                       <div className="flex w-full flex-col xl:flex-row">
+                        {/**
+                         * DATOS PERSONALES
+                         */}
                         <div className="w-full flex">
                           <div className="relative px-2 py-4 w-full border-2 mx-2 my-4 border-slate-300">
                             <div className="absolute w-full total-center -top-3">
@@ -205,6 +226,9 @@ const DetailEmpleado = () => {
                             </div>
                           </div>
                         </div>
+                        {/**
+                         * DATOS DEL EMPLEADO
+                         */}
                         <div className="w-full flex">
                           <div className="relative px-2 py-4 w-full border-2 mx-2 my-4 border-slate-300">
                             <div className="absolute w-full total-center -top-3">
@@ -218,22 +242,21 @@ const DetailEmpleado = () => {
                                 onChange={handleChange} onBlur={formik.handleBlur}
                                 errores={formik.errors.fechaEntrada && formik.touched.fechaEntrada ? formik.errors.fechaEntrada : null}
                               />
-                              {
-                                <CustomSelect
-                                  name='Departamento'
-                                  className='input z-[100]'
-                                  onChange={value => formik.setFieldValue('departamento', value.value)}
-                                  value={formik.values ? formik.values.departamento : ''}
-                                  onBlur={formik.handleBlur}
-                                  options={optionsDepartamento}
-                                  label='Departamento'
-                                  errores={formik.errors.departamento && formik.touched.departamento ? formik.errors.departamento : null}
-                                />}
+                              {<CustomSelect
+                                name='Departamento'
+                                className='input z-[100]'
+                                onChange={value => formik.setFieldValue('departamento', value.value)}
+                                value={formik.values ? formik.values.departamento : ''}
+                                onBlur={formik.handleBlur}
+                                options={optionsDepartamento}
+                                label='Departamento'
+                                errores={formik.errors.departamento && formik.touched.departamento ? formik.errors.departamento : null}
+                              />}
                               {<CustomSelect
                                 name='Estado'
                                 className='input z-[100]'
-                                onChange={value => formik.setFieldValue('is_active', value.value === 'Activo' ? true : false)}
-                                value={formik.values ? (formik.values.is_active ? 'Activo' : 'Inactivo') : ''}
+                                onChange={value => formik.setFieldValue('is_active', value.value )}
+                                value={formik.values ? (formik.values.is_active) : ''}
                                 onBlur={formik.handleBlur}
                                 options={optionsEstado}
                                 label='Estado'
@@ -256,18 +279,20 @@ const DetailEmpleado = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="mx-2 my-4 relative h-56 px-4 py-4 border-2 border-slate-300">
+                      <div className="mx-2 my-4 relative h-80 px-4 py-4 border-2 border-slate-300">
                         <div className="absolute w-full left-0 total-center -top-3">
                           <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
                             MAQUINAS
                           </div>
                         </div>
-                        {/*<SelectorMaquinas
-                          availableMaquinas={availableMaquinas}
-                          setAvailableMaquinas={setAvailableMaquinas}
-                          assignedMaquinas={assignedMaquinas}
-                          setAssignedMaquinas={setAssignedMaquinas}
-                        />*/}
+                        { //loadingMaquinas ? <Loader /> :
+                          <SelectorMaquinas
+                            idEmpleado={id}
+                            allMaquinas={allMaquinas}
+                            assignedMaquinas={assignedMaquinas}
+                            setAssignedMaquinas={setAssignedMaquinas}
+                          />
+                        }
                       </div>
                     </div>
                   </form>

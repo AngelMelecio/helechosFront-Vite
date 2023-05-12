@@ -30,6 +30,7 @@ export function EmpleadosProvider({ children }) {
 
   const [allEmpleados, setAllEmpledos] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loadingEmpleadoMaquinas, setLoadingEmpleadoMaquinas] = useState(true)
   const [errors, setErrors] = useState(false)
 
   async function getEmpleado(id) {
@@ -37,14 +38,14 @@ export function EmpleadosProvider({ children }) {
       method: 'GET',
       headers: { 'Authorization': 'Bearer ' + session.access }
     }
-    try{
+    try {
       setLoading(true)
       const empleado = await fetchAPI(API_EMPLEADOS_URL + id, options)
       return formatEmpleados([empleado])[0]
-    }catch(err){
+    } catch (err) {
       setErrors(err)
       notify('Error al obtener el empleado', true)
-    }finally{
+    } finally {
       setLoading(false)
     }
   }
@@ -70,7 +71,27 @@ export function EmpleadosProvider({ children }) {
     }
   }
 
+  async function getEmpleadoMaquinas(idEmpleado) {
+    let options = {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + session.access
+      }
+    }
+    try {
+      setLoadingEmpleadoMaquinas(true)
+      const maquinas = await fetchAPI(API_EMPLEADO_MAQUINAS_URL + idEmpleado, options)
+      return maquinas
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setLoadingEmpleadoMaquinas(false)
+    }
+  }
+
   async function assignMaquinas(idEmpleado, maquinasIds) {
+    console.log({ idEmpleado: idEmpleado, maquinas: maquinasIds })
     let options = {
       method: 'POST',
       headers: {
@@ -80,7 +101,7 @@ export function EmpleadosProvider({ children }) {
       body: JSON.stringify({ idEmpleado: idEmpleado, maquinas: maquinasIds }),
     }
     let { message } = await fetchAPI(API_EMPLEADO_MAQUINAS_URL, options)
-    console.log(message)
+    notify(message)
   }
 
   async function postEmpleado(values, maquinas, method) {
@@ -99,22 +120,18 @@ export function EmpleadosProvider({ children }) {
     let formData = new FormData()
     Keys.forEach(k => {
       if (k === 'fotografia' && !(values[k] instanceof File)) return
-      formData.append(k, values[k] ? values[k] : '')
+      if (values[k] !== null && values[k]!=='') formData.append(k, values[k])
     })
     const options = {
       method: method,
       headers: { 'Authorization': 'Bearer ' + session.access },
       body: formData
     }
-    let { empleados, newId, message } = await fetchAPI(API_EMPLEADOS_URL + (method === 'PUT' ? values.idEmpleado : ''), options)
-    console.log(message)
-    if (maquinas.length > 0) {
-      let maquinasIds = []
-      maquinas.forEach(m => maquinasIds.push({ id: m.idMaquina }))
-      await assignMaquinas(newId, maquinasIds)
-    }
+    let { empleado, message } = await fetchAPI(API_EMPLEADOS_URL + (method === 'PUT' ? values.idEmpleado : ''), options)
+    await assignMaquinas(empleado.idEmpleado, maquinas)
+
     return { message }
-    //return formatEmpleados(empleados)
+
   }
 
   async function deleteEmpleados(ids) {
@@ -124,15 +141,15 @@ export function EmpleadosProvider({ children }) {
         'Authorization': 'Bearer ' + session.access
       }
     }
-    try{
-      for( let id of ids){
-        let {message} = await fetchAPI(API_EMPLEADOS_URL + id, options)
+    try {
+      for (let id of ids) {
+        let { message } = await fetchAPI(API_EMPLEADOS_URL + id, options)
         notify(message)
       }
-    }catch(err){
+    } catch (err) {
       setErrors(err)
       notify('Error al eliminar empleado', true)
-    }finally{
+    } finally {
       setLoading(false)
     }
   }
@@ -161,7 +178,10 @@ export function EmpleadosProvider({ children }) {
         refreshEmpleados,
         getEmpleado,
         saveEmpleado,
-        deleteEmpleados
+        deleteEmpleados,
+
+        getEmpleadoMaquinas,
+        loadingEmpleadoMaquinas,
       }}
     >
       {children}

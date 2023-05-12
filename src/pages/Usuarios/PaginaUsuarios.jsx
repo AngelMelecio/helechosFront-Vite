@@ -16,6 +16,7 @@ const UsuariosColumns = [
 const PaginaUsuarios = () => {
 
   const { allUsuarios, loading, setLoading, refreshUsuarios, } = useUsuarios()
+
   const [listaUsuarios, setListaUsuarios] = useState([])
   const [saving, setSaving] = useState(false)
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
@@ -66,7 +67,7 @@ const PaginaUsuarios = () => {
           onDelete={() => handleOpenModal(setDeleteModalVisible)}
         />
       }
-      <div className='modal absolute h-full w-full' ref={modalContainerRef}>
+      <div className='modal absolute pointer-events-none z-50 h-full w-full' ref={modalContainerRef}>
         {deleteModalVisible &&
           <DeleteModal
             onCancel={() => handleCloseModal(setDeleteModalVisible)}

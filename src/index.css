@@ -182,7 +182,10 @@ input::-webkit-inner-spin-button {
   height: 100%;
   background-color: white;
   clip-path: polygon(38% 61%, 73% 15%, 89% 28%, 42% 86%, 33% 86%, 8% 60%, 22% 46%);
+}
 
+.palomita{
+  clip-path: polygon(38% 61%, 73% 15%, 89% 28%, 42% 86%, 33% 86%, 8% 60%, 22% 46%);
 }
 
 .inp-container input[type="checkbox"]:checked:hover~.check {
@@ -408,8 +411,6 @@ input::-webkit-inner-spin-button {
 .modal {
   opacity: 0%;
   visibility: hidden;
-  pointer-events: none;
-  z-index: 100;
   transition: visibility 0.3s, opacity 0.3s, pointer-events 0s;
 }
 
