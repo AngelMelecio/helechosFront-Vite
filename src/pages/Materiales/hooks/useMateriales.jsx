@@ -70,7 +70,6 @@ export function MaterialesProvider({ children }) {
             let mat = await fetchAPI(API_MATERIALES_URL + id, options)
             return formatMateriales([mat])[0]
         } catch (err) {
-            console.log(err)
             setErrors(err)
             notify('Error al buscar el material', true)
 
@@ -99,7 +98,6 @@ export function MaterialesProvider({ children }) {
             const {materiales, message} = await fetchAPI(API_FICHA_MATERIALES_URL+idFicha, options)
             return formatMaterialesFicha(materiales)
         }catch(e){
-            console.log(e)
         }finally{
             setLoadingFichaMateriales(false)
         }
@@ -118,7 +116,6 @@ export function MaterialesProvider({ children }) {
     }
 
     const postMaterial = async (values, method) => {
-        console.log('POST: ', values)
         let Keys = [
             'tipo',
             'color',
@@ -154,7 +151,6 @@ export function MaterialesProvider({ children }) {
                     const { message } = await fetchAPI(API_MATERIALES_URL + e.idMaterial, options)
                     notify(message)
                 } catch (err) {
-                    console.log(err)
                     setErrors(err)
                     notify('Error al eliminar el material', true)
                 } finally {
@@ -170,7 +166,6 @@ export function MaterialesProvider({ children }) {
             const { message } = await postMaterial(values, method)
             notify(message)
         } catch (err) {
-            console.log(err)
             setErrors(err)
             notify('Error al guardar el material', true)
         } finally {

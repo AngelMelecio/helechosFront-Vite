@@ -54,8 +54,8 @@ const FrmModelos = ({
     refreshClientes()
   }, [])
 
-  useEffect(() => {
-    console.log('EFFECTO FrmModelos modelo', modelo)
+  useEffect(()=>{
+
     modeloFormik.setValues(modelo)
   }, [modelo])
 

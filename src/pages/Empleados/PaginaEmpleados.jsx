@@ -1,12 +1,8 @@
 import React, { useRef, useState } from 'react'
 import { useEffect } from 'react'
 import DeleteModal from '../../components/DeleteModal'
-import { useApp } from '../../context/AppContext'
 import CRUD from '../../components/CRUD'
-import Loader from '../../components/Loader/Loader'
-import FrmEmpleados from '../../components/FrmEmpleados'
 import { sleep } from '../../constants/functions'
-import AppBar from '../../components/AppBar'
 import { useEmpleados } from './hooks/useEmpleados'
 
 const initobj = {
@@ -84,7 +80,7 @@ const PaginaEmpleados = () => {
 
   return (
     <>
-      {
+      
         <CRUD
           title='Empleados'
           path='empleados'
@@ -94,11 +90,9 @@ const PaginaEmpleados = () => {
           elements={listaEmpleados}
           setElements={setListaEmpleados}
           columns={empleadosColumns}
-          //onAdd={() => handleOpenModal(setFrmModalVisible)}
-          //onEdit={handleEdit}
           onDelete={() => handleOpenModal(setDeleteModalVisible)}
         />
-      }
+      
       <div className='modal absolute pointer-events-none z-50 h-full w-full' ref={modalContainerRef}>
         {deleteModalVisible &&
           <DeleteModal

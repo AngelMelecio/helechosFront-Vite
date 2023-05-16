@@ -1,7 +1,5 @@
 import { useEffect } from "react"
-import { useMaquinas } from '../../Maquinas/hooks/useMaquinas'
 import { useEmpleados } from "../hooks/useEmpleados"
-import Loader from "../../../components/Loader/Loader"
 import { useState } from "react"
 import { useRef } from "react"
 import { ICONS } from "../../../constants/icons"

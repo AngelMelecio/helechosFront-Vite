@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { ICONS } from "../../constants/icons";
-import {useUsuarios} from './hooks/useUsuarios'
+import { useUsuarios } from './hooks/useUsuarios'
 import { useFormik } from "formik";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -35,9 +35,7 @@ const DetailUsuario = () => {
   const navigate = useNavigate()
   const { id } = useParams();
   const isEdit = (id !== '0')
-
-  const {loading, setLoading, findUsuario} = useUsuarios()
-
+  const { getUsuario, handleSaveUsuario, loading, findUsuario, allUsuarios, setLoading, errors, setErrors } = useUsuarios();
   const [newPass, setNewPass] = useState(false)
 
   const validate = values => {
@@ -89,24 +87,42 @@ const DetailUsuario = () => {
     return errors;
   };
 
+
+
   const formik = useFormik({
     initialValues: null,
     validate,
-    onSubmit: values => {
-      console.log('Guardando:', values)
-      //handleSaveUsuario(values)
+    onSubmit: async (values) => {
+      let success = await handleSaveUsuario({ values: values, method: isEdit ? 'PUT' : 'POST', newPass })
+      if (!success) {
+        return
+      }
+      navigate(("/usuarios"))
+      setErrors(null);
     },
   });
 
-  useEffect(()=>{
-    return () => {setLoading(true); console.log('Bye detail usuarios')}
-  },[])
+  useEffect(async () => {
+    try {
+      setLoading(true)
+      formik.setValues(
+        id === '0' ? initUsuario :
+          allUsuarios.length > 0 ? allUsuarios.find(m => m.id + '' === id) :
+            await findUsuario(id)
+      )
+    } catch (e) {
+    } finally {
+      setLoading(false)
+    }
+  }, [id]);
 
-  useEffect( async()=>{
-    console.log('EFFECTO\n DETALLE Usuario, id:', id)
-    const mod = (id === '0' ? initUsuario : await findUsuario(id))
-    formik.setValues(mod)
-  },[id])
+  useEffect(() => {
+    return () => { setLoading(true); }
+  }, [])
+
+  const handleChange = (e) => {
+    formik.setFieldValue(e.target.name, e.target.value)
+  }
 
   return (
     <>
@@ -130,110 +146,110 @@ const DetailUsuario = () => {
                 form="frmUsuarios"
               />
               <div className="flex w-full h-full ">
-                { loading || formik.values === null ? <Loader/> : 
+                {loading || formik.values === null ? <Loader /> :
                   <form
-                  id='frmUsuarios'
-                  className='flex flex-col h-full w-full relative overflow-y-scroll'
-                  onSubmit={formik.handleSubmit}>
-                  <div className="absolute w-full flex flex-col  px-4">
-                    <div className='flex flex-row w-full h-full p-2 total-center'>
-                      <div className="flex relative w-full items-center justify-center text-center">
-                        <ICONS.UsersIdentity className='' size='100px' style={{ color: '#115e59' }} />
-                      </div>
-                    </div>
-                    <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-                      <div className="absolute w-full total-center -top-3">
-                        <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                          DATOS PERSONALES
+                    id='frmUsuarios'
+                    className='flex flex-col h-full w-full relative overflow-y-scroll'
+                    onSubmit={formik.handleSubmit}>
+                    <div className="absolute w-full flex flex-col  px-4">
+                      <div className='flex flex-row w-full h-full p-2 total-center'>
+                        <div className="flex relative w-full items-center justify-center text-center">
+                          <ICONS.UsersIdentity className='' size='100px' style={{ color: '#115e59' }} />
                         </div>
                       </div>
-                      <div className='flex flex-row'>
-                        <Input
-                          label='Nombre(s)' type='text' name='nombre' value={formik.values.nombre}
-                          onChange={formik.handleChange} onBlur={formik.handleBlur}
-                          errores={formik.errors.nombre && formik.touched.nombre ? formik.errors.nombre : null} />
-    
-                        <Input
-                          label='Apellido(s)' type='text' name='apellidos' value={formik.values.apellidos}
-                          onChange={formik.handleChange} onBlur={formik.handleBlur}
-                          errores={formik.errors.apellidos && formik.touched.apellidos ? formik.errors.apellidos : null}
-                        />
-                      </div>
-    
-                      <div className='flex flex-row'>
-                        <Input
-                          label='Correo' type='text' name='correo' value={formik.values.correo}
-                          onChange={formik.handleChange} onBlur={formik.handleBlur}
-                          errores={formik.errors.correo && formik.touched.correo ? formik.errors.correo : null}
-                          Icon={ICONS.Email}
-                        />
-    
-                      </div>
-                    </div>
-                    <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-                      <div className="absolute w-full total-center -top-3">
-                        <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                          DATOS DE USUARIO
+                      <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
+                        <div className="absolute w-full total-center -top-3">
+                          <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
+                            DATOS PERSONALES
+                          </div>
+                        </div>
+                        <div className='flex flex-row'>
+                          <Input
+                            label='Nombre(s)' type='text' name='nombre' value={formik.values ? formik.values.nombre : ''}
+                            onChange={handleChange} onBlur={formik.handleBlur}
+                            errores={formik.errors.nombre && formik.touched.nombre ? formik.errors.nombre : null} />
+
+                          <Input
+                            label='Apellido(s)' type='text' name='apellidos' value={formik.values ? formik.values.apellidos : ''}
+                            onChange={handleChange} onBlur={formik.handleBlur}
+                            errores={formik.errors.apellidos && formik.touched.apellidos ? formik.errors.apellidos : null}
+                          />
+                        </div>
+
+                        <div className='flex flex-row'>
+                          <Input
+                            label='Correo' type='text' name='correo' value={formik.values ? formik.values.correo : ''}
+                            onChange={handleChange} onBlur={formik.handleBlur}
+                            errores={formik.errors.correo && formik.touched.correo ? formik.errors.correo : null}
+                            Icon={ICONS.Email}
+                          />
+
                         </div>
                       </div>
-                      <div className='flex flex-row'>
-                        <Input
-                          label='Usuario' type='text' name='usuario' value={formik.values.usuario}
-                          onChange={formik.handleChange} onBlur={formik.handleBlur}
-                          errores={formik.errors.usuario && formik.touched.usuario ? formik.errors.usuario : null}
-                          Icon={ICONS.User}
-                        />
-                        {isEdit ?
-                          <div className="flex w-full mx-2 ">
-                            <div className="flex items-center px-2 pt-4">
-                              <div className="inp-container ">
-                                <input
-                                  onChange={() => setNewPass(prev => !prev)}
-                                  value={newPass} type="checkbox" className="inp-check" />
-                                <label className="check"></label>
+                      <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
+                        <div className="absolute w-full total-center -top-3">
+                          <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
+                            DATOS DE USUARIO
+                          </div>
+                        </div>
+                        <div className='flex flex-row'>
+                          <Input
+                            label='Usuario' type='text' name='usuario' value={formik.values ? formik.values.usuario : ''}
+                            onChange={handleChange} onBlur={formik.handleBlur}
+                            errores={formik.errors.usuario && formik.touched.usuario ? formik.errors.usuario : null}
+                            Icon={ICONS.User}
+                          />
+                          {isEdit ?
+                            <div className="flex w-full mx-2 ">
+                              <div className="flex items-center px-2 pt-4">
+                                <div className="inp-container ">
+                                  <input
+                                    onChange={() => setNewPass(prev => !prev)}
+                                    value={newPass} type="checkbox" className="inp-check" />
+                                  <label className="check"></label>
+                                </div>
                               </div>
+                              <Input
+                                label={isEdit ? 'Nueva Contraseña' : 'Contraseña'} type='password' name='password' value={formik.values ? formik.values.password : ''}
+                                onChange={handleChange} onBlur={formik.handleBlur}
+                                errores={formik.errors.password && formik.touched.password ? formik.errors.password : null}
+                                Icon={ICONS.Key}
+                                disabled={!newPass}
+                              />
                             </div>
+                            :
                             <Input
-                              label={isEdit ? 'Nueva Contraseña' : 'Contraseña'} type='password' name='password' value={formik.values.password}
-                              onChange={formik.handleChange} onBlur={formik.handleBlur}
+                              label={isEdit ? 'Nueva Contraseña' : 'Contraseña'} type='password' name='password' value={formik.values ? formik.values.password : ''}
+                              onChange={handleChange} onBlur={formik.handleBlur}
                               errores={formik.errors.password && formik.touched.password ? formik.errors.password : null}
                               Icon={ICONS.Key}
-                              disabled={!newPass}
-                            />
-                          </div>
-                          :
-                          <Input
-                            label={isEdit ? 'Nueva Contraseña' : 'Contraseña'} type='password' name='password' value={formik.values.password}
-                            onChange={formik.handleChange} onBlur={formik.handleBlur}
-                            errores={formik.errors.password && formik.touched.password ? formik.errors.password : null}
-                            Icon={ICONS.Key}
-                          />}
-                      </div>
-                      <div className="flex flex-row">
-                        <CustomSelect
-                          name='Tipo'
-                          className='input'
-                          onChange={value => formik.setFieldValue('is_staff', value.value === 'Administrador' ? true : false)}
-                          value={formik.values.is_staff ? "Administrador" : "Encargado"}
-                          onBlur={formik.handleBlur}
-                          options={optionsTipo}
-                          label='Tipo'
-                          errores={formik.errors.tipo && formik.touched.tipo ? formik.errors.tipo : null}
-                        />
-                        <CustomSelect
-                          name='Estado'
-                          className='input'
-                          onChange={value => formik.setFieldValue('is_active', value.value === 'Activo' ? true : false)}
-                          value={formik.values.is_active ? "Activo" : "Inactivo"}
-                          onBlur={formik.handleBlur}
-                          options={optionsActivo}
-                          label='Estado'
-                          errores={formik.errors.activo && formik.touched.activo ? formik.errors.activo : null}
-                        />
+                            />}
+                        </div>
+                        <div className="flex flex-row">
+                          <CustomSelect
+                            name='Tipo'
+                            className='input'
+                            onChange={value => formik.setFieldValue('is_staff', value.value === 'Administrador' ? true : false)}
+                            value={formik.values ? formik.values.is_staff ? "Administrador" : "Encargado" : ''}
+                            onBlur={formik.handleBlur}
+                            options={optionsTipo}
+                            label='Tipo'
+                            errores={formik.errors.tipo && formik.touched.tipo ? formik.errors.tipo : null}
+                          />
+                          <CustomSelect
+                            name='Estado'
+                            className='input'
+                            onChange={value => formik.setFieldValue('is_active', value.value === 'Activo' ? true : false)}
+                            value={formik.values ? formik.values.is_active ? "Activo" : "Inactivo" : ''}
+                            onBlur={formik.handleBlur}
+                            options={optionsActivo}
+                            label='Estado'
+                            errores={formik.errors.activo && formik.touched.activo ? formik.errors.activo : null}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </form>
+                  </form>
                 }
               </div>
             </div>

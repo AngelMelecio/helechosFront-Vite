@@ -33,6 +33,46 @@ const FrmFichas = ({
     pageScrollBottom
   } = useDetailModelos()
 
+
+  {/*
+  const { saveFicha } = useFichas()
+
+  useEffect(() => {
+    refreshMaquinas()
+  }, [])
+
+  // Cargamos las opciones de las maquinas
+  useEffect(() => {
+    setTejidoOptions(
+      allMaquinas
+        .filter(m => (m.departamento === 'Tejido'))
+        .map(m => ({ value: m.idMaquina.toString(), label: 'Línea: ' + m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca }))
+    )
+    setPlanchaOptions(
+      allMaquinas
+        .filter(m => (m.departamento === 'Plancha'))
+        .map(m => ({ value: m.idMaquina.toString(), label: 'Línea: ' + m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca }))
+    )
+  }, [allMaquinas])
+
+
+  // Cuando no queremos scroll en el Form lo regresamos hasta arriba
+  useEffect(() => {
+    if (!scrollForm) {
+      formRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [scrollForm])
+
+
+  // Cargamos los materiales de la ficha
+  useEffect(async () => {
+    fichaFormik.setValues(ficha)
+    if (!ficha.copied) {
+      let materiales = await getFichaMateriales(ficha.idFichaTecnica)
+      fichaFormik.setFieldValue('materiales', materiales)
+    }
+  */}
+
   const {
     refreshFichaMateriales,
     allFichaMateriales,
@@ -70,7 +110,6 @@ const FrmFichas = ({
     initialValues: ficha,
     validate,
     onSubmit: async (values) => {
-      //console.log(values)
       setTheresChangesFicha(false)
       await saveFicha({
         values: {
@@ -139,7 +178,6 @@ const FrmFichas = ({
   }
 
   const onPassMateriales = (availableMateriales) => {
-    //console.log(fichaFormik.values)
     let newMateriales = []
     availableMateriales.forEach(m => {
       if (m.count > 0) {
