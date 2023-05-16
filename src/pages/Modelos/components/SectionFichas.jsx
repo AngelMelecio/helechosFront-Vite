@@ -67,7 +67,6 @@ const SectionFichas = ({
 
 
   const dummySave = () => {
-    console.log('dummy save')
   }
 
   const handleSelectFicha = (indx) => {
@@ -127,7 +126,6 @@ const SectionFichas = ({
   }
 
   const handleDeleteFicha = (indx) => {
-    //console.log(fichasList[indx])
     if (theresChanges || fichasList[indx].idFichaTecnica) {
       setModalMessage('Se eliminará la ficha técnica de forma permanente')
       setModalCancelText('Cancelar')
@@ -147,7 +145,6 @@ const SectionFichas = ({
   const deleteFicha = async(indx) => {
     if (fichasList[indx].idFichaTecnica) {
       await deleteFichaAPI(fichasList[indx].idFichaTecnica)
-      //console.log(fichasList[indx])
       refreshFichas({ idModelo:fichasList[indx].modelo })
     }
     else {
@@ -159,8 +156,6 @@ const SectionFichas = ({
   }
 
   useEffect(() => {
-    console.log('EFFECTO\n SEC. FICHAS, fichas: ')
-    console.table(fichas)
     return () => { setLoading(true) }
   }, [])
 

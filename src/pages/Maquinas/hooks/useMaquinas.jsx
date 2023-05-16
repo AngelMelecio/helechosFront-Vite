@@ -48,9 +48,7 @@ export function MaquinasProvider({ children }) {
             let maquina = await fetchAPI(API_MAQUINAS_URL + id, options)
             return formatMaquinas([maquina])[0]
         }catch(err){
-            console.log(err)
-        }
-        finally{
+        }finally{
             setLoading(false)
         }
     }
@@ -73,14 +71,12 @@ export function MaquinasProvider({ children }) {
             let maquinas = await getMaquinas()
             setAllMaquinas(maquinas)
         }catch(error){
-            console.log(error)
         }finally{
             setLoading(false)
         }
     }
 
     const postMaquina = async (values, method) => {
-        console.log('POST: ', values)
         let Keys = [
             'numero',
             'linea',
@@ -116,7 +112,6 @@ export function MaquinasProvider({ children }) {
                     const { message } = await fetchAPI(API_MAQUINAS_URL + e.idMaquina, options)
                     notify(message)
                 } catch (err) {
-                    console.log(err)
                     setErrors(err)
                     notify('Error al eliminar la maquina', true)
                 } finally {
@@ -132,7 +127,6 @@ export function MaquinasProvider({ children }) {
             const { message } = await postMaquina(values, method)
             notify(message)
         } catch (err) {
-            console.log(err)
             setErrors(err)
             notify('Error al guardar la maquina', true)
         } finally {

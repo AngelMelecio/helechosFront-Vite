@@ -60,13 +60,13 @@ const PaginaModelos = () => {
     setListaModelos(allModelos)
   }, [allModelos])
 
-  async function handleDelete(){
+  async function handleDelete() {
     await deleteModelos(
       listaModelos
-      .filter(m => m.isSelected)
-      .map(m => m.idModelo)
+        .filter(m => m.isSelected)
+        .map(m => m.idModelo)
     )
-    handleCloseModal( setDeleteModalVisible )
+    handleCloseModal(setDeleteModalVisible)
     refreshModelos()
   }
 
@@ -85,25 +85,25 @@ const PaginaModelos = () => {
 
   return (
     <>
-      {
-        <CRUD
-          title='Modelos'
-          idName="idModelo"
-          path='modelos'
-          loading={loading}
-          allElements={allModelos}
-          elements={listaModelos}
-          setElements={setListaModelos}
-          columns={[{ name: 'Nombre', attribute: 'nombre' }]}
-          onDelete={() => handleOpenModal(setDeleteModalVisible)}
-        />
-      }
+
+      <CRUD
+        title='Modelos'
+        idName="idModelo"
+        path='modelos'
+        loading={loading}
+        allElements={allModelos}
+        elements={listaModelos}
+        setElements={setListaModelos}
+        columns={[{ name: 'Nombre', attribute: 'nombre' }]}
+        onDelete={() => handleOpenModal(setDeleteModalVisible)}
+      />
+
       <div className='modal absolute pointer-events-none z-50 h-full w-full' ref={modalContainerRef}>
 
         {deleteModalVisible &&
           <DeleteModal
             onCancel={() => handleCloseModal(setDeleteModalVisible)}
-            onConfirm={ handleDelete}
+            onConfirm={handleDelete}
             elements={listaModelos}
             representation={['nombre']}
             message='Las siguientes fichas serán eliminadas de forma permanente'

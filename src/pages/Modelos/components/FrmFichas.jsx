@@ -66,7 +66,6 @@ const FrmFichas = ({
   // Cargamos los materiales de la ficha
   useEffect(async () => {
     fichaFormik.setValues(ficha)
-    console.log('EFFECTO\n FRM FICHA ficha:', ficha)
     if (!ficha.copied) {
       let materiales = await getFichaMateriales(ficha.idFichaTecnica)
       fichaFormik.setFieldValue('materiales', materiales)
@@ -103,7 +102,6 @@ const FrmFichas = ({
     initialValues: ficha,
     validate,
     onSubmit: async (values) => {
-      //console.log(values)
       await saveFicha({
         values: {
           ...values,
@@ -125,7 +123,6 @@ const FrmFichas = ({
   }
 
   const onPassMateriales = (availableMateriales) => {
-    //console.log(fichaFormik.values)
     let newMateriales = []
     availableMateriales.forEach(m => {
       if (m.count > 0) {

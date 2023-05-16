@@ -158,7 +158,6 @@ export function FichasProvider({ children }) {
       setFichas(fichas)
     } catch (err) {
       setError(err)
-      console.log(err)
     } finally {
       setLoading(false)
     }

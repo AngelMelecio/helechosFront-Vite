@@ -49,7 +49,6 @@ const FrmModelos = ({ modelo, isEdit }) => {
   }, [])
 
   useEffect(()=>{
-    console.log('EFFECTO FrmModelos modelo',modelo)
     modeloFormik.setValues(modelo)
   },[modelo])
 

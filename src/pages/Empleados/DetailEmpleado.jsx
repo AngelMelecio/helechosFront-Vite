@@ -102,13 +102,11 @@ const DetailEmpleado = () => {
     initialValues: null,
     validate,
     onSubmit: async (values) => {
-      //console.log(values)
      await saveEmpleado({
         values: values,
         maquinas: assignedMaquinas.map(m => ({ id: m.idMaquina })),
         method: isEdit ? 'PUT' : 'POST'
       })
-      //await sleep(1000)
       navigate('/empleados/')
 
     },

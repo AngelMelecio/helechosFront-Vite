@@ -3,7 +3,6 @@ import { useMaquinas } from './hooks/useMaquinas'
 import { useState } from 'react'
 import DeleteModal from '../../components/DeleteModal'
 import CRUD from '../../components/CRUD'
-import Loader from '../../components/Loader/Loader'
 import { useRef } from 'react'
 import { sleep } from '../../constants/functions'
 
@@ -63,20 +62,19 @@ const PaginaMaquinas = () => {
 
   return (
     <>
-      {
-        loading ? <Loader /> :
-          <CRUD
-            title='Máquinas'
-            path='maquinas'
-            idName='idMaquina'
-            loading={loading}
-            allElements={allMaquinas}
-            elements={listaMaquinas}
-            setElements={setListaMaquinas}
-            columns={maquinasColumns}
-            onDelete={() => handleOpenModal(setDeleteModalVisible)}
-          />
-      }
+
+      <CRUD
+        title='Máquinas'
+        path='maquinas'
+        idName='idMaquina'
+        loading={loading}
+        allElements={allMaquinas}
+        elements={listaMaquinas}
+        setElements={setListaMaquinas}
+        columns={maquinasColumns}
+        onDelete={() => handleOpenModal(setDeleteModalVisible)}
+      />
+
       <div className='modal absolute pointer-events-none z-50 h-full w-full' ref={modalContainerRef}>
         {deleteModalVisible &&
           <DeleteModal

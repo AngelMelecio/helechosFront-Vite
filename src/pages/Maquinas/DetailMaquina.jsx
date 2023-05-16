@@ -81,10 +81,8 @@ const DetailMaquina = () => {
     initialValues: id !== '0' ? (allMaquinas.length ? getMaquina(id) : initMaquina) : initMaquina,
         validate,
         onSubmit: async (values) => {
-            console.log("PUT/POST")
             await saveMaquina({ values: values, method: isEdit ? 'PUT' : 'POST' })
             navigate(("/maquinas"))
-            //handleSaveMaquinas(values);
         },
   });
 
