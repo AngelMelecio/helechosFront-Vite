@@ -47,6 +47,7 @@ const PaginaEmpleados = () => {
   const modalContainerRef = useRef()
 
   useEffect(() => {
+    console.log('EFFECT pagina empleados')
     refreshEmpleados()
   }, [])
 

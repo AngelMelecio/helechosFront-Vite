@@ -63,6 +63,7 @@ const PaginaMaquinas = () => {
   return (
     <>
 
+    
       <CRUD
         title='Máquinas'
         path='maquinas'
@@ -74,7 +75,7 @@ const PaginaMaquinas = () => {
         columns={maquinasColumns}
         onDelete={() => handleOpenModal(setDeleteModalVisible)}
       />
-
+    
       <div className='modal absolute pointer-events-none z-50 h-full w-full' ref={modalContainerRef}>
         {deleteModalVisible &&
           <DeleteModal

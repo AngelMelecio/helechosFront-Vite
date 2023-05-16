@@ -35,9 +35,7 @@ const DetailUsuario = () => {
   const navigate = useNavigate()
   const { id } = useParams();
   const isEdit = (id !== '0')
-
   const { getUsuario, handleSaveUsuario, loading, findUsuario, allUsuarios, setLoading, errors, setErrors } = useUsuarios();
-
   const [newPass, setNewPass] = useState(false)
 
   const validate = values => {

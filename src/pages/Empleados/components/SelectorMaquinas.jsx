@@ -10,7 +10,8 @@ const SelectorMaquinas = ({
   idEmpleado,
   allMaquinas,
   assignedMaquinas,
-  setAssignedMaquinas
+  setAssignedMaquinas,
+  setTheresChanges,
 }) => {
 
   const {
@@ -84,6 +85,7 @@ const SelectorMaquinas = ({
     newAssigned.splice(indx, 1)
     setAssignedMaquinas(newAssigned)
     setAvailableMaquinasList(newAvailable)
+    setTheresChanges(true)
   }
 
   const handlePassMateriales = () => {
@@ -96,6 +98,7 @@ const SelectorMaquinas = ({
     ])
     handleCloseSelector()
     setMaquinaSearchText('')
+    setTheresChanges(true)
   }
 
   return (
@@ -128,7 +131,6 @@ const SelectorMaquinas = ({
                     ref={searchRef}
                     onChange={(e) => {
                       setMaquinaSearchText(e.target.value)
-                      //handleSearch()
                     }}
                     value={maquinaSearchText}
                     type="text"

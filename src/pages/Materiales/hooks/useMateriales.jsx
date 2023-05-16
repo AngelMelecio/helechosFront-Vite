@@ -5,7 +5,7 @@ import { useContext } from "react";
 import { fetchAPI } from "../../../services/fetchApiService";
 
 const API_MATERIALES_URL = "api/materiales/"
-const API_FICHA_MATERIALES_URL = "/api/fichas_tecnicas_materiales/"
+//const API_FICHA_MATERIALES_URL = "/api/fichas_tecnicas_materiales/"
 
 const MaterialesContext = React.createContext('MaterialesContext')
 
@@ -23,6 +23,8 @@ function formatMateriales(materiales) {
     }))
     return formatData
 }
+
+/*
 function formatMaterialesFicha(asigandos) {
     let formatData = asigandos.map((asig) => ({
         ...asig,
@@ -40,6 +42,7 @@ function formatMaterialesFicha(asigandos) {
     }))
     return formatData
 }
+*/
 
 export function MaterialesProvider({ children }) {
 
@@ -47,7 +50,7 @@ export function MaterialesProvider({ children }) {
 
     const [allMateriales, setAllMateriales] = useState([])
     const [loading, setLoading] = useState(true)
-    const [loadingFichaMateriales, setLoadingFichaMateriales] = useState(true)
+    //const [loadingFichaMateriales, setLoadingFichaMateriales] = useState(true)
     const [errors, setErrors] = useState(false)
 
     function getMaterial(id) {
@@ -84,7 +87,7 @@ export function MaterialesProvider({ children }) {
         return formatMateriales(materiales)
     }
 
-    async function getFichaMateriales(idFicha) {
+    /*async function getFichaMateriales(idFicha) {
         let options = {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + session.access }
@@ -98,7 +101,7 @@ export function MaterialesProvider({ children }) {
         }finally{
             setLoadingFichaMateriales(false)
         }
-    }
+    }*/
 
     async function refreshMateriales() {
         try {
@@ -178,7 +181,7 @@ export function MaterialesProvider({ children }) {
                 errors,
                 refreshMateriales,
                 getMaterial,
-                getFichaMateriales, loadingFichaMateriales,
+                //getFichaMateriales, loadingFichaMateriales,
                 saveMaterial,
                 deleteMateriales,
                 findMaterial,
