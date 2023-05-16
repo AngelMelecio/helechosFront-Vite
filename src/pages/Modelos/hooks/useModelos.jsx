@@ -88,6 +88,7 @@ export function ModelosProvider({ children }) {
       }
     } catch (err) {
       setErrors(err)
+      console.log(err)
     } finally {
       setFetchingModelos(false)
     }
@@ -107,10 +108,12 @@ export function ModelosProvider({ children }) {
 
   async function saveModelo({ modelo, method = "POST" }) {
     try {
+      console.log('savingAPI', modelo, method)
       setFetchingModelos(true)
       const modelos = await postModelo(modelo, method)
       setAllModelos(modelos)
     } catch (err) {
+      console.log(err)
       setErrors(err)
     } finally {
       setFetchingModelos(false)

@@ -72,6 +72,8 @@ const SectionFichas = ({
     allFichaMateriales,
   } = useFichaMateriales()
 
+
+
   const handleSelectFicha = (indx) => {
     if (indx === selectedFichaIndx) return
     if (theresChangesFicha) {
@@ -131,7 +133,7 @@ const SectionFichas = ({
   }
 
   const handleDeleteFicha = (indx) => {
-
+    //console.log(fichasList[indx])
     if (theresChangesFicha || fichasList[indx].idFichaTecnica) {
       setModalMessage('Se eliminará la ficha técnica de forma permanente')
       setModalCancelText('Cancelar')
@@ -151,6 +153,7 @@ const SectionFichas = ({
   const deleteFicha = async(indx) => {
     if (fichasList[indx].idFichaTecnica) {
       await deleteFichaAPI(fichasList[indx].idFichaTecnica)
+      //console.log(fichasList[indx])
       refreshFichas({ idModelo:fichasList[indx].modelo })
     }
     else {
@@ -161,7 +164,12 @@ const SectionFichas = ({
     setSelectedFichaIndx(null)
   }
 
+  
+
   useEffect(() => {
+    console.log('EFFECTO\n SEC. FICHAS, fichas: ')
+    console.table(allFichasModelo)
+    //console.log('EFFECTO\n SEC. FICHAS, selected indx: ', selectedFichaIndx)
     setFichasList(allFichasModelo)
     return () => { 
       setFetchingFichas(true) 

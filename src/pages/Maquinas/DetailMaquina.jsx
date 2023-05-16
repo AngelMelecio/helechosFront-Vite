@@ -94,7 +94,7 @@ const DetailMaquina = () => {
         method: isEdit ? 'PUT' : 'POST'
       })
       navigate(("/maquinas"))
-    }, 
+    },
   });
 
   useEffect(() => {

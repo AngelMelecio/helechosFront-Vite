@@ -75,6 +75,7 @@ const DetailModelo = () => {
   },[])
 
   useEffect(async () => {
+    console.log('EFFECTO\n DETALLE MODELO, id:', id)
     refreshFichas({ idModelo: id })
     const mod = (id === '0' ? initModelo : await getModelo(id))
     setModelo(mod)

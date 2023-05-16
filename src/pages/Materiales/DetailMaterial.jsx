@@ -9,7 +9,7 @@ import CustomSelect from "../../components/CustomSelect";
 import React from 'react'
 import { SketchPicker } from 'react-color'
 
-const initMaterial = {
+const initobj = {
   idMaterial: "",
   tipo: "Seleccione",
   color: "",
@@ -22,11 +22,10 @@ const initMaterial = {
 }
 
 
-
 const DetailMaterial = () => {
 
 
-  const { saveMaterial, loading, findMaterial, allMateriales, setLoading } = useMateriales()
+  const { getMaterial, saveMaterial, loading, findMaterial, allMateriales,setLoading } = useMateriales()
   const { refreshProveedores, allProveedores } = useProveedores()
   const [optionsProveedor, setOptionsProveedor] = useState([])
   const navigate = useNavigate()
@@ -89,37 +88,34 @@ const DetailMaterial = () => {
   };
 
   const formik = useFormik({
-    initialValues: null,
+    enableReinitialize: true,
+    initialValues: id !== '0' ? (allMateriales.length ? getMaterial(id) : initobj) : initobj,
     validate,
     onSubmit: async (values) => {
       values.codigoColor = sketchPickerColor;
+      console.log("PUT/POST");
       await saveMaterial({ values: values, method: isEdit ? 'PUT' : 'POST' })
       navigate("/materiales")
     },
   });
 
-  useEffect(async () => {
-    try {
-      setLoading(true)
-      formik.setValues(
-        id === '0' ? initMaterial :
-          allMateriales.length > 0 ? allMateriales.find(m => m.idMaterial + '' === id) :
-            await findMaterial(id)
-      )
-    } catch (e) {
-
-    } finally {
-      setLoading(false)
+  useEffect(() => {
+    if (id !== '0' && !allMateriales.length) {
+      (async () => {
+        const mate = await findMaterial(id);
+        formik.setValues(mate);
+        setLoading(false)
+      })();
     }
   }, [id]);
 
-
   useEffect(() => {
-    setSketchPickerColor(formik.values?formik.values.codigoColor:"#ffffff");
-  }, [formik.values?formik.values.codigoColor:""]);
+    setSketchPickerColor(formik.values.codigoColor);
+  }, [formik.values.codigoColor]);
 
 
   const handleChange = (e) => {
+    //console.log(e.target.name, e.target.value)
     formik.setFieldValue(e.target.name, e.target.value)
   }
 
@@ -168,7 +164,7 @@ const DetailMaterial = () => {
                           name='tipo'
                           className='input'
                           onChange={value => formik.setFieldValue('tipo', value.value)}
-                          value={formik.values?formik.values.tipo:"Seleccione"}
+                          value={formik.values.tipo}
                           onBlur={formik.handleBlur}
                           options={optionsTipo}
                           label='Tipo'
@@ -178,7 +174,7 @@ const DetailMaterial = () => {
                           name='calibre'
                           className='input'
                           onChange={value => formik.setFieldValue('calibre', value.value)}
-                          value={formik.values?formik.values.calibre:"Seleccione"}
+                          value={formik.values.calibre}
                           onBlur={formik.handleBlur}
                           options={optionsCalibre}
                           label='Calibre'
@@ -190,7 +186,7 @@ const DetailMaterial = () => {
                           name='idProveedor'
                           className='input'
                           onChange={value => formik.setFieldValue('idProveedor', value.value)}
-                          value={formik.values?formik.values.idProveedor:"Seleccione"}
+                          value={formik.values.idProveedor}
                           onBlur={formik.handleBlur}
                           options={optionsProveedor}
                           label='Proveedor'
@@ -227,7 +223,7 @@ const DetailMaterial = () => {
                           </div>
                         </div>
                         <Input
-                          label='Teñida' type='text' name='tenida' value={formik.values?formik.values.tenida:""}
+                          label='Teñida' type='text' name='tenida' value={formik.values.tenida}
                           onChange={handleChange} onBlur={formik.handleBlur}
                           errores={formik.errors.tenida && formik.touched.tenida ? formik.errors.tenida : null}
                         />

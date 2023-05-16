@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import { useEffect } from 'react'
 import DeleteModal from '../../components/DeleteModal'
 import CRUD from '../../components/CRUD'
+import Loader from '../../components/Loader/Loader'
 import { sleep } from '../../constants/functions'
 import { useClientes } from './hooks/useClientes'
 
@@ -47,26 +48,27 @@ const PaginaClientes = () => {
 
   return (
     <>
-
-      <CRUD
-        title='Clientes'
-        idName='idCliente'
-        path='clientes'
-        loading={loading}
-        allElements={allClientes}
-        elements={listaClientes}
-        setElements={setListaClientes}
-        columns={[
-          { name: 'Nombre', attribute: 'nombre' },
-          { name: 'RFC', attribute: 'rfc' },
-          { name: 'Dirección', attribute: 'direccion' },
-          { name: 'Teléfono', attribute: 'telefono' },
-          { name: 'Correo', attribute: 'correo' },
-          { name: 'Otro', attribute: 'otro' },
-        ]}
-        onDelete={() => handleOpenModal(setDeleteModalVisible)}
-      />
-
+      {
+        loading ? <Loader /> :
+          <CRUD
+            title='Clientes'
+            idName='idCliente'
+            path='clientes'
+            loading={loading}
+            allElements={allClientes}
+            elements={listaClientes}
+            setElements={setListaClientes}
+            columns={[
+              { name: 'Nombre', attribute: 'nombre' },
+              { name: 'RFC', attribute: 'rfc' },
+              { name: 'Dirección', attribute: 'direccion' },
+              { name: 'Teléfono', attribute: 'telefono' },
+              { name: 'Correo', attribute: 'correo' },
+              { name: 'Otro', attribute: 'otro' },
+            ]}
+            onDelete={() => handleOpenModal(setDeleteModalVisible)}
+          />
+      }
       <div className='modal absolute h-full w-full' ref={modalContainerRef}>
         {deleteModalVisible &&
           <DeleteModal

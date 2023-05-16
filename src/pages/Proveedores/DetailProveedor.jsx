@@ -7,7 +7,7 @@ import { useFormik, FormikProvider } from "formik";
 import Input from "../../components/Input";
 import CustomSelect from "../../components/CustomSelect";
 
-const initProveedor = {
+const initobj = {
     idProveedor: "",
     nombre: "",
     direccion: "",
@@ -17,7 +17,6 @@ const initProveedor = {
     contactos: [{ "nombre": "", "puesto": "", "correo": "", "telefono": "", "nota": "" }],
     otro: ""
 }
-const initContacto = { nombre: '', puesto: '', correo: '', telefono: '', nota: '' }
 
 const optionsDepartamento = [
     { value: 'Seleccione', label: 'Seleccione' },
@@ -74,31 +73,28 @@ const DetailProveedor = () => {
     };
 
     const formik = useFormik({
-        initialValues: null,
+        initialValues: id !== '0' ? (allProveedores.length ? getProveedor(id) : initobj) : initobj,
         validate,
         onSubmit: async (values) => {
+            console.log("PUT/POST")
             await saveProveedor({ values: values, method: isEdit ? 'PUT' : 'POST' })
             navigate(("/proveedores"))
             //handleSaveProveedores(values);
         },
     });
 
-    useEffect(async () => {
-        try {
-          setLoading(true)
-          formik.setValues(
-            id === '0' ? initProveedor :
-              allProveedores.length > 0 ? allProveedores.find(m => m.idProveedor + '' === id) :
-                await findProveedor(id)
-          )
-        } catch (e) {
-
-        } finally {
-          setLoading(false)
+    useEffect(() => {
+        if (id !== '0' && !allProveedores.length) {
+            (async () => {
+                const proveedor = await findProveedor(id);
+                formik.setValues(proveedor);
+                setLoading(false)
+            })();
         }
-      }, [id]);
+    }, [id]);
 
     const handleChange = (e) => {
+        //console.log(e.target.name, e.target.value)
         formik.setFieldValue(e.target.name, e.target.value)
     }
 
@@ -145,7 +141,7 @@ const DetailProveedor = () => {
                                                 </div>
                                                 <div className='flex flex-row'>
                                                     <Input
-                                                        label='Nombre' type='text' name='nombre' value={formik.values?formik.values.nombre:''}
+                                                        label='Nombre' type='text' name='nombre' value={formik.values.nombre}
                                                         onChange={handleChange} onBlur={formik.handleBlur}
                                                         errores={formik.errors.nombre && formik.touched.nombre ? formik.errors.nombre : null}
                                                     />
@@ -164,7 +160,7 @@ const DetailProveedor = () => {
                                                         Icon={ICONS.Phone}
                                                     />
                                                     <Input
-                                                        label='Correo' type='text' name='correo' value={formik.values?formik.values.correo:''}
+                                                        label='Correo' type='text' name='correo' value={formik.values.correo}
                                                         onChange={handleChange} onBlur={formik.handleBlur}
                                                         errores={formik.errors.correo && formik.touched.correo ? formik.errors.correo : null}
                                                         Icon={ICONS.Email}
@@ -172,7 +168,7 @@ const DetailProveedor = () => {
                                                 </div>
                                                 <div className='flex flex-row'>
                                                     <Input
-                                                        label='RFC' type='text' name='rfc' value={formik.values?formik.values.rfc:''}
+                                                        label='RFC' type='text' name='rfc' value={formik.values.rfc}
                                                         onChange={handleChange} onBlur={formik.handleBlur}
                                                         errores={formik.errors.rfc && formik.touched.rfc ? formik.errors.rfc : null}
                                                     />
@@ -180,7 +176,7 @@ const DetailProveedor = () => {
                                                         name='Departamento'
                                                         className='input'
                                                         onChange={value => formik.setFieldValue('departamento', value.value)}
-                                                        value={formik.values?formik.values.departamento:''}
+                                                        value={formik.values.departamento}
                                                         onBlur={formik.handleBlur}
                                                         options={optionsDepartamento}
                                                         label='Departamento'
@@ -189,7 +185,7 @@ const DetailProveedor = () => {
                                                 </div>
                                                 <div className='flex flex-row'>
                                                     <Input
-                                                        label='Otros' type='text' name='otro' value={formik.values?formik.values.otro:''}
+                                                        label='Otros' type='text' name='otro' value={formik.values.otro}
                                                         onChange={handleChange} onBlur={formik.handleBlur}
                                                         errores={formik.errors.otro && formik.touched.otro ? formik.errors.otro : null}
                                                     />
@@ -211,10 +207,10 @@ const DetailProveedor = () => {
                                                                 { name: 'Teléfono', atr: 'telefono' },
                                                                 { name: 'Nota', atr: 'nota' }
                                                             ]}
-                                                            elements={formik.values?formik.values.contactos:[initContacto]}
+                                                            elements={formik.values.contactos}
                                                             arrayName={'contactos'}
                                                             handleChange={formik.handleChange}
-                                                            clearObject={initContacto}
+                                                            clearObject={{ nombre: '', puesto: '', correo: '', telefono: '', nota: '' }}
                                                         >
                                                         </DynamicInput>
                                                     </div>
