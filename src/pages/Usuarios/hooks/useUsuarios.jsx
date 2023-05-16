@@ -152,7 +152,7 @@ async function saveUsuario({ values, method }) {
         allUsuarios,
         loading,
         refreshUsuarios,
-        getUsuario,
+        getUsuario, findUsuario,
         setLoading
       }}
     >

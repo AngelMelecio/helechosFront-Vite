@@ -15,7 +15,6 @@ import { ToastContainer } from "react-toastify"
 import PaginaModelos from "./pages/Modelos/PaginaModelos"
 import PaginaProveedores from "./pages/Proveedores/PaginaProveedores"
 import DetailProveedor from "./pages/Proveedores/DetailProveedor"
-import FichaTecnicaPrint from "./components/FichaTecnicaPrint"
 import DetailEmpleado from "./pages/Empleados/DetailEmpleado"
 import { EmpleadosProvider } from "./pages/Empleados/hooks/useEmpleados"
 import DetailModelo from "./pages/Modelos/DetailModelo"
@@ -33,7 +32,7 @@ const Main = () => {
       {session ?
         <>
           <AdminProvider>
-            <div className="flex w-full h-screen">
+            <div className="flex w-full h-screen overflow-hidden absolute">
               <AppBar />
               <Routes>
                 <Route exact path="*" element={<Navigate replace to="/perfil" />} />

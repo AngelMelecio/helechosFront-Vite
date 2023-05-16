@@ -9,6 +9,7 @@ const DynamicInput = ({
   elements,
   handleChange,
   clearObject,
+  setTheresChanges,
 }) => {
   const [confirmationIndex, setConfirmationIndex] = useState(null);
   return (
@@ -40,7 +41,7 @@ const DynamicInput = ({
                             type="text"
                             value={elements[index][c.atr]}
                             name={`${arrayName}[${index}][${[c.atr]}]`}
-                            onChange={handleChange}
+                            onChange={ (e) => { setTheresChanges(true); return handleChange(e)}}
                           />
                         </td>)
                     }
@@ -73,6 +74,7 @@ const DynamicInput = ({
                               arrayHelpers.remove(index);
                             }
                             setConfirmationIndex(null);
+                            setTheresChanges(true);
                           }}
                         >
                           <ICONS.Done />

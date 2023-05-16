@@ -28,8 +28,11 @@ function formatModelos(modelos) {
 export function ModelosProvider({ children }) {
 
   const { session, notify } = useAuth()
+  
   const [allModelos, setAllModelos] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [fetchingModelos, setFetchingModelos] = useState(true)
+  const [fetchingOneModelo, setFetchingOneModelo] = useState(true)
+
   const [errors, setErrors] = useState(false)
 
   async function getModelo(id) {
@@ -38,14 +41,14 @@ export function ModelosProvider({ children }) {
       headers: { 'Authorization': 'Bearer ' + session.access }
     }
     try {
-      setLoading(true)
+      setFetchingOneModelo(true)
       const modelo = await fetchAPI(API_MODELOS_URL + id, options)
       let modelos = formatModelos([modelo])
       return modelos[0]
     } catch (err) {
       setErrors(err)
     } finally {
-      setLoading(false)
+      setFetchingOneModelo(false)
     }
   }
 
@@ -78,7 +81,7 @@ export function ModelosProvider({ children }) {
       headers: { "authorization": "Bearer " + session.access }
     }
     try {
-      setLoading(true)
+      setFetchingModelos(true)
       for (let id of ids) {
         let { message } = await fetchAPI(API_MODELOS_URL + id, options)
         notify(message)
@@ -87,33 +90,33 @@ export function ModelosProvider({ children }) {
       setErrors(err)
       console.log(err)
     } finally {
-      setLoading(false)
+      setFetchingModelos(false)
     }
   }
 
   async function refreshModelos() {
     try {
-      setLoading(true)
+      setFetchingModelos(true)
       const modelos = await getModelos()
       setAllModelos(modelos)
     } catch (err) {
       setErrors(err)
     } finally {
-      setLoading(false)
+      setFetchingModelos(false)
     }
   }
 
   async function saveModelo({ modelo, method = "POST" }) {
     try {
       console.log('savingAPI', modelo, method)
-      setLoading(true)
+      setFetchingModelos(true)
       const modelos = await postModelo(modelo, method)
       setAllModelos(modelos)
     } catch (err) {
       console.log(err)
       setErrors(err)
     } finally {
-      setLoading(false)
+      setFetchingModelos(false)
     }
   }
 
@@ -124,13 +127,15 @@ export function ModelosProvider({ children }) {
   return (
     <ModelosContext.Provider value={{
       allModelos,
-      loading, setLoading,
-      errors,
       refreshModelos,
-      getModelo,
       saveModelo,
       deleteModelos,
+      fetchingModelos, setFetchingModelos,
 
+      getModelo,
+      fetchingOneModelo,
+
+      errors,
     }}>
       {children}
     </ModelosContext.Provider>

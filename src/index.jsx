@@ -13,6 +13,8 @@ import { MaquinasProvider } from './pages/Maquinas/hooks/useMaquinas';
 import { MaterialesProvider } from './pages/Materiales/hooks/useMateriales';
 import { ProveedoresProvider } from './pages/Proveedores/hooks/useProveedores';
 import { UsuariosProvider } from './pages/Usuarios/hooks/useUsuarios';
+import {FichaMaterialesProvider} from './pages/Modelos/hooks/useFichaMateriales'
+import {DetailModelosProvider} from './pages/Modelos/hooks/useDetailModelos'
 
 ReactDOM.render(
   <React.StrictMode>
@@ -23,15 +25,19 @@ ReactDOM.render(
             <UsuariosProvider>
               <MaquinasProvider>
                 <ModelosProvider>
-                  <ProveedoresProvider>
-                    <MaterialesProvider>
-                      <FichasProvider>
-                        <ClientesProvider>
-                          <Main />
-                        </ClientesProvider>
-                      </FichasProvider>
-                    </MaterialesProvider>
-                  </ProveedoresProvider>
+                  <FichasProvider>  
+                    <FichaMaterialesProvider>
+                      <DetailModelosProvider>
+                        <ProveedoresProvider>
+                          <MaterialesProvider>
+                              <ClientesProvider>
+                                <Main />
+                              </ClientesProvider>
+                          </MaterialesProvider>
+                        </ProveedoresProvider>
+                      </DetailModelosProvider>
+                    </FichaMaterialesProvider>
+                  </FichasProvider>
                 </ModelosProvider>
               </MaquinasProvider>
             </UsuariosProvider>

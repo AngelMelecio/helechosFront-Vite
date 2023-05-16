@@ -49,6 +49,8 @@ const DetailEmpleado = () => {
 
   const isEdit = (id !== '0')
   const [assignedMaquinas, setAssignedMaquinas] = useState([])
+  const [theresChanges, setTheresChanges] = useState(false)
+
 
   const {
     getEmpleado,
@@ -103,7 +105,7 @@ const DetailEmpleado = () => {
     validate,
     onSubmit: async (values) => {
       //console.log(values)
-     await saveEmpleado({
+      await saveEmpleado({
         values: values,
         maquinas: assignedMaquinas.map(m => ({ id: m.idMaquina })),
         method: isEdit ? 'PUT' : 'POST'
@@ -121,10 +123,12 @@ const DetailEmpleado = () => {
 
   const handleSelectImage = (e) => {
     formik.setValues(prev => ({ ...prev, fotografia: e.target.files[0] }))
+    setTheresChanges(true)
   }
 
   const handleChange = (e) => {
-    formik.setFieldValue(e.target.name, e.target.value)
+    formik.handleChange(e)
+    setTheresChanges(true)
   }
 
   return (
@@ -134,13 +138,24 @@ const DetailEmpleado = () => {
           {/**
            * HEADER
            */}
-          <div className="flex pb-4 ">
-            <button
-              onClick={() => navigate('/empleados')}
-              className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
-            <p className="font-bold text-3xl pl-3 text-teal-700">
-              {isEdit ? `Detalles del Empleado` : "Nuevo Empleado"}
-            </p>
+          <div className="flex pb-4 justify-between ">
+            <div className="flex">
+              <button
+                onClick={() => navigate('/empleados')}
+                className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
+              <p className="font-bold text-3xl pl-3 text-teal-700">
+                {isEdit ? `Detalles del Empleado` : "Nuevo Empleado"}
+              </p>
+            </div>
+            <div>
+              <input
+                disabled={loading || !theresChanges}
+                className='bg-teal-500 p-1 text-xl w-40 h-10 text-white normal-button  right-5 z-10 top-5 rounded-lg'
+                type="submit"
+                value={isEdit ? "Guardar" : "Agregar"}
+                form="frmEmpleados"
+              />
+            </div>
           </div>
           <div className="flex flex-col bg-white h-full rounded-t-lg relative shadow-lg">
             <div className='w-full flex h-full flex-col '>
@@ -152,13 +167,7 @@ const DetailEmpleado = () => {
                     onSubmit={formik.handleSubmit}>
                     <div className="absolute w-full flex flex-col  px-4">
                       <div className="flex w-full justify-end pt-3">
-                        <input
-                          disabled={loading}
-                          className='bg-teal-500 p-1 w-40 text-white normal-button  right-5 z-10 top-5 rounded-lg'
-                          type="submit"
-                          value={isEdit ? "GUARDAR" : "AGREGAR"}
-                          form="frmEmpleados"
-                        />
+
                       </div>
                       <div className="flex w-full">
                         {/**
@@ -245,7 +254,10 @@ const DetailEmpleado = () => {
                               {<CustomSelect
                                 name='Departamento'
                                 className='input z-[100]'
-                                onChange={value => formik.setFieldValue('departamento', value.value)}
+                                onChange={value => {
+                                  formik.setFieldValue('departamento', value.value)
+                                  setTheresChanges(true)
+                                }}
                                 value={formik.values ? formik.values.departamento : ''}
                                 onBlur={formik.handleBlur}
                                 options={optionsDepartamento}
@@ -255,7 +267,10 @@ const DetailEmpleado = () => {
                               {<CustomSelect
                                 name='Estado'
                                 className='input z-[100]'
-                                onChange={value => formik.setFieldValue('is_active', value.value )}
+                                onChange={value => {
+                                  formik.setFieldValue('is_active', value.value)
+                                  setTheresChanges(true)
+                                }}
                                 value={formik.values ? (formik.values.is_active) : ''}
                                 onBlur={formik.handleBlur}
                                 options={optionsEstado}
@@ -291,6 +306,7 @@ const DetailEmpleado = () => {
                             allMaquinas={allMaquinas}
                             assignedMaquinas={assignedMaquinas}
                             setAssignedMaquinas={setAssignedMaquinas}
+                            setTheresChanges={setTheresChanges}
                           />
                         }
                       </div>

@@ -9,6 +9,10 @@ import Loader from '../../components/Loader/Loader';
 import SectionFichas from './components/SectionFichas';
 import { sleep } from '../../constants/functions';
 import FichasModal from '../../components/FichasModal';
+import FichaTecnicaPrint from './components/FichaTecnicaPrint';
+import { useDetailModelos } from './hooks/useDetailModelos';
+import { useFichaMateriales } from './hooks/useFichaMateriales';
+import { useMaquinas } from '../Maquinas/hooks/useMaquinas';
 
 let initModelo = {
   nombre: '',
@@ -18,15 +22,16 @@ const DetailModelo = () => {
 
   const navigate = useNavigate()
   const { id } = useParams();
-  const [modelo, setModelo] = useState(null)
-  const { allModelos, getModelo, loading: loadingModelo } = useModelos()
-  const { fichas, refreshFichas, loading: loadingFichas } = useFichas()
-
   const isEdit = id !== '0'
 
   const modalRef = useRef()
+
+  const [modelo, setModelo] = useState(null)
+  const { getModelo, fetchingOneModelo } = useModelos()
+  const { allFichasModelo, refreshFichas, fetchingFichas } = useFichas()
+
   const [modalVisible, setModalVisible] = useState(false)
-  const [pageScrollBottom, setPageScrollBottom] = useState(false)
+  const [printModalVisible, setPrintModalVisible] = useState(false)
 
   const [onSaveChanges, setOnSaveChanges] = useState(() => { })
   const [onDiscardChanges, setOnDiscardChanges] = useState(() => { })
@@ -34,6 +39,21 @@ const DetailModelo = () => {
   const [modalCancelText, setModalCancelText] = useState('')
   const [modalConfirmText, setModalConfirmText] = useState('')
 
+  const {
+    allMaquinas
+  } = useMaquinas()
+
+  const {
+    disablePrint,
+    selectedFichaIndx,
+    theresChangesModelo, setTheresChangesModelo,
+    theresChangesFicha, setTheresChangesFicha,
+    setPageScrollBottom
+  } = useDetailModelos()
+
+  const {
+    allFichaMateriales,
+  } = useFichaMateriales()
 
   const handleOpenModal = async (setState) => {
     setState(true)
@@ -47,6 +67,13 @@ const DetailModelo = () => {
     setState(false)
   }
 
+  useEffect(()=>{
+    return () => {
+      setTheresChangesModelo(false)
+      setTheresChangesFicha(false)
+    }
+  },[])
+
   useEffect(async () => {
     console.log('EFFECTO\n DETALLE MODELO, id:', id)
     refreshFichas({ idModelo: id })
@@ -56,9 +83,11 @@ const DetailModelo = () => {
 
   const pageRef = useRef()
 
-  const handleScroll = (e) => {
-    setPageScrollBottom(Math.ceil(pageRef.current.scrollTop + pageRef.current.clientHeight) >=
-      pageRef.current.scrollHeight)
+  const handleScroll = () => {
+    setPageScrollBottom(
+      Math.ceil(pageRef.current.scrollTop + pageRef.current.clientHeight) >=
+      pageRef.current.scrollHeight
+    )
   }
 
   return (
@@ -68,30 +97,67 @@ const DetailModelo = () => {
         onScroll={handleScroll}
         className="w-full relative overflow-y-scroll h-full">
         <div id="tbl-page" className="flex flex-col w-full bg-slate-100 relative px-8 py-5">
-          <div className="flex pb-4 ">
-            <button
-              onClick={() => navigate(-1)}
-              className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
-            <p className="font-bold text-3xl pl-3 text-teal-700">
-              {isEdit ? `Detalles del Modelo` : "Nuevo Modelo"}
-            </p>
+          {/**
+           * HEADER
+           */}
+          <div className="flex pb-4 justify-between">
+            <div className="flex">
+              <button
+                onClick={() => navigate('/modelos')}
+                className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
+              <p className="font-bold text-3xl pl-3 text-teal-700">
+                {isEdit ? `Detalles del Modelo` : "Nuevo Modelo"}
+              </p>
+            </div>
+            <div>
+              <input
+                disabled={fetchingOneModelo || !theresChangesModelo}
+                className='bg-teal-500 h-10 p-1 w-40 text-white normal-button  z-10  rounded-lg'
+                type="submit"
+                value={isEdit ? "Guardar Modelo" : "Crear Modelo"}
+                form="frmModelos"
+              />
+            </div>
           </div>
+          {/**
+           * FORM MODELOS
+           */}
           <div className="flex flex-col bg-white rounded-lg shadow-lg">
-            {loadingModelo || modelo === null ? <Loader /> :
+            {fetchingOneModelo || modelo === null ? <Loader /> :
               <FrmModelos
                 modelo={modelo !== null ? modelo : initModelo}
                 isEdit={isEdit}
               />}
           </div>
+          {/**
+           * SECCION FICHAS
+           */}
           <div className='flex flex-col screen'>
-            <p className="pt-8 pb-4 font-bold text-3xl pl-3 text-teal-700">
-              Fichas Tecnicas
-            </p>
+            <div className="pt-12 pb-4 flex w-full justify-between items-center">
+              <p className=" font-bold text-3xl pl-3 text-teal-700">
+                Fichas Tecnicas
+              </p>
+              <div className='flex'>
+                <button
+                  onClick={() => handleOpenModal(setPrintModalVisible)}
+                  disabled={disablePrint}
+                  className='normal-button h-10 w-10 rounded-lg total-center mr-4'
+                >
+                  <ICONS.Print size='25px' />
+                </button>
+                {<input
+                  disabled={fetchingFichas || !theresChangesFicha}
+                  className='bg-teal-500 h-10 p-1 w-40 text-white normal-button z-10 rounded-lg'
+                  type="submit"
+                  value={"Guardar Ficha"}
+                  form="frmFichas"
+                />}
+              </div>
+            </div>
             <div className="flex flex-col relative h-full bg-white rounded-lg shadow-lg">
-              {loadingFichas ? <Loader />
+              {fetchingFichas ? <Loader />
                 :
                 <SectionFichas
-                  fichas={fichas}
                   openModal={() => handleOpenModal(setModalVisible)}
                   closeModal={() => handleCloseModal(setModalVisible)}
                   setOnSaveChanges={setOnSaveChanges}
@@ -99,14 +165,15 @@ const DetailModelo = () => {
                   setModalMessage={setModalMessage}
                   setModalCancelText={setModalCancelText}
                   setModalConfirmText={setModalConfirmText}
-                  scrollForm={pageScrollBottom}
                 />
               }
             </div>
           </div>
-
         </div>
       </div>
+      {/**
+       * MODALES
+       */}
       <div className='modal absolute pointer-events-none z-50 h-full w-full' ref={modalRef}>
         {modalVisible &&
           <FichasModal
@@ -117,9 +184,22 @@ const DetailModelo = () => {
             message={modalMessage}
           />
         }
+        {printModalVisible &&
+          <FichaTecnicaPrint
+            data={[
+              {
+                ...allFichasModelo[selectedFichaIndx],
+                materiales: allFichaMateriales,
+                modelo: modelo,
+                cliente: modelo.cliente,
+                maquinaTejido: allMaquinas.find( m => m.idMaquina + '' === allFichasModelo[selectedFichaIndx].maquinaTejido ),
+                maquinaPlancha: allMaquinas.find( m => m.idMaquina + '' === allFichasModelo[selectedFichaIndx].maquinaPlancha )
+              }
+            ]}
+            onCloseModal={() => handleCloseModal(setPrintModalVisible)}
+          />
+        }
       </div>
-
-
     </>
   )
 }

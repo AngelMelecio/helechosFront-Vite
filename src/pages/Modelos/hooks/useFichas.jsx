@@ -30,9 +30,10 @@ function formatFichas(fichas) {
 
 export function FichasProvider({ children }) {
 
-  const { session, notify } = useAuth()
-  const [fichas, setFichas] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {session, notify } = useAuth()
+  const [allFichasModelo, setAllFichasModelo] = useState([])
+  const [fetchingFichas, setFetchingFichas] = useState(true);
+
   const [error, setError] = useState(false);
 
   async function getFichas(idModelo) {
@@ -124,43 +125,43 @@ export function FichasProvider({ children }) {
       }
     }
     try {
-      setLoading(true)
+      setFetchingFichas(true)
       const { message } = await fetchAPI(API_FICHAS_URL + idFicha, options)
       notify(message)
     } catch (err) {
       setError(err)
     } finally {
-      setLoading(false)
+      setFetchingFichas(false)
     }
 
   }
 
   async function refreshFichas({ idModelo }) {
     try {
-      setLoading(true)
+      setFetchingFichas(true)
       if (idModelo !== '0') {
         const fichas = await getFichas(idModelo)
-        setFichas(fichas)
+        setAllFichasModelo(fichas)
       } else {
-        setFichas([])
+        setAllFichasModelo([])
       }
     } catch (err) {
       setError(err)
     } finally {
-      setLoading(false)
+      setFetchingFichas(false)
     }
   }
 
   async function saveFicha({ values, materiales = [], method = "POST" }) {
     try {
-      setLoading(true)
+      setFetchingFichas(true)
       const fichas = await postFicha(values, materiales, method)
-      setFichas(fichas)
+      setAllFichasModelo(fichas)
     } catch (err) {
       setError(err)
       console.log(err)
     } finally {
-      setLoading(false)
+      setFetchingFichas(false)
     }
   }
 
@@ -168,9 +169,10 @@ export function FichasProvider({ children }) {
   return (
     <FichasContext.Provider
       value={{
-        fichas, saveFicha,
-        loading, setLoading,
+        allFichasModelo, 
+        fetchingFichas, setFetchingFichas,
         error,
+        saveFicha,
         refreshFichas,
         deleteFicha
       }}
