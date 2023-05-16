@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { useAuth } from "../../../context/AuthContext"
 import { API_URL } from "../../../constants/API_URL"
+import { useEffect } from "react"
 import { fetchAPI } from "../../../services/fetchApiService"
 import { useContext } from "react"
 
@@ -86,12 +87,14 @@ export function EmpleadosProvider({ children }) {
       const maquinas = await fetchAPI(API_EMPLEADO_MAQUINAS_URL + idEmpleado, options)
       return maquinas
     } catch (err) {
+      console.log(err)
     } finally {
       setLoadingEmpleadoMaquinas(false)
     }
   }
 
   async function assignMaquinas(idEmpleado, maquinasIds) {
+    console.log({ idEmpleado: idEmpleado, maquinas: maquinasIds })
     let options = {
       method: 'POST',
       headers: {

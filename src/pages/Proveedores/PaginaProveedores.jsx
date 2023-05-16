@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import { useEffect } from 'react'
 import DeleteModal from '../../components/DeleteModal'
 import CRUD from '../../components/CRUD'
+import Loader from '../../components/Loader/Loader'
 import { sleep } from '../../constants/functions'
 import { useProveedores } from './hooks/useProveedores'
 
@@ -44,27 +45,28 @@ const PaginaProveedores = () => {
 
     return (
         <>
-
-            <CRUD
-                title='Proveedores'
-                idName='idProveedor'
-                path='proveedores'
-                loading={loading}
-                allElements={allProveedores}
-                elements={listaProveedores}
-                setElements={setListaProveedores}
-                columns={[
-                    { name: 'Nombre', attribute: 'nombre' },
-                    { name: 'RFC', attribute: 'rfc' },
-                    { name: 'Dirección', attribute: 'direccion' },
-                    { name: 'Teléfono', attribute: 'telefono' },
-                    { name: 'Correo', attribute: 'correo' },
-                    { name: 'Departamento', attribute: 'departamento' },
-                    { name: 'Otro', attribute: 'otro' },
-                ]}
-                onDelete={() => handleOpenModal(setDeleteModalVisible)}
-            />
-
+            {
+                loading ? <Loader /> :
+                    <CRUD
+                        title='Proveedores'
+                        idName='idProveedor'
+                        path='proveedores'
+                        loading={loading}
+                        allElements={allProveedores}
+                        elements={listaProveedores}
+                        setElements={setListaProveedores}
+                        columns={[
+                            { name: 'Nombre', attribute: 'nombre' },
+                            { name: 'RFC', attribute: 'rfc' },
+                            { name: 'Dirección', attribute: 'direccion' },
+                            { name: 'Teléfono', attribute: 'telefono' },
+                            { name: 'Correo', attribute: 'correo' },
+                            { name: 'Departamento', attribute: 'departamento' },
+                            { name: 'Otro', attribute: 'otro' },
+                          ]}
+                        onDelete={() => handleOpenModal(setDeleteModalVisible)}
+                    />
+            }
             <div className='modal absolute h-full w-full' ref={modalContainerRef}>
                 {deleteModalVisible &&
                     <DeleteModal

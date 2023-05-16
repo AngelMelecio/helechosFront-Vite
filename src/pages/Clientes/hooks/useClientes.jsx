@@ -46,6 +46,7 @@ export function ClientesProvider({ children }) {
             let clie = await fetchAPI(API_CLIENTES_URL + id, options)
             return formatClientes([clie])[0]
         } catch (err) {
+            console.log(err)
             setErrors(err)
             notify('Error al buscar el cliente', true)
         } finally {
@@ -75,6 +76,7 @@ export function ClientesProvider({ children }) {
     }
 
     const postCliente = async (values, method) => {
+        console.log('POST: ', values)
         let Keys = [
             'nombre',
             'direccion',
@@ -111,6 +113,7 @@ export function ClientesProvider({ children }) {
                     const { message } = await fetchAPI(API_CLIENTES_URL + e.idCliente, options)
                     notify(message)
                 } catch (err) {
+                    console.log(err)
                     setErrors(err)
                     notify('Error al eliminar el cliente', true)
                 } finally {
@@ -127,6 +130,7 @@ export function ClientesProvider({ children }) {
             const { message } = await postCliente(values, method)
             notify(message)
         } catch (err) {
+            console.log(err)
             setErrors(err)
             notify('Error al guardar cliente', true)
         } finally {
