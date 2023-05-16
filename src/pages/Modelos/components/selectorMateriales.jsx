@@ -3,12 +3,13 @@ import { useMateriales } from '../../Materiales/hooks/useMateriales'
 import Loader from '../../../components/Loader/Loader'
 import { ICONS } from "../../../constants/icons";
 import { sleep } from "../../../constants/functions";
+import { useDetailModelos } from "../hooks/useDetailModelos";
 
 const Th = ({ children }) => <th className="sticky top-0 z-10 bg-slate-100">{children}</th>
 
 const SelectorMateriales = ({
   fichaTecnicaObj,
-  onPassMateriales
+  onPassMateriales,
 }) => {
 
   const selectorContentRef = useRef()
@@ -19,6 +20,10 @@ const SelectorMateriales = ({
     refreshMateriales,
     loading,
   } = useMateriales()
+
+  const {
+    setTheresChangesFicha
+  } = useDetailModelos()
 
   const [availableMateriales, setAvailableMateriales] = useState([])
   const [selectorVisible, setSelectorVisible] = useState(false)
@@ -91,29 +96,8 @@ const SelectorMateriales = ({
     let newMateriales = [...fichaTecnicaObj.values.materiales]
     newMateriales[indx][e.target.name] = e.target.value
     fichaTecnicaObj.setValues(prev => ({ ...prev, materiales: newMateriales }))
+    setTheresChangesFicha(true)
   }
-
-  /*const calcularPesos = (materiales) =>{
-    let newPesoPoliester = 0
-      let newPesoLurex = 0
-      let newPesoMelt = 0
-      materiales?.forEach( m => {
-        switch(m.tipo){
-          case 'Poliester':
-            newPesoPoliester += Number(m.peso)
-            break
-          case 'Lurex':
-            newPesoLurex += Number(m.peso)
-            break
-          case 'Melting':
-            newPesoMelt += Number(m.peso)
-            break
-        }        
-      })
-      fichaTecnicaObj.setFieldValue('pesoPoliester', newPesoPoliester )
-      fichaTecnicaObj.setFieldValue('pesoLurex', newPesoLurex )
-      fichaTecnicaObj.setFieldValue('pesoMelt', newPesoMelt )
-  }*/
 
   const handleDeleteMaterial = (e, indx) => {
     e.preventDefault()
@@ -127,8 +111,8 @@ const SelectorMateriales = ({
     newMateriales[index1] = newMateriales[index2];
     newMateriales[index2] = temp;
     fichaTecnicaObj.setValues(prev => ({ ...prev, materiales: newMateriales }));
+    setTheresChangesFicha(true)
   };
-
 
   let sel_width = selectorVisible ? 'w-full' : 'w-10'
   let addButtonClass = selectorVisible ? 'neutral-button' : 'normal-button'
@@ -330,7 +314,6 @@ const SelectorMateriales = ({
               </tbody>
             </table>
           </div>
-
         </div>
       </div>
     </div>

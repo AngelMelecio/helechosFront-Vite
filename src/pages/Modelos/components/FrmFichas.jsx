@@ -14,12 +14,11 @@ import Loader from "../../../components/Loader/Loader";
 import { useFichas } from "../hooks/useFichas";
 import { useMateriales } from "../../Materiales/hooks/useMateriales";
 import { useParams } from "react-router-dom";
+import { useDetailModelos } from "../hooks/useDetailModelos";
+import { useFichaMateriales } from "../hooks/useFichaMateriales";
 
 const FrmFichas = ({
   ficha,
-  scrollForm,
-  theresChanges,
-  setTheresChanges,
 }) => {
 
   const { id } = useParams()
@@ -30,49 +29,17 @@ const FrmFichas = ({
   const [planchaOptions, setPlanchaOptions] = useState([])
 
   const {
-    getFichaMateriales,
-    loadingFichaMateriales
-  } = useMateriales()
+    setTheresChangesFicha,
+    pageScrollBottom
+  } = useDetailModelos()
+
+  const {
+    refreshFichaMateriales,
+    allFichaMateriales,
+    fetchingFichaMateriales,
+  } = useFichaMateriales()
 
   const { saveFicha } = useFichas()
-
-  useEffect(() => {
-    refreshMaquinas()
-  }, [])
-
-  // Cargamos las opciones de las maquinas
-  useEffect(() => {
-    setTejidoOptions(
-      allMaquinas
-        .filter(m => (m.departamento === 'Tejido'))
-        .map(m => ({ value: m.idMaquina.toString(), label: 'Línea: ' + m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca }))
-    )
-    setPlanchaOptions(
-      allMaquinas
-        .filter(m => (m.departamento === 'Plancha'))
-        .map(m => ({ value: m.idMaquina.toString(), label: 'Línea: ' + m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca }))
-    )
-  }, [allMaquinas])
-
-
-  // Cuando no queremos scroll en el Form lo regresamos hasta arriba
-  useEffect(() => {
-    if (!scrollForm) {
-      formRef.current.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }, [scrollForm])
-
-
-  // Cargamos los materiales de la ficha
-  useEffect(async () => {
-    fichaFormik.setValues(ficha)
-    console.log('EFFECTO\n FRM FICHA ficha:', ficha)
-    if (!ficha.copied) {
-      let materiales = await getFichaMateriales(ficha.idFichaTecnica)
-      fichaFormik.setFieldValue('materiales', materiales)
-    }
-
-  }, [ficha.idFichaTecnica])
 
   const validate = values => {
     const errors = {};
@@ -104,6 +71,7 @@ const FrmFichas = ({
     validate,
     onSubmit: async (values) => {
       //console.log(values)
+      setTheresChangesFicha(false)
       await saveFicha({
         values: {
           ...values,
@@ -115,13 +83,59 @@ const FrmFichas = ({
     }
   })
 
+  useEffect(() => {
+    refreshMaquinas()
+  }, [])
+
+  useEffect(() => {
+    fichaFormik.setFieldValue('materiales', allFichaMateriales)
+    console.log('EFFECTO formulario cargo ficha-materiales', allFichaMateriales)
+  }, [allFichaMateriales])
+
+  // Cargamos las opciones de las maquinas
+  useEffect(() => {
+    setTejidoOptions(
+      allMaquinas
+        .filter(m => (m.departamento === 'Tejido'))
+        .map(m => ({ value: m.idMaquina.toString(), label: 'Línea: ' + m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca }))
+    )
+    setPlanchaOptions(
+      allMaquinas
+        .filter(m => (m.departamento === 'Plancha'))
+        .map(m => ({ value: m.idMaquina.toString(), label: 'Línea: ' + m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca }))
+    )
+  }, [allMaquinas])
+
+
+  // Cuando no queremos scroll en el Form lo regresamos hasta arriba
+  useEffect(() => {
+    if (!pageScrollBottom) {
+      formRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [pageScrollBottom])
+
+
+  // Cargamos los materiales de la ficha
+  useEffect(async () => {
+    fichaFormik.setValues(ficha)
+    console.log('EFFECTO\n FRM FICHA ficha:', ficha)
+    if (!ficha.copied) {
+      await refreshFichaMateriales(ficha.idFichaTecnica)
+      //let materiales = await getFichaMateriales(ficha.idFichaTecnica)
+      //fichaFormik.setFieldValue('materiales', materiales)
+    }
+
+  }, [ficha?.idFichaTecnica])
+
+
+
   const handleSelectFile = (e) => {
     fichaFormik.setValues(prev => ({ ...prev, [e.target.name]: e.target.files[0] }))
-    setTheresChanges(true)
+    setTheresChangesFicha(true)
   }
   const handleFichaChange = (e) => {
     fichaFormik.setValues(prev => ({ ...prev, [e.target.name]: e.target.value }))
-    setTheresChanges(true)
+    setTheresChangesFicha(true)
   }
 
   const onPassMateriales = (availableMateriales) => {
@@ -146,27 +160,27 @@ const FrmFichas = ({
       }
     })
     fichaFormik.setValues(prev => ({ ...prev, materiales: [...prev.materiales, ...newMateriales] }))
-    setTheresChanges(true)
+    setTheresChangesFicha(true)
   }
 
 
   return (
     <div
       ref={formRef}
-      className={`flex flex-col h-full w-full ${scrollForm ? "overflow-y-scroll" : "overflow-hidden pr-3"}`}>
+      className={`flex flex-col h-full w-full ${pageScrollBottom ? "overflow-y-scroll" : "overflow-hidden pr-3"}`}>
       <FormikProvider value={fichaFormik}>
         <form
           id='frmFichas' onSubmit={fichaFormik.handleSubmit}
           className='flex flex-col h-full w-full relative '>
           <div className="absolute w-full flex flex-col p-4">
             <div className='flex flex-row w-full h-full px-2 items-center justify-end'>
-              <input
+              {/*<input
                 disabled={!theresChanges}
                 className='py-1 px-5 text-white normal-button self-end rounded-lg'
                 type="submit"
                 value={"GUARDAR FICHA"}
                 form="frmFichas"
-              />
+  />*/}
             </div>
             <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
               <div className="absolute w-full total-center -top-3">
@@ -242,7 +256,7 @@ const FrmFichas = ({
                   <CustomSelect
                     name='maquinaTejido'
                     className='input z-[30]'
-                    onChange={value => { fichaFormik.setFieldValue('maquinaTejido', value.value); setTheresChanges(true) }}
+                    onChange={value => { fichaFormik.setFieldValue('maquinaTejido', value.value); setTheresChangesFicha(true) }}
                     value={fichaFormik?.values?.maquinaTejido}
                     onBlur={fichaFormik.handleBlur}
                     options={tejidoOptions}
@@ -285,7 +299,7 @@ const FrmFichas = ({
                   <CustomSelect
                     name='maquinaPlancha'
                     className='input z-[20]'
-                    onChange={value => { fichaFormik.setFieldValue('maquinaPlancha', value.value); setTheresChanges(true) }}
+                    onChange={value => { fichaFormik.setFieldValue('maquinaPlancha', value.value); setTheresChangesFicha(true) }}
                     value={fichaFormik?.values?.maquinaPlancha}
                     onBlur={fichaFormik.handleBlur}
                     options={planchaOptions}
@@ -314,7 +328,7 @@ const FrmFichas = ({
                   DATOS DE LOS HILOS
                 </div>
               </div>
-              {fichaFormik?.values?.materiales && !loadingFichaMateriales ?
+              {!fetchingFichaMateriales && fichaFormik?.values?.materiales ?
                 <>
                   <PesosList
                     materiales={fichaFormik?.values?.materiales}
@@ -344,10 +358,11 @@ const FrmFichas = ({
                         { name: 'Numero', atr: 'valor' },
                         { name: 'Puntos', atr: 'posicion' }
                       ]}
-                      elements={fichaFormik?.values?.numeroPuntos}
+                      elements={fichaFormik?.values?.numeroPuntos || []}
                       arrayName='numeroPuntos'
                       handleChange={fichaFormik.handleChange}
                       clearObject={{ valor: '', posicion: '' }}
+                      setTheresChanges={setTheresChangesFicha}
                     />
                   </div>
                 </div>
@@ -365,10 +380,11 @@ const FrmFichas = ({
                         { name: 'Numero', atr: 'valor' },
                         { name: 'Puntos', atr: 'posicion' }
                       ]}
-                      elements={fichaFormik?.values?.economisadores}
+                      elements={fichaFormik?.values?.economisadores || []}
                       arrayName='economisadores'
                       handleChange={fichaFormik.handleChange}
                       clearObject={{ valor: '', posicion: '' }}
+                      setTheresChanges={setTheresChangesFicha}
                     />
                   </div>
                 </div>
@@ -386,10 +402,11 @@ const FrmFichas = ({
                         { name: 'Numero', atr: 'valor' },
                         { name: 'Puntos', atr: 'posicion' }
                       ]}
-                      elements={fichaFormik?.values?.jalones}
+                      elements={fichaFormik?.values?.jalones || []}
                       arrayName='jalones'
                       handleChange={fichaFormik.handleChange}
                       clearObject={{ valor: '', posicion: '' }}
+                      setTheresChanges={setTheresChangesFicha}
                     />
                   </div>
                 </div>

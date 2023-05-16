@@ -2,9 +2,9 @@ import { useEffect, useState } from "react"
 import { ICONS } from "../../../constants/icons"
 import { useFichas } from "../hooks/useFichas"
 import FrmFichas from "./FrmFichas"
-import { useFormik } from "formik"
-import { useMateriales } from "../../Materiales/hooks/useMateriales"
 import { useParams } from "react-router-dom"
+import { useFichaMateriales } from "../hooks/useFichaMateriales"
+import { useDetailModelos } from "../hooks/useDetailModelos"
 
 const initFichaObj = {
   modelo: '',
@@ -37,7 +37,6 @@ const initFichaObj = {
 }
 
 const SectionFichas = ({
-  fichas,
   openModal,
   closeModal,
   setOnSaveChanges,
@@ -45,40 +44,45 @@ const SectionFichas = ({
   setModalMessage,
   setModalCancelText,
   setModalConfirmText,
-  scrollForm
+  
 }) => {
 
   const { id } = useParams();
 
-  const [fichasList, setFichasList] = useState(fichas)
-  const [selectedFichaIndx, setSelectedFichaIndx] = useState(null)
-  const [theresChanges, setTheresChanges] = useState(false)
+  const [fichasList, setFichasList] = useState([])
+  //const [selectedFichaIndx, setSelectedFichaIndx] = useState(null)
+  //const [theresChanges, setTheresChanges] = useState(false)
 
   const {
-    loading,
+    allFichasModelo,
     refreshFichas,
-    setLoading,
+    setFetchingFichas,
     deleteFicha : deleteFichaAPI,
+    fetchingFichas
   } = useFichas()
-
+  
+  const{
+    selectedFichaIndx,
+    setSelectedFichaIndx,
+    theresChangesFicha,
+    setTheresChangesFicha,
+  } = useDetailModelos()
+  
   const {
-    getFichaMateriales,
-  } = useMateriales()
+    allFichaMateriales,
+  } = useFichaMateriales()
 
 
-  const dummySave = () => {
-    console.log('dummy save')
-  }
 
   const handleSelectFicha = (indx) => {
     if (indx === selectedFichaIndx) return
-    if (theresChanges) {
+    if (theresChangesFicha) {
       setModalMessage('Hay cambios sin guardar, ¿Desea descartarlos?')
       setModalCancelText('Permanecer')
       setModalConfirmText('Descartar')
       setOnDiscardChanges(() => () => {
         setSelectedFichaIndx(indx)
-        setTheresChanges(false)
+        setTheresChangesFicha(false)
         closeModal()
       })
       setOnSaveChanges(() => () => {
@@ -90,19 +94,21 @@ const SectionFichas = ({
       openModal()
       return
     }
+    setTheresChangesFicha(false)
     setSelectedFichaIndx(indx)
+
     //handleGetFichaMateriales(fichasModeloList[indx].idFichaTecnica)
   }
 
   const handleAddFicha = () => {
-    if (theresChanges) {
+    if (theresChangesFicha) {
       setModalMessage('Hay cambios sin guardar, ¿Desea descartarlos?')
       setModalCancelText('Permanecer')
       setModalConfirmText('Descartar')
       setOnDiscardChanges(() => () => {
         addFicha()
         closeModal()
-        setTheresChanges(false)
+        setTheresChangesFicha(false)
       })
       setOnSaveChanges(() => () => {
         closeModal()
@@ -128,14 +134,14 @@ const SectionFichas = ({
 
   const handleDeleteFicha = (indx) => {
     //console.log(fichasList[indx])
-    if (theresChanges || fichasList[indx].idFichaTecnica) {
+    if (theresChangesFicha || fichasList[indx].idFichaTecnica) {
       setModalMessage('Se eliminará la ficha técnica de forma permanente')
       setModalCancelText('Cancelar')
       setModalConfirmText('Eliminar')
       setOnSaveChanges(() => () => closeModal())
       setOnDiscardChanges(() => () => {
         deleteFicha(indx)
-        setTheresChanges(false)
+        setTheresChangesFicha(false)
         closeModal()
       })
       openModal()
@@ -154,18 +160,25 @@ const SectionFichas = ({
       let newFichas = [...fichasList]
       newFichas.splice(indx, 1)
       setFichasList(newFichas)
-      setSelectedFichaIndx(null)
     }
+    setSelectedFichaIndx(null)
   }
+
+  
 
   useEffect(() => {
     console.log('EFFECTO\n SEC. FICHAS, fichas: ')
-    console.table(fichas)
-    return () => { setLoading(true) }
-  }, [])
+    console.table(allFichasModelo)
+    //console.log('EFFECTO\n SEC. FICHAS, selected indx: ', selectedFichaIndx)
+    setFichasList(allFichasModelo)
+    return () => { 
+      setFetchingFichas(true) 
+      setSelectedFichaIndx(null)
+    }
+  }, [allFichasModelo])
 
   const handleCopyFicha = async (indx) => {
-    let materiales = await getFichaMateriales( fichasList[indx].idFichaTecnica )
+    //let materiales = await getFichaMateriales( fichasList[indx].idFichaTecnica )
     setFichasList(prev => [
       ...prev,
       {
@@ -174,7 +187,7 @@ const SectionFichas = ({
         idFichaTecnica: undefined,
         fotografia:'',
         archivoPrograma: null,
-        materiales: materiales,
+        materiales: allFichaMateriales,
         copied: true
       }
     ])
@@ -215,7 +228,7 @@ const SectionFichas = ({
                           type="button"
                           className="  w-6 h-6 trash-button rounded-md total-center absolute right-8"> <ICONS.Trash /> </button>
                         <button
-                          disabled={!ficha.idFichaTecnica || theresChanges}
+                          disabled={!ficha.idFichaTecnica || theresChangesFicha}
                           onClick={e => {
                             e.stopPropagation();
                             handleCopyFicha(indx)
@@ -231,12 +244,9 @@ const SectionFichas = ({
         </div>
       </div>
       {/* Formulario Fichas */
-        selectedFichaIndx !== null ?
+        selectedFichaIndx !== null && !fetchingFichas ?
           <FrmFichas
             ficha={fichasList[selectedFichaIndx]}
-            scrollForm={scrollForm}
-            theresChanges={theresChanges}
-            setTheresChanges={setTheresChanges}
           />
           :
           <div className="flex justify-center items-center w-full total-center bg-gray-200 h-full">

@@ -6,15 +6,22 @@ import useModelos from "../hooks/useModelos"
 import { useEffect } from "react"
 import { useClientes } from "../../Clientes/hooks/useClientes"
 import { useNavigate } from "react-router-dom"
+import { useDetailModelos } from "../hooks/useDetailModelos"
 
-const FrmModelos = ({ modelo, isEdit }) => {
+const FrmModelos = ({
+  modelo,
+  isEdit,
+}) => {
 
   const navigate = useNavigate()
 
   const [clientesOptions, setClientesOptions] = useState([])
-  const [theresChanges, setTheresChanges] = useState(false)
   const { allClientes, refreshClientes } = useClientes()
-  const { saveModelo, setLoading } = useModelos()
+  const { saveModelo } = useModelos()
+
+  const {
+    setTheresChangesModelo
+  } = useDetailModelos()
 
   const validate = values => {
     const errors = {}
@@ -45,13 +52,12 @@ const FrmModelos = ({ modelo, isEdit }) => {
 
   useEffect(() => {
     refreshClientes()
-    return () => setLoading(true)
   }, [])
 
-  useEffect(()=>{
-    console.log('EFFECTO FrmModelos modelo',modelo)
+  useEffect(() => {
+    console.log('EFFECTO FrmModelos modelo', modelo)
     modeloFormik.setValues(modelo)
-  },[modelo])
+  }, [modelo])
 
   useEffect(() => {
     let newClientesOptions = [{ value: 'Seleccione', label: 'Seleccione' }]
@@ -63,7 +69,7 @@ const FrmModelos = ({ modelo, isEdit }) => {
 
   const handleChange = (e) => {
     modeloFormik.setFieldValue(e.target.name, e.target.value)
-    setTheresChanges(true)
+    setTheresChangesModelo(true)
   }
 
   return (
@@ -71,13 +77,13 @@ const FrmModelos = ({ modelo, isEdit }) => {
       id='frmModelos'
       onSubmit={modeloFormik.handleSubmit}
       className="xl:px-32 px-7 py-4 flex flex-col">
-      <input
+      {/*<input
         disabled={!theresChanges}
         className='py-1 px-5 mr-2 text-white normal-button self-end rounded-lg'
         type="submit"
         value={isEdit ? "GUARDAR MODELO" : "AGREGAR MODELO"}
         form="frmModelos"
-      />
+  />*/}
       <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
         <div className="absolute w-full total-center -top-3">
           <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >

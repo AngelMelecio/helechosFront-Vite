@@ -36,7 +36,7 @@ const DetailUsuario = () => {
   const { id } = useParams();
   const isEdit = (id !== '0')
 
-  const {loading, setLoading, getUsuario} = useUsuarios()
+  const {loading, setLoading, findUsuario} = useUsuarios()
 
   const [newPass, setNewPass] = useState(false)
 
@@ -104,7 +104,7 @@ const DetailUsuario = () => {
 
   useEffect( async()=>{
     console.log('EFFECTO\n DETALLE Usuario, id:', id)
-    const mod = (id === '0' ? initUsuario : await getUsuario(id))
+    const mod = (id === '0' ? initUsuario : await findUsuario(id))
     formik.setValues(mod)
   },[id])
 

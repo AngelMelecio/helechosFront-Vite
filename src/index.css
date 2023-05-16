@@ -266,8 +266,8 @@ input::-webkit-inner-spin-button {
 .normal-button:disabled,
 .normal-button:disabled:hover,
 .normal-button:disabled:active {
-  background-color: #f3f4f6;
-  color: #9ca3af;
+  background-color: rgb(229 231 235);
+  color: #6b7280;
   cursor: not-allowed;
 }
 
