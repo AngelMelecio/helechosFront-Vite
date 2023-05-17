@@ -2,13 +2,12 @@ import React, { useRef, useState } from 'react'
 import { useEffect } from 'react'
 import DeleteModal from '../../components/DeleteModal'
 import CRUD from '../../components/CRUD'
-import Loader from '../../components/Loader/Loader'
 import { sleep } from '../../constants/functions'
 import { useMateriales } from './hooks/useMateriales'
 
 
 const PaginaMateriales = () => {
-    const { allMateriales, loading, refreshMateriales, deleteMateriales} = useMateriales()
+    const { allMateriales, loading, refreshMateriales, deleteMateriales } = useMateriales()
     const modalContainerRef = useRef()
     const [listaMateriales, setListaMateriales] = useState([])
     const [deleteModalVisible, setDeleteModalVisible] = useState(false)
@@ -43,30 +42,29 @@ const PaginaMateriales = () => {
         setSaving(false)
     }
 
-   
+
     return (
         <>
-            {
-                loading ? <Loader /> :
-                    <CRUD
-                        title='Materiales'
-                        idName='idMaterial'
-                        path='materiales'
-                        loading={loading}
-                        allElements={allMateriales}
-                        elements={listaMateriales}
-                        setElements={setListaMateriales}
-                        columns={[
-                            { name: 'Tipo', attribute: 'tipo' },
-                            { name: 'Color', attribute: 'color' },
-                            { name: 'Calibre', attribute: 'calibre' },
-                            { name: 'Proveedor', attribute: 'nombreProveedor' },
-                            { name: 'Teñida / Calidad', attribute: 'tenida' },
-                            { name: 'Código de color', attribute: 'codigoColor' },
-                          ]}
-                        onDelete={() => handleOpenModal(setDeleteModalVisible)}
-                    />
-            }
+
+            <CRUD
+                title='Materiales'
+                idName='idMaterial'
+                path='materiales'
+                loading={loading}
+                allElements={allMateriales}
+                elements={listaMateriales}
+                setElements={setListaMateriales}
+                columns={[
+                    { name: 'Tipo', attribute: 'tipo' },
+                    { name: 'Color', attribute: 'color' },
+                    { name: 'Calibre', attribute: 'calibre' },
+                    { name: 'Proveedor', attribute: 'nombreProveedor' },
+                    { name: 'Teñida / Calidad', attribute: 'tenida' },
+                    { name: 'Código de color', attribute: 'codigoColor' },
+                ]}
+                onDelete={() => handleOpenModal(setDeleteModalVisible)}
+            />
+
             <div className='modal absolute h-full w-full' ref={modalContainerRef}>
                 {deleteModalVisible &&
                     <DeleteModal

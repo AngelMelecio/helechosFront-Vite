@@ -46,7 +46,6 @@ export function ProveedoresProvider({ children }) {
             let prov = await fetchAPI(API_PROVEEDORES_URL + id, options)
             return formatProveedores([prov])[0]
         } catch (err) {
-            console.log(err)
             setErrors(err)
             notify('Error al buscar el proveedor', true)
         } finally {
@@ -78,7 +77,6 @@ export function ProveedoresProvider({ children }) {
     }
 
     const postProveedor = async (values, method) => {
-        console.log('POST: ', values)
         let Keys = [
             'nombre',
             'rfc',
@@ -116,7 +114,6 @@ export function ProveedoresProvider({ children }) {
                     const { message } = await fetchAPI(API_PROVEEDORES_URL + e.idProveedor, options)
                     notify(message)
                 } catch (err) {
-                    console.log(err)
                     setErrors(err)
                     notify('Error al eliminar el proveedor', true)
                 } finally {
@@ -132,7 +129,6 @@ export function ProveedoresProvider({ children }) {
             const { message } = await postProveedor(values, method)
             notify(message)
         } catch (err) {
-            console.log(err)
             setErrors(err)
             notify('Error al guardar el proveedor', true)
         } finally {
