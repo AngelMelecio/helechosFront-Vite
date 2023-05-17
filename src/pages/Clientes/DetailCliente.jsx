@@ -7,7 +7,7 @@ import { ICONS } from "../../constants/icons";
 import { useFormik, FormikProvider } from "formik";
 import Input from "../../components/Input";
 
-const initobj = {
+const initCliente = {
     idCliente: "",
     nombre: "",
     direccion: "",
@@ -16,11 +16,13 @@ const initobj = {
     otro: ""
 }
 
+const initContacto = { nombre: '', puesto: '', correo: '', telefono: '', nota: '' }
+
 const DetailCliente = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const isEdit = (id !== '0');
-    const { getCliente, saveCliente, loading, findCliente, allClientes, setLoading } = useClientes();
+    const { saveCliente, loading, findCliente, allClientes, setLoading } = useClientes();
 
     const validate = values => {
         const errors = {};
@@ -49,28 +51,29 @@ const DetailCliente = () => {
     };
 
     const formik = useFormik({
-        initialValues: id !== '0' ? (allClientes.length ? getCliente(id) : initobj) : initobj,
+        initialValues: null,
         validate,
         onSubmit: async (values) => {
-            console.log("PUT/POST")
             await saveCliente({ values: values, method: isEdit ? 'PUT' : 'POST' })
             navigate(("/clientes"))
-            //handleSaveClientes(values);
         },
     });
 
-    useEffect(() => {
-        if (id !== '0' && !allClientes.length) {
-            (async () => {
-                const cliente = await findCliente(id);
-                formik.setValues(cliente);
-                setLoading(false)
-            })();
+    useEffect(async () => {
+        try {
+          setLoading(true)
+          formik.setValues(
+            id === '0' ? initCliente :
+              allClientes.length > 0 ? allClientes.find(m => m.idCliente + '' === id) :
+                await findCliente(id)
+          )
+        } catch (e) {
+        } finally {
+          setLoading(false)
         }
-    }, [id]);
+      }, [id]);
 
     const handleChange = (e) => {
-        //console.log(e.target.name, e.target.value)
         formik.setFieldValue(e.target.name, e.target.value)
     }
     return (
@@ -170,10 +173,10 @@ const DetailCliente = () => {
                                                                 { name: 'Teléfono', atr: 'telefono' },
                                                                 { name: 'Nota', atr: 'nota' }
                                                             ]}
-                                                            elements={formik.values ? formik.values.contactos : [{ nombre: '', puesto: '', correo: '', telefono: '', nota: '' }]}
+                                                            elements={formik.values ? formik.values.contactos : [initContacto]}
                                                             arrayName={'contactos'}
                                                             handleChange={formik.handleChange}
-                                                            clearObject={{ nombre: '', puesto: '', correo: '', telefono: '', nota: '' }}
+                                                            clearObject={initContacto}
                                                         >
                                                         </DynamicInput>
                                                     </div>

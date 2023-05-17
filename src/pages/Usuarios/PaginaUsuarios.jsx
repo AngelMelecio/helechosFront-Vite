@@ -3,6 +3,8 @@ import { useUsuarios } from "./hooks/useUsuarios"
 import CRUD from "../../components/CRUD"
 import DeleteModal from "../../components/DeleteModal"
 import { useState } from "react"
+import Loader from '../../components/Loader/Loader'
+import { sleep } from '../../constants/functions'
 
 const UsuariosColumns = [
   { name: 'Nombre', attribute: 'nombre' },
@@ -15,8 +17,9 @@ const UsuariosColumns = [
 
 const PaginaUsuarios = () => {
 
-  const { allUsuarios, loading, setLoading, refreshUsuarios, } = useUsuarios()
+  const { allUsuarios, loading, setLoading, refreshUsuarios, deleteUsuarios } = useUsuarios()
 
+  const modalContainerRef = useRef()
   const [listaUsuarios, setListaUsuarios] = useState([])
   const [saving, setSaving] = useState(false)
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
@@ -29,7 +32,6 @@ const PaginaUsuarios = () => {
     setListaUsuarios(allUsuarios)
   }, [allUsuarios])
 
-  const modalContainerRef = useRef()
 
   const handleOpenModal = async (setState) => {
     setState(true)
@@ -46,27 +48,27 @@ const PaginaUsuarios = () => {
 
   const handleDeleteUsuarios = async () => {
     setSaving(true)
-    await deleteClientes(listaClientes)
-    await refreshClientes()
+    await deleteUsuarios(listaUsuarios)
+    await refreshUsuarios()
     handleCloseModal(setDeleteModalVisible)
     setSaving(false)
   }
 
   return (
     <>
-      {
-        <CRUD
-          title='Usuarios'
-          path='usuarios'
-          idName='id'
-          loading={loading}
-          allElements={allUsuarios}
-          elements={listaUsuarios}
-          setElements={setListaUsuarios}
-          columns={UsuariosColumns}
-          onDelete={() => handleOpenModal(setDeleteModalVisible)}
-        />
-      }
+
+      <CRUD
+        title='Usuarios'
+        path='usuarios'
+        idName='id'
+        loading={loading}
+        allElements={allUsuarios}
+        elements={listaUsuarios}
+        setElements={setListaUsuarios}
+        columns={UsuariosColumns}
+        onDelete={() => handleOpenModal(setDeleteModalVisible)}
+      />
+
       <div className='modal absolute pointer-events-none z-50 h-full w-full' ref={modalContainerRef}>
         {deleteModalVisible &&
           <DeleteModal

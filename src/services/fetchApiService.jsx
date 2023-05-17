@@ -5,8 +5,7 @@ async function fetchAPI(path, options = {}) {
     const response = await fetch(url, options)
     
     if (!response.ok) {
-        const {message} = await response.json()
-        throw message
+        throw await response.json()
     }
     const data = await response.json()
     return data
