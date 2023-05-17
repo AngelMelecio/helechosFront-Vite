@@ -94,7 +94,11 @@ const PaginaModelos = () => {
           allElements={allModelos}
           elements={listaModelos}
           setElements={setListaModelos}
-          columns={[{ name: 'Nombre', attribute: 'nombre' }]}
+          columns={[
+            { name: 'Nombre', attribute: 'nombre' },
+            { name: 'Cliente', attribute: 'cliente[nombre]' },
+          
+          ]}
           onDelete={() => handleOpenModal(setDeleteModalVisible)}
         />
       }
