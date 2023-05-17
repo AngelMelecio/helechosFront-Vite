@@ -85,7 +85,6 @@ const PaginaModelos = () => {
 
   return (
     <>
-
       <CRUD
         title='Modelos'
         idName="idModelo"
@@ -97,9 +96,7 @@ const PaginaModelos = () => {
         columns={[{ name: 'Nombre', attribute: 'nombre' }]}
         onDelete={() => handleOpenModal(setDeleteModalVisible)}
       />
-
       <div className='modal absolute pointer-events-none z-50 h-full w-full' ref={modalContainerRef}>
-
         {deleteModalVisible &&
           <DeleteModal
             onCancel={() => handleCloseModal(setDeleteModalVisible)}
@@ -109,7 +106,6 @@ const PaginaModelos = () => {
             message='Las siguientes fichas serán eliminadas de forma permanente'
           />
         }
-
       </div>
     </>
   )

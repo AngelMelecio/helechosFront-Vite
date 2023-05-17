@@ -51,50 +51,55 @@ const PaginaPerfil = () => {
 
   return (
     <>
-      <div className="flex flex-col w-full bg-gray-200">
-        <div className=" h-screen  bg-white py-5">
-          <div className="flex flex-row w-full h-1/5 items-center px-5">
-            <ICONS.UsersIdentity className='mr-5' size='110px' style={{ color: '#115e59' }} />
-            <div className="text-lg font-medium text-gray-700 italic">
-              {user[0].value} {user[1].value}
-              <br />
-              <p className="text-base font-normal">
-                {session.usuario.is_staff ? 'Administrador' : 'Encargado'}
-              </p>
+      <div className="flex flex-col w-full h-full relative bg-slate-100">
+        <div className=" flex flex-col h-full w-full absolute px-8 py-5 overflow-hidden">
+          <h1 className="font-bold text-3xl pb-4 pl-3 text-teal-700">
+            Perfil
+          </h1>
+          <div className="bg-white flex flex-col h-full rounded-lg shadow-lg">
+            <div className="flex flex-row w-full h-1/5 items-center px-10">
+              <ICONS.UsersIdentity className='mr-5' size='110px' style={{ color: '#115e59' }} />
+              <div className="text-lg font-medium text-gray-700 italic">
+                {user[0].value} {user[1].value}
+                <br />
+                <p className="text-base font-normal">
+                  {session.usuario.is_staff ? 'Administrador' : 'Encargado'}
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="w-full p-5">
-            <table className="profile-table">
-              <tbody>
-                {
-                  user.map(atr =>
-                    <tr
-                      key={'A' + atr.id}
-                      onClick={() => {
-                        if (focusedRow !== atr.id) {
-                          setFocusedRow(atr.id)
-                          setTmpInp(atr.value)
-                        }
-                      }}
-                      className="h-12 text-gray-700 border-b-1">
-                      <td className="px-3 text-gray-900 font-medium text-sm pointer-events-none">
-                        {atr.label}:
-                      </td>
-                      <td className="w-full  font-normal">
-                        {
-                          <p className="border-2 border-transparent px-2">
-                            {atr.value}
-                          </p>
-                        }
-                      </td>
-                      <td className="">
-                        <div className="flex flex-row h-full justify-around items-center w-24">
-                        </div>
-                      </td>
-                    </tr>)
-                }
-              </tbody>
-            </table>
+            <div className="w-full px-10 py-5">
+              <table className="profile-table">
+                <tbody>
+                  {
+                    user.map(atr =>
+                      <tr
+                        key={'A' + atr.id}
+                        onClick={() => {
+                          if (focusedRow !== atr.id) {
+                            setFocusedRow(atr.id)
+                            setTmpInp(atr.value)
+                          }
+                        }}
+                        className="h-12 text-gray-700 border-b-1">
+                        <td className="px-3 text-gray-900 font-medium text-sm pointer-events-none">
+                          {atr.label}:
+                        </td>
+                        <td className="w-full  font-normal">
+                          {
+                            <p className="border-2 border-transparent px-2">
+                              {atr.value}
+                            </p>
+                          }
+                        </td>
+                        <td className="">
+                          <div className="flex flex-row h-full justify-around items-center w-24">
+                          </div>
+                        </td>
+                      </tr>)
+                  }
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

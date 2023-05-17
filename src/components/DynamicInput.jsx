@@ -9,8 +9,9 @@ const DynamicInput = ({
   elements,
   handleChange,
   clearObject,
-  setTheresChanges,
+  setTheresChanges = null,
 }) => {
+  
   const [confirmationIndex, setConfirmationIndex] = useState(null);
   return (
     <FieldArray
@@ -41,7 +42,10 @@ const DynamicInput = ({
                             type="text"
                             value={elements[index][c.atr]}
                             name={`${arrayName}[${index}][${[c.atr]}]`}
-                            onChange={ (e) => { setTheresChanges(true); return handleChange(e)}}
+                            onChange={(e) => {
+                              setTheresChanges && setTheresChanges(true);
+                              return handleChange(e)
+                            }}
                           />
                         </td>)
                     }

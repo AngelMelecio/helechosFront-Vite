@@ -104,6 +104,7 @@ const SelectorMateriales = ({
     let newMateriales = [...fichaTecnicaObj.values.materiales]
     newMateriales.splice(indx, 1)
     fichaTecnicaObj.setValues(prev => ({ ...prev, materiales: newMateriales }))
+    setTheresChangesFicha(true)
   }
   const swapMaterials = (index1, index2) => {
     const newMateriales = [...fichaTecnicaObj.values.materiales];
