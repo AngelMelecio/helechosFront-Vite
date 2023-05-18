@@ -19,6 +19,7 @@ function formatModelos(modelos) {
     formatData.push({
       ...m,
       idCliente: m?.cliente?.idCliente + '',
+      nombreCliente: m?.cliente?.nombre,
       isSelected: false,
     })
   })

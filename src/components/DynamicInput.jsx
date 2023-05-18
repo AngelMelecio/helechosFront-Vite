@@ -16,7 +16,7 @@ const DynamicInput = ({
     <FieldArray
       name={arrayName}
       render={(arrayHelpers) => (
-        <div>
+        <div className="w-full">
           <table >
             <thead >
               <tr className="font-medium text-teal-800">
