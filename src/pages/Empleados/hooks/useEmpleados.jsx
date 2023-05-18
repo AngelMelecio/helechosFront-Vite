@@ -60,15 +60,12 @@ export function EmpleadosProvider({ children }) {
 
   async function refreshEmpleados() {
     try {
-      console.log('refreshing')
       setLoading(true)
       const empleados = await getEmpleados()
       setAllEmpledos(empleados)
     } catch (err) {
-      console.log('error refreshing')
       setErrors(err)
     } finally {
-      console.log('refreshing done')
       setLoading(false)
     }
   }
