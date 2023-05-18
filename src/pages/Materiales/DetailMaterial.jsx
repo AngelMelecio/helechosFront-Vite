@@ -222,6 +222,7 @@ const DetailMaterial = () => {
                               </div>
                               {displaySketchPickerColor ? <div className="absolute right-0 top-8"><SketchPicker
                                 onChange={(color) => {
+                                  
                                   setSketchPickerColor(color.hex);
                                 }}
                                 color={sketchPickerColor}
