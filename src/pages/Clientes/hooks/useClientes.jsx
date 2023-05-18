@@ -82,7 +82,7 @@ export function ClientesProvider({ children }) {
             'telefono',
             'correo',
             'contactos',
-            'otros',
+            'otro',
         ]
         let formData = new FormData()
         Keys.forEach(k => {

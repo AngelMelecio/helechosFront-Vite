@@ -33,69 +33,67 @@ export function MaquinasProvider({ children }) {
         'Authorization': 'Bearer ' + session.access
       }
     }
-
-    async function findMaquina(id) {
-        let options = {
-            method: 'GET',
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization': 'Bearer ' + session.access
-            }
-        }
-        try{
-            setLoading(true)
-            let maquina = await fetchAPI(API_MAQUINAS_URL + id, options)
-            return formatMaquinas([maquina])[0]
-        }catch(err){
-        }finally{
-            setLoading(false)
-        }
-    }
-    finally {
+    try {
+      setLoading(true)
+      let maquina = await fetchAPI(API_MAQUINAS_URL + id, options)
+      return formatMaquinas([maquina])[0]
+    } catch (err) {
+    } finally {
       setLoading(false)
     }
   }
 
-    async function refreshMaquinas() {
-        try{
-            setLoading(true)
-            let maquinas = await getMaquinas()
-            setAllMaquinas(maquinas)
-        }catch(error){
-        }finally{
-            setLoading(false)
-        }
+
+
+  async function refreshMaquinas() {
+    try {
+      setLoading(true)
+      const  maquinas = await getMaquinas()
+      setAllMaquinas(maquinas)
+    } catch (error) {
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function getMaquinas() {
+    let options = {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + session.access
+      }
     }
     let maquinas = await fetchAPI(API_MAQUINAS_URL, options)
     return formatMaquinas(maquinas)
   }
 
-    const postMaquina = async (values, method) => {
-        let Keys = [
-            'numero',
-            'linea',
-            'marca',
-            'modelo',
-            'ns',
-            'otros',
-            'fechaAdquisicion',
-            'detalleAdquisicion',
-            'departamento'
-        ]
-        let formData = new FormData()
-        Keys.forEach(k => {
-            formData.append(k, values[k] ? values[k] : '')
-        })
-        const options = {
-            method: method,
-            headers: { 'Authorization': 'Bearer ' + session.access },
-            body: formData
-        }
-        let { maquina, message } = await fetchAPI(API_MAQUINAS_URL + (method === 'PUT' ? values.idMaquina : ''), options)
-        return { message }
-
+  const postMaquina = async (values, method) => {
+    let Keys = [
+      'numero',
+      'linea',
+      'marca',
+      'modelo',
+      'ns',
+      'otros',
+      'fechaAdquisicion',
+      'detalleAdquisicion',
+      'departamento'
+    ]
+    let formData = new FormData()
+    Keys.forEach(k => {
+      formData.append(k, values[k] ? values[k] : '')
+    })
+    const options = {
+      method: method,
+      headers: { 'Authorization': 'Bearer ' + session.access },
+      body: formData
     }
+    let { maquina, message } = await fetchAPI(API_MAQUINAS_URL + (method === 'PUT' ? values.idMaquina : ''), options)
+    return { message }
+
   }
+
 
   const deleteMaquinas = async (listaMaquinas) => {
     for (let i = 0; i < listaMaquinas.length; i++) {
@@ -107,8 +105,8 @@ export function MaquinasProvider({ children }) {
           const { message } = await fetchAPI(API_MAQUINAS_URL + e.idMaquina, options)
           notify(message)
         } catch (err) {
-           setErrors(err)
-           notify('Error al guardar la maquina', true)
+          setErrors(err)
+          notify('Error al guardar la maquina', true)
         } finally {
           setLoading(false)
         }
