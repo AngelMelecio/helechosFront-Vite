@@ -18,7 +18,7 @@ const DynamicInput = ({
       name={arrayName}
       render={(arrayHelpers) => (
         <div className="w-full">
-          <table >
+          <table className="w-full">
             <thead >
               <tr className="font-medium text-teal-800">
                 {
@@ -50,7 +50,8 @@ const DynamicInput = ({
                         </td>)
                     }
                     <td>
-                      <button
+                      
+                      {<button
                         type="button"
                         onClick={() => {
                           if (confirmationIndex === index) {
@@ -59,10 +60,10 @@ const DynamicInput = ({
                             setConfirmationIndex(index);
                           }
                         }}
-                        className="m-1 p-2 rounded-r-lg bg-gray-200 text-zinc-700	"
+                        className="p-2 rounded-r-lg bg-gray-200 text-zinc-700	"
                       >
                         <ICONS.Trash />
-                      </button>
+                      </button>}
 
                       <div
                         className={`absolute bg-gray-100 min-w-0 shadow-lg z-10 ${confirmationIndex === index ? "block" : "hidden"}`}
@@ -103,7 +104,7 @@ const DynamicInput = ({
                 ))}
             </tbody>
           </table>
-          <div className="flex justify-end mr-1.5">
+          <div className="flex justify-end py-1">
             <button
               type="button"
               onClick={() => arrayHelpers.push(clearObject)}
