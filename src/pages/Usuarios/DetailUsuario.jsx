@@ -235,7 +235,7 @@ const DetailUsuario = () => {
                           <CustomSelect
                             name='Tipo'
                             className='input'
-                            onChange={value => formik.setFieldValue('is_staff', value.value === 'Administrador' ? true : false)}
+                            onChange={value => {formik.setFieldValue('is_staff', value.value === 'Administrador' ? true : false); setTheresChanges(true)}}
                             value={formik.values ? formik.values.is_staff ? "Administrador" : "Encargado" : ''}
                             onBlur={formik.handleBlur}
                             options={optionsTipo}
@@ -245,7 +245,7 @@ const DetailUsuario = () => {
                           <CustomSelect
                             name='Estado'
                             className='input'
-                            onChange={value => formik.setFieldValue('is_active', value.value === 'Activo' ? true : false)}
+                            onChange={value => {formik.setFieldValue('is_active', value.value === 'Activo' ? true : false); setTheresChanges(true)}}
                             value={formik.values ? formik.values.is_active ? "Activo" : "Inactivo" : ''}
                             onBlur={formik.handleBlur}
                             options={optionsActivo}
