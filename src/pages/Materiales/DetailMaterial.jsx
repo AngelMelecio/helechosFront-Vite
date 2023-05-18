@@ -114,7 +114,7 @@ const DetailMaterial = () => {
 
   useEffect(() => {
     setSketchPickerColor(formik.values ? formik.values.codigoColor : "#ffffff");
-  }, [formik.values ? formik.values.codigoColor : ""]);
+  }, [formik.values?.codigoColor]);
 
 
   const handleChange = (e) => {
@@ -223,6 +223,7 @@ const DetailMaterial = () => {
                               {displaySketchPickerColor ? <div className="absolute right-0 top-8"><SketchPicker
                                 onChange={(color) => {
                                   setSketchPickerColor(color.hex);
+                                  setTheresChanges(true);
                                 }}
                                 color={sketchPickerColor}
                               /></div> : null}
