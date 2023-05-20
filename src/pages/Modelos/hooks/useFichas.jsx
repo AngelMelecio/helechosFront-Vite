@@ -22,7 +22,9 @@ function formatFichas(fichas) {
       modelo: f.modelo.idModelo,
       maquinaTejido: f.maquinaTejido.idMaquina + '',
       maquinaPlancha: f.maquinaPlancha.idMaquina + '',
-      fotografia: f.fotografia ? API_URL + f.fotografia : ''
+      fotografia: f.fotografia ? API_URL + f.fotografia : '',
+      fechaCreacion: new Date(f.fechaCreacion).toLocaleString(),
+      fechaUltimaEdicion: new Date(f.fechaUltimaEdicion).toLocaleString(),
     })
   })
   return formatData

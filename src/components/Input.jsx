@@ -9,6 +9,7 @@ const Input = ({ label, type, name, value = "", onChange, Icon = null, onBlur, e
     let dis = props.disabled
     let labelColor = dis ? 'text-gray-800' : 'text-teal-800'
     let opacity = dis ? 'opacity-50' : ''
+    let readOnly = props.readOnly ? 'bg-white border-0' : ''
 
     return (
         <div className={'flex flex-col w-full mx-2 mt-2' + opacity}>
@@ -19,7 +20,7 @@ const Input = ({ label, type, name, value = "", onChange, Icon = null, onBlur, e
                     name={name}
                     value={!dis ? (value != null ? value : '') : ''}
                     onChange={onChange}
-                    className={errores ? cn_bad : cn_good}
+                    className={( errores ? cn_bad : cn_good) + ' ' + readOnly  }
                     onBlur={onBlur}
                     {...props}
                 />
