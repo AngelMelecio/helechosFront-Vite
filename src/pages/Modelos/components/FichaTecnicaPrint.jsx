@@ -204,7 +204,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                             {/**
                              * Datos de la ficha
                              */}
-                            <Col style={{ padding: '5px' }}>
+                            <Col style={{ padding: '5px', width:'40%' }}>
                               <Row style={{ padding: '3px' }}>
                                 <Center>
                                   Datos de la ficha
@@ -262,7 +262,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                             {/**
                              * Maquina Tejido
                              */}
-                            <Col style={{ padding: '5px' }}>
+                            <Col style={{ padding: '5px', width:'20%' }}>
                               <Row style={{ padding: '3px' }}>
                                 <Center>
                                   Maquina Tejido
@@ -320,7 +320,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                             {/**
                              * Maquina Plancha
                              */}
-                            <Col style={{ padding: '5px' }}>
+                            <Col style={{ padding: '5px', width:'20%' }}>
                               <Row style={{ padding: '3px' }}>
                                 <Center>
                                   Maquina Plancha
@@ -370,7 +370,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
                             {/**
                              * Pesos Dinamicos
                              */}
-                            <Col style={{ padding: '5px' }}>
+                            <Col style={{ padding: '5px', width:'20%' }}>
                               <Row style={{ padding: '3px' }}>
                                 <Center>
                                   Pesos
