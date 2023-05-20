@@ -46,7 +46,6 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
         Se Combinan (puntos, jalones, economisadores) U (materiales) en una sola lista
     */
     let newData = []
-    console.log(data)
     data.map(ficha => {
 
       let puntosMateriales = []
@@ -75,8 +74,6 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
       })
 
     })
-    console.log(newData)
-
     setFormatData(newData)
   }, [])
 

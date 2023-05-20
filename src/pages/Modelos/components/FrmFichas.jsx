@@ -34,45 +34,6 @@ const FrmFichas = ({
   } = useDetailModelos()
 
 
-  {/*
-  const { saveFicha } = useFichas()
-
-  useEffect(() => {
-    refreshMaquinas()
-  }, [])
-
-  // Cargamos las opciones de las maquinas
-  useEffect(() => {
-    setTejidoOptions(
-      allMaquinas
-        .filter(m => (m.departamento === 'Tejido'))
-        .map(m => ({ value: m.idMaquina.toString(), label: 'Línea: ' + m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca }))
-    )
-    setPlanchaOptions(
-      allMaquinas
-        .filter(m => (m.departamento === 'Plancha'))
-        .map(m => ({ value: m.idMaquina.toString(), label: 'Línea: ' + m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca }))
-    )
-  }, [allMaquinas])
-
-
-  // Cuando no queremos scroll en el Form lo regresamos hasta arriba
-  useEffect(() => {
-    if (!scrollForm) {
-      formRef.current.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }, [scrollForm])
-
-
-  // Cargamos los materiales de la ficha
-  useEffect(async () => {
-    fichaFormik.setValues(ficha)
-    if (!ficha.copied) {
-      let materiales = await getFichaMateriales(ficha.idFichaTecnica)
-      fichaFormik.setFieldValue('materiales', materiales)
-    }
-  */}
-
   const {
     refreshFichaMateriales,
     allFichaMateriales,
@@ -128,7 +89,7 @@ const FrmFichas = ({
 
   useEffect(() => {
     fichaFormik.setFieldValue('materiales', allFichaMateriales)
-    console.log('EFFECTO formulario cargo ficha-materiales', allFichaMateriales)
+    //console.log('EFFECTO formulario cargo ficha-materiales', allFichaMateriales)
   }, [allFichaMateriales])
 
   // Cargamos las opciones de las maquinas
@@ -157,16 +118,11 @@ const FrmFichas = ({
   // Cargamos los materiales de la ficha
   useEffect(async () => {
     fichaFormik.setValues(ficha)
-    console.log('EFFECTO\n FRM FICHA ficha:', ficha)
+    //console.log('EFFECTO\n FRM FICHA ficha:', ficha)
     if (!ficha.copied) {
       await refreshFichaMateriales(ficha.idFichaTecnica)
-      //let materiales = await getFichaMateriales(ficha.idFichaTecnica)
-      //fichaFormik.setFieldValue('materiales', materiales)
     }
-
   }, [ficha?.idFichaTecnica])
-
-
 
   const handleSelectFile = (e) => {
     fichaFormik.setValues(prev => ({ ...prev, [e.target.name]: e.target.files[0] }))
@@ -211,15 +167,6 @@ const FrmFichas = ({
           id='frmFichas' onSubmit={fichaFormik.handleSubmit}
           className='flex flex-col h-full w-full relative '>
           <div className="absolute w-full flex flex-col p-4">
-            <div className='flex flex-row w-full h-full px-2 items-center justify-end'>
-              {/*<input
-                disabled={!theresChanges}
-                className='py-1 px-5 text-white normal-button self-end rounded-lg'
-                type="submit"
-                value={"GUARDAR FICHA"}
-                form="frmFichas"
-  />*/}
-            </div>
             <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
               <div className="absolute w-full total-center -top-3">
                 <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
@@ -255,32 +202,12 @@ const FrmFichas = ({
                   onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
                   errores={fichaFormik?.errors.talla && fichaFormik?.touched.talla ? fichaFormik?.errors.talla : null}
                 />
-
-                <div className="flex flex-col w-full justify-end mx-2 relative text-center">
-                  { /* Archivo del Programa */}
-                  <p className="text-start font-medium text-teal-800">Archivo del Programa</p>
-                  <div className="flex">
-                    <div className="flex w-full bg-gray-200 rounded-l-lg">
-                      {(toUrl(fichaFormik.values?.archivoPrograma) !== null) &&
-                        <a
-                          className="w-full normal-button rounded-l-lg total-center"
-                          target="_blank"
-                          href={toUrl(fichaFormik.values?.archivoPrograma)}>
-                          <p className="px-3">{fichaFormik.values?.archivoPrograma?.name}</p>
-                          <ICONS.File size="20px" />
-                        </a>}
-                      <input
-                        id='ProgramaFile'
-                        type="file"
-                        name='archivoPrograma' onChange={handleSelectFile} className='inputfile' />
-                    </div>
-                    <label
-                      className='p-2 normal-button w-9 rounded-r-lg'
-                      htmlFor='ProgramaFile' >
-                      <ICONS.Upload style={{ color: 'white' }} size='18px' />
-                    </label>
-                  </div>
-                </div>
+                <Input
+                    label='Nombre del Programa' type='text' name='nombrePrograma' value={fichaFormik?.values?.nombrePrograma}
+                    onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
+                    errores={fichaFormik?.errors.nombrePrograma && fichaFormik?.touched.nombrePrograma ? fichaFormik?.errors.nombrePrograma : null}
+                  />
+                
               </div>
             </div>
             <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
