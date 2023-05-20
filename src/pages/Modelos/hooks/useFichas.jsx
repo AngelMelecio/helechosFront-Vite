@@ -53,7 +53,7 @@ export function FichasProvider({ children }) {
       'idFichaTecnica',
       'modelo',
       'nombre',
-      'archivoPrograma',
+      'nombrePrograma',
       'fotografia',
       'talla',
       'maquinaTejido',

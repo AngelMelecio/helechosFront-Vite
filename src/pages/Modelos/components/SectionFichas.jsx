@@ -9,7 +9,7 @@ import { useDetailModelos } from "../hooks/useDetailModelos"
 const initFichaObj = {
   modelo: '',
   nombre: '',
-  archivoPrograma: null,
+  nombrePrograma: '',
   fotografia: null,
   talla: '',
 
