@@ -207,7 +207,20 @@ const FrmFichas = ({
                     onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
                     errores={fichaFormik?.errors.nombrePrograma && fichaFormik?.touched.nombrePrograma ? fichaFormik?.errors.nombrePrograma : null}
                   />
-                
+              </div>
+              <div className="flex flex-row w-full">
+                <Input
+                  readOnly
+                  label='Fecha de Creación' type='text' name='fechaCreacion' value={fichaFormik?.values?.fechaCreacion}
+                  onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
+                  errores={fichaFormik?.errors.fechaCreacion && fichaFormik?.touched.fechaCreacion ? fichaFormik?.errors.fechaCreacion : null}
+                />
+                <Input
+                    readOnly
+                    label='Ultima Modificación' type='text' name='fechaUltimaEdicion' value={fichaFormik?.values?.fechaUltimaEdicion}
+                    onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
+                    errores={fichaFormik?.errors.fechaUltimaEdicion && fichaFormik?.touched.fechaUltimaEdicion ? fichaFormik?.errors.fechaUltimaEdicion : null}
+                  />
               </div>
             </div>
             <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">

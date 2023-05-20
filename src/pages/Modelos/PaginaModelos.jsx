@@ -93,7 +93,11 @@ const PaginaModelos = () => {
         allElements={allModelos}
         elements={listaModelos}
         setElements={setListaModelos}
-        columns={[{ name: 'Nombre', attribute: 'nombre' },{name: 'Cliente', attribute: 'nombreCliente'}]}
+        columns={[
+          { name: 'Nombre', attribute: 'nombre' },
+          {name: 'Cliente', attribute: 'nombreCliente'},
+          {name: 'Fecha de Creación', attribute: 'fechaCreacion'},
+        ]}
         onDelete={() => handleOpenModal(setDeleteModalVisible)}
       />
       <div className='modal absolute pointer-events-none z-50 h-full w-full' ref={modalContainerRef}>
