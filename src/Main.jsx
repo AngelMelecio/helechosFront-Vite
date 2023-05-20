@@ -1,6 +1,6 @@
 import AppBar from "./components/AppBar"
 import PaginaEmpleados from "./pages/Empleados/PaginaEmpleados"
-import { Route, Routes, Navigate, Router } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import PaginaMaquinas from "./pages/Maquinas/PaginaMaquinas"
 import PaginaClientes from "./pages/Clientes/PaginaClientes"
 import Login from "./pages/Login"
@@ -22,6 +22,49 @@ import DetailCliente from "./pages/Clientes/DetailCliente"
 import DetailMaquina from "./pages/Maquinas/DetailMaquina"
 import DetailUsuario from "./pages/Usuarios/DetailUsuario"
 
+const getRoutesForRole = (role) => {
+  const routesByRole = {
+    'Administrador': [
+      { path: "/usuarios", element: <PaginaUsuarios /> },
+      { path: "/usuarios/:id", element: <DetailUsuario /> },
+      { path: "/empleados", element: <PaginaEmpleados /> },
+      { path: "/empleados/:id", element: <DetailEmpleado /> },
+      { path: "/maquinas", element: <PaginaMaquinas /> },
+      { path: "/maquinas/:id", element: <DetailMaquina /> },
+      { path: "/modelos", element: <PaginaModelos /> },
+      { path: "/modelos/:id", element: <DetailModelo /> },
+      { path: "/materiales", element: <PaginaMateriales /> },
+      { path: "/materiales/:id", element: <DetailMaterial /> },
+      { path: "/clientes", element: <PaginaClientes /> },
+      { path: "/clientes/:id", element: <DetailCliente /> },
+      { path: "/proveedores", element: <PaginaProveedores /> },
+      { path: "/proveedores/:id", element: <DetailProveedor /> },
+    ],
+    'Desarrollador': [
+      { path: "/modelos", element: <PaginaModelos /> },
+      { path: "/modelos/:id", element: <DetailModelo /> },
+    ],
+    'Encargado': [
+      { path: "/empleados", element: <PaginaEmpleados /> },
+      { path: "/empleados/:id", element: <DetailEmpleado /> },
+      { path: "/maquinas", element: <PaginaMaquinas /> },
+      { path: "/maquinas/:id", element: <DetailMaquina /> },
+      { path: "/modelos", element: <PaginaModelos /> },
+      { path: "/modelos/:id", element: <DetailModelo /> },
+      { path: "/materiales", element: <PaginaMateriales /> },
+      { path: "/materiales/:id", element: <DetailMaterial /> },
+      { path: "/clientes", element: <PaginaClientes /> },
+      { path: "/clientes/:id", element: <DetailCliente /> },
+      { path: "/proveedores", element: <PaginaProveedores /> },
+      { path: "/proveedores/:id", element: <DetailProveedor /> },
+    ]
+  };
+
+  const routes = routesByRole[role] || [];
+  //console.log(`Rutas para el rol ${role}:`, routes);
+  return routes.map((route, index) => <Route key={`${role}-${index}`} path={route.path} element={route.element} />);
+};
+
 const Main = () => {
 
   const navigate = useNavigate()
@@ -37,22 +80,7 @@ const Main = () => {
               <Routes>
                 <Route exact path="*" element={<Navigate replace to="/perfil" />} />
                 <Route path="/perfil" element={<PaginaPerfil />} />
-                {session.usuario.is_staff && 
-                  <Route path="/usuarios" element={<PaginaUsuarios />} />}
-                {session.usuario.is_staff && 
-                  <Route path="/usuarios/:id" element={<DetailUsuario />} />}
-                <Route path="/empleados" element={<PaginaEmpleados />} />
-                <Route path="/empleados/:id" element={<DetailEmpleado />} />
-                <Route path="/maquinas" element={<PaginaMaquinas />} />
-                <Route path="/maquinas/:id" element={<DetailMaquina />} />
-                <Route path="/modelos" element={<PaginaModelos />} />
-                <Route path="/modelos/:id" element={<DetailModelo />} />
-                <Route path="/materiales" element={<PaginaMateriales />} />
-                <Route path="/materiales/:id" element={<DetailMaterial />} />
-                <Route path="/clientes" element={<PaginaClientes />} />
-                <Route path="/proveedores" element={<PaginaProveedores />} />
-                <Route path="/proveedores/:id" element={<DetailProveedor />} />
-                <Route path="/clientes/:id" element={<DetailCliente />} />
+                {getRoutesForRole(session.usuario.rol)}
               </Routes>
             </div>
           </AdminProvider>
@@ -66,7 +94,6 @@ const Main = () => {
         </>
       }
     </>
-
   )
 }
 export default Main

@@ -12,7 +12,7 @@ const UsuariosColumns = [
   { name: 'Correo', attribute: 'correo' },
   { name: 'Usuario', attribute: 'usuario' },
   { name: 'Estado', attribute: 'estado' },
-  { name: 'Tipo', attribute: 'tipo' },
+  { name: 'Rol', attribute: 'rol' },
 ]
 
 const PaginaUsuarios = () => {
