@@ -30,6 +30,34 @@ const AppBar = () => {
     )
   }
 
+  const tabsByRole = {
+    'Administrador': [
+      { to: '/usuarios', content: 'USUARIOS', Icon: ICONS.Admin },
+      { to: '/empleados', content: 'EMPLEADOS', Icon: ICONS.Worker},
+      { to: '/maquinas', content: 'MAQUINAS', Icon: ICONS.Machine},
+      { to: '/modelos', content: 'MODELOS', Icon: ICONS.Shoe},
+      { to: '/clientes', content: 'CLIENTES', Icon: ICONS.HandShake},
+      { to: '/proveedores', content: 'PROVEEDORES', Icon: ICONS.Truck},
+      { to: '/materiales', content: 'MATERIALES', Icon: ICONS.Worker},
+    ],
+    'Desarrollador': [
+      { to: '/modelos', content: 'MODELOS', Icon: ICONS.Shoe },
+    ],
+    'Encargado': [
+      { to: '/empleados', content: 'EMPLEADOS', Icon: ICONS.Worker},
+      { to: '/maquinas', content: 'MAQUINAS', Icon: ICONS.Machine},
+      { to: '/modelos', content: 'MODELOS', Icon: ICONS.Shoe},
+      { to: '/clientes', content: 'CLIENTES', Icon: ICONS.HandShake},
+      { to: '/proveedores', content: 'PROVEEDORES', Icon: ICONS.Truck},
+      { to: '/materiales', content: 'MATERIALES', Icon: ICONS.Worker},
+    ],
+  };
+
+  const getTabsForRole = (role) => {
+    const tabs = tabsByRole[role] || [];
+    return tabs.map((tab, index) => <Tab key={`${role}-${index}`} to={tab.to} Icon={tab.Icon} content={tab.content} />);
+  };
+
   return (
     <>
       <div id="appbar-container" className={`z-20 flex relative w-20 h-screen`} >
@@ -40,19 +68,7 @@ const AppBar = () => {
             </div>
             <div id="tabs" className="mt-10">
               <Tab to={'/perfil'} content={'PERFIL'} Icon={ICONS.Profile} />
-              {session.usuario.is_staff && <Tab to={'/usuarios'} content={'USUARIOS'} Icon={ICONS.Admin} />}
-              <Tab to={'/empleados'} content={'EMPLEADOS'} Icon={ICONS.Worker} />
-              <Tab to={'/maquinas'} content={'MAQUINAS'} Icon={ICONS.Machine} />
-              <Tab to={'/modelos'} content={'MODELOS'} Icon={ICONS.Shoe} />
-              <Tab to={'/clientes'} content={'CLIENTES'} Icon={ICONS.HandShake} />
-              <Tab to={'/proveedores'} content={'PROVEEDORES'} Icon={ICONS.Truck} />
-              <Tab to={'/materiales'} content={'MATERIALES'} Icon={ICONS.Thread} />
-              {
-                /* 
-                <Tab to={'/pedidos'} content={'PEDIDOS'} Icon={ICONS.Diablito} />                
-                <Tab to={'/produccion'} content={'PRODUCCION'} Icon={ICONS.Boot} />
-              */
-              }
+              {getTabsForRole(session.usuario.rol)}
             </div>
             <div className='flex h-full items-end w-full pb-10'>
               <Tab

@@ -63,7 +63,7 @@ const PaginaPerfil = () => {
                 {user[0].value} {user[1].value}
                 <br />
                 <p className="text-base font-normal">
-                  {session.usuario.is_staff ? 'Administrador' : 'Encargado'}
+                  {session.usuario.rol}
                 </p>
               </div>
             </div>

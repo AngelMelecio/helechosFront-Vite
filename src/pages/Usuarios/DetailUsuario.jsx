@@ -15,12 +15,14 @@ const initUsuario = {
   usuario: '',
   password: '',
   is_active: true,
-  is_staff: false
+  is_staff: false,
+  rol: 'Seleccione'
 }
 
-const optionsTipo = [
+const optionsRol = [
   { value: 'Seleccione', label: 'Seleccione' },
   { value: 'Encargado', label: 'Encargado' },
+  { value: 'Desarrollador', label: 'Desarrollador' },
   { value: 'Administrador', label: 'Administrador' },
 ]
 
@@ -73,11 +75,10 @@ const DetailUsuario = () => {
         errors.password = 'La contraseña debe tener una longitud entre 8 y 15 caracteres';
       }
     }
-
-    if (values.is_staff !== true && values.is_staff !== false) {
-      errors.is_staff = 'Selecciona un tipo';
-    } else if (values.is_staff === "Seleccione") {
-      errors.is_staff = 'Selecciona un tipo';
+    if (!values.rol) {
+      errors.rol = 'Selecciona un rol';
+    } else if (values.rol === 'Seleccione') {
+      errors.rol = 'Selecciona un rol';
     }
 
     if (values.is_active !== true && values.is_active !== false) {
@@ -233,14 +234,14 @@ const DetailUsuario = () => {
                         </div>
                         <div className="flex flex-row">
                           <CustomSelect
-                            name='Tipo'
+                            name='Rol'
                             className='input'
-                            onChange={value => {formik.setFieldValue('is_staff', value.value === 'Administrador' ? true : false); setTheresChanges(true)}}
-                            value={formik.values ? formik.values.is_staff ? "Administrador" : "Encargado" : ''}
+                            onChange={value => {formik.setFieldValue('rol', value.value); setTheresChanges(true)}}
+                            value={formik.values?.rol }
                             onBlur={formik.handleBlur}
-                            options={optionsTipo}
-                            label='Tipo'
-                            errores={formik.errors.tipo && formik.touched.tipo ? formik.errors.tipo : null}
+                            options={optionsRol}
+                            label='Rol'
+                            errores={formik.errors.rol && formik.touched.rol ? formik.errors.rol : null}
                           />
                           <CustomSelect
                             name='Estado'

@@ -14,9 +14,9 @@ export function useUsuarios() {
 function formatUsuarios(usuarios) {
   return usuarios.map(usr => ({
     ...usr,
-    password: usr.password?'':'',
+    password: usr.password? '' : '' ,
     estado: usr.is_active ? 'Activo' : 'Inactivo',
-    tipo: usr.is_staff ? 'Administrador' : 'Encargado',
+    //tipo: usr.is_staff ? 'Administrador' : 'Encargado',
     isSelected: false,
   }))
 }
