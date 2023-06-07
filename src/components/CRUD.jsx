@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { ICONS } from "../constants/icons"
 import Loader from "./Loader/Loader"
 import { useNavigate } from "react-router-dom";
+import { get } from 'lodash'
 
 const CRUD = ({
   title,
@@ -126,7 +127,7 @@ const CRUD = ({
         {
           columns.map((c, i) => {
 
-            let value = element[c.attribute] + ''
+            let value = get(element, c.attribute) + ''
             let isBool = (value == 'true' || value == 'false' || value == '' || value == 'null')
             if (isBool) {
               if (value == 'true') value = 'Sí'

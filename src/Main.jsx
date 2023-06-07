@@ -21,6 +21,7 @@ import DetailModelo from "./pages/Modelos/DetailModelo"
 import DetailCliente from "./pages/Clientes/DetailCliente"
 import DetailMaquina from "./pages/Maquinas/DetailMaquina"
 import DetailUsuario from "./pages/Usuarios/DetailUsuario"
+import PaginaPedidos from "./pages/Pedidos/PaginaPedidos"
 
 const getRoutesForRole = (role) => {
   const routesByRole = {
@@ -39,6 +40,7 @@ const getRoutesForRole = (role) => {
       { path: "/clientes/:id", element: <DetailCliente /> },
       { path: "/proveedores", element: <PaginaProveedores /> },
       { path: "/proveedores/:id", element: <DetailProveedor /> },
+      { path: "/pedidos", element: <PaginaPedidos /> },
     ],
     'Desarrollador': [
       { path: "/modelos", element: <PaginaModelos /> },
@@ -57,6 +59,7 @@ const getRoutesForRole = (role) => {
       { path: "/clientes/:id", element: <DetailCliente /> },
       { path: "/proveedores", element: <PaginaProveedores /> },
       { path: "/proveedores/:id", element: <DetailProveedor /> },
+      { path: "/pedidos", element: <PaginaPedidos /> },
     ]
   };
 
