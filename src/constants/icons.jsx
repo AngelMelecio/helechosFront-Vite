@@ -63,7 +63,8 @@ import {
 import {
     BiCaretDown as DownFill,
     BiCaretUp as UpFill,
-    BiLogOut as Logout
+    BiLogOut as Logout,
+    BiPackage as BoxAlone
 } from 'react-icons/bi'
 
 import {

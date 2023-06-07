@@ -38,7 +38,8 @@ const AppBar = () => {
       { to: '/modelos', content: 'MODELOS', Icon: ICONS.Shoe},
       { to: '/clientes', content: 'CLIENTES', Icon: ICONS.HandShake},
       { to: '/proveedores', content: 'PROVEEDORES', Icon: ICONS.Truck},
-      { to: '/materiales', content: 'MATERIALES', Icon: ICONS.Worker},
+      { to: '/materiales', content: 'MATERIALES', Icon: ICONS.Thread},
+      { to: '/pedidos', content: 'PEDIDOS', Icon: ICONS.Diablito},
     ],
     'Desarrollador': [
       { to: '/modelos', content: 'MODELOS', Icon: ICONS.Shoe },
@@ -49,7 +50,8 @@ const AppBar = () => {
       { to: '/modelos', content: 'MODELOS', Icon: ICONS.Shoe},
       { to: '/clientes', content: 'CLIENTES', Icon: ICONS.HandShake},
       { to: '/proveedores', content: 'PROVEEDORES', Icon: ICONS.Truck},
-      { to: '/materiales', content: 'MATERIALES', Icon: ICONS.Worker},
+      { to: '/materiales', content: 'MATERIALES', Icon: ICONS.Thread},
+      { to: '/pedidos', content: 'PEDIDOS', Icon: ICONS.Diablito},
     ],
   };
 
