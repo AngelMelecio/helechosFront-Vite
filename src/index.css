@@ -409,16 +409,15 @@ input::-webkit-inner-spin-button {
 
 
 .modal {
-  opacity: 0%;
   visibility: hidden;
-  transition: visibility 0.3s, opacity 0.3s, pointer-events 0s;
+  opacity: 0;
+  transition: 0.3s ease-in-out;
 }
 
 .modal.visible {
-  opacity: 100%;
   visibility: visible;
-  pointer-events: all;
-  transition: visibility 0.3s, opacity 0.3s, pointer-events 0s;
+  opacity: 1;
+  transition: 0.3s ease-in-out;
 }
 
 .modal .modal-box {
@@ -557,3 +556,50 @@ input::-webkit-inner-spin-button {
   height: 100vh;
 }
 
+.hover-modal .elmt{
+  opacity: 0;
+  transition: 0.2s;
+}
+
+.hover-modal:hover .elmt{
+  opacity: 1;
+  transition: 0.2s;
+}
+
+input[type="checkbox"]{
+  position: relative;
+
+}
+
+
+input[type="checkbox"]::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  border: 1px solid #acacac;
+  transition: 0.2s;
+}
+
+input[type="checkbox"]:checked::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #5eead4;
+  border: 1px solid #ffffff00;
+  transition: 0.2s;
+}
+
+input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  clip-path: polygon(43% 56%, 74% 18%, 89% 28%, 43% 83%, 14% 58%, 28% 43%);
+}

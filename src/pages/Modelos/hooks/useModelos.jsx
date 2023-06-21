@@ -6,6 +6,7 @@ import { fetchAPI } from "../../../services/fetchApiService"
 import { useContext } from "react"
 
 const API_MODELOS_URL = "api/modelos/"
+const API_MODELOS_CLIENTE_URL = "api/modelos_cliente/"
 
 const ModelosContext = React.createContext('ModelosContext')
 
@@ -60,6 +61,15 @@ export function ModelosProvider({ children }) {
       headers: { 'Authorization': 'Bearer ' + session.access }
     }
     const modelos = await fetchAPI(API_MODELOS_URL, options)
+    return formatModelos(modelos)
+  }
+
+  async function getModelosCliente(idCliente){
+    const options = {
+      method: 'GET',
+      headers: { 'Authorization': 'Bearer ' + session.access }
+    }
+    const modelos = await fetchAPI( API_MODELOS_CLIENTE_URL + idCliente, options )
     return formatModelos(modelos)
   }
 
@@ -131,7 +141,7 @@ export function ModelosProvider({ children }) {
       deleteModelos,
       fetchingModelos, setFetchingModelos,
 
-      getModelo,
+      getModelo, getModelosCliente,
       fetchingOneModelo,
 
       errors,

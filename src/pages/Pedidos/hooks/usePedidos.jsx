@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { fetchAPI } from "../../../services/fetchApiService";
 
 const API_PEDIDOS_URL = "api/pedidos/"
+const API_FICHAS_MATERIALES = "/api/fichas_tecnicas_materiales/"
 
 const PedidosContext = React.createContext('PedidosContext')
 
@@ -16,6 +17,8 @@ function formatPedidos(pedidos) {
     let formatData = pedidos.map((pedido) => ({
         ...pedido,
         isSelected: false,
+        fechaRegistro: new Date(pedido.fechaRegistro).toLocaleString(),
+        fechaEntrega: new Date(pedido.fechaEntrega).toLocaleDateString()
     }))
     return formatData
 }
@@ -54,19 +57,19 @@ export function PedidosProvider({ children }) {
     }
 
     async function getPedidos() {
-        console.log('Getting 2')
+        //console.log('Getting 2')
         let options = {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + session.access }
         }
         const pedidos = await fetchAPI(API_PEDIDOS_URL, options)
-        console.table(pedidos)
+        //console.table(pedidos)
         return formatPedidos(pedidos)
     }
 
     async function refreshPedidos() {
         try {
-            console.log('Getting 1')
+            //console.log('Getting 1')
             setLoading(true)
             const pedidos = await getPedidos()
             setAllPedidos(pedidos)
@@ -77,7 +80,31 @@ export function PedidosProvider({ children }) {
         }
     }
 
-    
+    async function postPedido(pedido)
+    {
+        let options = {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + session.access },
+            body: JSON.stringify(pedido)
+        }
+      
+        setLoading(true)
+        const response = await fetchAPI(API_PEDIDOS_URL, options)
+        return response
+        
+    }
+
+    async function getFichas(idModelo)
+    {
+        let options = {
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + session.access }
+        }
+        const fichas = await fetchAPI(API_FICHAS_MATERIALES + idModelo, options)
+        return fichas
+    }
 
     return (
         <PedidosContext.Provider
@@ -86,7 +113,10 @@ export function PedidosProvider({ children }) {
                 loading,
                 errors,
                 refreshPedidos,
-                setLoading
+                setLoading,
+                getFichas,
+                postPedido,
+                findPedido,
             }}
         >
             {children}

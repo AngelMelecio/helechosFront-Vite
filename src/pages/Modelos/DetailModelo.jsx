@@ -27,11 +27,13 @@ const DetailModelo = () => {
   const modalRef = useRef()
 
   const [modelo, setModelo] = useState(null)
-  const { getModelo, fetchingOneModelo } = useModelos()
+  const { allModelos, getModelo, fetchingOneModelo } = useModelos()
   const { allFichasModelo, refreshFichas, fetchingFichas } = useFichas()
 
   const [modalVisible, setModalVisible] = useState(false)
   const [printModalVisible, setPrintModalVisible] = useState(false)
+
+  const [loadingModelo, setLoadingModelo] = useState(true)
 
   const [onSaveChanges, setOnSaveChanges] = useState(() => { })
   const [onDiscardChanges, setOnDiscardChanges] = useState(() => { })
@@ -67,17 +69,30 @@ const DetailModelo = () => {
     setState(false)
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     return () => {
       setTheresChangesModelo(false)
       setTheresChangesFicha(false)
     }
-  },[])
+  }, [])
 
   useEffect(async () => {
     refreshFichas({ idModelo: id })
-    const mod = (id === '0' ? initModelo : await getModelo(id))
-    setModelo(mod)
+    //const mod = (id === '0' ? initModelo : await getModelo(id))
+
+    try {
+      setLoadingModelo(true)
+      setModelo(
+        id === '0' ? initModelo :
+          allModelos.length > 0 ? allModelos.find(m => m.idModelo + '' === id) :
+            await getModelo(id)
+      )
+    }catch(e){
+      console.log('Error en detalles del modelo: ', e)
+    }finally{
+      setLoadingModelo(false)
+    }
+  
   }, [id])
 
   const pageRef = useRef()
@@ -110,7 +125,7 @@ const DetailModelo = () => {
             </div>
             <div>
               <input
-                disabled={fetchingOneModelo || !theresChangesModelo}
+                disabled={loadingModelo || !theresChangesModelo}
                 className='bg-teal-500 h-10 p-1 w-40 text-white normal-button  z-10  rounded-lg'
                 type="submit"
                 value={isEdit ? "Guardar Modelo" : "Crear Modelo"}
@@ -122,9 +137,9 @@ const DetailModelo = () => {
            * FORM MODELOS
            */}
           <div className="flex flex-col bg-white rounded-lg shadow-lg">
-            {fetchingOneModelo || modelo === null ? <Loader /> :
+            {modelo === null || loadingModelo ? <Loader /> :
               <FrmModelos
-                modelo={modelo !== null ? modelo : initModelo}
+                modelo={modelo}
                 isEdit={isEdit}
               />}
           </div>
@@ -132,6 +147,7 @@ const DetailModelo = () => {
            * SECCION FICHAS
            */}
           <div className='flex flex-col screen'>
+            {/*  Header, print / save buttons  */}
             <div className="pt-12 pb-4 flex w-full justify-between items-center">
               <p className=" font-bold text-3xl pl-3 text-teal-700">
                 Fichas Tecnicas
@@ -154,7 +170,7 @@ const DetailModelo = () => {
               </div>
             </div>
             <div className="flex flex-col relative h-full bg-white rounded-lg shadow-lg">
-              {fetchingFichas ? <Loader />
+              {fetchingFichas && id !== '0' ? <Loader />
                 :
                 <SectionFichas
                   openModal={() => handleOpenModal(setModalVisible)}
@@ -173,7 +189,7 @@ const DetailModelo = () => {
       {/**
        * MODALES
        */}
-      <div className='modal absolute pointer-events-none z-50 h-full w-full' ref={modalRef}>
+      <div className='modal absolute z-50 h-full w-full' ref={modalRef}>
         {modalVisible &&
           <FichasModal
             onCancel={onSaveChanges}
@@ -191,8 +207,8 @@ const DetailModelo = () => {
                 materiales: allFichaMateriales,
                 modelo: modelo,
                 cliente: modelo.cliente,
-                maquinaTejido: allMaquinas.find( m => m.idMaquina + '' === allFichasModelo[selectedFichaIndx].maquinaTejido ),
-                maquinaPlancha: allMaquinas.find( m => m.idMaquina + '' === allFichasModelo[selectedFichaIndx].maquinaPlancha )
+                maquinaTejido: allMaquinas.find(m => m.idMaquina + '' === allFichasModelo[selectedFichaIndx].maquinaTejido),
+                maquinaPlancha: allMaquinas.find(m => m.idMaquina + '' === allFichasModelo[selectedFichaIndx].maquinaPlancha)
               }
             ]}
             onCloseModal={() => handleCloseModal(setPrintModalVisible)}
