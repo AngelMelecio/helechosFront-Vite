@@ -1,5 +1,5 @@
 
-const Input = ({ label, type, name, value = "", onChange, Icon = null, onBlur, errores, ...props }) => {
+const Input = ({ label, type, name, value = "", onChange, Icon = null, onBlur, errores, onKeyDown, ...props }) => {
 
     let p = Icon !== null ? 'pl-9' : ''
     let cn_good = "flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500 " + p;
@@ -16,6 +16,7 @@ const Input = ({ label, type, name, value = "", onChange, Icon = null, onBlur, e
             <p className={'font-normal ' + labelColor}>{label}</p>
             <div className="total-center relative">
                 <input
+                    onKeyDown={ onKeyDown}
                     type={type}
                     name={name}
                     value={!dis ? (value != null ? value : '') : ''}

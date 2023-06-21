@@ -10,7 +10,7 @@ export function useFichaMateriales() {
     return React.useContext(FichaMaterialesContext)
 }
 
-const API_FICHA_MATERIALES_URL = "/api/fichas_tecnicas_materiales/"
+const API_FICHA_MATERIALES_URL = "/api/materiales_by_fichaTecnica/"
 
 function formatFichaMateriales(asigandos) {
     let formatData = asigandos.map((asig) => ({

@@ -198,8 +198,9 @@ const FrmFichas = ({
               </div>
               <div className="flex flex-row w-full">
                 <Input
-                  label='Talla' type='text' name='talla' value={fichaFormik?.values?.talla}
-                  onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
+                  label='Talla' type='text' name='talla' value={fichaFormik?.values?.talla} placeholder='25,26,...'
+                  onKeyDown={(e) => ((e.keyCode < 48 || e.keyCode > 57) && e.keyCode !== 188 && e.keyCode !== 8) && e.preventDefault()}
+                  onChange={ handleFichaChange} onBlur={fichaFormik?.handleBlur}
                   errores={fichaFormik?.errors.talla && fichaFormik?.touched.talla ? fichaFormik?.errors.talla : null}
                 />
                 <Input
