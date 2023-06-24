@@ -47,7 +47,8 @@ export function PedidosProvider({ children }) {
         try {
             setLoading(true)
             let pedido = await fetchAPI(API_PEDIDOS_URL + id, options)
-            return formatPedidos([pedido])[0]
+            console.log('GET: ', pedido)
+            //return formatPedidos([pedido])[0]
         } catch (err) {
             setErrors(err)
             notify('Error al buscar el pedido', true)
@@ -74,7 +75,7 @@ export function PedidosProvider({ children }) {
             const pedidos = await getPedidos()
             setAllPedidos(pedidos)
         } catch (e) {
-            setErrors(err)
+            setErrors(e)
         } finally {
             setLoading(false)
         }
