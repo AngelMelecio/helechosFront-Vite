@@ -3,9 +3,12 @@ import { useAuth } from "../../../context/AuthContext";
 import { useState } from "react";
 import { useContext } from "react";
 import { fetchAPI } from "../../../services/fetchApiService";
+import { entorno } from "../../../constants/entornos";
 
 const API_PEDIDOS_URL = "api/pedidos/"
+const API_PEDIDO_URL = "api/pedido/"
 const API_FICHAS_MATERIALES = "/api/fichas_tecnicas_materiales/"
+const API_FICHAS_BY_MODELO = "/api/fichas_by_modelo/"
 
 const PedidosContext = React.createContext('PedidosContext')
 
@@ -21,6 +24,16 @@ function formatPedidos(pedidos) {
         fechaEntrega: new Date(pedido.fechaEntrega).toLocaleDateString()
     }))
     return formatData
+}
+
+function formatFichas(fichas){
+    let formatedFichas = fichas.map((ficha) => ({
+        ...ficha,
+        fechaCreacion: new Date(ficha.fechaCreacion).toLocaleString(),
+        fechaUltimaEdicion: new Date(ficha.fechaUltimaEdicion).toLocaleString(),
+        fotografia: entorno + ficha.fotografia
+    }))
+    return formatedFichas
 }
 
 export function PedidosProvider({ children }) {
@@ -46,9 +59,8 @@ export function PedidosProvider({ children }) {
         }
         try {
             setLoading(true)
-            let pedido = await fetchAPI(API_PEDIDOS_URL + id, options)
-            console.log('GET: ', pedido)
-            //return formatPedidos([pedido])[0]
+            let pedido = await fetchAPI(API_PEDIDO_URL + id, options)
+            return formatPedidos([pedido])[0]
         } catch (err) {
             setErrors(err)
             notify('Error al buscar el pedido', true)
@@ -103,8 +115,8 @@ export function PedidosProvider({ children }) {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + session.access }
         }
-        const fichas = await fetchAPI(API_FICHAS_MATERIALES + idModelo, options)
-        return fichas
+        const fichas = await fetchAPI(API_FICHAS_BY_MODELO + idModelo, options)
+        return formatFichas(fichas)
     }
 
     return (

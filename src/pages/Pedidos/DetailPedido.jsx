@@ -9,15 +9,16 @@ import { useClientes } from "../Clientes/hooks/useClientes";
 import { useEffect } from "react";
 import useModelos from "../Modelos/hooks/useModelos";
 import Slider from "../../components/Slider";
-import { useFichas } from "../Modelos/hooks/useFichas";
 import { usePedidos } from "./hooks/usePedidos";
 import SelectedFichas from "./components/SelectedFichas";
 import { useAuth } from "../../context/AuthContext";
 import { entorno } from "../../constants/entornos";
 
 const initPedido = {
-  cliente: "",
-  modelo: "",
+  modelo: {
+    idModelo: "",
+    cliente: "",
+  },
   fechaEntrega: "",
   detalles: []
 }
@@ -44,24 +45,11 @@ const initRoute = {
   "empacado": "entregado"
 }
 
-function formatFichas(fichas) {
-  let formatedFichas = []
-  fichas.forEach(ficha => {
-    formatedFichas.push({
-      ...ficha,
-      fotografia: entorno + ficha.fotografia,
-      fechaCreacion: new Date(ficha.fechaCreacion).toLocaleString(),
-      fechaUltimaEdicion: new Date(ficha.fechaUltimaEdicion).toLocaleString()
-    })
-  })
-  return formatedFichas
-}
-
 function formatPedido(pedido) {
   return ({
     ...pedido,
-    modelo: pedido.modelo.idModelo,
-    cliente: pedido.modelo.cliente.idCliente,
+    //modelo: pedido.modelo.idModelo,
+    //cliente: pedido.modelo.cliente.idCliente,
   })
 }
 
@@ -90,7 +78,7 @@ const DetailPedido = () => {
     if (values.modelo === "") errors.modelo = "Seleccione un modelo"
     if (values.fechaEntrega === "") errors.fechaEntrega = "Seleccione una fecha de entrega"
     if (values.detalles?.length === 0) errors.detalles = "Seleccione al menos una ficha"
-    
+
     values.detalles?.forEach((detalle, i) => {
       detalle.cantidades.forEach((cantidad, j) => {
         if (cantidad.cantidad === "" || cantidad.cantidad === 0)
@@ -106,63 +94,41 @@ const DetailPedido = () => {
     initialValues: null,
     validate,
     onSubmit: async (values) => {
-      
-      console.log(values)
-      /*
       try {
         setSaving(true)
-
+        console.log(values)
         let formatValues = structuredClone(values)
+        formatValues.modelo = formatValues.modelo.idModelo
 
+        // Formatear los detalles
         formatValues.detalles.forEach(detalle => {
 
-
-          // Formatear la ruta
-          let estaciones = detalle.estaciones
+          // Crear la ruta a partir de las estaciones
           let rutaProduccion = { ...initRoute }
-          let posRuta = "impresa"
-          let posDef = "impresa"
-
+          let posRuta = "impresa", posDef = "impresa"
           while (posDef !== "empacado") {
             posDef = defaultRoute[posDef]
-            if (estaciones[posDef]) {
+            if (detalle.estaciones[posDef]) {
               rutaProduccion[posRuta] = posDef
               posRuta = posDef
             }
           }
-
-
           detalle.rutaProduccion = rutaProduccion
+          detalle.fichaTecnica = detalle.fichaTecnica.idFichaTecnica
           delete detalle.estaciones
-          delete detalle.nombre
-
-          // Crear descripcion de cantidades
-          detalle.cantidades.forEach(cantidad => {
-            cantidad.cantidad = Number(cantidad.cantidad)
-            cantidad.paquete = Number(cantidad.paquete)
-            let paquetes = Math.floor(cantidad.cantidad / cantidad.paquete)
-            let sobrante = cantidad.cantidad % cantidad.paquete
-            cantidad.descripcion = ""
-            cantidad.descripcion += paquetes
-              + " paquetes de " + cantidad.paquete
-            if (sobrante) cantidad.descripcion += " y un paquete de " + sobrante
-          })
-
+          detalle.cantidades.forEach(cantidad => { cantidad.cantidad = Number(cantidad.cantidad); cantidad.paquete = Number(cantidad.paquete) })
         })
 
         console.log(formatValues)
         const { message, pedido } = await postPedido(formatValues)
         notify(message)
         navigate('/pedidos')
-
       } catch (e) {
         notify('Error al crear pedido: ' + e.message, true)
       } finally {
         setSaving(false)
       }
-
       // */
-
     },
   });
 
@@ -173,84 +139,69 @@ const DetailPedido = () => {
   useEffect(async () => {
     
     refreshClientes()
-    formik.setValues(
-      id === '0' ? initPedido :
-        allPedidos.length > 0 ? formatPedido(allPedidos.find(pedido => pedido.idPedido === Number(id))) :
-          formatPedido(await findPedido(id))
-    )
+    let p = id === '0' ? initPedido :
+        formatPedido(await findPedido(id))
+    
+    console.log(p)
+    formik.setValues(p)
   }, [])
 
   // selecciona cliente -> Cambia los modelos disponibles
   useEffect(async () => {
-    if (!formik?.values?.cliente) return
+    if (!formik?.values?.modelo.cliente) return
     try {
       setLoadingModelos(true)
-      let modelos = await getModelosCliente(formik?.values?.cliente)
+      let modelos = await getModelosCliente(formik?.values?.modelo.cliente)
       setOptionsModelo(modelos.map(modelo => ({ value: modelo.idModelo, label: modelo.nombre })))
     } catch (e) {
       console.log(e)
     } finally {
       setLoadingModelos(false)
     }
-  }, [formik?.values?.cliente])
+  }, [formik?.values?.modelo?.cliente])
 
   // Selecciona modelo -> Cambia las fichas disponibles
   useEffect(async () => {
-    let id = formik?.values?.modelo
+    let id = formik?.values?.modelo.idModelo
     if (!id) return
     try {
       let fichas = await getFichas(id)
-      setAllFichas(formatFichas(fichas))
+      setAllFichas(fichas)
     } catch (e) {
       console.log(e)
     }
-  }, [formik?.values?.modelo])
+  }, [formik?.values?.modelo?.idModelo])
 
   useEffect(() => { setAvailableFichas(allFichas) }, [allFichas])
 
   const handlePass = (list) => {
-    let newAvailable = []
-    let newDetalles = []
-    availableFichas.forEach(f => {
-      if (list.includes(f.idFichaTecnica)) {
-        let nD = {
-          cantidades: [],
-          estaciones: {
-            "tejido": true,
-            "plancha": true,
-            "corte": true,
-            "calidad": true,
-            "empaque": true,
-          }
-        }
-        nD['fichaTecnica'] = f.idFichaTecnica
-        nD['nombre'] = f.nombre
-        let tallas = f.talla.split(',')
-        tallas.forEach(t => {
-          nD.cantidades.push({
+
+    formik.setFieldValue('detalles', [...formik.values.detalles,
+    ...availableFichas.filter(f => list.includes(f.idFichaTecnica))
+      .map(f => ({
+        fichaTecnica: { ...f },
+        estaciones: {
+          "tejido": true,
+          "plancha": true,
+          "corte": true,
+          "calidad": true,
+          "empaque": true,
+        },
+        cantidades: [
+          ...f.talla.split(',').map(t => ({
             talla: t,
             cantidad: 0,
-            paquete: 0,
-            descripcion: ''
-          })
-        })
-        newDetalles.push(nD)
-      } else {
-        newAvailable.push(f)
-      }
-    })
-    setAvailableFichas(newAvailable)
-    //console.log(newDetalle)
-    formik.setFieldValue('detalles', [...formik.values.detalles, ...newDetalles])
+            paquete: 0
+          }))
+        ]
+      }))]
+    )
+    setAvailableFichas(availableFichas.filter(f => !list.includes(f.idFichaTecnica)))
   }
 
-  const handleErase = (detalle) => {
-    let newDetalles = formik.values.detalles.filter(d => d.fichaTecnica !== detalle.fichaTecnica)
-    formik.setFieldValue('detalles', newDetalles)
-    let newAvailable = [...availableFichas]
-    let ficha = allFichas.find(f => f.idFichaTecnica === detalle.fichaTecnica)
-    newAvailable.push({ ...ficha, isSelected: false })
-    setAvailableFichas(newAvailable)
+  const handleErase = (idFicha) => {
+    formik.setFieldValue('detalles', formik.values.detalles.filter(d => d.fichaTecnica.idFichaTecnica !== idFicha))
+    setAvailableFichas(prev => [...prev, { ...allFichas.find(f => f.idFichaTecnica === idFicha), isSelected: false }])
   }
 
   return (
@@ -296,11 +247,11 @@ const DetailPedido = () => {
                           </div>
                           <div className="flex flex-row">
                             <CustomSelect
-                              readOnly={id !== '0'}
+                              readOnly={formik?.values.detalles?.length > 0 || id !== '0'}
                               name='Cliente'
                               className='input'
-                              onChange={value => { formik.setFieldValue('cliente', value.value) }}
-                              value={formik?.values.cliente}
+                              onChange={value => { formik.setFieldValue('modelo', { ...formik.values.modelo, cliente: value.value }) }}
+                              value={formik?.values.modelo?.cliente}
                               //onBlur={formik.handleBlur}
                               options={optionsCliente}
                               label='Cliente'
@@ -311,8 +262,8 @@ const DetailPedido = () => {
                               loading={loadingModelos}
                               name='Modelo'
                               className='input'
-                              onChange={value => { formik.setFieldValue('modelo', value.value) }}
-                              value={formik.values ? formik.values.modelo : ""}
+                              onChange={value => { formik.setFieldValue('modelo', { ...formik.values.modelo, idModelo: value.value }) }}
+                              value={formik.values ? formik.values.modelo.idModelo : ""}
                               //onBlur={formik.handleBlur}
                               options={optionsModelo}
                               label='Modelo'
@@ -353,7 +304,6 @@ const DetailPedido = () => {
                             </div>
                           </div>
                           {id === '0' ?
-
                             <Slider
                               list={availableFichas}
                               unique='idFichaTecnica'
@@ -365,10 +315,8 @@ const DetailPedido = () => {
                                 { name: 'Ultima Edición', atr: 'fechaUltimaEdicion' },
                               ]}
                               right={<SelectedFichas formik={formik} onErase={handleErase} />}
-                            /> :
-                            <SelectedFichas formik={formik} onErase={handleErase} />
+                            /> : <></>
                           }
-
                         </div>
                       </div>
                     </form>
