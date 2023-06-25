@@ -137,6 +137,7 @@ const DetailPedido = () => {
   }, [allClientes])
 
   useEffect(async () => {
+    
     refreshClientes()
     let p = id === '0' ? initPedido :
         formatPedido(await findPedido(id))
@@ -145,7 +146,7 @@ const DetailPedido = () => {
     formik.setValues(p)
   }, [])
 
-  // seleccione el cliente - Cambia los modelos disponibles
+  // selecciona cliente -> Cambia los modelos disponibles
   useEffect(async () => {
     if (!formik?.values?.modelo.cliente) return
     try {
@@ -159,7 +160,7 @@ const DetailPedido = () => {
     }
   }, [formik?.values?.modelo?.cliente])
 
-  // Seleccione el modelo - Cambia las fichas disponibles
+  // Selecciona modelo -> Cambia las fichas disponibles
   useEffect(async () => {
     let id = formik?.values?.modelo.idModelo
     if (!id) return
@@ -207,6 +208,7 @@ const DetailPedido = () => {
     <>
       <div className="w-full relative overflow-hidden">
         <div id="tbl-page" className="flex flex-col h-full w-full bg-slate-100 absolute px-8 py-5">
+          {/*  PAGE HEADER  */}
           <div className="flex pb-4 justify-between">
             <div className="flex">
               <button
@@ -226,6 +228,7 @@ const DetailPedido = () => {
               />
             </div>
           </div>
+          
           <div className="flex flex-col bg-white h-full rounded-t-lg relative shadow-lg">
             <div className='w-full flex h-full flex-col '>
               <div ref={blankRef} id='visible-blank' className="flex w-full h-full">

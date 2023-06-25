@@ -87,7 +87,7 @@ export function PedidosProvider({ children }) {
             const pedidos = await getPedidos()
             setAllPedidos(pedidos)
         } catch (e) {
-            setErrors(err)
+            setErrors(e)
         } finally {
             setLoading(false)
         }
