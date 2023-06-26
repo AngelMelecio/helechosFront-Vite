@@ -79,11 +79,11 @@
   background: #0b6b63d8;
 }
 
-#appbar{
+#appbar {
   transition: 0.2s;
 }
 
-#appbar:hover{
+#appbar:hover {
   width: 15rem;
   transition: 0.3s;
   transition-delay: 0.4s;
@@ -184,7 +184,7 @@ input::-webkit-inner-spin-button {
   clip-path: polygon(38% 61%, 73% 15%, 89% 28%, 42% 86%, 33% 86%, 8% 60%, 22% 46%);
 }
 
-.palomita{
+.palomita {
   clip-path: polygon(38% 61%, 73% 15%, 89% 28%, 42% 86%, 33% 86%, 8% 60%, 22% 46%);
 }
 
@@ -329,7 +329,8 @@ input::-webkit-inner-spin-button {
   border-radius: 50px;
   background-color: #e5e7eb;
 }
-.file{
+
+.file {
   width: 100px;
   height: 100px;
   border-radius: 10px;
@@ -505,6 +506,7 @@ input::-webkit-inner-spin-button {
 
 .blurred {
   filter: blur(2px);
+  transition: 0.2s;
 }
 
 .pdf-gray {
@@ -512,12 +514,12 @@ input::-webkit-inner-spin-button {
   background: linear-gradient(0deg, rgba(83, 87, 89, 1) 0%, rgba(50, 54, 57, 1) 65%, rgba(50, 54, 57, 1) 100%);
 }
 
-.n-2{
+.n-2 {
   width: calc(100%/2);
   min-width: 150px;
 }
 
-.array-row::after{
+.array-row::after {
   content: "";
   position: absolute;
   left: 0;
@@ -526,25 +528,25 @@ input::-webkit-inner-spin-button {
   /*
   background-color: #ff7d817b;
   */
-  border:'1px solid #ff7d817b';
+  border: '1px solid #ff7d817b';
   height: 100%;
   width: 100%;
   transition: 0.3s;
 }
 
-.array-row:has( .vanish:active )::after{
+.array-row:has(.vanish:active)::after {
   opacity: 100%;
   transition: 0.1s;
 }
 
-.hidden-button{
+.hidden-button {
   visibility: hidden;
   pointer-events: none;
   opacity: 0%;
   transition: 0.2s;
 }
 
-.hover-show:hover .hidden-button{
+.hover-show:hover .hidden-button {
   visibility: visible;
   pointer-events: all;
   opacity: 100%;
@@ -556,23 +558,23 @@ input::-webkit-inner-spin-button {
   height: 100vh;
 }
 
-.hover-modal .elmt{
+.hover-modal .elmt {
   opacity: 0;
   transition: 0.2s;
 }
 
-.hover-modal:hover .elmt{
+.hover-modal:hover .elmt {
   opacity: 1;
   transition: 0.2s;
 }
 
-input[type="checkbox"]{
+input[type="checkbox"] {
   position: relative;
 
 }
 
 
-input[type="checkbox"]::before{
+input[type="checkbox"]::before {
   content: "";
   position: absolute;
   left: 0;
@@ -583,7 +585,7 @@ input[type="checkbox"]::before{
   transition: 0.2s;
 }
 
-input[type="checkbox"]:checked::before{
+input[type="checkbox"]:checked::before {
   content: "";
   position: absolute;
   left: 0;
@@ -602,4 +604,8 @@ input[type="checkbox"]:checked::after {
   height: 100%;
   background-color: #ffffff;
   clip-path: polygon(43% 56%, 74% 18%, 89% 28%, 43% 83%, 14% 58%, 28% 43%);
+}
+
+#ficha-nombre:hover + div  {
+  background-color: red;
 }
