@@ -9,19 +9,19 @@ import helechos from '../imgs/helechos.png'
 const AppBar = () => {
 
   const { Logout, session } = useAuth()
-
+ 
   const Tab = ({ to, Icon = null, content, ...props }) => {
     const resolvePath = useResolvedPath(to)
     const isActive = useMatch({ path: resolvePath.pathname, end: false })
-    let activeStyles = isActive ? `bg-teal-700 hover:bg-teal-700` : `hover:bg-teal-500`
+    let activeStyles = isActive ? `bg-teal-700 text-white hover:bg-teal-700` : `hover:bg-teal-500`
     return (
       <Link to={to}
         {...props}
-        className={`text-white relative w-full flex flex-row py-3
-            font-bold text-sm  duration-200 rounded-lg
-            items-center cursor-pointer my-2 ` + activeStyles}>
+        className={`text-white relative w-full h-10 flex flex-row pl-2 py-3
+            font-bold text-sm  duration-200 rounded-r-full
+            cursor-pointer ` + activeStyles}>
         <p className='w-14 total-center'>
-          {Icon && <Icon size='20px' />}
+          {Icon && <Icon size='18px' />}
         </p>
         <p className='absolute ml-14 appbar-content align-center flex'>
           {content}
@@ -32,26 +32,26 @@ const AppBar = () => {
 
   const tabsByRole = {
     'Administrador': [
-      { to: '/usuarios', content: 'USUARIOS', Icon: ICONS.Admin },
-      { to: '/empleados', content: 'EMPLEADOS', Icon: ICONS.Worker},
-      { to: '/maquinas', content: 'MAQUINAS', Icon: ICONS.Machine},
-      { to: '/modelos', content: 'MODELOS', Icon: ICONS.Shoe},
-      { to: '/clientes', content: 'CLIENTES', Icon: ICONS.HandShake},
-      { to: '/proveedores', content: 'PROVEEDORES', Icon: ICONS.Truck},
-      { to: '/materiales', content: 'MATERIALES', Icon: ICONS.Thread},
-      { to: '/pedidos', content: 'PEDIDOS', Icon: ICONS.Diablito},
+      { to: '/usuarios', content: 'Usuarios', Icon: ICONS.Admin },
+      { to: '/empleados', content: 'Empleados', Icon: ICONS.Worker},
+      { to: '/maquinas', content: 'Máquinas', Icon: ICONS.Machine},
+      { to: '/modelos', content: 'Modelos', Icon: ICONS.Shoe},
+      { to: '/clientes', content: 'Clientes', Icon: ICONS.HandShake},
+      { to: '/proveedores', content: 'Proveedores', Icon: ICONS.Truck},
+      { to: '/materiales', content: 'Materiales', Icon: ICONS.Thread},
+      { to: '/pedidos', content: 'Pedidos', Icon: ICONS.Diablito},
     ],
     'Desarrollador': [
-      { to: '/modelos', content: 'MODELOS', Icon: ICONS.Shoe },
+      { to: '/modelos', content: 'Modelos', Icon: ICONS.Shoe },
     ],
     'Encargado': [
-      { to: '/empleados', content: 'EMPLEADOS', Icon: ICONS.Worker},
-      { to: '/maquinas', content: 'MAQUINAS', Icon: ICONS.Machine},
-      { to: '/modelos', content: 'MODELOS', Icon: ICONS.Shoe},
-      { to: '/clientes', content: 'CLIENTES', Icon: ICONS.HandShake},
-      { to: '/proveedores', content: 'PROVEEDORES', Icon: ICONS.Truck},
-      { to: '/materiales', content: 'MATERIALES', Icon: ICONS.Thread},
-      { to: '/pedidos', content: 'PEDIDOS', Icon: ICONS.Diablito},
+      { to: '/empleados', content: 'Empleados', Icon: ICONS.Worker},
+      { to: '/maquinas', content: 'Máquinas', Icon: ICONS.Machine},
+      { to: '/modelos', content: 'Modelos', Icon: ICONS.Shoe},
+      { to: '/clientes', content: 'Clientes', Icon: ICONS.HandShake},
+      { to: '/proveedores', content: 'Proveedores', Icon: ICONS.Truck},
+      { to: '/materiales', content: 'Materiales', Icon: ICONS.Thread},
+      { to: '/pedidos', content: 'Pedidos', Icon: ICONS.Diablito},
     ],
   };
 
@@ -62,21 +62,21 @@ const AppBar = () => {
 
   return (
     <>
-      <div id="appbar-container" className={`z-20 flex relative w-20 h-screen`} >
+      <div id="appbar-container" className={`z-20 flex relative w-20 h-full`} >
         <div id='appbar' className='w-full h-full overflow-y-scroll overflow-x-hidden absolute ease-in-out bg-teal-600'>
-          <div className='absolute flex pl-2 flex-col justify-center w-full h-full'>
+          <div className='absolute flex flex-col justify-center w-full h-full'>
             <div className="appbar-content flex w-full justify-center mt-5 ">
               <img className="w-24 h-24" src={helechos} alt="" />
             </div>
             <div id="tabs" className="mt-10">
-              <Tab to={'/perfil'} content={'PERFIL'} Icon={ICONS.Profile} />
+              <Tab to={'/perfil'} content={'Perfil'} Icon={ICONS.Profile} />
               {getTabsForRole(session.usuario.rol)}
             </div>
             <div className='flex h-full items-end w-full pb-10'>
               <Tab
                 onClick={Logout}
                 to={'/login'}
-                content={'SALIR'}
+                content={'Salir'}
                 Icon={ICONS.Logout} />
             </div>
           </div>

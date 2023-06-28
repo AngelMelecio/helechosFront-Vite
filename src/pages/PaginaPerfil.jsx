@@ -52,8 +52,8 @@ const PaginaPerfil = () => {
   return (
     <>
       <div className="flex flex-col w-full h-full relative bg-slate-100">
-        <div className=" flex flex-col h-full w-full absolute px-8 py-5 overflow-hidden">
-          <h1 className="font-bold text-3xl pb-4 pl-3 text-teal-700">
+        <div className=" flex flex-col h-full w-full absolute p-4 overflow-hidden">
+          <h1 className="font-bold text-2xl pb-4 pl-3 text-teal-700">
             Perfil
           </h1>
           <div className="bg-white flex flex-col h-full rounded-lg shadow-lg">

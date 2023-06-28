@@ -176,9 +176,9 @@ const CRUD = ({
 
   return (
     <div className="flex w-full h-full relative pl-18 bg-slate-100">
-      <div id="tbl-page" className="flex flex-col h-full w-full absolute px-8 py-5 overflow-hidden">
+      <div id="tbl-page" className="flex flex-col h-full w-full absolute p-4 overflow-hidden">
         <div className="flex flex-col h-full">
-          <h1 className="font-bold text-3xl pb-4 pl-3 text-teal-700">{title}</h1>
+          <h1 className="font-bold text-2xl pb-4 pl-3 text-teal-700">{title}</h1>
           <div className="h-full flex flex-col shadow-lg overflow-hidden">
             <div
               className="flex flex-col bg-white py-4 px-5 rounded-t-lg"

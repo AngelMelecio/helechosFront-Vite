@@ -130,25 +130,23 @@ const DetailUsuario = () => {
   return (
     <>
       <div className="w-full relative overflow-hidden">
-        <div id="tbl-page" className="flex flex-col h-full w-full bg-slate-100 absolute px-8 py-5">
+        <div id="tbl-page" className="flex flex-col h-full w-full bg-slate-100 absolute p-4">
           <div className="flex pb-4 justify-between">
-            <div className="flex">
+            <div className="flex items-center">
               <button
                 onClick={() => navigate(-1)}
                 className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
-              <p className="font-bold text-3xl pl-3 text-teal-700">
+              <p className="font-bold text-2xl pl-3 text-teal-700">
                 {isEdit ? `Detalles del Usuario` : "Nuevo Usuario"}
               </p>
             </div>
-            <div>
-              <input
-                disabled={loading || !theresChanges}
-                className='bg-teal-500 p-1 w-40 text-white normal-button absolute right-10 z-10 top-5 rounded-lg'
-                type="submit"
-                value={isEdit ? "GUARDAR" : "AGREGAR"}
-                form="frmUsuarios"
-              />
-            </div>
+            <input
+              disabled={loading || !theresChanges}
+              className='bg-teal-500 p-1 w-40 text-white normal-button rounded-lg'
+              type="submit"
+              value={isEdit ? "Guardar" : "Agregar"}
+              form="frmUsuarios"
+            />
           </div>
           <div className="flex flex-col bg-white h-full rounded-t-lg relative shadow-lg">
             <div className='w-full flex h-full flex-col '>
@@ -236,8 +234,8 @@ const DetailUsuario = () => {
                           <CustomSelect
                             name='Rol'
                             className='input'
-                            onChange={value => {formik.setFieldValue('rol', value.value); setTheresChanges(true)}}
-                            value={formik.values?.rol }
+                            onChange={value => { formik.setFieldValue('rol', value.value); setTheresChanges(true) }}
+                            value={formik.values?.rol}
                             onBlur={formik.handleBlur}
                             options={optionsRol}
                             label='Rol'
@@ -246,7 +244,7 @@ const DetailUsuario = () => {
                           <CustomSelect
                             name='Estado'
                             className='input'
-                            onChange={value => {formik.setFieldValue('is_active', value.value === 'Activo' ? true : false); setTheresChanges(true)}}
+                            onChange={value => { formik.setFieldValue('is_active', value.value === 'Activo' ? true : false); setTheresChanges(true) }}
                             value={formik.values ? formik.values.is_active ? "Activo" : "Inactivo" : ''}
                             onBlur={formik.handleBlur}
                             options={optionsActivo}

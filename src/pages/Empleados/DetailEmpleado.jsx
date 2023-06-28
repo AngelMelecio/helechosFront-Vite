@@ -132,23 +132,23 @@ const DetailEmpleado = () => {
   return (
     <>
       <div className="w-full relative overflow-hidden">
-        <div id="tbl-page" className="flex flex-col h-full w-full bg-slate-100 absolute px-8 py-5">
+        <div id="tbl-page" className="flex flex-col h-full w-full bg-slate-100 absolute p-4">
           {/**
            * HEADER
            */}
           <div className="flex pb-4 justify-between ">
-            <div className="flex">
+            <div className="flex items-center">
               <button
                 onClick={() => navigate('/empleados')}
                 className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
-              <p className="font-bold text-3xl pl-3 text-teal-700">
+              <p className="font-bold text-2xl pl-3 text-teal-700">
                 {isEdit ? `Detalles del Empleado` : "Nuevo Empleado"}
               </p>
             </div>
             <div>
               <input
                 disabled={loading || !theresChanges}
-                className='bg-teal-500 p-1 text-xl w-40 h-10 text-white normal-button  right-5 z-10 top-5 rounded-lg'
+                className='bg-teal-500 p-1 text-md w-40 h-10 text-white normal-button  right-5 z-10 top-5 rounded-lg'
                 type="submit"
                 value={isEdit ? "Guardar" : "Agregar"}
                 form="frmEmpleados"
