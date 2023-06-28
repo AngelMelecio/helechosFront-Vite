@@ -4,7 +4,7 @@ import DeleteModal from '../../components/DeleteModal'
 import CRUD from '../../components/CRUD'
 import { sleep } from '../../constants/functions'
 import { usePedidos } from './hooks/usePedidos'
-
+import ProgressBar from "@ramonak/react-progress-bar";
 
 const PaginaPedidos = () => {
 
@@ -63,6 +63,12 @@ const PaginaPedidos = () => {
           { name: 'Fecha de entrega', attribute: 'fechaEntrega' },
           { name: 'Cliente', attribute: 'modelo.cliente.nombre' },
           { name: 'Modelo', attribute: 'modelo.nombre' },
+          {
+            name: 'Progreso del pedido', attribute: (e) => <ProgressBar completed={e.progressBar.progress}
+              maxCompleted={e.progressBar.goal}
+              className='w-full'
+              bgColor={e.progressBar.color} />
+          }
         ]}
         onDelete={() => handleOpenModal(setDeleteModalVisible)}
       />

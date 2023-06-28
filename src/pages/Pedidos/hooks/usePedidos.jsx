@@ -53,6 +53,7 @@ export function PedidosProvider({ children }) {
     }
 
     async function findPedido(id) {
+        //console.log('Calling findPedido')
         let options = {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + session.access }
@@ -70,19 +71,16 @@ export function PedidosProvider({ children }) {
     }
 
     async function getPedidos() {
-        //console.log('Getting 2')
         let options = {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + session.access }
         }
         const pedidos = await fetchAPI(API_PEDIDOS_URL, options)
-        //console.table(pedidos)
         return formatPedidos(pedidos)
     }
 
     async function refreshPedidos() {
         try {
-            //console.log('Getting 1')
             setLoading(true)
             const pedidos = await getPedidos()
             setAllPedidos(pedidos)

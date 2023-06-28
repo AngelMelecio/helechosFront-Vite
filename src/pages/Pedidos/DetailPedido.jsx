@@ -13,6 +13,9 @@ import { usePedidos } from "./hooks/usePedidos";
 import SelectedFichas from "./components/SelectedFichas";
 import { useAuth } from "../../context/AuthContext";
 import { entorno } from "../../constants/entornos";
+import { Chart } from "react-google-charts";
+import chroma from 'chroma-js';
+
 
 const initPedido = {
   modelo: {
@@ -137,11 +140,11 @@ const DetailPedido = () => {
   }, [allClientes])
 
   useEffect(async () => {
-    
+
     refreshClientes()
     let p = id === '0' ? initPedido :
-        formatPedido(await findPedido(id))
-    
+      formatPedido(await findPedido(id))
+
     console.log(p)
     formik.setValues(p)
   }, [])
@@ -228,7 +231,7 @@ const DetailPedido = () => {
               />
             </div>
           </div>
-          
+
           <div className="flex flex-col bg-white h-full rounded-t-lg relative shadow-lg">
             <div className='w-full flex h-full flex-col '>
               <div ref={blankRef} id='visible-blank' className="flex w-full h-full">
@@ -300,7 +303,7 @@ const DetailPedido = () => {
                         >
                           <div className="absolute w-full total-center -top-3">
                             <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                              Datos de los Modelos
+                              {id==='0'? "Datos de los Modelos": "Detalles de la producción"}
                             </div>
                           </div>
                           {id === '0' ?
@@ -315,7 +318,54 @@ const DetailPedido = () => {
                                 { name: 'Ultima Edición', atr: 'fechaUltimaEdicion' },
                               ]}
                               right={<SelectedFichas formik={formik} onErase={handleErase} />}
-                            /> : <></>
+                            /> :
+                            <>
+                              <div className="flex flex-col w-full h-full overflow-y-scroll bg-gray-50">
+                                {
+                                  formik?.values?.detalles.map((detalle, i) => {
+                                    return (
+                                      <div key={`detalle-${i}`} className="flex flex-row my-1 pl-1 h-full w-full bg-white">
+                                        <div className="flex flex-col w-full h-full">
+                                          <div >
+                                            <p className="font-semibold text-teal-800 text-lg ml-1">
+                                              {detalle.fichaTecnica.nombre}
+                                            </p>
+                                          </div>
+                                          <div className="flex flex-row w-full h-full ">
+                                            {detalle.cantidades.map((cantidad, j) => {//por cada cantidad renderizamos una grafica
+                                              //Especificamos las opciones de la grafica
+                                              let options = {
+                                                title: "Distribución de\n produccion - Talla \n " + cantidad.talla,
+                                                colors: chroma.scale(['#2A4858', '#fafa6e']).mode('lch').colors(5),
+                                                pieHole: 0.4
+                                              }
+                                              //Ajustamos el arreglo de datos para la grafica
+                                              let data = [["Departamentos", "Número de etiquetas"]]
+                                              cantidad.progreso.forEach(progreso => {
+                                                data.push(progreso);
+                                              });
+                                              //Renderizamos la grafica
+                                              return (
+                                                <div key={`PieChart-${j}`} className="flex lg:w-1/3 md:w-1/2 sm:w-1 h-full bg-white">
+                                                  <Chart
+                                                    chartType="PieChart"
+                                                    data={data}
+                                                    options={options}
+                                                    loader={<Loader />}
+                                                    width={"100%"}
+                                                    height={"100%"}
+                                                  />
+                                                </div>
+                                              );
+                                            })}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })
+                                }
+                              </div>
+                            </>
                           }
                         </div>
                       </div>

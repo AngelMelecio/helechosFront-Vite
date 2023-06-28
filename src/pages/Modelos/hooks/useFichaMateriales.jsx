@@ -13,6 +13,7 @@ export function useFichaMateriales() {
 const API_FICHA_MATERIALES_URL = "/api/materiales_by_fichaTecnica/"
 
 function formatFichaMateriales(asigandos) {
+    console.log(asigandos)   
     let formatData = asigandos.map((asig) => ({
         ...asig,
         id: asig.id,
