@@ -127,22 +127,31 @@ const CRUD = ({
         {
           columns.map((c, i) => {
 
-            let value = get(element, c.attribute) + ''
+            let value = typeof c.attribute === 'function' ? c.attribute(element) : get(element, c.attribute) + '';
             let isBool = (value == 'true' || value == 'false' || value == '' || value == 'null')
             if (isBool) {
               if (value == 'true') value = 'Sí'
               else value = '--'
             }
-            return <td
-              className="px-4"
-              key={'td' + i}
-              onClick={onClick}>
-              <p className="flex flex-row items-center">
-                {value}
-                {value === 'Activo' && <ICONS.Active className="ml-2 text-sm text-emerald-500" />}
-                {value === 'Inactivo' && <ICONS.Ghost className="ml-2 text-lg text-gray-500" />}
-              </p>
-            </td>
+            return typeof c.attribute !== 'function' ?
+              <td
+                className="px-4"
+                key={'td' + i}
+                onClick={onClick}>
+                <p className="flex flex-row items-center">
+                  {value}
+                  {value === 'Activo' && <ICONS.Active className="ml-2 text-sm text-emerald-500" />}
+                  {value === 'Inactivo' && <ICONS.Ghost className="ml-2 text-lg text-gray-500" />}
+                </p>
+              </td> :
+              <td
+                className="px-4"
+                key={'td' + i}
+                onClick={onClick}>
+                <div className="flex flex-row justify-center">
+                  {value}
+                </div>
+              </td>
           }
           )
         }
