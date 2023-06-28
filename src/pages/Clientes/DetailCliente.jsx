@@ -82,27 +82,27 @@ const DetailCliente = () => {
     return (
         <>
             <div className="w-full relative overflow-hidden">
-                <div id="tbl-page" className="flex flex-col h-full w-full bg-slate-100 absolute px-8 py-5">
+                <div id="tbl-page" className="flex flex-col h-full w-full bg-slate-100 absolute p-4">
                     <div className="flex pb-4 justify-between">
-                        <div className="lex pb-4 justify-between">
-                            <div className="flex">
+                        <div className="flex justify-between">
+                            <div className="flex items-center">
                                 <button
                                     onClick={() => navigate(-1)}
                                     className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
-                                <p className="font-bold text-3xl pl-3 text-teal-700">
+                                <p className="font-bold text-2xl pl-3 text-teal-700">
                                     {isEdit ? `Detalles del cliente` : "Nuevo cliente"}
                                 </p>
                             </div>
                         </div>
-                        <div>
+                     
                             <input
                                 disabled={loading || !theresChanges}
-                                className='bg-teal-500 p-1 w-40 text-white normal-button absolute right-10 z-10 top-5 rounded-lg'
+                                className='bg-teal-500 p-1 w-40 text-white normal-button h-full rounded-lg'
                                 type="submit"
-                                value={isEdit ? "GUARDAR" : "AGREGAR"}
+                                value={isEdit ? "Guardar" : "Agregar"}
                                 form="frmClientes"
                             />
-                        </div>
+                   
 
                     </div>
                     <div className="flex flex-col bg-white h-full rounded-t-lg relative shadow-lg">

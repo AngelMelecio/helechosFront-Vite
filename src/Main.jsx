@@ -82,7 +82,8 @@ const Main = () => {
         <>
           <AdminProvider>
             <div className="flex w-full h-screen overflow-hidden absolute">
-              <AppBar />
+              <AppBar/>
+            
               <Routes>
                 <Route exact path="*" element={<Navigate replace to="/perfil" />} />
                 <Route path="/perfil" element={<PaginaPerfil />} />

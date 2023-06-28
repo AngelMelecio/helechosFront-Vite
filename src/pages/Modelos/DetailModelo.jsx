@@ -110,16 +110,16 @@ const DetailModelo = () => {
         ref={pageRef}
         onScroll={handleScroll}
         className="w-full relative overflow-y-scroll h-full">
-        <div id="tbl-page" className="flex flex-col w-full bg-slate-100 relative px-8 py-5">
+        <div id="tbl-page" className="flex flex-col w-full bg-slate-100 relative p-4">
           {/**
            * HEADER
            */}
           <div className="flex pb-4 justify-between">
-            <div className="flex">
+            <div className="flex items-center">
               <button
                 onClick={() => navigate('/modelos')}
                 className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
-              <p className="font-bold text-3xl pl-3 text-teal-700">
+              <p className="font-bold text-2xl pl-3 text-teal-700">
                 {isEdit ? `Detalles del Modelo` : "Nuevo Modelo"}
               </p>
             </div>
@@ -148,8 +148,8 @@ const DetailModelo = () => {
            */}
           <div className='flex flex-col screen'>
             {/*  Header, print / save buttons  */}
-            <div className="pt-12 pb-4 flex w-full justify-between items-center">
-              <p className=" font-bold text-3xl pl-3 text-teal-700">
+            <div className="pt-8 pb-4 flex w-full justify-between items-center">
+              <p className=" font-bold text-2xl pl-3 text-teal-700">
                 Fichas Tecnicas
               </p>
               <div className='flex'>

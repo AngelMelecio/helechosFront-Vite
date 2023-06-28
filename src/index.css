@@ -102,6 +102,15 @@
   visibility: visible;
 }
 
+#appbar .link {
+  width: 2.5rem;
+}
+
+#appbar:hover .link {
+  width: 100%;
+  transition-delay: 0.5s;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -606,6 +615,6 @@ input[type="checkbox"]:checked::after {
   clip-path: polygon(43% 56%, 74% 18%, 89% 28%, 43% 83%, 14% 58%, 28% 43%);
 }
 
-#ficha-nombre:hover + div  {
+#ficha-nombre:hover+div {
   background-color: red;
 }
