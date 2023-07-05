@@ -12,10 +12,11 @@ import { FaRegTrashAlt as Trash } from 'react-icons/fa'
 import {
     MdOutlineMail as Email,
     MdDone as Done,
-    MdOutlineFileCopy as Copy
+    MdOutlineFileCopy as Copy,
+    MdQrCodeScanner as Qr
 } from 'react-icons/md'
 
-import{
+import {
     ImFileOpenoffice as File,
     ImFilePdf as PDF
 } from 'react-icons/im'
@@ -85,7 +86,7 @@ import {
     RiSubtractFill as Minus
 
 } from 'react-icons/ri'
-    
+
 
 import { TbNeedleThread as Thread } from 'react-icons/tb';
 
@@ -133,5 +134,6 @@ export const ICONS = {
     File,
     Done,
     Copy,
-    Thread
+    Thread,
+    Qr
 }

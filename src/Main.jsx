@@ -23,6 +23,8 @@ import DetailMaquina from "./pages/Maquinas/DetailMaquina"
 import DetailUsuario from "./pages/Usuarios/DetailUsuario"
 import PaginaPedidos from "./pages/Pedidos/PaginaPedidos"
 import DetailPedido from "./pages/Pedidos/DetailPedido"
+import PaginaProduccion from "./pages/Produccion/PaginaProduccion"
+import PdfTest from "./pages/PdfTest"
 
 const getRoutesForRole = (role) => {
   const routesByRole = {
@@ -63,6 +65,9 @@ const getRoutesForRole = (role) => {
       { path: "/proveedores/:id", element: <DetailProveedor /> },
       { path: "/pedidos", element: <PaginaPedidos /> },
       { path: "/pedidos/:id", element: <DetailPedido /> },
+    ],
+    'Produccion':[
+      { path: "/produccion", element: <PaginaProduccion /> },
     ]
   };
 
@@ -83,12 +88,12 @@ const Main = () => {
           <AdminProvider>
             <div className="flex w-full h-screen overflow-hidden absolute">
               <AppBar/>
-            
-              <Routes>
+              <PdfTest/>    
+              {/*<Routes>
                 <Route exact path="*" element={<Navigate replace to="/perfil" />} />
                 <Route path="/perfil" element={<PaginaPerfil />} />
                 {getRoutesForRole(session.usuario.rol)}
-              </Routes>
+              </Routes>*/}
             </div>
           </AdminProvider>
         </>
