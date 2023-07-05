@@ -17,13 +17,13 @@ const AppBar = () => {
     return (
       <Link to={to}
         {...props}
-        className={`text-white relative w-full h-10 flex flex-row pl-2 py-3
+        className={`text-white relative w-full h-10 flex flex-row items-center pl-2 py-3
             font-bold text-sm  duration-200 rounded-r-full
             cursor-pointer ` + activeStyles}>
         <p className='w-14 total-center'>
           {Icon && <Icon size='18px' />}
         </p>
-        <p className='absolute ml-14 appbar-content align-center flex'>
+        <p className='absolute ml-14 appbar-content whitespace-nowrap align-center flex'>
           {content}
         </p>
       </Link>
@@ -53,6 +53,9 @@ const AppBar = () => {
       { to: '/materiales', content: 'Materiales', Icon: ICONS.Thread},
       { to: '/pedidos', content: 'Pedidos', Icon: ICONS.Diablito},
     ],
+    'Produccion':[
+      { to: '/Produccion', content: 'Captura de Producción', Icon: ICONS.Qr }
+    ]
   };
 
   const getTabsForRole = (role) => {

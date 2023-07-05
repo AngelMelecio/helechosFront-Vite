@@ -179,10 +179,8 @@ const CRUD = ({
       <div id="tbl-page" className="flex flex-col h-full w-full absolute p-4 overflow-hidden">
         <div className="flex flex-col h-full">
           <h1 className="font-bold text-2xl pb-4 pl-3 text-teal-700">{title}</h1>
-          <div className="h-full flex flex-col shadow-lg overflow-hidden">
-            <div
-              className="flex flex-col bg-white py-4 px-5 rounded-t-lg"
-              id="options-bar" >
+          <div className="h-full flex flex-col shadow-lg overflow-hidden bg-white">
+            <div className="flex flex-col py-4 px-5 rounded-t-lg" >
               <div className="flex w-full justify-between">
                 <div
                   className="flex flex-row"
