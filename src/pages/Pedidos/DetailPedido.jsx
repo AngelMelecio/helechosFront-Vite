@@ -15,7 +15,8 @@ import { useAuth } from "../../context/AuthContext";
 import { entorno } from "../../constants/entornos";
 import { Chart } from "react-google-charts";
 import chroma from 'chroma-js';
-
+import EtiquetasModal from "../../components/EtiquetasModal";
+import { sleep } from '../../constants/functions';
 
 const initPedido = {
   modelo: {
@@ -63,6 +64,10 @@ const DetailPedido = () => {
 
   const blankRef = useRef()
 
+  const modalRef = useRef()
+  const [modalEtiquetas, setModalEtiquetas] = useState('')
+  const [modalVisible, setModalVisible] = useState(false)
+
   const { notify } = useAuth()
   const { allClientes, refreshClientes } = useClientes()
   const { getModelosCliente } = useModelos()
@@ -73,7 +78,7 @@ const DetailPedido = () => {
 
   const [allFichas, setAllFichas] = useState([])
   const [availableFichas, setAvailableFichas] = useState([])
-  const { getFichas, postPedido, allPedidos, findPedido } = usePedidos()
+  const { getFichas, postPedido, allPedidos, findPedido, allEtiquetas, getEtiquetas } = usePedidos()
   const [saving, setSaving] = useState(false)
 
   const validate = values => {
@@ -145,10 +150,12 @@ const DetailPedido = () => {
     let p = id === '0' ? initPedido :
       formatPedido(await findPedido(id))
 
-    console.log(p)
+    //console.log(p)
     formik.setValues(p)
   }, [])
-
+  useEffect(async () => {
+    await getEtiquetas(id)
+  }, [])
   // selecciona cliente -> Cambia los modelos disponibles
   useEffect(async () => {
     if (!formik?.values?.modelo.cliente) return
@@ -207,6 +214,18 @@ const DetailPedido = () => {
     setAvailableFichas(prev => [...prev, { ...allFichas.find(f => f.idFichaTecnica === idFicha), isSelected: false }])
   }
 
+  const handleOpenModal = async (setState) => {
+    setState(true)
+    await sleep(150)
+    modalRef.current.classList.add('visible')
+  }
+
+  const handleCloseModal = async (setState) => {
+    modalRef.current.classList.remove('visible')
+    await sleep(150)
+    setState(false)
+  }
+
   return (
     <>
       <div className="w-full relative overflow-hidden">
@@ -226,7 +245,7 @@ const DetailPedido = () => {
               disabled={saving}
               className='bg-teal-500 p-1 w-40 text-white normal-button rounded-lg'
               type="submit"
-              value={isEdit ? "Gauradar" : "Agregar"}
+              value={isEdit ? "Guardar" : "Agregar"}
               form="frmPedido"
             />
 
@@ -297,13 +316,38 @@ const DetailPedido = () => {
                             }
                           </div>
                         </div>
+                        <div className="flex pb-4 justify-between">
+                          <div className="flex items-center">
+                            <p className="font-bold text-2xl pl-3 text-teal-700">
+                              {isEdit ? `Estado de la producción por talla` : ""}
+                            </p>
+                          </div>
+                          {
+                            isEdit &&
+                            <div className='flex'>
+                              {
+                                allEtiquetas.length > 0 &&
+                                <button
+
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    handleOpenModal(setModalVisible)
+                                  }}
+                                  className='normal-button h-10 w-10 rounded-lg total-center mr-4'
+                                >
+                                  <ICONS.Print size='25px' />
+                                </button>
+                              }
+                            </div>
+                          }
+                        </div>
                         <div
                           className="relative flex h-full px-2 py-4 border-2 mx-2 my-4 border-slate-300"
                           style={{ height: `${blankRef.current.offsetHeight - 32}px` }}
                         >
                           <div className="absolute w-full total-center -top-3">
                             <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                              {id==='0'? "Datos de los Modelos": "Detalles de la producción"}
+                              {id === '0' ? "Datos de los Modelos" : "Progreso del pedido"}
                             </div>
                           </div>
                           {id === '0' ?
@@ -336,7 +380,7 @@ const DetailPedido = () => {
                                               //Especificamos las opciones de la grafica
                                               let options = {
                                                 title: "Distribución de\n produccion - Talla \n " + cantidad.talla,
-                                                colors: chroma.scale(['#2A4858', '#fafa6e']).mode('lch').colors(5),
+                                                colors: chroma.scale(['#2A4858', '#fafa6e']).mode('lch').colors(7),
                                                 pieHole: 0.4
                                               }
                                               //Ajustamos el arreglo de datos para la grafica
@@ -376,6 +420,15 @@ const DetailPedido = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className='modal absolute z-50 h-full w-full' ref={modalRef}>
+        {modalVisible &&
+          <EtiquetasModal
+            listaEtiquetas={allEtiquetas}
+            onClose={() => { handleCloseModal(setModalVisible);}}
+            title="Selección de etiquetas"
+          />
+        }
       </div>
     </>
   )
