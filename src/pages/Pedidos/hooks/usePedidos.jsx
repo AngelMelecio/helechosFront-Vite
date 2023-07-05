@@ -4,11 +4,13 @@ import { useState } from "react";
 import { useContext } from "react";
 import { fetchAPI } from "../../../services/fetchApiService";
 import { entorno } from "../../../constants/entornos";
+import { set } from "lodash";
 
 const API_PEDIDOS_URL = "api/pedidos/"
 const API_PEDIDO_URL = "api/pedido/"
 const API_FICHAS_MATERIALES = "/api/fichas_tecnicas_materiales/"
 const API_FICHAS_BY_MODELO = "/api/fichas_by_modelo/"
+const API_GET_ETIQUETAS = "/api/produccionByPedido/"
 
 const PedidosContext = React.createContext('PedidosContext')
 
@@ -35,22 +37,23 @@ function formatFichas(fichas){
     }))
     return formatedFichas
 }
+function formatEtiquetas(etiquetas){
+    let formatedEtiquetas = etiquetas.map((etiqueta) => ({
+        ...etiqueta,
+        isSelected: false
+    }))
+    return formatedEtiquetas
+}
 
 export function PedidosProvider({ children }) {
 
     const { session, notify } = useAuth()
 
     const [allPedidos, setAllPedidos] = useState([])
+    const [allEtiquetas, setAllEtiquetas] = useState([])
     const [loading, setLoading] = useState(true)
     const [errors, setErrors] = useState(false)
 
-    function getPedido(id) {
-        if(allPedidos.length!==0){
-            let pedido = allPedidos.find(e => e.idPedido + '' === id + '')
-            return pedido
-        }
-        
-    }
 
     async function findPedido(id) {
         //console.log('Calling findPedido')
@@ -77,6 +80,19 @@ export function PedidosProvider({ children }) {
         }
         const pedidos = await fetchAPI(API_PEDIDOS_URL, options)
         return formatPedidos(pedidos)
+    }
+
+    async function getEtiquetas(idPedido) {
+        let options = {
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + session.access }
+        }   
+        try{
+            const etiquetas = await fetchAPI(API_GET_ETIQUETAS + idPedido, options)
+            setAllEtiquetas(formatEtiquetas(etiquetas))
+        }catch (e) {
+            setErrors(e)
+        } 
     }
 
     async function refreshPedidos() {
@@ -121,6 +137,7 @@ export function PedidosProvider({ children }) {
         <PedidosContext.Provider
             value={{
                 allPedidos,
+                allEtiquetas,
                 loading,
                 errors,
                 refreshPedidos,
@@ -128,6 +145,7 @@ export function PedidosProvider({ children }) {
                 getFichas,
                 postPedido,
                 findPedido,
+                getEtiquetas
             }}
         >
             {children}
