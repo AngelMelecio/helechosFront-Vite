@@ -7,13 +7,14 @@ const CustomSelect = ({ name, className, onChange, value, onBlur, options, label
   const defaultValue = (options, value) => {
     return options ? options.find(option => option.value === value) : "";
   };
-  let cn_good = className + " center relative" + "bg-gray-100 duration-300 border focus:border-teal-500 ";
-  let cn_bad = className + " center relative" + "bg-gray-100 duration-300 border focus:border-red-600 border-red-600 ";
+  let cn_good = className + " center relative" + "bg-gray-100 duration-300 border focus:border-teal-500 text-gray-700";
+  let cn_bad = className + " center relative" + "bg-gray-100 duration-300 border focus:border-rose-500 border-rose-500 text-gray-700";
   const customStyles = {
     option: (defaultStyles, state) => ({
       ...defaultStyles,
       color: state.isSelected ? "#fff" : "#000",
-      backgroundColor: state.isSelected ? "#14B8A6" : "#fff",
+      backgroundColor: state.isSelected ? "#e5e7eb" : "#fff",
+      color: "#374151",
       select: "#14B8A6"
     }),
 
@@ -23,12 +24,12 @@ const CustomSelect = ({ name, className, onChange, value, onBlur, options, label
       border: readOnly ? "#fff" : "#14B8A6",
       boxShadow: "#14B8A6",
     }),
-    singleValue: (defaultStyles) => ({ ...defaultStyles, color: "000" }),
+    singleValue: (defaultStyles) => ({ ...defaultStyles, color: "#374151" }),
   };
 
   return (
     <div className="flex flex-col w-full mx-2 mt-2">
-      <p className='text-teal-800 font-normal'>{label}</p>
+      <p className='text-teal-700 font-medium'>{label}</p>
       <div className={(errores ? cn_bad : cn_good) + ' bg-gray-100'}>
         {
           loading ? <Loader /> :
@@ -42,7 +43,7 @@ const CustomSelect = ({ name, className, onChange, value, onBlur, options, label
               styles={customStyles} />
         }
       </div>
-      {errores ? <div className='text-red-600'>{errores}</div> : null}
+      {errores ? <div className='text-rose-500'>{errores}</div> : null}
     </div>
 
 

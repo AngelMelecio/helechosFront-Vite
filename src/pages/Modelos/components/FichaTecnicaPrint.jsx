@@ -137,7 +137,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
       display: 'flex',
       //flexDirection: 'column',
       padding: '0 0 0 3px',
-      color: '#115e59',
+      color: '#0f766e',
       //backgroundColor: '#f3f4f6'
     }
     return <View style={estilos}>{props.children}</View>

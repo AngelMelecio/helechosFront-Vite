@@ -54,11 +54,11 @@ const PaginaPerfil = () => {
       <div className="flex flex-col w-full h-full relative bg-slate-100">
         <div className=" flex flex-col h-full w-full absolute p-4 overflow-hidden">
           <h1 className="font-bold text-2xl pb-4 pl-3 text-teal-700">
-            Perfil
+            Mi perfil
           </h1>
           <div className="bg-white flex flex-col h-full rounded-lg shadow-lg">
-            <div className="flex flex-row w-full h-1/5 items-center px-10">
-              <ICONS.UsersIdentity className='mr-5' size='110px' style={{ color: '#115e59' }} />
+            <div className="flex flex-row w-full items-center px-10 pt-5">
+              <ICONS.UsersIdentity className='mr-5' size='110px' style={{ color: '#0f766e' }} />
               <div className="text-lg font-medium text-gray-700 italic">
                 {user[0].value} {user[1].value}
                 <br />
@@ -81,7 +81,7 @@ const PaginaPerfil = () => {
                           }
                         }}
                         className="h-12 text-gray-700 border-b-1">
-                        <td className="px-3 text-gray-900 font-medium text-sm pointer-events-none">
+                        <td className="px-3 text-teal-700 font-medium text-sm pointer-events-none">
                           {atr.label}:
                         </td>
                         <td className="w-full  font-normal">

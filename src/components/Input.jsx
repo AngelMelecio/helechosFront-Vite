@@ -1,19 +1,19 @@
 
 const Input = ({ label, type, name, value = "", onChange, Icon = null, onBlur, errores, onKeyDown, ...props }) => {
 
-    let p = Icon !== null ? 'pl-9' : ''
-    let cn_good = "flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500 " + p;
-    let cn_bad = "flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-red-600 border-red-600 " + p;
+    let p = Icon !== null ? ' pl-9' : ''
+    let cn_good = "flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500 text-gray-700" + p;
+    let cn_bad = "flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-rose-500 border-rose-500 text-gray-700" + p;
 
 
     let dis = props.disabled
-    let labelColor = dis ? 'text-gray-800' : 'text-teal-800'
+    let labelColor = dis ? 'text-gray-800' : 'text-teal-700'
     let opacity = dis ? 'opacity-50' : ''
     let readOnly = props.readOnly ? 'bg-white border-0' : ''
 
     return (
         <div className={'flex flex-col w-full mx-2 mt-2' + opacity}>
-            <p className={'font-normal ' + labelColor}>{label}</p>
+            <p className={'font-medium ' + labelColor}>{label}</p>
             <div className="total-center relative">
                 <input
                     onKeyDown={ onKeyDown}
@@ -32,7 +32,7 @@ const Input = ({ label, type, name, value = "", onChange, Icon = null, onBlur, e
                         size='20px'
                     /> : null}
             </div>
-            {errores ? <div className='text-red-600'>{errores}</div> : null}
+            {errores ? <div className='text-rose-500'>{errores}</div> : null}
         </div>
     )
 }

@@ -169,8 +169,8 @@ const FrmFichas = ({
           <div className="absolute w-full flex flex-col p-4">
             <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
               <div className="absolute w-full total-center -top-3">
-                <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                  INFORMACIÓN DE LA FICHA
+                <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                  Información de la ficha
                 </div>
               </div>
               <div className="w-full total-center">
@@ -226,8 +226,8 @@ const FrmFichas = ({
             </div>
             <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
               <div className="absolute w-full total-center -top-3">
-                <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                  DATOS DEL TEJIDO
+                <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                  Datos del tejido
                 </div>
               </div>
               <div className="flex flex-row w-full">
@@ -269,8 +269,8 @@ const FrmFichas = ({
             </div>
             <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
               <div className="absolute w-full total-center -top-3">
-                <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                  DATOS DE PLANCHA
+                <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                  Datos de la plancha
                 </div>
               </div>
               <div className="flex flex-row w-full">
@@ -303,8 +303,8 @@ const FrmFichas = ({
 
             <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
               <div className="absolute w-full total-center -top-3">
-                <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                  DATOS DE LOS HILOS
+                <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                  Datos de los hilos
                 </div>
               </div>
               {!fetchingFichaMateriales && fichaFormik?.values?.materiales ?
@@ -326,8 +326,8 @@ const FrmFichas = ({
             <div className="flex flex-row">
               <div className="w-full relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                 <div className="absolute w-full total-center -top-3">
-                  <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                    NUMERO PUNTOS
+                  <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                    Número puntos
                   </div>
                 </div>
                 <div className="flex flex-row h-80  justify-around">
@@ -348,8 +348,8 @@ const FrmFichas = ({
               </div>
               <div className="w-full relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                 <div className="absolute w-full total-center -top-3">
-                  <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                    ECONOMISADORES
+                  <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                    Economisadores
                   </div>
                 </div>
                 <div className="flex flex-row h-80  justify-around">
@@ -370,8 +370,8 @@ const FrmFichas = ({
               </div>
               <div className="w-full relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                 <div className="absolute w-full total-center -top-3">
-                  <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                    JALONES
+                  <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                    Jalones
                   </div>
                 </div>
                 <div className="flex flex-row h-80  justify-around">

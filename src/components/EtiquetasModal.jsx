@@ -63,7 +63,7 @@ const EtiquetasModal = ({ listaEtiquetas, onClose, title }) => {
                 <div className='max-h-95 overflow-y-scroll'>
                     <table className="w-full">
                         <thead>
-                            <tr className="font-medium text-teal-800">
+                            <tr className="font-medium text-teal-700">
                                 <Th>
                                     <input
                                         type="checkbox"

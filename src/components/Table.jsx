@@ -236,7 +236,7 @@ const Table = ({
                 </th>
                 {
                   columns.map((c, i) =>
-                    <th className='p-2 font-medium text-teal-800' key={"C" + i} >
+                    <th className='p-2 font-medium text-teal-700' key={"C" + i} >
                       {<div className="flex flex-row relative total-center text-center">
                         <p className="px-6">{c.name} </p>
                         <button

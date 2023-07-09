@@ -65,7 +65,7 @@ const PaginaProveedores = () => {
                 onDelete={() => handleOpenModal(setDeleteModalVisible)}
             />
 
-            <div className='modal absolute h-full w-full' ref={modalContainerRef}>
+            <div className='modal absolute z-50 h-full w-full' ref={modalContainerRef}>
                 {deleteModalVisible &&
                     <DeleteModal
                         onCancel={() => handleCloseModal(setDeleteModalVisible)}

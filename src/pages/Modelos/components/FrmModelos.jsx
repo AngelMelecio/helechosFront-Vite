@@ -86,8 +86,8 @@ const FrmModelos = ({
   />*/}
       <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
         <div className="absolute w-full total-center -top-3">
-          <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-            DATOS DEL MODELO
+          <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+            Datos del Modelo
           </div>
         </div>
         <div className='flex flex-row w-full'>

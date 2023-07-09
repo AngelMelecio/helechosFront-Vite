@@ -20,7 +20,7 @@ const DynamicInput = ({
         <div className="w-full">
           <table className="w-full">
             <thead >
-              <tr className="font-medium text-teal-800">
+              <tr className="font-medium text-teal-700">
                 {
                   columns.map((c, i) =>
                     <th key={'H' + i}>

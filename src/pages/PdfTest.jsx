@@ -83,7 +83,6 @@ const PdfTest = () => {
                 <View style={{
                   display: 'flex',
                   flex: 1,
-                  display: 'flex',
                   justifyContent: 'flex-end',
                   alignItems: 'start',
                 }}>

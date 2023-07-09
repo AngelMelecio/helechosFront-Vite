@@ -196,7 +196,7 @@ const SelectorMateriales = ({
           <div className="w-full" >
             <table className="w-full">
               <thead>
-                <tr className="font-medium text-teal-800">
+                <tr className="font-medium text-teal-700">
                   <Th></Th>
                   <Th>Guía Hilos</Th>
                   <Th>calibre</Th>
