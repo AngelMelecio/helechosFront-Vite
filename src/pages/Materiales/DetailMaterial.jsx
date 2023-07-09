@@ -157,13 +157,13 @@ const DetailMaterial = () => {
                     <div className="absolute w-full flex flex-col  px-4">
                       <div className='flex flex-row w-full h-full p-2 total-center'>
                         <div className="flex relative w-full items-center justify-center text-center">
-                          <ICONS.Thread className='' size='100px' style={{ color: '#115e59' }} />
+                          <ICONS.Thread className='' size='100px' style={{ color: '#0f766e' }} />
                         </div>
                       </div>
                       <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                         <div className="absolute w-full total-center -top-3">
-                          <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                            DATOS MATERIAL
+                          <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                            Datos del material
                           </div>
                         </div>
                         <div className='flex flex-row'>
@@ -207,7 +207,7 @@ const DetailMaterial = () => {
                         </div>
                         <div className='flex flex-row'>
                           <div className="flex flex-col w-full mx-2 mt-2">
-                            <p className={'font-medium text-teal-800'}>Código de color</p>
+                            <p className={'font-medium text-teal-700'}>Código de color</p>
                             <div className="relative flex flex-row border p-1 justify-between">
                               <div>{sketchPickerColor}</div>
                               <div

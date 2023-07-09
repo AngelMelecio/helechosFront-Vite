@@ -31,17 +31,21 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: rgb(255, 255, 255);
+  background: #f1f5f900;
+}
+
+::-webkit-scrollbar-track:hover {
+  background: #0000000d;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #9ca3af;
+  background: #cbd5e1;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+  background: #94a3b8;
 }
 
 #appbar::-webkit-scrollbar {
@@ -210,14 +214,22 @@ input::-webkit-inner-spin-button {
   cursor: default;
 }
 
-.customTable td,
-.customTable th {
+table td{
   white-space: nowrap;
 }
 
+.customTable td {
+  white-space: nowrap;
+  color: #374151;
+}
+
 .customTable th {
-  background-color: #f0fdfa;
+  background-color: #ffffff;
+  font-weight: 500;
+  color: #0f766e;
   cursor: default;
+  white-space: nowrap;
+  border-block: 1px solid #e2e8f0;
 }
 
 .customTable th .filter-button {
@@ -229,8 +241,6 @@ input::-webkit-inner-spin-button {
   opacity: 100%;
   transition: 0.2s;
 }
-
-
 
 .customTable tbody tr {
 
@@ -336,7 +346,7 @@ input::-webkit-inner-spin-button {
   width: 100px;
   height: 100px;
   border-radius: 50px;
-  background-color: #e5e7eb;
+  background-color: #f3f4f6;
 }
 
 .file {
@@ -514,7 +524,7 @@ input::-webkit-inner-spin-button {
 }
 
 .blurred {
-  filter: blur(2px);
+  filter: blur(2.5px);
   transition: 0.2s;
 }
 

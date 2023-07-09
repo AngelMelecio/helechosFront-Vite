@@ -23,7 +23,7 @@ const MaquinasTable = ({
             {
               columns.map((c, i) =>
                 <th
-                  className="px-2 text-teal-800 whitespace-nowrap"
+                  className="px-2 text-teal-700 whitespace-nowrap"
                   key={'MH' + i}>
                   {c.name}
                 </th>)

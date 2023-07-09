@@ -195,7 +195,7 @@ const SectionFichas = ({
             <button
               disabled={id==='0'}
               onClick={handleAddFicha}
-              className="flex items-center duration-200 border-gray-300 text-teal-800 border rounded-sm w-full p-3 hover:border-teal-500  disabled:border-gray-300 disabled:text-gray-400">
+              className="flex items-center duration-200 border-gray-300 text-teal-700 border rounded-sm w-full p-3 hover:border-teal-500  disabled:border-gray-300 disabled:text-gray-400">
               <ICONS.Plus></ICONS.Plus>
               <p className="ml-2 font-semibold">Nueva Ficha</p>
             </button>
@@ -245,7 +245,6 @@ const SectionFichas = ({
             <p className="italic font-semibold text-gray-600 ">
               {
                 id === '0' ? <>Guarde un modelo antes de crear fichas...</> : <>Selecciona o crea una ficha ...</>
-                
               }
             </p>
           </div>

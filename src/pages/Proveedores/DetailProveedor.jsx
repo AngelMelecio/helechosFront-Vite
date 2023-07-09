@@ -141,7 +141,7 @@ const DetailProveedor = () => {
                       <div className="absolute w-full flex flex-col px-4">
                         <div className='flex flex-row w-full h-full p-2 total-center'>
                           <div className="flex relative w-full items-center justify-center text-center">
-                            <ICONS.Truck className='' size='100px' style={{ color: '#115e59' }} />
+                            <ICONS.Truck className='' size='100px' style={{ color: '#0f766e' }} />
                           </div>
                         </div>
                         {/**
@@ -149,8 +149,8 @@ const DetailProveedor = () => {
                          */}
                         <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                           <div className="absolute w-full total-center -top-3">
-                            <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                              DATOS PROVEEDOR
+                            <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                              Datos del proveedor
                             </div>
                           </div>
                           <div className='flex flex-row'>
@@ -207,8 +207,8 @@ const DetailProveedor = () => {
                         </div>
                         <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                           <div className="absolute w-full total-center -top-3">
-                            <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                              CONTACTOS
+                            <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                              Contactos
                             </div>
                           </div>
                           <div className="flex flex-row w-full  justify-around">
