@@ -55,7 +55,7 @@ const Slider = ({
       <div className="w-full h-full flex absolute">
 
         {/*  Left Side  */}
-        <div className={(leftShow ? "w-full " : "w-10 ") + " bg-gray-50 pt-1 h-full flex duration-500"}>
+        <div className={(leftShow ? "w-full " : "w-10 ") + " bg-slate-100 pt-1 h-full flex duration-500"}>
           <div className={"flex h-full w-full relative "}>
 
             {/*  Search & Table  */}
@@ -95,13 +95,13 @@ const Slider = ({
 
                 {/*  TABLE  */}
                 <div className="w-full h-full relative overflow-scroll bg-white shadow-md">
-                  {data.length > 0 && <table className="absolute w-full bg-white">
+                  {data.length > 0 && <table className="absolute w-full bg-white customTable">
                     <thead><tr className="h-8 shadow-sm">
                       <th className="px-2 sticky top-0 z-10 bg-white">
                         <input onChange={handleCheckAll} checked={someSelected} type="checkbox" /></th>
 
                       {columns.map((column, index) => (
-                        <th className="hover-modal text-teal-800 pl-2 pr-8 whitespace-nowrap sticky top-0 z-10 bg-white" key={index}>
+                        <th className="hover-modal text-teal-700 pl-2 pr-8 whitespace-nowrap sticky top-0 z-10 bg-white" key={index}>
                           {column.name}
                           <div className="absolute p-1 right-0 w-8 h-8 top-0">
                             <button type="button" onClick={() => { setFilter(prev => ({ atr: column.atr, ord: (prev.atr === column.atr ? (prev.ord + 1) % 3 : 1) })) }}
@@ -148,7 +148,7 @@ const Slider = ({
             </div>
           </div>
         </div>
-        <div className="w-full h-full relative bg-gray-50">
+        <div className="w-full h-full relative bg-slate-100">
           {right}
         </div>
       </div>

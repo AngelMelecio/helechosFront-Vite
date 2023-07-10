@@ -11,7 +11,7 @@ const SelectorClientes = ({ name, className, value, onChange, onBlur, errores, o
   const customStyles = {
     option: (defaultStyles, state) => ({
       ...defaultStyles,
-      color: state.isSelected ? "#fff" : "#115e59",
+      color: state.isSelected ? "#fff" : "#0f766e",
       backgroundColor: state.isSelected ? "#14B8A6" : "#fff",
       select: "#14B8A6",
     }),
@@ -27,7 +27,7 @@ const SelectorClientes = ({ name, className, value, onChange, onBlur, errores, o
     }),
     
     
-    singleValue: (defaultStyles) => ({ ...defaultStyles, color: "#115e59" }),
+    singleValue: (defaultStyles) => ({ ...defaultStyles, color: "#0f766e" }),
   };
 
   return (

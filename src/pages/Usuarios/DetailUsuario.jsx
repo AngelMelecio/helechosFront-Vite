@@ -160,13 +160,13 @@ const DetailUsuario = () => {
                     <div className="absolute w-full flex flex-col  px-4">
                       <div className='flex flex-row w-full h-full p-2 total-center'>
                         <div className="flex relative w-full items-center justify-center text-center">
-                          <ICONS.UsersIdentity className='' size='100px' style={{ color: '#115e59' }} />
+                          <ICONS.UsersIdentity className='' size='100px' style={{ color: '#0f766e' }} />
                         </div>
                       </div>
                       <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                         <div className="absolute w-full total-center -top-3">
-                          <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                            DATOS PERSONALES
+                          <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                            Datos Personales
                           </div>
                         </div>
                         <div className='flex flex-row'>
@@ -194,8 +194,8 @@ const DetailUsuario = () => {
                       </div>
                       <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                         <div className="absolute w-full total-center -top-3">
-                          <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                            DATOS DE USUARIO
+                          <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                            Datos de usuario
                           </div>
                         </div>
                         <div className='flex flex-row'>

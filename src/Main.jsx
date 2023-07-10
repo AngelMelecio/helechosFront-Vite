@@ -45,6 +45,7 @@ const getRoutesForRole = (role) => {
       { path: "/proveedores/:id", element: <DetailProveedor /> },
       { path: "/pedidos", element: <PaginaPedidos /> },
       { path: "/pedidos/:id", element: <DetailPedido /> },
+      { path: "/produccion", element: <PaginaProduccion /> },
     ],
     'Desarrollador': [
       { path: "/modelos", element: <PaginaModelos /> },
@@ -66,7 +67,7 @@ const getRoutesForRole = (role) => {
       { path: "/pedidos", element: <PaginaPedidos /> },
       { path: "/pedidos/:id", element: <DetailPedido /> },
     ],
-    'Produccion':[
+    'Produccion': [
       { path: "/produccion", element: <PaginaProduccion /> },
     ]
   };
@@ -86,14 +87,14 @@ const Main = () => {
       {session ?
         <>
           <AdminProvider>
-            <div className="flex w-full h-screen overflow-hidden absolute">
-              <AppBar/>
-              <PdfTest/>    
-              {/*<Routes>
+            <div className="flex w-full h-screen overflow-hidden absolute bg-slate-100">
+              <AppBar />
+
+              <Routes>
                 <Route exact path="*" element={<Navigate replace to="/perfil" />} />
                 <Route path="/perfil" element={<PaginaPerfil />} />
                 {getRoutesForRole(session.usuario.rol)}
-              </Routes>*/}
+              </Routes>
             </div>
           </AdminProvider>
         </>

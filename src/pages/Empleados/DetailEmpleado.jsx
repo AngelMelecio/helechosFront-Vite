@@ -171,19 +171,14 @@ const DetailEmpleado = () => {
                         {/**
                          * FOTOGRAFIA
                          */}
-                        <div className="relative px-2 py-4 w-full border-2 mx-2 my-4 border-slate-300">
-                          <div className="absolute w-full total-center -top-3">
-                            <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                              FOTOGRAFIA
-                            </div>
-                          </div>
-                          <div className='flex flex-row w-full h-full total-center'>
+                        
+                          <div className='flex flex-row w-full h-full total-center pt-4 pb-6'>
                             <div className="flex relative w-full items-center justify-center foto text-center">
                               {(toUrl(formik?.values?.fotografia) !== null) ? <img
                                 className='object-cover foto'
                                 src={toUrl(formik?.values?.fotografia)}
                                 alt='' />
-                                : <ICONS.Person className='' size='80px' style={{ color: '#115e59' }} />}
+                                : <ICONS.Person className='' size='80px' style={{ color: '#0f766e' }} />}
                               <input id='file' type="file" name='fotografia' accept='image/*' onChange={handleSelectImage} className='inputfile' />
                               <label
                                 className='absolute -bottom-2 -right-1 bg-teal-500 p-2 text-white normal-button rounded-full'
@@ -192,7 +187,7 @@ const DetailEmpleado = () => {
                               </label>
                             </div>
                           </div>
-                        </div>
+                        
                       </div>
                       <div className="flex w-full flex-col xl:flex-row">
                         {/**
@@ -201,8 +196,8 @@ const DetailEmpleado = () => {
                         <div className="w-full flex">
                           <div className="relative px-2 py-4 w-full border-2 mx-2 my-4 border-slate-300">
                             <div className="absolute w-full total-center -top-3">
-                              <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                                DATOS PERSONALES
+                              <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                                Datos Personales
                               </div>
                             </div>
                             <div className='flex flex-row'>
@@ -239,8 +234,8 @@ const DetailEmpleado = () => {
                         <div className="w-full flex">
                           <div className="relative px-2 py-4 w-full border-2 mx-2 my-4 border-slate-300">
                             <div className="absolute w-full total-center -top-3">
-                              <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                                DATOS DEL EMPLEADO
+                              <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                                Datos del empleado
                               </div>
                             </div>
                             <div className='flex flex-row'>
@@ -294,8 +289,8 @@ const DetailEmpleado = () => {
                       </div>
                       <div className="mx-2 my-4 relative h-80 px-4 py-4 border-2 border-slate-300">
                         <div className="absolute w-full left-0 total-center -top-3">
-                          <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                            MAQUINAS
+                          <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                            Máquinas
                           </div>
                         </div>
                         { //loadingMaquinas ? <Loader /> :

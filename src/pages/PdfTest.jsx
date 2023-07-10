@@ -100,6 +100,7 @@ const PdfTest = () => {
                 size={[102, 102]}
                 key={i}
               >
+
                 <View style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
 
                   <View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -169,6 +170,7 @@ const PdfTest = () => {
                     </View>
 
                   </View>
+
                 </View>
 
               </Page>
