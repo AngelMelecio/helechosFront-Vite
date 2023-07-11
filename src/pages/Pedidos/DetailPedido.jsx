@@ -15,7 +15,7 @@ import { useAuth } from "../../context/AuthContext";
 import { entorno } from "../../constants/entornos";
 import { Chart } from "react-google-charts";
 import chroma from 'chroma-js';
-import EtiquetasModal from "../../components/EtiquetasModal";
+import EtiquetasModal from "../../components/LabelModal";
 import { sleep } from '../../constants/functions';
 
 const initPedido = {
@@ -435,14 +435,6 @@ const DetailPedido = () => {
               </form>
             </FormikProvider>
           }
-
-          {/*<div className="flex flex-col bg-white h-full rounded-t-lg relative shadow-lg">
-            <div className='w-full flex h-full flex-col '>
-              <div ref={blankRef} id='visible-blank' className="flex w-full h-full">
-              </div>
-            </div>
-        </div>*/}
-
         </div>
       </div>
       <div className='modal absolute z-50 h-full w-full' ref={modalRef}>
