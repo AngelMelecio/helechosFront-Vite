@@ -45,160 +45,172 @@ const SelectedFichas = ({
             className={(pageScrollBottom ? "overflow-y-scroll" : "overflow-y-hidden pr-3") + " flex-col w-full h-full absolute bg-slate-100"}>
             {/*  Detalles  */}
             {formik?.values.detalles.map((d, i) =>
-              <div className="bg-white flex w-full rounded-md shadow-md mb-2 " key={"det" + i}>
-                <div className="w-full flex flex-col px-6">
-                  {/* CARD HEADER */}
-                  <div className="flex relative font-semibold px-2 pt-4 text-teal-700 text-lg">
-                    <div
-                      onMouseEnter={() => setFichaHover(i)}
-                      onMouseLeave={() => setFichaHover(null)}
-                      className=" text-teal-700 text-lg">
-                      {d.fichaTecnica.nombre}
-                    </div>
-                    <button onClick={() => onErase(d.fichaTecnica?.idFichaTecnica)}
-                      type="button" className="rounded-md neutral-button total-center absolute top-3.5 right-2 w-8 h-8">
-                      <ICONS.Trash size="18px" />
-                    </button>
-                  </div>
-                  <div className="relative w-full h-full flex flex-col">
-                    <div className={(fichaHover === i ? "blurred" : "") + " w-full flex flex-col relative overflow-x-scroll duration-200"}>
-                      {/*  CATIDAD POR TALLA  */}
-                      <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-                        <div className="absolute w-full total-center -top-3">
-                          <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-                            Cantidades por talla
-                          </div>
-                        </div>
-                        <table className="w-full">
-                          <thead>
-                            <tr className="border-b-2" >
-                              <th className="p-2 font-normal text-teal-700 text-base whitespace-nowrap">Talla</th>
-                              <th className="p-2 font-normal text-teal-700 text-base whitespace-nowrap">Cantidad</th>
-                              <th className="p-2 font-normal text-teal-700 text-base whitespace-nowrap">C / Paquete</th>
-                              <th className="p-2 font-normal text-teal-700 text-base whitespace-nowrap">Descripción</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {d.cantidades.map((c, j) =>
-                              <tr className="border-b-2" key={"Can" + j}>
-                                <td className="text-center">
-                                  {c.talla}
-                                </td>
-                                {/*  Cantidad  */}
-                                <td >
-                                  <input
-                                    onChange={e => {
-                                      let v = e.target.value
-                                      let nC = formik.values.detalles
-                                      nC[i].cantidades[j].cantidad = v
-                                      formik.setFieldValue('detalles', nC)
-                                    }}
-                                    className={
-                                      (formik.errors[`detalles[${i}].cantidades[${j}].cantidad`] ? "border-rose-400 " : "focus:border-teal-500")
-                                      + " border w-full outline-none text-center duration-200"
-                                    }
-                                    type="number"
-                                    value={c.cantidad} />
-
-                                </td>
-
-                                {/*  Cantidad por paquete  */}
-                                <td >
-
-                                  <input
-                                    onChange={e => {
-                                      let v = e.target.value
-                                      let nC = formik.values.detalles
-                                      nC[i].cantidades[j].paquete = v
-                                      formik.setFieldValue('detalles', nC)
-                                    }}
-                                    className={
-                                      (formik.errors[`detalles[${i}].cantidades[${j}].paquete`] ? "border-rose-400 " : "focus:border-teal-500")
-                                      + " border w-full outline-none  text-center duration-200"
-                                    }
-                                    type="number"
-                                    value={c.paquete} />
-
-                                </td>
-                                <td>
-                                  {(!formik.errors[`detalles[${i}].cantidades[${j}].cantidad`] && !formik.errors[`detalles[${i}].cantidades[${j}].paquete`]) &&
-                                    <p className="text-teal-700 text-base whitespace-nowrap px-2">
-                                      {calculateDescription(c.cantidad, c.paquete)}
-                                    </p>
-                                  }
-                                </td>
-                              </tr>)
-                            }
-                          </tbody>
-                        </table>
+              <div className="w-full px-4">
+                <div className="bg-white flex w-full rounded-md shadow-md mb-6 " key={"det" + i}>
+                  <div className="w-full flex flex-col px-6">
+                    {/* CARD HEADER */}
+                    <div className="flex relative font-semibold px-2 pt-4 text-teal-700 text-lg">
+                      <div
+                        onMouseEnter={() => setFichaHover(i)}
+                        onMouseLeave={() => setFichaHover(null)}
+                        className=" text-teal-700 text-lg">
+                        {d.fichaTecnica.nombre}
                       </div>
-                      {/*  RUTA PRODUCCION  */}
-                      <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-                        <div className="absolute w-full total-center -top-3">
-                          <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-                            Ruta de Produccion
-                          </div>
-                        </div>
-                        {
-                          STATIONS.map((r, j) => <div className="flex py-1 w-36 border-b-2 justify-between" key={"r" + j}>
-                            <p className="px-2 text-teal-700">{r.name}</p>
-                            <div className="px-2 flex total-center">
-                              <input
-                                onChange={(e) => { formik.setFieldValue(`detalles.${i}.estaciones.${r.atr}`, e.target.checked) }}
-                                checked={d.estaciones[r.atr]}
-                                type="checkbox" />
-                            </div>
-                          </div>)
-                        }
-                      </div>
+                      <button onClick={() => onErase(d.fichaTecnica?.idFichaTecnica)}
+                        type="button" className="rounded-md neutral-button total-center absolute top-3.5 right-2 w-8 h-8">
+                        <ICONS.Trash size="18px" />
+                      </button>
                     </div>
+                    <div className="relative w-full h-full flex flex-col">
 
-                    {/* DETALLES DE LA FICHA MODAL */}
-                    <div className={(fichaHover === i ? "visible" : "") + " modal absolute top-4 grayTrans w-1/2 rounded-xl text-white "}>
-                      <div className="py-10 px-10 flex flex-col w-full items-center">
-                        <div className="h-24 w-24 mb-2 rounded-full foto bg-white">
-                          <img className="object-cover foto" src={d.fichaTecnica.fotografia} alt="" />
-                        </div>
-                        <div className="relative px-2 py-4 my-4 w-full">
-                          <div className="absolute w-full total-center -top-3">
-                            <div className=' px-3 font-bold text-white text-base italic' >
-                              Materiales
+                      <div className={(fichaHover === i ? "blurred" : "") + " w-full flex md:flex-row flex-col relative overflow-x-scroll duration-200"}>
+                        {/*  CATIDAD POR TALLA  */}
+                        <div className="flex md:w-2/3 w-full">
+                          <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300 w-full">
+                            <div className="absolute w-full total-center -top-3">
+                              <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                                Cantidades por talla
+                              </div>
                             </div>
-                          </div>
-                          <div className="w-full">
-                            <table className="w-full">
+                            <table className=" customTable w-full">
                               <thead>
-                                <tr className="border-b-2">
-                                  <th className="px-2">Color</th>
-                                  <th className="px-2">Proveedor</th>
-                                  <th className="px-2">Teñida</th>
-                                  <th className="px-2">Código</th>
+                                <tr >
+                                  <th>Talla</th>
+                                  <th>Cantidad</th>
+                                  <th>C / Paquete</th>
+                                  <th>Descripción</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                {d.fichaTecnica.materiales.map(m =>
-                                  <tr className="border-b-2 text-center">
-                                    <td className="flex w-full">
-                                      <div className="flex w-full justify-around items-center">
-                                        <p>
-                                          {m.color}
-                                        </p>
-                                        <div
-                                          style={{ backgroundColor: `${m.codigoColor}` }}
-                                          className="h-5 w-5 rounded-full">
-                                        </div>
-                                      </div>
+                                {d.cantidades.map((c, j) =>
+                                  <tr key={"Can" + j}>
+                                    <td className="text-center">
+                                      {c.talla}
                                     </td>
-                                    <td>{m.proveedor.nombre}</td>
-                                    <td>{m.tenida}</td>
-                                    <td>{m.codigoColor}</td>
+                                    {/*  Cantidad  */}
+                                    <td>
+                                      <input
+                                        onChange={e => {
+                                          let v = e.target.value
+                                          let nC = formik.values.detalles
+                                          nC[i].cantidades[j].cantidad = v
+                                          formik.setFieldValue('detalles', nC)
+                                        }}
+                                        className={
+                                          (formik.errors[`detalles[${i}].cantidades[${j}].cantidad`] ? "border-rose-400 " : "focus:border-teal-500")
+                                          + " border w-full outline-none text-center duration-200"
+                                        }
+                                        type="number"
+                                        value={c.cantidad} />
+
+                                    </td>
+
+                                    {/*  Cantidad por paquete  */}
+                                    <td >
+
+                                      <input
+                                        onChange={e => {
+                                          let v = e.target.value
+                                          let nC = formik.values.detalles
+                                          nC[i].cantidades[j].paquete = v
+                                          formik.setFieldValue('detalles', nC)
+                                        }}
+                                        className={
+                                          (formik.errors[`detalles[${i}].cantidades[${j}].paquete`] ? "border-rose-400 " : "focus:border-teal-500")
+                                          + " border w-full outline-none  text-center duration-200"
+                                        }
+                                        type="number"
+                                        value={c.paquete} />
+
+                                    </td>
+                                    <td>
+                                      {(!formik.errors[`detalles[${i}].cantidades[${j}].cantidad`] && !formik.errors[`detalles[${i}].cantidades[${j}].paquete`]) &&
+                                        <p>
+                                          {calculateDescription(c.cantidad, c.paquete)}
+                                        </p>
+                                      }
+                                    </td>
                                   </tr>)
                                 }
                               </tbody>
                             </table>
                           </div>
                         </div>
+                        {/*  RUTA PRODUCCION  */}
+                        <div className="flex md:w-1/3 w-full">
+                          <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300 w-full">
+                            <div className="absolute w-full total-center -top-3">
+                              <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                                Ruta de Produccion
+                              </div>
+                            </div>
+                            {
+                              STATIONS.map((r, j) => <div className="flex py-1 border-b-2 justify-between w-full" key={"r" + j}>
+                                <p className="px-2 text-teal-700">{r.name}</p>
+                                <div className="px-2 flex total-center">
+                                  <input
+                                    onChange={(e) => { formik.setFieldValue(`detalles.${i}.estaciones.${r.atr}`, e.target.checked) }}
+                                    checked={d.estaciones[r.atr]}
+                                    type="checkbox" />
+                                </div>
+                              </div>)
+                            }
+                          </div>
+                        </div>
                       </div>
+
+                      {/* DETALLES DE LA FICHA MODAL */}
+                      <div className={(fichaHover === i ? "visible" : "") + " modal absolute top-2  w-full z-10 "}>
+                        <div className=" w-full h-full rounded-xl text-white grayTrans top-0 shadow-md">
+
+                          {<div className="p-8 flex flex-row w-full total-center">
+                            <div className="h-24 w-24 mr-8 rounded-full foto bg-white z-10">
+                              <img className="object-cover foto" src={d.fichaTecnica.fotografia} alt="" />
+                            </div>
+                            <div className="relative px-2 py-4 my-4 flex-1">
+                              <div className="absolute w-full total-center -top-3">
+                                <div className=' px-3 font-bold text-white text-base italic' >
+                                  Materiales
+                                </div>
+                              </div>
+                              <div className="w-full">
+                                <table className="w-full">
+                                  <thead>
+                                    <tr className="border-b-2">
+                                      <th className="px-2">Color</th>
+                                      <th className="px-2">Proveedor</th>
+                                      <th className="px-2">Teñida</th>
+                                      <th className="px-2">Código</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {d.fichaTecnica.materiales.map(m =>
+                                      <tr className="border-b-2 text-center">
+                                        <td className="flex w-full">
+                                          <div className="flex w-full justify-around items-center">
+                                            <p>
+                                              {m.color}
+                                            </p>
+                                            <div
+                                              style={{ backgroundColor: `${m.codigoColor}` }}
+                                              className="h-5 w-5 rounded-full">
+                                            </div>
+                                          </div>
+                                        </td>
+                                        <td>{m.proveedor.nombre}</td>
+                                        <td>{m.tenida}</td>
+                                        <td>{m.codigoColor}</td>
+                                      </tr>)
+                                    }
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>}
+
+                        </div>
+                      </div>
+
                     </div>
                   </div>
                 </div>
