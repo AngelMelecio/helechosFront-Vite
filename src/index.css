@@ -134,12 +134,7 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-.customTable {
-  table-layout: auto;
-  /*box-shadow: 0px 0px 10px -1px rgba(0,0,0,0.75);*/
-  width: 100%;
-  border-collapse: collapse;
-}
+
 
 .inp-container {
   position: relative;
@@ -218,6 +213,13 @@ table td{
   white-space: nowrap;
 }
 
+.customTable {
+  table-layout: auto;
+  /*box-shadow: 0px 0px 10px -1px rgba(0,0,0,0.75);*/
+  width: 100%;
+  border-collapse: collapse;
+}
+
 .customTable td {
   white-space: nowrap;
   color: #374151;
@@ -229,6 +231,8 @@ table td{
   color: #0f766e;
   cursor: default;
   white-space: nowrap;
+  font-size: 0.875rem/* 14px */;
+  line-height: 1.25rem/* 20px */;
   border-block: 1px solid #e2e8f0;
 }
 
@@ -246,13 +250,13 @@ table td{
 
   color: #334155;
   font-size: medium;
-  cursor: pointer;
   transition: 0.4s;
   border-collapse: collapse;
   border-bottom: 1px solid #e2e8f0;
 }
 
-.customTable tbody tr:hover {
+.customTable.clic-row tbody tr:hover {
+  cursor: pointer;
   background-color: #f1f5f9;
   transition: 0.2s;
 }
@@ -317,7 +321,7 @@ table td{
 
 .grayTrans {
   background-color: #3838388e;
-  transition: 0.2s
+  /*transition: 0.2s*/
 }
 
 .display-none {
@@ -526,6 +530,11 @@ table td{
 .blurred {
   filter: blur(2.5px);
   transition: 0.2s;
+}
+.blur-behind{
+  backdrop-filter: blur(2.5px);
+  -webkit-backdrop-filter:blur(2.5px);
+  
 }
 
 .pdf-gray {

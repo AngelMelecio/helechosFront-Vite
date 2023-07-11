@@ -13,7 +13,7 @@ const Input = ({ label, type, name, value = "", onChange, Icon = null, onBlur, e
 
     return (
         <div className={'flex flex-col w-full mx-2 mt-2' + opacity}>
-            <p className={'font-medium ' + labelColor}>{label}</p>
+            <p className={'font-medium text-sm ' + labelColor}>{label}</p>
             <div className="total-center relative">
                 <input
                     onKeyDown={ onKeyDown}

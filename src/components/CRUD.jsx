@@ -239,7 +239,7 @@ const CRUD = ({
                 </div> :
                 <div className="w-full">
                   {
-                    <table className="customTable bg-white  w-full">
+                    <table className="customTable clic-row bg-white  w-full">
                       <thead className='text-center'>
                         <tr>
                           <th className="px-7 w-10">

@@ -83,6 +83,8 @@ const DetailPedido = () => {
   const { getFichas, postPedido, allPedidos, findPedido, allEtiquetas, getEtiquetas } = usePedidos()
   const [saving, setSaving] = useState(false)
 
+  const [selectedFichaIndx, setSelectedFichaIndx] = useState(0)
+
   const validate = values => {
     let errors = {}
     if (values.modelo === "") errors.modelo = "Seleccione un modelo"
@@ -152,7 +154,7 @@ const DetailPedido = () => {
     let p = id === '0' ? initPedido :
       formatPedido(await findPedido(id))
 
-    //console.log(p)
+    console.log(p)
     formik.setValues(p)
   }, [])
   useEffect(async () => {
@@ -252,14 +254,15 @@ const DetailPedido = () => {
                 {isEdit ? `Detalles del Pedido` : "Nuevo pedido"}
               </p>
             </div>
-
-            <input
-              disabled={saving}
-              className='bg-teal-500 p-1 w-40 text-white normal-button rounded-lg'
-              type="submit"
-              value={isEdit ? "Guardar" : "Agregar"}
-              form="frmPedido"
-            />
+            {id === '0' &&
+              <input
+                disabled={saving}
+                className='bg-teal-500 p-1 w-40 text-white normal-button rounded-lg'
+                type="submit"
+                value={isEdit ? "Guardar" : "Agregar"}
+                form="frmPedido"
+              />
+            }
           </div>
 
           {formik.values === null ? <Loader /> :
@@ -355,79 +358,133 @@ const DetailPedido = () => {
                       }
                     </div>
 
-                    <div className="flex flex-col relative h-full bg-white rounded-lg shadow-lg">
+                    <div className="flex flex-col relative h-full bg-white rounded-lg ">
                       {id === '0' ?
-                        <Slider
-                          list={availableFichas}
-                          unique='idFichaTecnica'
-                          onPass={(list) => { handlePass(list) }}
-                          columns={[
-                            { name: 'Nombre', atr: 'nombre' },
-                            { name: 'Talla', atr: 'talla' },
-                            { name: 'Fecha de Creación', atr: 'fechaCreacion' },
-                            { name: 'Ultima Edición', atr: 'fechaUltimaEdicion' },
-                          ]}
-                          right={<SelectedFichas pageScrollBottom={pageScrollBottom} formik={formik} onErase={handleErase} />}
-                        /> :
-                        <div className="flex w-full relative h-full">
-                          <div className="h-full w-60 bg-gray-50">
-                            <div className="flex flex-col w-full h-full overflow-hidden">
-                              <div className="flex w-full h-full relative overflow-y-scroll">
-                              
+                        <>
+                          <Slider
+                            list={availableFichas}
+                            unique='idFichaTecnica'
+                            onPass={(list) => { handlePass(list) }}
+                            columns={[
+                              { name: 'Nombre', atr: 'nombre' },
+                              { name: 'Talla', atr: 'talla' },
+                              { name: 'Fecha de Creación', atr: 'fechaCreacion' },
+                              { name: 'Ultima Edición', atr: 'fechaUltimaEdicion' },
+                            ]}
+                            right={<SelectedFichas pageScrollBottom={pageScrollBottom} formik={formik} onErase={handleErase} />}
+                          />
+                        </>
+                        :
+                        <>
+                          {/*  MONITOREO DE LA PRODUCCION */}
+                          <div className="flex w-full relative h-full">
+                            {/*  SIDE MENU  */}
+                            <div className="h-full w-60 bg-gray-50">
+                              <div className="flex flex-col w-full h-full overflow-hidden">
+                                <div className="p-3">
+                                  <p className="px-4 py-2 text-xl font-semibold text-teal-700">
+                                    Modelos
+                                  </p>
+                                </div>
+                                <div className="flex flex-col w-full h-full relative overflow-y-scroll">
+                                  <div className="flex flex-col w-full h-full px-3 pb-3">
+                                    {
+                                      formik?.values?.detalles.map((detalle, indx) =>
+                                        <button
+                                          type="button"
+                                          className={"rounded-sm my-1 flex w-full p-3 items-center relative cursor-pointer" + (indx === selectedFichaIndx ? " bg-white shadow-md text-teal-700" : " hover:bg-gray-200 text-gray-600 duration-200")}
+                                          onClick={() => setSelectedFichaIndx(indx)}>
+                                          <p className="font-medium">
+                                            {detalle.fichaTecnica.nombre}
+                                          </p>
+                                        </button>)
+                                    }
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex-1 relative h-full bg-white">
+                              <div className="absolute w-full h-full">
+                                {
+                                  <div className="flex flex-col w-full h-full ">
+                                    {/*  HEADER  */}
+                                    <div className="px-7 pt-4 pb-2 ">
+                                      <p className="font-bold text-teal-700 text-3xl ">
+                                        {formik?.values?.detalles[selectedFichaIndx]?.fichaTecnica.nombre}
+                                      </p>
+                                    </div>
+
+                                    <div className="flex flex-col w-full h-full overflow-y-scroll">
+                                      {formik?.values?.detalles[selectedFichaIndx]?.cantidades.map((cantidad, j) => {
+                                        //por cada cantidad renderizamos una grafica
+                                        //Especificamos las opciones de la grafica
+                                        let options = {
+                                          title: "Paquetes por estacion",
+                                          titleTextStyle: { fontSize: 15, bold:false, color: '#0f766e', },
+                                          colors: chroma.scale(['#2A4858', '#fafa6e']).mode('lch').colors(7),
+                                          pieHole: 0.4,
+                                          legend: { textStyle: { color: '#1f2937', fontSize: 17 } },
+                                          //tooltip: { isHtml: true },
+                                          tooltip: { backgroundColor: '#000', textStyle: { color: '#1f2937', fontSize: 17 } },
+                                          pieSliceTextStyle: { color: '#fff', fontSize: 14, textAlign: 'center' }
+                                        }
+                                        //Ajustamos el arreglo de datos para la grafica
+                                        let data = [["Departamentos", "Número de etiquetas"]]
+                                        cantidad.progreso.forEach(progreso => {
+                                          data.push(progreso);
+                                        });
+                                        //Renderizamos la grafica
+                                        return (
+                                          <div key={`PieChart-${j}`} className={`flex flex-1 px-6`}>
+                                            <div className="relative my-4 w-full  ">
+                                              <div className="px-1 w-full font-semibold text-teal-700 text-2xl">
+                                                Talla - {cantidad.talla}
+                                              </div>
+                                              <div className="w-full flex flex-row h-full">
+                                                <div style={{ width: '440px', height: '280px' }}>
+                                                  {<Chart
+                                                    chartType="PieChart"
+                                                    data={data}
+                                                    options={options}
+                                                    loader={<Loader />}
+                                                    width={"100%"}
+                                                    height={"100%"}
+                                                  />}
+                                                </div>
+                                                {/*  DATOS DEL DETALLE */}
+                                                <div className="w-1/2 flex flex-col h-full">
+                                                  <div className="w-full p-2">
+                                                    <div className="bg-gray-50 flex flex-col justify-between  py-2 px-4 rounded-lg">
+                                                      <p className="text-gray-700 text-3xl font-semibold">{Math.floor(cantidad.cantidad / cantidad.paquete) + (cantidad.cantidad % cantidad.paquete ? 1 : 0)}</p>
+                                                      <p className=" text-base font-semibold text-teal-700 whitespace-nowrap">Paquetes</p>
+                                                    </div>
+                                                  </div>
+                                                  <div className="w-full p-2">
+                                                    <div className="bg-gray-50 flex flex-col justify-between  py-2 px-4 rounded-lg">
+                                                      <p className="text-gray-700 text-3xl font-semibold">{cantidad.paquete}</p>
+                                                      <p className=" text-base font-semibold text-teal-700 whitespace-nowrap">Pares por paquete</p>
+                                                    </div>
+                                                  </div>
+                                                  <div className="w-full p-2">
+                                                    <div className="bg-gray-50 flex flex-col justify-between  py-2 px-4 rounded-lg">
+                                                      <p className="text-gray-700 text-3xl font-semibold">{cantidad.cantidad}</p>
+                                                      <p className=" text-base font-semibold text-teal-700 whitespace-nowrap">Pares en total</p>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+                                }
                               </div>
                             </div>
                           </div>
-                          <div className="flex-1 relative flex-col h-full overflow-y-scroll bg-slate-100">
-                            <div className="absolute w-full h-full">
-
-                              {
-
-                                formik?.values?.detalles.map((detalle, i) => {
-                                  return (
-                                    <div key={`detalle-${i}`} className="flex flex-row w-full h-1/2 p-4 pb-2">
-                                      <div className="flex flex-col w-full h-full bg-white rounded-md shadow-md">
-                                        <div >
-                                          <p className="font-semibold text-teal-700 text-lg ml-1">
-                                            {detalle.fichaTecnica.nombre}
-                                          </p>
-                                        </div>
-                                        <div className="flex flex-row w-full h-full ">
-                                          {detalle.cantidades.map((cantidad, j) => {//por cada cantidad renderizamos una grafica
-                                            //Especificamos las opciones de la grafica
-                                            let options = {
-                                              title: "Distribución de\n produccion - Talla \n " + cantidad.talla,
-                                              colors: chroma.scale(['#2A4858', '#fafa6e']).mode('lch').colors(7),
-                                              pieHole: 0.4
-                                            }
-                                            //Ajustamos el arreglo de datos para la grafica
-                                            let data = [["Departamentos", "Número de etiquetas"]]
-                                            cantidad.progreso.forEach(progreso => {
-                                              data.push(progreso);
-                                            });
-                                            //Renderizamos la grafica
-                                            return (
-                                              <div key={`PieChart-${j}`} className="flex lg:w-1/3 md:w-1/2 sm:w-1 h-full bg-white">
-                                                <Chart
-                                                  chartType="PieChart"
-                                                  data={data}
-                                                  options={options}
-                                                  loader={<Loader />}
-                                                  width={"100%"}
-                                                  height={"100%"}
-                                                />
-                                              </div>
-                                            );
-                                          })}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  );
-                                })
-
-                              }
-                            </div>
-                          </div>
-                        </div>
+                        </>
                       }
                     </div>
                   </div>
