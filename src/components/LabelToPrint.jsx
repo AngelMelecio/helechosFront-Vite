@@ -4,6 +4,7 @@ import { Document, Image, PDFViewer, Page, Text, View, Font } from "@react-pdf/r
 import QRCode from 'qrcode';
 import { useState, useEffect } from 'react';
 import { ICONS } from "../constants/icons";
+import Loader from "./Loader/Loader";
 
 
 const LabelToPrint = ({ list, onCloseModal }) => {
@@ -15,7 +16,7 @@ const LabelToPrint = ({ list, onCloseModal }) => {
     });
 
     const [qrUrls, setQrUrls] = useState([]);
-
+   {
     useEffect(() => {
         const generateQrUrls = async () => {
             const urls = await Promise.all(list.map((obj) => GenerateQrUrl(obj)));
@@ -23,6 +24,7 @@ const LabelToPrint = ({ list, onCloseModal }) => {
         };
         generateQrUrls();
     }, [list]);
+    }
 
     const GenerateQrUrl = async (data) => {
         const jsonString = JSON.stringify(data);
@@ -53,10 +55,12 @@ const LabelToPrint = ({ list, onCloseModal }) => {
 
                         <div id="modal-body" className="flex w-full h-full ">
                             <div className='flex w-full h-full absolute bg-transparent flex-col justify-center'>
-                                    <div className='font-extralight text-white text-3xl flex flex-row justify-center'>
-                                        Generando etiquetas...
-                                    </div>
-                                    
+                                <div className='font-extralight text-white text-3xl flex flex-row justify-center'>
+                                    Generando etiquetas...
+                                </div>
+                                <div className='flex flex-row justify-center'>
+                                    <Loader color={"white"} />
+                                </div>
                             </div>
                             <PDFViewer className="w-full z-10 h-full">
                                 <Document>
@@ -122,10 +126,11 @@ const LabelToPrint = ({ list, onCloseModal }) => {
                                                                 flexDirection: 'column',
                                                             }}>
                                                                 {
-                                                                    qrUrls[i] &&
+                                                                    qrUrls.length > 0 &&
                                                                     <View style={{}}>
                                                                         <Image
                                                                             src={qrUrls[i]}
+                                                                            //src={GenerateQrUrl(obj)}
                                                                         />
                                                                     </View>
                                                                 }

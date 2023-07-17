@@ -96,22 +96,24 @@ const Slider = ({
                 {/*  TABLE  */}
                 <div className="w-full h-full relative overflow-scroll bg-white shadow-md">
                   {data.length > 0 && <table className="absolute w-full bg-white customTable">
-                    <thead><tr className="h-8 shadow-sm">
-                      <th className="px-2 sticky top-0 z-10 bg-white">
-                        <input onChange={handleCheckAll} checked={someSelected} type="checkbox" /></th>
+                    <thead>
+                      <tr className="h-8 shadow-sm">
+                        <th className="px-2 sticky top-0 z-10 bg-white">
+                          <input onChange={handleCheckAll} checked={someSelected} type="checkbox" /></th>
 
-                      {columns.map((column, index) => (
-                        <th className="hover-modal text-teal-700 pl-2 pr-8 whitespace-nowrap sticky top-0 z-10 bg-white" key={index}>
-                          {column.name}
-                          <div className="absolute p-1 right-0 w-8 h-8 top-0">
-                            <button type="button" onClick={() => { setFilter(prev => ({ atr: column.atr, ord: (prev.atr === column.atr ? (prev.ord + 1) % 3 : 1) })) }}
-                              className={((filter.atr === column.atr && filter.ord !== 0) ? "" : "elmt ") + "h-full w-full flex items-center justify-center"} >
-                              {filter.atr === column.atr ? (filter.ord === 1 ? <ICONS.Down /> : (filter.ord === 2 ? <ICONS.Up /> : <ICONS.Filter />)) : <ICONS.Filter />}
-                            </button>
-                          </div>
-                        </th>
-                      ))}
-                    </tr></thead>
+                        {columns.map((column, index) => (
+                          <th className="hover-modal text-teal-700 pl-2 pr-8 whitespace-nowrap sticky top-0 z-10 bg-white" key={index}>
+                            {column.name}
+                            <div className="absolute p-1 right-0 w-8 h-8 top-0">
+                              <button type="button" onClick={() => { setFilter(prev => ({ atr: column.atr, ord: (prev.atr === column.atr ? (prev.ord + 1) % 3 : 1) })) }}
+                                className={((filter.atr === column.atr && filter.ord !== 0) ? "" : "elmt ") + "h-full w-full flex items-center justify-center"} >
+                                {filter.atr === column.atr ? (filter.ord === 1 ? <ICONS.Down /> : (filter.ord === 2 ? <ICONS.Up /> : <ICONS.Filter />)) : <ICONS.Filter />}
+                              </button>
+                            </div>
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
                     <tbody>
                       {data.filter(d => Object.keys(d).some(k => d[k]?.toString().toLowerCase().includes(search.toLowerCase())))
                         .sort((a, b) => {
