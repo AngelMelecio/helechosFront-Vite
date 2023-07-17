@@ -80,9 +80,10 @@ const DetailPedido = () => {
 
   const [allFichas, setAllFichas] = useState([])
   const [availableFichas, setAvailableFichas] = useState([])
-  const { getFichas, postPedido, allPedidos, findPedido, allEtiquetas, getEtiquetas } = usePedidos()
+  const { getFichas, postPedido, allPedidos, findPedido, allEtiquetas, getEtiquetas, setAllEtiquetas} = usePedidos()
   const [saving, setSaving] = useState(false)
 
+    
   const [selectedFichaIndx, setSelectedFichaIndx] = useState(0)
 
   const validate = values => {
@@ -143,6 +144,9 @@ const DetailPedido = () => {
       // */
     },
   });
+  useEffect(() => {
+    return () => {setAllEtiquetas([]); console.log('unmounting...')}
+  }, [])
 
   useEffect(() => {
     setOptionsCliente(allClientes.map(cliente => ({ value: cliente.idCliente, label: cliente.nombre })))
@@ -343,8 +347,8 @@ const DetailPedido = () => {
                         isEdit &&
                         <div className='flex'>
                           {
-                            allEtiquetas.length > 0 &&
                             <button
+                              disabled={allEtiquetas.length===0}
                               onClick={(e) => {
                                 e.preventDefault();
                                 handleOpenModal(setModalVisible)
@@ -421,7 +425,7 @@ const DetailPedido = () => {
                                         //Especificamos las opciones de la grafica
                                         let options = {
                                           title: "Paquetes por estacion",
-                                          titleTextStyle: { fontSize: 15, bold:false, color: '#0f766e', },
+                                          titleTextStyle: { fontSize: 15, bold: false, color: '#0f766e', },
                                           colors: chroma.scale(['#2A4858', '#fafa6e']).mode('lch').colors(7),
                                           pieHole: 0.4,
                                           legend: { textStyle: { color: '#1f2937', fontSize: 17 } },
@@ -497,9 +501,17 @@ const DetailPedido = () => {
       <div className='modal absolute z-50 h-full w-full' ref={modalRef}>
         {modalVisible &&
           <EtiquetasModal
-            listaEtiquetas={allEtiquetas}
-            onClose={() => { handleCloseModal(setModalVisible); }}
             title="Selección de etiquetas"
+            list={allEtiquetas}
+            unique='idProduccion'
+            columns={[
+              { name: 'ID', atr: 'idProduccion' },
+              { name: 'Talla', atr: 'talla' },
+              { name: 'Cantidad', atr: 'cantidad' },
+              { name: 'Número etiqueta', atr: 'numEtiqueta' },
+              { name: 'Estado', atr: 'estado' },
+            ]}
+            onClose={() => { handleCloseModal(setModalVisible); }}
           />
         }
       </div>

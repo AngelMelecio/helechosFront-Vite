@@ -1,47 +1,95 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ICONS } from "../constants/icons";
 import LabelToPrint from './LabelToPrint';
+import Input from './Input';
 import CustomSelect from './CustomSelect';
+import { usePedidos } from "../pages/Pedidos/hooks/usePedidos";
+import { get } from 'lodash';
 
-const Th = ({ children }) => <th className="sticky top-0 z-10 bg-slate-100">{children}</th>
+const EtiquetasModal = ({ columns, list, unique, onClose, title }) => {
 
+    const {putProduccion} = usePedidos();
 
-const EtiquetasModal = ({ listaEtiquetas, onClose, title }) => {
     const [selectedItems, setSelectedItems] = useState([]);
-    const [search, setSearch] = useState("");
-    const [selecting, setSelecting] = useState(false);
+
     const [showLabelToPrint, setShowLabelToPrint] = useState(false);
     const optionsLabel = [
-        { value: 'Impresa', label: 'Impresa' },
-        { value: 'No impresa', label: 'No impresa' },
+        { value: 'Impresa', label: 'Impresas' },
+        { value: 'No impresa', label: 'No impresas' },
         { value: 'Todas', label: 'Todas' },
     ]
 
-    useEffect(() => {
-        (selectedItems.length > 0) ? setSelecting(true) : setSelecting(false);
-    }, [selectedItems]);
+    const [listToPrint, setListToPrint] = useState([]);
 
-    useEffect(() => {
-        // Cuando el componente recibe una nueva lista de etiquetas, actualiza los elementos seleccionados
-        setSelectedItems(listaEtiquetas.filter(etiqueta => etiqueta.isSelected));
-    }, [listaEtiquetas]);
-
-    const handleSelect = (item) => {
-        if (selectedItems.some(i => i.idProduccion === item.idProduccion)) {
-            setSelectedItems(selectedItems.filter(i => i.idProduccion !== item.idProduccion));
-        } else {
-            setSelectedItems([...selectedItems, item]);
-        }
+    async function getListToPrint() {
+        const listToPrint = list.filter(item => selectedItems.includes(item.idProduccion));
+        listToPrint.forEach(element => {
+            delete element.isSelected;
+            delete element.estado;
+            element.estado='Impresa';
+        });
+        setListToPrint(listToPrint);
     }
 
-    const handleSelectAll = () => {
-        const filteredItems = listaEtiquetas.filter(item => item.modelo.toLowerCase().includes(search.toLowerCase()) || item.color.toLowerCase().includes(search.toLowerCase()));
-        if (selectedItems.length === filteredItems.length) {
-            setSelectedItems([]);
-        } else {
-            setSelectedItems(filteredItems);
-        }
+    async function getListToUpdete() {
+        const listToUpdete = []
+        selectedItems.forEach(id => {
+            listToUpdete.push({idProduccion: id});
+        });
+        return listToUpdete;
     }
+
+    const [selectedOption, setSelectedOption] = useState('Todas');
+    const [cantidadLabels, setCantidadLabels] = useState(list?.length);
+
+    /***   Table Controls  ***/
+    const [data, setData] = useState([])
+
+    useEffect(() => {
+        let updatedData = [...list];
+        data.map(item => {
+            const index = updatedData.findIndex(i => i.idProduccion === item.idProduccion);
+            if (index !== -1) {
+                updatedData[index] = item;
+                list[index] = item;
+            }
+        });
+        
+        if (selectedOption !== 'Todas') {
+            updatedData = updatedData.filter(item => item.estado === selectedOption);
+        }
+
+        if (cantidadLabels <=updatedData.length) {
+            updatedData = updatedData.slice(0, cantidadLabels);
+        }
+
+        setData(updatedData);
+    }, [list, selectedOption, cantidadLabels]);
+
+
+    useEffect(() => setData(list), [list])
+
+    const searchRef = useRef(null)
+    const [search, setSearch] = useState("")
+    const [filter, setFilter] = useState({ atr: unique, ord: 1 })
+
+    const unSelectAll = () => { setData(data.map(d => ({ ...d, isSelected: false }))); setSelectedItems([]) }
+
+    const handleCheck = (id) => {
+        let i = data.findIndex(e => e[unique] === id)
+        let c = [...data]
+        c[i].isSelected = !c[i].isSelected
+        setData(c)
+        setSelectedItems(prev => prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id])
+
+    }
+    const handleCheckAll = (e) => {
+        let v = e.target.checked
+        setData(prev => prev.map(e => ({ ...e, isSelected: v })))
+        setSelectedItems(v ? data.map(e => e[unique]) : [])
+    }
+
+    let someSelected = data.some(d => d.isSelected)
 
     return (
         <div className='z-10 total-center h-screen w-full grayTrans absolute'>
@@ -53,114 +101,110 @@ const EtiquetasModal = ({ listaEtiquetas, onClose, title }) => {
                     >
                         <ICONS.Cancel className='m-0' size='25px' />
                     </button>
-                    <div className="font-semibold text-2xl text-teal-700 ">
+                    <div className="font-semibold text-3xl text-teal-700 ">
                         {title}
                     </div>
                     <div className='flex justify-end'>
                         <input
                             type='button'
-                            disabled={!selecting}
                             className='bg-teal-500 p-1 w-28 text-white normal-button rounded-lg text-center'
                             value="Imprimir"
-                            onClick={(e) => {
+                            disabled={selectedItems.length === 0}
+                            onClick={async (e) => {
                                 e.preventDefault();
+                                await getListToPrint();
                                 setShowLabelToPrint(true);
+                                putProduccion(await getListToUpdete());
                             }}
                         />
                     </div>
 
                 </div>
-                <div className="flex flex-row my-3 justify-between">
+                <div className="flex flex-row my-3">
 
-                    <input
-                        type="text"
-                        placeholder="Buscar..."
-                        className="border rounded w-full outline-none"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
-                   
+                    <div className='flex w-2/4'>
+                        <CustomSelect
+                            className='input z-50'
+                            onChange={option =>{ setSelectedOption(option.value); option.value === 'Todas' && setCantidadLabels(list.length)}}
+                            value={selectedOption}
+                            options={optionsLabel}
+                            label='Mostrando:'
+                            withoutMargin={true}
+                        />
+
+                    </div>
+                    <div className='flex w-1/4'>
+                        <Input
+                            label='Cantidad:'
+                            type={'number'}
+                            value={data.length > cantidadLabels ? cantidadLabels : data.length}
+                            onChange={(e) => setCantidadLabels(e.target.value)}
+                            max={data.length}
+                        />
+                    </div>
 
                 </div>
-
-                <div className='max-h-95 overflow-y-scroll'>
-                    <table className="w-full">
+                <div className="flex flex-row my-3 ">
+                    <div className="flex-grow flex items-center h-full bg-gray-100 shadow-sm rounded-full border-2">
+                        <input
+                            ref={searchRef}
+                            value={search}
+                            onChange={e => { setSearch(e.target.value); unSelectAll() }}
+                            className="w-full h-full pl-2 pr-10 py-1 outline-none bg-transparent rounded-lg" type="text" />
+                        <button
+                            type="button"
+                            onClick={() => search.length > 0 ? setSearch("") : searchRef?.current?.focus()}
+                            className="total-center h-6 w-6 neutral-button right-2 rounded-full">
+                            {search.length > 0 ? <ICONS.Cancel /> : <ICONS.Lupa />}
+                        </button>
+                    </div>
+                </div>
+                <div className='max-h-95 overflow-y-scroll '>
+                    {data.length > 0 && <table className="w-full bg-white customTable">
                         <thead>
-                            <tr className="font-medium text-teal-700">
-                                <Th>
-                                    <input
-                                        type="checkbox"
-                                        onChange={handleSelectAll}
-                                        checked={selectedItems.length === listaEtiquetas.length}
-                                    />
-                                </Th>
-                                <Th>ID</Th>
-                                <Th>Talla</Th>
-                                <Th>Cantidad</Th>
-                                <Th>Número Etiqueta</Th>
-                                <Th>Estado</Th>
+                            <tr className="h-8 shadow-sm">
+                                <th className="px-2 sticky top-0 z-10 bg-white">
+                                    <input onChange={handleCheckAll} checked={someSelected} type="checkbox" /></th>
+
+                                {columns.map((column, index) => (
+                                    <th className="hover-modal text-teal-700 pl-2 pr-8 whitespace-nowrap sticky top-0 z-10 bg-white" key={index}>
+                                        {column.name}
+                                        <div className="absolute p-1 right-0 w-8 h-8 top-0">
+                                            <button type="button" onClick={() => { setFilter(prev => ({ atr: column.atr, ord: (prev.atr === column.atr ? (prev.ord + 1) % 3 : 1) })) }}
+                                                className={((filter.atr === column.atr && filter.ord !== 0) ? "" : "elmt ") + "h-full w-full flex items-center justify-center"} >
+                                                {filter.atr === column.atr ? (filter.ord === 1 ? <ICONS.Down /> : (filter.ord === 2 ? <ICONS.Up /> : <ICONS.Filter />)) : <ICONS.Filter />}
+                                            </button>
+                                        </div>
+                                    </th>
+                                ))}
                             </tr>
                         </thead>
                         <tbody>
-                            {listaEtiquetas.filter(item =>
-                                item.idProduccion.toString().toLowerCase().includes(search.toLowerCase()) ||
-                                item.talla.toString().toLowerCase().includes(search.toLowerCase()) ||
-                                item.numEtiqueta.toLowerCase().includes(search.toLowerCase()))
-                                .map((item, index) => (
-
-
-                                    <tr key={'F' + index} className="array-row border-y-2 relative hover:bg-slate-200 duration-200">
-                                        <td>
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedItems.some(i => i.idProduccion === item.idProduccion)}
-                                                onChange={() => handleSelect(item)}
-                                            />
+                            {data.filter(d => Object.keys(d).some(k => d[k]?.toString().toLowerCase().includes(search.toLowerCase())))
+                                .sort((a, b) => {
+                                    if (filter.ord === 1) return a[filter.atr] > b[filter.atr] ? 1 : -1
+                                    if (filter.ord === 2) return a[filter.atr] < b[filter.atr] ? 1 : -1
+                                })
+                                .map((row, i) => (
+                                    <tr
+                                        onClick={() => handleCheck(row[unique])}
+                                        className="cursor-pointer h-8 duration-200 hover:bg-gray-100"
+                                        key={"R" + i}>
+                                        <td className="px-2 sticky">
+                                            <input readOnly checked={row?.isSelected | false} className="pointer-events-none" type="checkbox" />
                                         </td>
-                                        <td>
-                                            <input
-                                                readOnly
-                                                className="flex w-full p-1 outline-none bg-transparent text-center"
-                                                value={item.idProduccion}
-                                                type="text" />
-                                        </td>
-                                        <td>
-                                            <input
-                                                readOnly
-                                                className="flex w-full p-1 outline-none bg-transparent text-center"
-                                                value={item.talla}
-                                                type="text" />
-                                        </td>
-                                        <td>
-                                            <input
-                                                readOnly
-                                                className="flex w-full p-1 outline-none bg-transparent text-center"
-                                                value={item.cantidad}
-                                                type="text" />
-                                        </td>
-                                        <td>
-                                            <input
-                                                readOnly
-                                                className="flex w-full p-1 outline-none bg-transparent text-center"
-                                                value={item.numEtiqueta}
-                                                type="text" />
-                                        </td>
-                                        <td>
-                                            <input
-                                                readOnly
-                                                className="flex w-full p-1 outline-none bg-transparent text-center"
-                                                value="Impresa"
-                                                type="text" />
-                                        </td>
+                                        {columns.map((column, j) => (
+                                            <td className="px-2 whitespace-nowrap" key={j}>{row[column.atr]}</td>
+                                        ))}
                                     </tr>
                                 ))}
                         </tbody>
-                    </table>
+                    </table>}
                 </div>
 
 
             </div>
-            {showLabelToPrint && <LabelToPrint list={selectedItems} onCloseModal={setShowLabelToPrint} />}
+            {showLabelToPrint && <LabelToPrint list={listToPrint} onCloseModal={setShowLabelToPrint} />}
         </div>
 
     )

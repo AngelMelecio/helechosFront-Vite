@@ -2,8 +2,8 @@
 const Input = ({ label, type, name, value = "", onChange, Icon = null, onBlur, errores, onKeyDown, ...props }) => {
 
     let p = Icon !== null ? ' pl-9' : ''
-    let cn_good = "flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500 text-gray-700" + p;
-    let cn_bad = "flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-rose-500 border-rose-500 text-gray-700" + p;
+    let cn_good = "flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500 text-gray-700 h-10" + p;
+    let cn_bad = "flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-rose-500 border-rose-500 text-gray-700 h-10" + p;
 
 
     let dis = props.disabled

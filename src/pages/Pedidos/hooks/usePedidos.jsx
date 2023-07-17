@@ -11,6 +11,7 @@ const API_PEDIDO_URL = "api/pedido/"
 const API_FICHAS_MATERIALES = "/api/fichas_tecnicas_materiales/"
 const API_FICHAS_BY_MODELO = "/api/fichas_by_modelo/"
 const API_GET_ETIQUETAS = "/api/produccionByPedido/"
+const API_IMPRESION_ETIQUETAS = "/api/produccionPrint/"
 
 const PedidosContext = React.createContext('PedidosContext')
 
@@ -28,7 +29,7 @@ function formatPedidos(pedidos) {
     return formatData
 }
 
-function formatFichas(fichas){
+function formatFichas(fichas) {
     let formatedFichas = fichas.map((ficha) => ({
         ...ficha,
         fechaCreacion: new Date(ficha.fechaCreacion).toLocaleString(),
@@ -37,7 +38,7 @@ function formatFichas(fichas){
     }))
     return formatedFichas
 }
-function formatEtiquetas(etiquetas){
+function formatEtiquetas(etiquetas) {
     let formatedEtiquetas = etiquetas.map((etiqueta) => ({
         ...etiqueta,
         isSelected: false
@@ -86,13 +87,13 @@ export function PedidosProvider({ children }) {
         let options = {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + session.access }
-        }   
-        try{
+        }
+        try {
             const etiquetas = await fetchAPI(API_GET_ETIQUETAS + idPedido, options)
             setAllEtiquetas(formatEtiquetas(etiquetas))
-        }catch (e) {
+        } catch (e) {
             setErrors(e)
-        } 
+        }
     }
 
     async function refreshPedidos() {
@@ -107,24 +108,36 @@ export function PedidosProvider({ children }) {
         }
     }
 
-    async function postPedido(pedido)
-    {
+    async function postPedido(pedido) {
         let options = {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + session.access },
+                'Authorization': 'Bearer ' + session.access
+            },
             body: JSON.stringify(pedido)
         }
-      
+
         setLoading(true)
         const response = await fetchAPI(API_PEDIDOS_URL, options)
         return response
-        
+    }
+    async function putProduccion(listIds) {
+        let options = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + session.access
+            },
+            body: JSON.stringify(listIds)
+        }
+
+        setLoading(true)
+        const response = await fetchAPI(API_IMPRESION_ETIQUETAS, options)
+        return response
     }
 
-    async function getFichas(idModelo)
-    {
+    async function getFichas(idModelo) {
         let options = {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + session.access }
@@ -145,7 +158,9 @@ export function PedidosProvider({ children }) {
                 getFichas,
                 postPedido,
                 findPedido,
-                getEtiquetas
+                getEtiquetas,
+                putProduccion,
+                setAllEtiquetas
             }}
         >
             {children}
