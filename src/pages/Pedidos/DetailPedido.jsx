@@ -330,7 +330,7 @@ const DetailPedido = () => {
                       </div>
                     </div>
                   </div>
-                  {/*  SECCION DETALLES DEL PEDIDO */}
+                  {/*  MONITOREO DE LA PRODUCCION */}
                   <div className="screen flex flex-col">
                     {/*  HEADER */}
                     <div className="flex pt-8 pb-4 justify-between ">
@@ -403,7 +403,7 @@ const DetailPedido = () => {
                                 </div>
                               </div>
                             </div>
-
+                            {/*  DETALLES DEL PEDIDO  */}
                             <div className="flex-1 relative h-full bg-white">
                               <div className="absolute w-full h-full">
                                 {
@@ -414,7 +414,7 @@ const DetailPedido = () => {
                                         {formik?.values?.detalles[selectedFichaIndx]?.fichaTecnica.nombre}
                                       </p>
                                     </div>
-
+                                    {/*  CHARTS  */}
                                     <div className="flex flex-col w-full h-full overflow-y-scroll">
                                       {formik?.values?.detalles[selectedFichaIndx]?.cantidades.map((cantidad, j) => {
                                         //por cada cantidad renderizamos una grafica

@@ -188,7 +188,8 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
               </div>
             </div>
             <div id="modal-body" className="flex w-full h-full ">
-              <PDFViewer className="w-full z-10 h-full">
+              <PDFViewer 
+                className="w-full z-10 h-full">
                 <Document>
                   {
                     formatData?.map((fich, i) =>
