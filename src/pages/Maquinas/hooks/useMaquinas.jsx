@@ -6,6 +6,7 @@ import { useContext } from "react";
 const MaquinasContext = React.createContext('MaquinasContext')
 
 const API_MAQUINAS_URL = "api/maquinas/"
+const API_MAQUINAS_EMPLEADO_URL = "api/maquinas/empleado/"
 
 export function useMaquinas() {
   return useContext(MaquinasContext)
@@ -66,6 +67,25 @@ export function MaquinasProvider({ children }) {
     }
     let maquinas = await fetchAPI(API_MAQUINAS_URL, options)
     return formatMaquinas(maquinas)
+  }
+
+  async function getMaquinasEmpleado({idEmpleado}){
+    let options = {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + session.access
+      }
+    }
+    try{
+      setLoading(true)
+      let maquinas = await fetchAPI(API_MAQUINAS_EMPLEADO_URL + idEmpleado, options)
+      return (maquinas)
+    }catch(e){
+      console.log('error al obtener las maquinas del empleado: ', e)
+    }finally{
+      setLoading(false)
+    }
   }
 
   const postMaquina = async (values, method) => {
@@ -138,7 +158,8 @@ export function MaquinasProvider({ children }) {
         saveMaquina,
         deleteMaquinas,
         findMaquina,
-        setLoading
+        setLoading,
+        //getMaquinasEmpleado
       }}
     >
       {children}

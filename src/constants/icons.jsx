@@ -31,7 +31,7 @@ import {
     BsPeopleFill as Worker,
     BsFilter as Filter,
     BsFillCheckCircleFill as Active,
-
+    BsCheckLg as Check,
 } from 'react-icons/bs'
 
 import {
@@ -135,5 +135,6 @@ export const ICONS = {
     Done,
     Copy,
     Thread,
-    Qr
+    Qr,
+    Check
 }
