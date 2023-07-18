@@ -16,6 +16,7 @@ import { UsuariosProvider } from './pages/Usuarios/hooks/useUsuarios';
 import { FichaMaterialesProvider } from './pages/Modelos/hooks/useFichaMateriales'
 import { DetailModelosProvider } from './pages/Modelos/hooks/useDetailModelos'
 import { PedidosProvider } from './pages/Pedidos/hooks/usePedidos'
+import {ProduccionProvider} from './pages/Produccion/hooks/useProduccion'
 
 ReactDOM.render(
   <React.StrictMode>
@@ -33,7 +34,10 @@ ReactDOM.render(
                           <MaterialesProvider>
                             <ClientesProvider>
                               <PedidosProvider>
-                                <Main />
+                                <ProduccionProvider>
+
+                                  <Main />
+                                </ProduccionProvider>
                               </PedidosProvider>
                             </ClientesProvider>
                           </MaterialesProvider>

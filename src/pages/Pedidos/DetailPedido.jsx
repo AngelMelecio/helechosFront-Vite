@@ -28,8 +28,7 @@ const initPedido = {
 }
 
 const defaultRoute = {
-  "creada": "impresa",
-  "impresa": "tejido",
+  "creada": "tejido",
   "tejido": "plancha",
   "plancha": "corte",
   "corte": "calidad",
@@ -39,8 +38,7 @@ const defaultRoute = {
 }
 
 const initRoute = {
-  "creada": "impresa",
-  "impresa": null,
+  "creada": "tjeido",
   "tejido": null,
   "plancha": null,
   "corte": null,
@@ -118,7 +116,7 @@ const DetailPedido = () => {
 
           // Crear la ruta a partir de las estaciones
           let rutaProduccion = { ...initRoute }
-          let posRuta = "impresa", posDef = "impresa"
+          let posRuta = "creada", posDef = "creada"
           while (posDef !== "empacado") {
             posDef = defaultRoute[posDef]
             if (detalle.estaciones[posDef]) {

@@ -6,10 +6,12 @@ import CustomSelect from "../../components/CustomSelect"
 import { useRef } from "react"
 import { QrReader } from "react-qr-reader"
 import { sleep } from "../../constants/functions"
+import { useProduccion } from './hooks/useProduccion'
+import ResponseModal from "./components/ResponseModal"
 
 const optsTurno = [
-  { value: 1, label: 'Mañana' },
-  { value: 2, label: 'Tarde' },
+  { value: 'Mañana', label: 'Mañana' },
+  { value: 'Tarde', label: 'Tarde' },
 ]
 
 const optionsDepartamento = [
@@ -29,6 +31,8 @@ const etiquetaColumns = [{ label: 'Modelo', atr: 'modelo' },
 ]
 
 const PaginaProduccion = () => {
+
+  const { postProduccion, loading } = useProduccion()
 
   const modalContainerRef = useRef()
   const [scannModalVisible, setScannModalVisible] = useState(false)
@@ -51,6 +55,10 @@ const PaginaProduccion = () => {
   // Lista de Etiquetas Escaneadas
   const [etiquetasList, setEtiquetasList] = useState([])
 
+  // Response
+  const [response, setResponse] = useState(null)
+  const [responseModalVisible, setResponseModalVisible] = useState(false)
+
   useEffect(() => {
     refreshEmpleados()
     refreshMaquinas()
@@ -65,6 +73,7 @@ const PaginaProduccion = () => {
   }, [departamento])
 
   useEffect(async () => {
+    if(!empleado) return
     let maquinas = await getEmpleadoMaquinas(empleado.idEmpleado)
     let mqnasIds = maquinas.map(m => m.idMaquina)
     setOptsMaquinas(
@@ -78,8 +87,8 @@ const PaginaProduccion = () => {
     let p2 = new Date().setHours(14, 30, 0)
 
     setTurno(
-      ( Date.now() >= p1 &&
-        Date.now() < p2 ) ? 1 : 2)
+      (Date.now() >= p1 &&
+        Date.now() < p2) ? 'Mañana' : 'Tarde')
 
   }, [empleado])
 
@@ -99,6 +108,33 @@ const PaginaProduccion = () => {
       setEtiqueta(JSON.parse(result.text))
       handleCloseModal(setScannModalVisible)
     }
+  }
+
+  const handleCapturar = async () => {
+    setEtiquetasList([])
+    setEmpleado(null)
+
+    let {
+      empleado: empleadoResponse,
+      fecha,
+      registros,
+      departamento
+    } = await postProduccion(etiquetasList.map(etq => ({
+      "empleado": empleado.idEmpleado,
+      "maquina": maquina,
+      "produccion": etq.idProduccion,
+      "turno": turno,
+      "departamento": empleado.departamento
+    })))
+
+    setResponse({
+      empleado: empleadoResponse,
+      fecha: new Date(fecha).toLocaleString(),
+      registros,
+      departamento
+    })
+
+    handleOpenModal(setResponseModalVisible)
   }
 
   return (
@@ -266,7 +302,11 @@ const PaginaProduccion = () => {
                   {/* Card Header */}
                   <div className="w-full h-12 p-2 flex items-center  justify-between">
                     <p className={(empleado === null ? "text-gray-400" : "text-teal-700") + " text-lg font-semibold px-2"}>Datos de la Captura</p>
-                    <button disabled={empleado === null || etiquetasList.length === 0} type="button" className="normal-button h-8 rounded-md px-6">Capturar</button>
+                    <button
+                      onClick={handleCapturar}
+                      disabled={loading || empleado === null || etiquetasList.length === 0}
+                      type="button"
+                      className="normal-button h-8 rounded-md px-6">Capturar</button>
                   </div>
                   <div className="w-full h-full relative">
                     <div className="w-full h-full absolute flex-col overflow-y-scroll">
@@ -319,6 +359,13 @@ const PaginaProduccion = () => {
               </button>
             </div>
           </div>
+        }
+        {
+          responseModalVisible &&
+          <ResponseModal
+            onClose={() => handleCloseModal(setResponseModalVisible)}
+            response={response}
+          />
         }
       </div>
     </>
