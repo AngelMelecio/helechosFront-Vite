@@ -17,6 +17,7 @@ import { Chart } from "react-google-charts";
 import chroma from 'chroma-js';
 import EtiquetasModal from "../../components/LabelModal";
 import { sleep } from '../../constants/functions';
+import useWebSocket from "../../components/useWebSockets";
 
 const initPedido = {
   modelo: {
@@ -60,6 +61,9 @@ const DetailPedido = () => {
   const { id } = useParams();
   const isEdit = (id !== '0');
 
+  const { messages: detallesSocket, status, sendMessage } =
+    id !== '0' ? useWebSocket(`ws://localhost:8000/ws/pedidos/${id}/`) : null
+
   const blankRef = useRef()
   const pageRef = useRef()
   const modalRef = useRef()
@@ -78,10 +82,10 @@ const DetailPedido = () => {
 
   const [allFichas, setAllFichas] = useState([])
   const [availableFichas, setAvailableFichas] = useState([])
-  const { getFichas, postPedido, allPedidos, findPedido, allEtiquetas, getEtiquetas, setAllEtiquetas} = usePedidos()
+  const { getFichas, postPedido, allPedidos, findPedido, allEtiquetas, getEtiquetas, setAllEtiquetas } = usePedidos()
   const [saving, setSaving] = useState(false)
 
-    
+
   const [selectedFichaIndx, setSelectedFichaIndx] = useState(0)
 
   const validate = values => {
@@ -142,9 +146,6 @@ const DetailPedido = () => {
       // */
     },
   });
-  useEffect(() => {
-    return () => {setAllEtiquetas([]); console.log('unmounting...')}
-  }, [])
 
   useEffect(() => {
     setOptionsCliente(allClientes.map(cliente => ({ value: cliente.idCliente, label: cliente.nombre })))
@@ -155,13 +156,23 @@ const DetailPedido = () => {
     refreshClientes()
     let p = id === '0' ? initPedido :
       formatPedido(await findPedido(id))
-
-    console.log(p)
     formik.setValues(p)
+
   }, [])
+
   useEffect(async () => {
-    await getEtiquetas(id)
+    id !== '0' && await getEtiquetas(id)
   }, [])
+
+  useEffect(() => {
+
+    if (detallesSocket) {
+      console.log('Escuchando Actualizacion')
+      formik.setValues(detallesSocket)
+    }
+
+  }, [detallesSocket])
+
   // selecciona cliente -> Cambia los modelos disponibles
   useEffect(async () => {
     if (!formik?.values?.modelo.cliente) return
@@ -178,10 +189,10 @@ const DetailPedido = () => {
 
   // Selecciona modelo -> Cambia las fichas disponibles
   useEffect(async () => {
-    let id = formik?.values?.modelo.idModelo
-    if (!id) return
+    let idmod = formik?.values?.modelo.idModelo
+    if (!idmod) return
     try {
-      let fichas = await getFichas(id)
+      let fichas = await getFichas(idmod)
       setAllFichas(fichas)
     } catch (e) {
       console.log(e)
@@ -346,7 +357,7 @@ const DetailPedido = () => {
                         <div className='flex'>
                           {
                             <button
-                              disabled={allEtiquetas.length===0}
+                              disabled={allEtiquetas.length === 0}
                               onClick={(e) => {
                                 e.preventDefault();
                                 handleOpenModal(setModalVisible)
@@ -393,6 +404,7 @@ const DetailPedido = () => {
                                     {
                                       formik?.values?.detalles.map((detalle, indx) =>
                                         <button
+                                          key={"B" + indx}
                                           type="button"
                                           className={"rounded-sm my-1 flex w-full p-3 items-center relative cursor-pointer" + (indx === selectedFichaIndx ? " bg-white shadow-md text-teal-700" : " hover:bg-gray-200 text-gray-600 duration-200")}
                                           onClick={() => setSelectedFichaIndx(indx)}>
@@ -429,7 +441,8 @@ const DetailPedido = () => {
                                           legend: { textStyle: { color: '#1f2937', fontSize: 17 } },
                                           //tooltip: { isHtml: true },
                                           tooltip: { backgroundColor: '#000', textStyle: { color: '#1f2937', fontSize: 17 } },
-                                          pieSliceTextStyle: { color: '#fff', fontSize: 14, textAlign: 'center' }
+                                          pieSliceTextStyle: { color: '#fff', fontSize: 14, textAlign: 'center' },
+                                          
                                         }
                                         //Ajustamos el arreglo de datos para la grafica
                                         let data = [["Departamentos", "Número de etiquetas"]]

@@ -204,6 +204,7 @@ const CRUD = ({
                     <ICONS.Trash size='19px' />
                   </button>
                 </div>
+                {/* Search Bar */}
                 <div
                   id="searchbar"
                   className="flex relative w-80 items-center">
