@@ -40,17 +40,17 @@ const ResponseModal = ({ response, onClose }) => {
           <table className="customTable text-center">
             <thead>
               <tr>
-                <th>Modelo</th>
-                <th>Num. Etiqueta</th>
-                <th>Resultado</th>
-                <th>Detalles</th>
+                <th className="px-2">Modelo</th>
+                <th className="px-2">Etiqueta</th>
+                <th className="px-2">Resultado</th>
+                <th className="px-2">Detalles</th>
               </tr>
             </thead>
             <tbody>
               {
                 response.registros.map((etiqueta, index) =>
                   <tr key={'etiqueta' + index} > {
-                    ['modelo', 'numEtiqueta', 'ok', 'Detalles'].map(atr => <td>
+                    ['modelo', 'numEtiqueta', 'ok', 'Detalles'].map((atr,j) => <td key={'D'+index +j}>
                       <div className="total-center">
                         {typeof etiqueta[atr] === 'boolean' ?
                           (etiqueta[atr] ?

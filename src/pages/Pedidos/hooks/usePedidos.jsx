@@ -6,12 +6,16 @@ import { fetchAPI } from "../../../services/fetchApiService";
 import { entorno } from "../../../constants/entornos";
 import { set } from "lodash";
 
+import useWebSocket from "../../../components/useWebSockets";
+const WS_PEDIDOS_URL = "ws://localhost:8000/ws/pedidos/"
+
 const API_PEDIDOS_URL = "api/pedidos/"
 const API_PEDIDO_URL = "api/pedido/"
 const API_FICHAS_MATERIALES = "/api/fichas_tecnicas_materiales/"
-const API_FICHAS_BY_MODELO = "/api/fichas_by_modelo/"
-const API_GET_ETIQUETAS = "/api/produccionByPedido/"
-const API_IMPRESION_ETIQUETAS = "/api/produccionPrint/"
+const API_FICHAS_BY_MODELO = "api/fichas_by_modelo/"
+const API_GET_ETIQUETAS = "api/produccionByPedido/"
+const API_IMPRESION_ETIQUETAS = "api/produccionPrint/"
+
 
 const PedidosContext = React.createContext('PedidosContext')
 
@@ -55,6 +59,7 @@ export function PedidosProvider({ children }) {
     const [loading, setLoading] = useState(true)
     const [errors, setErrors] = useState(false)
 
+    
 
     async function findPedido(id) {
         //console.log('Calling findPedido')
@@ -73,7 +78,6 @@ export function PedidosProvider({ children }) {
             setLoading(false)
         }
     }
-
     async function getPedidos() {
         let options = {
             method: 'GET',
@@ -82,7 +86,6 @@ export function PedidosProvider({ children }) {
         const pedidos = await fetchAPI(API_PEDIDOS_URL, options)
         return formatPedidos(pedidos)
     }
-
     async function getEtiquetas(idPedido) {
         let options = {
             method: 'GET',
@@ -95,7 +98,6 @@ export function PedidosProvider({ children }) {
             setErrors(e)
         }
     }
-
     async function refreshPedidos() {
         try {
             setLoading(true)
@@ -107,7 +109,6 @@ export function PedidosProvider({ children }) {
             setLoading(false)
         }
     }
-
     async function postPedido(pedido) {
         let options = {
             method: 'POST',
@@ -136,7 +137,6 @@ export function PedidosProvider({ children }) {
         const response = await fetchAPI(API_IMPRESION_ETIQUETAS, options)
         return response
     }
-
     async function getFichas(idModelo) {
         let options = {
             method: 'GET',

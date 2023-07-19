@@ -21,8 +21,6 @@ export function ProduccionProvider({ children }) {
 
     const [loading, setLoading] = useState(false)
   
-
-
     async function postProduccion(registros) {
         let options = {
             method: 'POST',

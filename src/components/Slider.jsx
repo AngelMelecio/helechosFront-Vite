@@ -30,7 +30,7 @@ const Slider = ({
   /***   Table Controls  ***/
   const [data, setData] = useState([])
 
-  useEffect(() => { console.log('llega:', list); setData(list) }, [list])
+  useEffect(() => { setData(list) }, [list])
 
   const searchRef = useRef(null)
   const [search, setSearch] = useState("")
