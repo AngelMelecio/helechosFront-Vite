@@ -5,7 +5,7 @@ import { useContext } from "react";
 import { fetchAPI } from "../../../services/fetchApiService";
 
 const API_MATERIALES_URL = "api/materiales/"
-//const API_FICHA_MATERIALES_URL = "/api/fichas_tecnicas_materiales/"
+//const API_FICHA_MATERIALES_URL = "api/fichas_tecnicas_materiales/"
 
 const MaterialesContext = React.createContext('MaterialesContext')
 
