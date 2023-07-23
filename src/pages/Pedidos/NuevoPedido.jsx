@@ -66,7 +66,6 @@ const NuevoPedido = () => {
     onSubmit: async (values) => {
       try {
         setSaving(true)
-        console.log(values)
         let formatValues = structuredClone(values)
         formatValues.modelo = formatValues.modelo.idModelo
 
