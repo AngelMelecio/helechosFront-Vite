@@ -18,6 +18,7 @@ import EtiquetasModal from "../../components/LabelModal";
 import { sleep } from '../../constants/functions';
 import useWebSocket from "../../components/useWebSockets";
 import Progreso from "./components/Progreso";
+import DetalleEtiquetaModal from "./components/DetalleEtiquetaModal";
 
 const DetailPedido = () => {
 
@@ -35,6 +36,7 @@ const DetailPedido = () => {
   const modalRef = useRef()
 
   const [modalVisible, setModalVisible] = useState(false)
+  const [detalleEtiquetaModalVisible, setDetalleEtiquetaModalVisible] = useState(false)
 
   const [pageScrollBottom, setPageScrollBottom] = useState(false)
 
@@ -44,6 +46,10 @@ const DetailPedido = () => {
 
   const [selectedFichaIndx, setSelectedFichaIndx] = useState(0)
   const [selectedTallaIndx, setSelectedTallaIndx] = useState(0)
+
+  useEffect(() => {
+    console.log('llega etiquetas: ', allEtiquetas)
+  }, [allEtiquetas])
 
   useEffect(async () => {
     getEtiquetas(id)
@@ -186,7 +192,10 @@ const DetailPedido = () => {
                                   <button
                                     key={"B" + indx}
                                     type="button"
-                                    className={"rounded-sm my-1 flex w-full p-3 items-center relative cursor-pointer" + (indx === selectedFichaIndx ? " bg-white shadow-md text-teal-700" : " hover:bg-white text-gray-600 duration-200")}
+                                    className={"rounded-sm my-1 flex w-full p-3 items-center relative cursor-pointer"
+                                      + (indx === selectedFichaIndx ?
+                                        " bg-white shadow-md text-teal-700" :
+                                        " hover:bg-white text-gray-600 duration-200")}
                                     onClick={() => { setSelectedFichaIndx(indx); setSelectedTallaIndx(0) }}>
                                     <p className="font-medium">
                                       {detalle.fichaTecnica.nombre}
@@ -254,166 +263,38 @@ const DetailPedido = () => {
                                 <div className="flex flex-row w-full overflow-x-scroll overflow-y-hidden py-2">
                                 </div>
                               </div>
+                              {/*  Tabla de Etiquetas  */}
                               <div className="relative flex-grow overflow-y-scroll">
                                 <div className="absolute w-full">
                                   <table className="customTable clic-row">
                                     <thead>
-                                      <tr>
+                                      <tr className="h-10">
                                         <th>Etiqueta</th>
+                                        <th>Cantidad</th>
                                         <th>Progreso</th>
                                       </tr>
                                     </thead>
                                     <tbody>
                                       {
-
-                                        [
-                                          {
-                                            numEtiqueta: 1,
-                                            "rutaProduccion": {
-                                              "corte": 'plancha',
-                                              "creada": "impresa",
-                                              "tejido": "corte",
-                                              "calidad": "empaque",
-                                              "empaque": "empacado",
-                                              "impresa": "tejido",
-                                              "plancha": "calidad",
-                                              "empacado": "entregado"
-                                            },
-                                            estacionActual: "impresa",
-                                          },
-                                          {
-                                            numEtiqueta: 2,
-                                            "rutaProduccion": {
-                                              "corte": 'plancha',
-                                              "creada": "impresa",
-                                              "tejido": "corte",
-                                              "calidad": "empaque",
-                                              "empaque": "empacado",
-                                              "impresa": "tejido",
-                                              "plancha": "calidad",
-                                              "empacado": "entregado"
-                                            },
-                                            estacionActual: "creada",
-                                          },
-                                          {
-                                            numEtiqueta: 3,
-                                            "rutaProduccion": {
-                                              "corte": 'plancha',
-                                              "creada": "impresa",
-                                              "tejido": "corte",
-                                              "calidad": "empaque",
-                                              "empaque": "empacado",
-                                              "impresa": "tejido",
-                                              "plancha": "calidad",
-                                              "empacado": "entregado"
-                                            },
-                                            estacionActual: "plancha",
-                                          },
-                                          {
-                                            numEtiqueta: 4,
-                                            "rutaProduccion": {
-                                              "corte": 'plancha',
-                                              "creada": "impresa",
-                                              "tejido": "corte",
-                                              "calidad": "empaque",
-                                              "empaque": "empacado",
-                                              "impresa": "tejido",
-                                              "plancha": "calidad",
-                                              "empacado": "entregado"
-                                            },
-                                            estacionActual: "corte",
-                                          },
-                                          {
-                                            numEtiqueta: 5,
-                                            "rutaProduccion": {
-                                              "corte": 'plancha',
-                                              "creada": "impresa",
-                                              "tejido": "corte",
-                                              "calidad": "empaque",
-                                              "empaque": "empacado",
-                                              "impresa": "tejido",
-                                              "plancha": "calidad",
-                                              "empacado": "entregado"
-                                            },
-                                            estacionActual: "entregado",
-                                          },
-                                        ].map((etiqueta, fila) => <tr className="w-full text-center">
-                                          <td> {etiqueta.numEtiqueta} </td>
-                                          <td>
-                                            <Progreso last={fila === 4} estacion={etiqueta.estacionActual} ruta={etiqueta.rutaProduccion} />
-                                          </td>
-                                        </tr>)
+                                        allEtiquetas?.filter(e => e.idDetallePedido === pedido.detalles[selectedFichaIndx].idDetallePedido).filter(e => e.talla === pedido.detalles[selectedFichaIndx].cantidades[selectedTallaIndx].talla).
+                                          map((etiqueta, fila) =>
+                                            <tr
+                                              onClick={()=>handleOpenModal(setDetalleEtiquetaModalVisible) }
+                                              className="w-full text-center">
+                                              <td> {etiqueta.numEtiqueta} </td>
+                                              <td> {etiqueta.cantidad} </td>
+                                              <td>
+                                                <Progreso
+                                                  last={fila === allEtiquetas.length - 1}
+                                                  estacion={etiqueta.estacionActual}
+                                                  ruta={etiqueta.rutaProduccion} />
+                                              </td>
+                                            </tr>)
                                       }
                                     </tbody>
                                   </table>
                                 </div>
                               </div>
-                              {/*  CHARTS  
-                              <div className="flex flex-col overflow-y-scroll">
-                                {pedido?.detalles[selectedFichaIndx]?.cantidades.map((cantidad, j) => {
-                                  //por cada cantidad renderizamos una grafica
-                                  //Especificamos las opciones de la grafica
-                                  let options = {
-                                    title: "Paquetes por estacion",
-                                    titleTextStyle: { fontSize: 15, bold: false, color: '#0f766e', },
-                                    colors: chroma.scale(['#2A4858', '#fafa6e']).mode('lch').colors(7),
-                                    pieHole: 0.4,
-                                    legend: { textStyle: { color: '#1f2937', fontSize: 17 } },
-                                    //tooltip: { isHtml: true },
-                                    tooltip: { backgroundColor: '#000', textStyle: { color: '#1f2937', fontSize: 17 } },
-                                    pieSliceTextStyle: { color: '#fff', fontSize: 14, textAlign: 'center' },
-
-                                  }
-                                  //Ajustamos el arreglo de datos para la grafica
-                                  let data = [["Departamentos", "Número de etiquetas"]]
-                                  cantidad.progreso.forEach(progreso => {
-                                    data.push(progreso);
-                                  });
-                                  //Renderizamos la grafica
-                                  return (
-                                    <div key={`PieChart-${j}`} className={`flex flex-1 px-6`}>
-                                      <div className="relative my-4 w-full  ">
-                                        <div className="px-1 w-full font-semibold text-teal-700 text-2xl">
-                                          Talla - {cantidad.talla}
-                                        </div>
-                                        <div className="w-full flex flex-row h-full">
-                                          <div style={{ width: '440px', height: '280px' }}>
-                                            {<Chart
-                                              chartType="PieChart"
-                                              data={data}
-                                              options={options}
-                                              loader={<Loader />}
-                                              width={"100%"}
-                                              height={"100%"}
-                                            />}
-                                          </div>
-                                          <div className="w-1/2 flex flex-col h-full">
-                                            <div className="w-full p-2">
-                                              <div className="bg-gray-50 flex flex-col justify-between  py-2 px-4 rounded-lg">
-                                                <p className="text-gray-700 text-3xl font-semibold">{Math.floor(cantidad.cantidad / cantidad.paquete) + (cantidad.cantidad % cantidad.paquete ? 1 : 0)}</p>
-                                                <p className=" text-base font-semibold text-teal-700 whitespace-nowrap">Paquetes</p>
-                                              </div>
-                                            </div>
-                                            <div className="w-full p-2">
-                                              <div className="bg-gray-50 flex flex-col justify-between  py-2 px-4 rounded-lg">
-                                                <p className="text-gray-700 text-3xl font-semibold">{cantidad.paquete}</p>
-                                                <p className=" text-base font-semibold text-teal-700 whitespace-nowrap">Pares por paquete</p>
-                                              </div>
-                                            </div>
-                                            <div className="w-full p-2">
-                                              <div className="bg-gray-50 flex flex-col justify-between  py-2 px-4 rounded-lg">
-                                                <p className="text-gray-700 text-3xl font-semibold">{cantidad.cantidad}</p>
-                                                <p className=" text-base font-semibold text-teal-700 whitespace-nowrap">Pares en total</p>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                              */}
                             </div>
                           }
                         </div>
@@ -440,6 +321,12 @@ const DetailPedido = () => {
               { name: 'Estado', atr: 'estado' },
             ]}
             onClose={() => { handleCloseModal(setModalVisible); }}
+          />
+        }
+        {
+          detalleEtiquetaModalVisible &&
+          <DetalleEtiquetaModal
+            onClose={()=>handleCloseModal(setDetalleEtiquetaModalVisible)}
           />
         }
       </div>
