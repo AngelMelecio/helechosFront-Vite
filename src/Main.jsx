@@ -26,6 +26,7 @@ import DetailPedido from "./pages/Pedidos/DetailPedido"
 import PaginaProduccion from "./pages/Produccion/PaginaProduccion"
 import PdfTest from "./pages/PdfTest"
 import NuevoPedido from "./pages/Pedidos/NuevoPedido"
+import TestComp from "./components/TestComp"
 
 const getRoutesForRole = (role) => {
   const routesByRole = {
@@ -93,7 +94,6 @@ const Main = () => {
           <AdminProvider>
             <div className="flex w-full h-screen overflow-hidden absolute bg-slate-100">
               <AppBar />
-
               <Routes>
                 <Route exact path="*" element={<Navigate replace to="/perfil" />} />
                 <Route path="/perfil" element={<PaginaPerfil />} />

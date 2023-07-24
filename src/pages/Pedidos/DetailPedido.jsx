@@ -46,6 +46,7 @@ const DetailPedido = () => {
 
   const [selectedFichaIndx, setSelectedFichaIndx] = useState(0)
   const [selectedTallaIndx, setSelectedTallaIndx] = useState(0)
+  const [selectedEtiqueta, setSelectedEtiqueta] = useState(null)
 
   useEffect(() => {
     console.log('llega etiquetas: ', allEtiquetas)
@@ -60,8 +61,18 @@ const DetailPedido = () => {
 
   useEffect(() => {
     if (detallesSocket) {
-      console.log('Escuchando Actualizacion')
-      setPedido(detallesSocket)
+      setPedido( prev => {
+        let newPedido = {...prev}
+        detallesSocket.forEach( cambio => {
+          newPedido.detalles
+          .find( dtll => dtll.idDetallePedido === cambio.detallePedido).cantidades
+          .find( ctd => ctd.talla === cambio.talla ).etiquetas
+          .find( etq => etq.idProduccion === cambio.produccion )
+          .estacionActual = cambio.estacionNueva
+        } )
+        return newPedido
+      })
+      //setPedido(detallesSocket)
     }
   }, [detallesSocket])
 
@@ -263,7 +274,7 @@ const DetailPedido = () => {
                                 <div className="flex flex-row w-full overflow-x-scroll overflow-y-hidden py-2">
                                 </div>
                               </div>
-                              {/*  Tabla de Etiquetas  */}
+                              {/*  Tabla de Etiquetas */}
                               <div className="relative flex-grow overflow-y-scroll">
                                 <div className="absolute w-full">
                                   <table className="customTable clic-row">
@@ -276,18 +287,22 @@ const DetailPedido = () => {
                                     </thead>
                                     <tbody>
                                       {
-                                        allEtiquetas?.filter(e => e.idDetallePedido === pedido.detalles[selectedFichaIndx].idDetallePedido).filter(e => e.talla === pedido.detalles[selectedFichaIndx].cantidades[selectedTallaIndx].talla).
-                                          map((etiqueta, fila) =>
+                                        (pedido.detalles[selectedFichaIndx]?.cantidades[selectedTallaIndx]?.etiquetas)
+                                          .map((etiqueta, fila) =>
                                             <tr
-                                              onClick={()=>handleOpenModal(setDetalleEtiquetaModalVisible) }
+                                              key={'E' + fila}
+                                              onClick={() => {
+                                                handleOpenModal(setDetalleEtiquetaModalVisible)
+                                                setSelectedEtiqueta(etiqueta)
+                                              }}
                                               className="w-full text-center">
                                               <td> {etiqueta.numEtiqueta} </td>
                                               <td> {etiqueta.cantidad} </td>
                                               <td>
                                                 <Progreso
-                                                  last={fila === allEtiquetas.length - 1}
+                                                  last={fila === pedido.detalles[selectedFichaIndx]?.cantidades[selectedTallaIndx]?.etiquetas.length - 1}
                                                   estacion={etiqueta.estacionActual}
-                                                  ruta={etiqueta.rutaProduccion} />
+                                                  ruta={pedido.detalles[selectedFichaIndx]?.rutaProduccion} />
                                               </td>
                                             </tr>)
                                       }
@@ -326,7 +341,8 @@ const DetailPedido = () => {
         {
           detalleEtiquetaModalVisible &&
           <DetalleEtiquetaModal
-            onClose={()=>handleCloseModal(setDetalleEtiquetaModalVisible)}
+            onClose={() => handleCloseModal(setDetalleEtiquetaModalVisible)}
+            etiqueta={selectedEtiqueta}
           />
         }
       </div>
