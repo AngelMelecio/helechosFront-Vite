@@ -48,12 +48,6 @@ const DetailPedido = () => {
   const [selectedTallaIndx, setSelectedTallaIndx] = useState(0)
   const [selectedEtiqueta, setSelectedEtiqueta] = useState(null)
 
-  useEffect(() => {
-    console.log("Etiqueta para ver detalles", selectedEtiqueta)
-  }, [selectedEtiqueta])
-  useEffect(() => {
-    console.log('llega etiquetas: ', allEtiquetas)
-  }, [allEtiquetas])
 
   useEffect(async () => {
     let p = await findPedido(id)
