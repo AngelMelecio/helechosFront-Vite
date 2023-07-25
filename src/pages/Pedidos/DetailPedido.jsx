@@ -40,19 +40,22 @@ const DetailPedido = () => {
 
   const [pageScrollBottom, setPageScrollBottom] = useState(false)
 
-  const { findPedido, allEtiquetas, getEtiquetas } = usePedidos()
+  const { findPedido, allEtiquetas } = usePedidos()
 
   const [pedido, setPedido] = useState(null)
 
   const [selectedFichaIndx, setSelectedFichaIndx] = useState(0)
   const [selectedTallaIndx, setSelectedTallaIndx] = useState(0)
+  const [selectedEtiqueta, setSelectedEtiqueta] = useState(null)
 
+  useEffect(() => {
+    console.log("Etiqueta para ver detalles", selectedEtiqueta)
+  }, [selectedEtiqueta])
   useEffect(() => {
     console.log('llega etiquetas: ', allEtiquetas)
   }, [allEtiquetas])
 
   useEffect(async () => {
-    getEtiquetas(id)
     let p = await findPedido(id)
     console.log('llega prdido: ', p)
     setPedido(p)

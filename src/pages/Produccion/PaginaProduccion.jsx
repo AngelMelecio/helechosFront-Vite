@@ -19,6 +19,7 @@ const optionsDepartamento = [
   { value: 'Tejido', label: 'Tejido' },
   { value: 'Corte', label: 'Corte' },
   { value: 'Plancha', label: 'Plancha' },
+  { value: 'Calidad', label: 'Calidad' },
   { value: 'Empaque', label: 'Empaque' },
   { value: 'Transporte', label: 'Transporte' },
 ]

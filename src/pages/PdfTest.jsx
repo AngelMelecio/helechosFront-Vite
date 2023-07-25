@@ -12,74 +12,23 @@ Font.register({
 });
 
 
-let modelos = [
-  "gixxewewewewewr",
-  "gixxewewewewewr",
-  "gixxewewewewewr",
-  "gixxewewewewewr",
-  "gixxewewewewewr",
-  "gixxewewewewewr",
-]
-
-let colores = [
-  "\nrojo\nAzul\nAmarillo\nVerde\nNegro\nBlanco",
-  "\nazul\nrojo\namarillo\nverde\nnegro\nblanco",
-  "\nverde\nrojo\namarillo\nazul\nnegro\nblanco",
-  "\namarillo\nrojo\nazul\nverde\nnegro\nblanco",
-
-]
-
-let tallas = [
-  "26",
-  "27",
-  "25",
-  "30",
-  "29",
-
-]
-
-let proveedores = [
-  "proveedor 1",
-  "proveedor 2",
-  "proveedor 3",
-  "proveedor 4",
-  "proveedor 5",
-  "proveedor 6",
-
-]
-
-let num = [
-  "1/5000",
-  "2/5000",
-  "3/5000",
-  "4/5000",
-  "5/5000"
-]
-
-let cantidad = [
-  "1000",
-  "1000",
-  "1000",
-  "1000",
-  "5000"
-]
+let empleado = {
+  "idEmpleado": 1,
+  "fotografia": "/mediafiles/images/Screenshot_2023-03-06_095732.png",
+  "nombre": "Maria Trinidad",
+  "apellidos": "Madrigal Quintana",
+  "direccion": "Rio Temascatio #43",
+  "telefono": "5588545529",
+  "ns": "12345678900",
+  "fechaEntrada": "2023-06-15",
+  "fechaAltaSeguro": "2023-06-29",
+  "departamento": "Tejido",
+  "gafete": null,
+  "is_active": true
+}
 
 const PdfTest = () => {
-  const [data, setData] = useState(() => {
-    let D = []
-    for (let i = 0; i < 1; i++) {
-      D.push({
-        id: i,
-        modelo: modelos[Math.floor(Math.random() * modelos.length)],
-        color: colores[Math.floor(Math.random() * colores.length)],
-        talla: tallas[Math.floor(Math.random() * tallas.length)],
-        proveedor: proveedores[Math.floor(Math.random() * proveedores.length)],
-        num: num[Math.floor(Math.random() * num.length)],
-        cantidad: cantidad[Math.floor(Math.random() * cantidad.length)] + " prs",
-      })
-    }
-    return D
-  })
+  const [data, setData] = useState(() => [empleado])
 
   const GenerateQrUrl = async (data) => {
     const jsonString = JSON.stringify(data);
@@ -103,76 +52,46 @@ const PdfTest = () => {
 
                 <View style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
 
-                  <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ fontFamily: 'Roboto', fontWeight: 700,fontSize: 8 }}>{d.modelo}</Text>
+                  <View style={{ justifyContent: 'center', alignItems: 'center', borderBottom: 0.8, marginVertical: 3, marginHorizontal: 3 }}>
+                    <Text style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: 5, letterSpacing: '3.2px', textAlign: 'center', width: '100%' }}>{"TEJIDOS HELECHO"}</Text>
                   </View>
 
-                  <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '3' }}>
-                    <View style={{ display: 'flex', flexDirection: 'row' }}>
-                      <Text style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: 5 }}>Talla: </Text>
-                      <Text style={{ fontFamily: 'Roboto', fontWeight: 400, fontSize: 5 }}>{d.talla}</Text>
-                    </View>
-                    <View style={{ display: 'flex', flexDirection: 'row' }}>
-                      <Text style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: 5 }}># Etiqueta: </Text>
-                      <Text style={{ fontFamily: 'Roboto', fontWeight: 400, fontSize: 5 }}>{d.num}</Text>
-                    </View>
+                  <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginHorizontal: '3', height: '30%' }}>
+                    <View style={{ border: 0.4, width: '27%', height: '100%', }}></View>
                   </View>
 
-                  <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '3' }}>
-                    <View style={{ display: 'flex', flexDirection: 'row' }}>
-                      <Text style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: 5 }}>Cantidad: </Text>
-                      <Text style={{ fontFamily: 'Roboto', fontWeight: 400, fontSize: 5 }}>{d.cantidad}</Text>
-                    </View>
-                  </View>
-
-                  <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '3', marginTop: '3' }}>
-                    <View><Text style={{ fontSize: 5 }}>Tejedor:</Text></View>
-                    <View><Text style={{ fontSize: 5 }}>__________________ / _____</Text></View>
-                  </View>
-                  <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '3', marginTop: '1' }}>
-                    <View><Text style={{ fontSize: 5 }}>Planchador:</Text></View>
-                    <View><Text style={{ fontSize: 5 }}>__________________ / _____</Text></View>
-                  </View>
-                  <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '3', marginTop: '1' }}>
-                    <View><Text style={{ fontSize: 5 }}>Cortador:</Text></View>
-                    <View><Text style={{ fontSize: 5 }}>__________________ / _____</Text></View>
-                  </View>
-                  <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '3', marginTop: '1' }}>
-                    <View><Text style={{ fontSize: 5 }}>Empacador:</Text></View>
-                    <View><Text style={{ fontSize: 5 }}>__________________ / _____</Text></View>
+                  <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginHorizontal: '3', marginVertical: '2' }}>
+                    <Text style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: 4 }}>{d.nombre + " " + d.apellidos}</Text>
                   </View>
 
 
                   <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <View style={{
-                      display: 'flex',
-                      flex: 1,
-                      justifyContent: 'flex-end',
-                      alignItems: 'start',
-                      height: '100%',
-                      width: '100%',
-                      flexDirection: 'column',
-                    }}>
-                      {
-                        <View style={{}}>
-                          <Image
-                            src={GenerateQrUrl(d)}
-                          />
-                        </View>
-                      }
+                    <View style={{ display: 'flex', flex: 1, justifyContent: 'flex-end', alignItems: 'start', flexDirection: 'column' }}>
+
+                      <View style={{}}>
+                        <Image
+                          src={GenerateQrUrl(d)}
+                        />
+                      </View>
+
                     </View>
 
                     <View style={{ display: 'flex', flexDirection: 'col', justifyContent: 'space-between', flex: 1, marginTop: 2 }}>
-                      <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
-                        <Text style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: 5 ,position:"absolute", width:'100%'}}>Colores: </Text>
-                        <Text style={{ fontFamily: 'Roboto', fontWeight: 400, fontSize: 5 }}>{d.color}</Text>
+                      <View style={{ display: 'flex', flexDirection: 'col', justifyContent: 'flex-start' }}>
+                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent:'space-between', marginRight:3}}>
+                          <Text style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: 4 }}>Departamento: </Text>
+                          <Text style={{ fontFamily: 'Roboto', fontWeight: 400, fontSize: 4 }}>{d.departamento}</Text>
+                        </View>
+
+                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent:'space-between', marginRight:3,marginVertical:2}}>
+                          <Text style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: 4 }}>NS: </Text>
+                          <Text style={{ fontFamily: 'Roboto', fontWeight: 400, fontSize: 4 }}>{d.ns}</Text>
+                        </View>
                       </View>
                     </View>
 
                   </View>
-
                 </View>
-
               </Page>
             )
           }

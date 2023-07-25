@@ -34,6 +34,7 @@ const optionsDepartamento = [
   { value: 'Empaque', label: 'Empaque' },
   { value: 'Transporte', label: 'Transporte' },
   { value: 'Diseno', label: 'Diseño' },
+  { value: 'Calidad', label: 'Calidad' },
   { value: 'Gerencia', label: 'Gerencia' }
 ]
 

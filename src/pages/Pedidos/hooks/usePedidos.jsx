@@ -1,12 +1,13 @@
 import React from "react";
 import { useAuth } from "../../../context/AuthContext";
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import { useContext } from "react";
 import { fetchAPI } from "../../../services/fetchApiService";
 import { entorno } from "../../../constants/entornos";
 import { set } from "lodash";
 
 import useWebSocket from "../../../components/useWebSockets";
+import { data } from "autoprefixer";
 const WS_PEDIDOS_URL = "ws://localhost:8000/ws/pedidos/"
 
 const API_PEDIDOS_URL = "api/pedidos/"
@@ -23,16 +24,6 @@ export function usePedidos() {
     return useContext(PedidosContext)
 }
 
-function formatPedidos(pedidos) {
-    let formatData = pedidos.map((pedido) => ({
-        ...pedido,
-        isSelected: false,
-        fechaRegistro: new Date(pedido.fechaRegistro).toLocaleString(),
-        fechaEntrega: new Date(pedido.fechaEntrega).toLocaleDateString()
-    }))
-    return formatData
-}
-
 function formatFichas(fichas) {
     let formatedFichas = fichas.map((ficha) => ({
         ...ficha,
@@ -42,13 +33,14 @@ function formatFichas(fichas) {
     }))
     return formatedFichas
 }
-function formatEtiquetas(etiquetas) {
+
+/*function formatEtiquetas(etiquetas) {
     let formatedEtiquetas = etiquetas.map((etiqueta) => ({
         ...etiqueta,
         isSelected: false
     }))
     return formatedEtiquetas
-}
+}*/
 
 export function PedidosProvider({ children }) {
 
@@ -58,11 +50,46 @@ export function PedidosProvider({ children }) {
     const [allEtiquetas, setAllEtiquetas] = useState([])
     const [loading, setLoading] = useState(true)
     const [errors, setErrors] = useState(false)
+    const [dataPedido, setDataPedido] = useState(null)
 
+    function formatPedidos(pedidos) {
+        let formatData = pedidos.map((pedido) => ({
+            ...pedido,
+            isSelected: false,
+            fechaRegistro: new Date(pedido.fechaRegistro).toLocaleString(),
+            fechaEntrega: new Date(pedido.fechaEntrega).toLocaleDateString()
+        }))
+        return formatData
+    }
+    
+    useEffect(() => {
+        let etiquetasFormated=[]
+        let modelo= dataPedido?.modelo.nombre
+        let idPedido = dataPedido?.idPedido
+        dataPedido?.detalles?.forEach((detalle) => {
+            let colores ="";
+            detalle?.fichaTecnica?.materiales.forEach((material) => {colores += material?.color+"\n"})
+            detalle?.cantidades?.forEach((cantidad) => {
+                cantidad?.etiquetas?.map((etiqueta) => {
+                    etiquetasFormated.push({
+                        ...etiqueta,
+                        modelo: modelo,
+                        idPedido: idPedido,
+                        color: colores,
+                        estado: etiqueta.fechaImpresion!==null?"Impresa":"No impresa",
+                        isSelected: false,
+                        talla: etiqueta.tallaReal,
+                        numEtiqueta: Number(etiqueta.numEtiqueta)
+                    })
+                })
+        
+            })
+        })
+        setAllEtiquetas(etiquetasFormated)
+    }, [dataPedido])
     
 
     async function findPedido(id) {
-        //console.log('Calling findPedido')
         let options = {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + session.access }
@@ -70,6 +97,7 @@ export function PedidosProvider({ children }) {
         try {
             setLoading(true)
             let pedido = await fetchAPI(API_PEDIDO_URL + id, options)
+            setDataPedido(pedido)
             return formatPedidos([pedido])[0]
         } catch (err) {
             setErrors(err)
@@ -86,7 +114,7 @@ export function PedidosProvider({ children }) {
         const pedidos = await fetchAPI(API_PEDIDOS_URL, options)
         return formatPedidos(pedidos)
     }
-    async function getEtiquetas(idPedido) {
+    /*async function getEtiquetas(idPedido) {
         let options = {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + session.access }
@@ -97,7 +125,7 @@ export function PedidosProvider({ children }) {
         } catch (e) {
             setErrors(e)
         }
-    }
+    }*/
     async function refreshPedidos() {
         try {
             setLoading(true)
@@ -158,7 +186,6 @@ export function PedidosProvider({ children }) {
                 getFichas,
                 postPedido,
                 findPedido,
-                getEtiquetas,
                 putProduccion,
                 setAllEtiquetas
             }}
