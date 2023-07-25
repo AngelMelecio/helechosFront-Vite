@@ -7,6 +7,7 @@ import { ICONS } from "../constants/icons";
 import Loader from "./Loader/Loader";
 
 const GafetToPrint = ({ list, onCloseModal }) => {
+    
     Font.register({
         family: 'Roboto', fonts: [
             { src: RobotoBold, fontWeight: 700 },
@@ -52,13 +53,17 @@ const GafetToPrint = ({ list, onCloseModal }) => {
                             <PDFViewer className="w-full z-10 h-full">
                                 <Document>
                                     {
-                                        list.map((obj, i) => {
+                                        list.map((originalObj, i) => {
+                                            // Clonamos el objeto
+                                            let obj = { ...originalObj };
+                                            
                                             delete obj.fotografia;
                                             delete obj.direccion;
                                             delete obj.telefono;
                                             delete obj.fechaEntrada;
                                             delete obj.fechaAltaSeguro;
                                             delete obj.gafete;
+                                            delete obj.estado;
                                             delete obj.is_active;
                                             delete obj.isSelected;
 
