@@ -6,32 +6,6 @@ import { useState, useEffect } from 'react';
 import { ICONS } from "../constants/icons";
 import Loader from "./Loader/Loader";
 
-const useImageData = (url) => {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const loadImage = async () => {
-            setLoading(true);
-            try {
-                const response = await fetch(url);
-                const blob = await response.blob();
-                const dataUrl = URL.createObjectURL(blob);
-                setData(dataUrl);
-                setLoading(false);
-            } catch (e) {
-                setError(e);
-                setLoading(false);
-            }
-        };
-
-        loadImage();
-    }, [url]);
-
-    return { data, loading, error };
-};
-
 const GafetToPrint = ({ list, onCloseModal }) => {
     Font.register({
         family: 'Roboto', fonts: [
@@ -79,9 +53,15 @@ const GafetToPrint = ({ list, onCloseModal }) => {
                                 <Document>
                                     {
                                         list.map((obj, i) => {
-                                            delete obj.isSelected;
+                                            delete obj.fotografia;
+                                            delete obj.direccion;
+                                            delete obj.telefono;
+                                            delete obj.fechaEntrada;
+                                            delete obj.fechaAltaSeguro;
+                                            delete obj.gafete;
                                             delete obj.is_active;
-                                            const { data: imageUrl, loading, error } = useImageData(obj.fotografia); // Using hook
+                                            delete obj.isSelected;
+
                                             return (
                                                 <Page
                                                     size={[102, 102]}
@@ -95,10 +75,7 @@ const GafetToPrint = ({ list, onCloseModal }) => {
                                                         </View>
 
                                                         <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginHorizontal: '3', height: '30%' }}>
-                                                            {(imageUrl && error===null)? 
-                                                                <Image style={{ border:0.4,width: '27%', height: '100%', }} src={imageUrl}/>:
-                                                                <View style={{ border: 0.4, width: '27%', height: '100%', }}/>}
-                                                          
+                                                                <View style={{ border: 0.4, width: '27%', height: '100%', }} />
                                                         </View>
 
                                                         <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginHorizontal: '3', marginVertical: '2' }}>

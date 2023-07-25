@@ -16,6 +16,7 @@ const API_FICHAS_MATERIALES = "/api/fichas_tecnicas_materiales/"
 const API_FICHAS_BY_MODELO = "api/fichas_by_modelo/"
 const API_GET_ETIQUETAS = "api/produccionByPedido/"
 const API_IMPRESION_ETIQUETAS = "api/produccionPrint/"
+const API_PROGRESS_ETIQUETA = "api/progresoByEtiqueta/"
 
 
 const PedidosContext = React.createContext('PedidosContext')
@@ -78,7 +79,7 @@ export function PedidosProvider({ children }) {
     const [errors, setErrors] = useState(false)
     const [dataPedido, setDataPedido] = useState(null)
 
-    function formatPedidos(pedidos) {
+    function formatPedidosTodos(pedidos) {
         let formatData = pedidos.map((pedido) => ({
             ...pedido,
             isSelected: false,
@@ -139,7 +140,7 @@ export function PedidosProvider({ children }) {
             headers: { 'Authorization': 'Bearer ' + session.access }
         }
         const pedidos = await fetchAPI(API_PEDIDOS_URL, options)
-        return formatPedidos(pedidos)
+        return formatPedidosTodos(pedidos)
     }
     /*async function getEtiquetas(idPedido) {
         let options = {
@@ -201,6 +202,15 @@ export function PedidosProvider({ children }) {
         return formatFichas(fichas)
     }
 
+    async function getRegistrosByIdProduccion(idProduccion) {
+        let options = {
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + session.access }
+        }
+        const registros = await fetchAPI(API_PROGRESS_ETIQUETA + idProduccion, options)
+        return registros
+    }
+
     return (
         <PedidosContext.Provider
             value={{
@@ -214,7 +224,8 @@ export function PedidosProvider({ children }) {
                 postPedido,
                 findPedido,
                 putProduccion,
-                setAllEtiquetas
+                setAllEtiquetas,
+                getRegistrosByIdProduccion
             }}
         >
             {children}
