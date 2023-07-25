@@ -26,6 +26,9 @@ const EtiquetasModal = ({ columns, list, unique, onClose, title }) => {
         listToPrint.forEach(element => {
             delete element.isSelected;
             delete element.estado;
+            delete element.detallePedido;
+            delete element.fechaImpresion;
+            delete element.tallaReal;
             element.estado='Impresa';
         });
         setListToPrint(listToPrint);

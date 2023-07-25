@@ -174,7 +174,7 @@ const DetailCliente = () => {
                             </div>
                           </div>
                           <div className="flex flex-row w-full  justify-around">
-                            <div className="overflow-y-scroll">
+                            <div className="overflow-y-scroll w-full px-2">
                               <DynamicInput
                                 columns={[
                                   { name: 'Nombre', atr: 'nombre' },

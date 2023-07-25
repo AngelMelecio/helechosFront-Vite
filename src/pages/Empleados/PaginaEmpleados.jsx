@@ -4,6 +4,7 @@ import DeleteModal from '../../components/DeleteModal'
 import CRUD from '../../components/CRUD'
 import { sleep } from '../../constants/functions'
 import { useEmpleados } from './hooks/useEmpleados'
+import GafetToPrint from '../../components/GafeteToPrint'
 
 const initobj = {
   idEmpleado: "",
@@ -43,7 +44,7 @@ const PaginaEmpleados = () => {
 
   const [listaEmpleados, setListaEmpleados] = useState([])
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
-
+  const [printModalVisible, setPrintModalVisible] = useState(false)
   const modalContainerRef = useRef()
 
   useEffect(() => {
@@ -79,19 +80,20 @@ const PaginaEmpleados = () => {
 
   return (
     <>
-      
-        <CRUD
-          title='Empleados'
-          path='empleados'
-          idName='idEmpleado'
-          loading={loading}
-          allElements={allEmpleados}
-          elements={listaEmpleados}
-          setElements={setListaEmpleados}
-          columns={empleadosColumns}
-          onDelete={() => handleOpenModal(setDeleteModalVisible)}
-        />
-      
+
+      <CRUD
+        title='Empleados'
+        path='empleados'
+        idName='idEmpleado'
+        loading={loading}
+        allElements={allEmpleados}
+        elements={listaEmpleados}
+        setElements={setListaEmpleados}
+        columns={empleadosColumns}
+        onDelete={() => handleOpenModal(setDeleteModalVisible)}
+        onPrint={() => handleOpenModal(setPrintModalVisible)}
+      />
+
       <div className='modal absolute z-50 h-full w-full' ref={modalContainerRef}>
         {deleteModalVisible &&
           <DeleteModal
@@ -101,6 +103,9 @@ const PaginaEmpleados = () => {
             representation={['nombre']}
             message='Las siguientes fichas serán eliminadas de forma permanente'
           />
+        }
+        {printModalVisible &&
+          <GafetToPrint list={listaEmpleados.filter(e => e.is_active === true && e.isSelected === true)} onCloseModal={() => { handleCloseModal(setPrintModalVisible); }} />
         }
       </div>
     </>
