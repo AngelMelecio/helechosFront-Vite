@@ -1,6 +1,6 @@
 import { ICONS } from "../../../constants/icons"
 
-const DetalleEtiquetaModal = ({ onClose }) => {
+const DetalleEtiquetaModal = ({ onClose, etiqueta }) => {
   return (
     <div className='total-center h-screen w-full grayTrans absolute'>
       <div className='flex flex-col h-4/5 w-3/6 rounded-xl bg-white shadow-lg p-4 modal-box'>
@@ -14,6 +14,9 @@ const DetalleEtiquetaModal = ({ onClose }) => {
           <div className="font-semibold text-3xl text-teal-700 ">
             Detalles de la etiqueta
           </div>
+        </div>
+        <div>
+          {JSON.stringify(etiqueta)}
         </div>
       </div>
     </div>

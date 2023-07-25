@@ -24,6 +24,32 @@ export function usePedidos() {
     return useContext(PedidosContext)
 }
 
+
+function formatPedidos(pedidos) {
+    let formatData = pedidos.map((pedido) => ({
+        ...pedido,
+        detalles: [...pedido.detalles.map((detalle) => ({
+            ...detalle,
+            cantidades: [...detalle.cantidades.map((cantidad) => ({
+                ...cantidad,
+                progreso: 
+                    // Sacar las estaciones Unicas
+                    [...new Set(cantidad.etiquetas.map(etiqueta => etiqueta.estacionActual))]
+                        // Devolver una matris con el nombre de la estacion y la cantidad de etiquetas en esa estacion
+                        .map(uniqueEstacion => [
+                            uniqueEstacion,
+                            [...cantidad.etiquetas.filter(et => et.estacionActual === uniqueEstacion)].length
+                        ])
+                
+            }))]
+        }))],
+        isSelected: false,
+        fechaRegistro: new Date(pedido.fechaRegistro).toLocaleString(),
+        fechaEntrega: new Date(pedido.fechaEntrega).toLocaleDateString()
+    }))
+    return formatData
+}
+
 function formatFichas(fichas) {
     let formatedFichas = fichas.map((ficha) => ({
         ...ficha,
@@ -88,6 +114,7 @@ export function PedidosProvider({ children }) {
         setAllEtiquetas(etiquetasFormated)
     }, [dataPedido])
     
+
 
     async function findPedido(id) {
         let options = {
