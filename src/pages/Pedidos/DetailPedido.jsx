@@ -230,7 +230,7 @@ const DetailPedido = () => {
                                         title: "Talla: " + cantidad.talla,
                                         titleTextStyle: { fontSize: 18, bold: false, color: '#0f766e', },
                                         colors: chroma.scale(['#2A4858', '#fafa6e']).mode('lch').colors(7),
-                                        pieHole: 0.4,
+                                        pieHole: 0.3,
                                         legend: { textStyle: { color: '#1f2937', fontSize: 17 } },
                                         //tooltip: { isHtml: true },
                                         tooltip: { backgroundColor: '#000', textStyle: { color: '#1f2937', fontSize: 17 } },
