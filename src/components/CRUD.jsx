@@ -57,11 +57,11 @@ const CRUD = ({
       let newOrder = ([...allElements].sort((a, b) => {
         let A = a[sortParams.attribute]
         if (A === null) A = ''
-        if (A != true && A != false)
+        if (A != true && A != false && typeof A === 'string')
           A = A?.toLowerCase()
         let B = b[sortParams.attribute]
         if (B === null) B = ''
-        if (B != true && B != false)
+        if (B != true && B != false && typeof B === 'string')
           B = B?.toLowerCase()
 
         if (A > B)
@@ -127,7 +127,14 @@ const CRUD = ({
         {
           columns.map((c, i) => {
 
-            let value = typeof c.attribute === 'function' ? c.attribute(element) : get(element, c.attribute) + '';
+            console.log(typeof get(element, c.attribute), get(element, c.attribute))
+            let value
+            if (c.type && c.type === 'dateTime' && element[c.attribute]!==null) 
+              value = new Date(element[c.attribute]).toLocaleString()
+            else if (c.type && c.type === 'date' && element[c.attribute]!==null) 
+              value = new Date(element[c.attribute]).toLocaleDateString()
+            else
+              value = typeof c.attribute === 'function' ? c.attribute(element) : get(element, c.attribute) + '';
             let isBool = (value == 'true' || value == 'false' || value == '' || value == 'null')
             if (isBool) {
               if (value == 'true') value = 'Sí'

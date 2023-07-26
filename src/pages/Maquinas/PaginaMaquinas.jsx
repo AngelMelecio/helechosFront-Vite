@@ -14,7 +14,7 @@ const maquinasColumns = [
   { name: 'Modelo', attribute: 'modelo' },
   { name: 'Número de Serie', attribute: 'ns' },
   { name: 'Otros', attribute: 'otros' },
-  { name: 'Fecha de Adquisición', attribute: 'fechaAdquisicion' },
+  { name: 'Fecha de Adquisición', attribute: 'fechaAdquisicion', type: 'date' },
   { name: 'Detalle Adquisición', attribute: 'detalleAdquisicion' },
   { name: 'Departamento', attribute: 'departamento' },
 ]

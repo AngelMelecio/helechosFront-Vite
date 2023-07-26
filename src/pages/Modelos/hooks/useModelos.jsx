@@ -20,7 +20,7 @@ function formatModelos(modelos) {
       idCliente: m?.cliente?.idCliente + '',
       nombreCliente: m?.cliente?.nombre,
       isSelected: false,
-      fechaCreacion: new Date(m.fechaCreacion).toLocaleString(),
+      fechaCreacion: new Date(m.fechaCreacion),
     })
   })
   return formatData
