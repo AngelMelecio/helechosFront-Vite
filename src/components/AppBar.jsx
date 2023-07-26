@@ -1,8 +1,5 @@
-import { useEffect } from 'react'
-import { Link, resolvePath, useMatch, useResolvedPath } from 'react-router-dom'
-
+import { Link, useMatch, useResolvedPath } from 'react-router-dom'
 import { ICONS } from '../constants/icons'
-import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
 import helechos from '../imgs/helechos.png'
 

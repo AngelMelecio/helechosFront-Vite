@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import { fetchAPI } from "../../../services/fetchApiService";
-import { API_URL } from "../../../constants/API_URL";
+import { API_URL } from "../../../constants/HOSTS";
 import { useContext } from "react";
 
 const API_FICHAS_URL = "api/fichas_tecnicas/"
