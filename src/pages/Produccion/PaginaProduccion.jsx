@@ -73,7 +73,7 @@ const PaginaProduccion = () => {
   }, [departamento])
 
   useEffect(async () => {
-    if(!empleado) return
+    if (!empleado) return
     let maquinas = await getEmpleadoMaquinas(empleado.idEmpleado)
     let mqnasIds = maquinas.map(m => m.idMaquina)
     setOptsMaquinas(
@@ -245,7 +245,16 @@ const PaginaProduccion = () => {
                           /* Boton Escanear Etiqueta  */
                           etiqueta === null ?
                             <button
-                              onClick={e => handleOpenModal(setScannModalVisible)}
+                              onClick={async () => {
+                                try {
+                                  await navigator.mediaDevices.getUserMedia({ video: true }).then((stream)=>{
+                                    console.log(stream)
+                                    handleOpenModal(setScannModalVisible);
+                                  })
+                                } catch (e) {
+                                  console.log(e)
+                                }
+                              }}
                               disabled={empleado === null}
                               type="button"
                               className="normal-button h-8 w-8 rounded-md total-center">

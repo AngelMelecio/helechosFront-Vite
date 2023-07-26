@@ -3,8 +3,6 @@ import { useAuth } from "../../../context/AuthContext";
 import { useState } from "react";
 import { useContext } from "react";
 import { fetchAPI } from "../../../services/fetchApiService";
-import { entorno } from "../../../constants/entornos";
-import { set } from "lodash";
 
 const API_REGISTROS_URL = "api/registros/"
 

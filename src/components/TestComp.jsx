@@ -25,6 +25,7 @@ const ProgressBar = ({ ruta, estacion }) => {
                             backgroundColor: p.completed ? '#10B981' : '#D1D5DB', 
                             transition: 'background-color, border 0.5s ease',
                             border: (indx && !p.completed && progress[indx-1].completed) ? '3px solid #10B981' : '3px solid #D1D5DB'
+                            
                         }}
                         className="w-6 h-6 rounded-full">
 

@@ -94,11 +94,11 @@ const Main = () => {
           <AdminProvider>
             <div className="flex w-full h-screen overflow-hidden absolute bg-slate-100">
               <AppBar />
-              <Routes>
+              {<Routes>
                 <Route exact path="*" element={<Navigate replace to="/perfil" />} />
                 <Route path="/perfil" element={<PaginaPerfil />} />
                 {getRoutesForRole(session.usuario.rol)}
-              </Routes>
+              </Routes>}
             </div>
           </AdminProvider>
         </>

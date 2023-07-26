@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useAuth } from "../../../context/AuthContext"
-import { API_URL } from "../../../constants/API_URL"
+import { API_URL } from "../../../constants/HOSTS"
 import { fetchAPI } from "../../../services/fetchApiService"
 import { useContext } from "react"
 

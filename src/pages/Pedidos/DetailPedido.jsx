@@ -2,16 +2,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ICONS } from "../../constants/icons";
 import Loader from "../../components/Loader/Loader";
 import Input from "../../components/Input";
-import CustomSelect from "../../components/CustomSelect";
 import { useRef, useState } from "react";
-import { useClientes } from "../Clientes/hooks/useClientes";
 import { useEffect } from "react";
-import useModelos from "../Modelos/hooks/useModelos";
-import Slider from "../../components/Slider";
 import { usePedidos } from "./hooks/usePedidos";
-import SelectedFichas from "./components/SelectedFichas";
 import { useAuth } from "../../context/AuthContext";
-import { entorno } from "../../constants/entornos";
+import { WS_PREFIX } from "../../constants/HOSTS";
 import { Chart } from "react-google-charts";
 import chroma from 'chroma-js';
 import EtiquetasModal from "../../components/LabelModal";
@@ -27,10 +22,8 @@ const DetailPedido = () => {
   const { id } = useParams();
 
   const {
-    messages: detallesSocket,
-    status,
-    sendMessage
-  } = useWebSocket(`ws://localhost:8000/ws/pedidos/${id}/`)
+    messages: detallesSocket
+  } = useWebSocket(`${WS_PREFIX}/ws/pedidos/${id}/`)
 
   const pageRef = useRef()
   const modalRef = useRef()
@@ -49,30 +42,42 @@ const DetailPedido = () => {
   const [selectedEtiqueta, setSelectedEtiqueta] = useState(null)
 
   useEffect(() => {
-    console.log('llega etiquetas: ', allEtiquetas)
+    //console.log('llega etiquetas: ', allEtiquetas)
   }, [allEtiquetas])
 
   useEffect(async () => {
     getEtiquetas(id)
     let p = await findPedido(id)
-    console.log('llega prdido: ', p)
     setPedido(p)
   }, [])
 
   useEffect(() => {
     if (detallesSocket) {
-      setPedido( prev => {
-        let newPedido = {...prev}
-        detallesSocket.forEach( cambio => {
+      setPedido(prev => {
+        // Aplicamos los cambios a cada lista de etiquetas
+        let newPedido = { ...prev }
+        detallesSocket.forEach(cambio => {
           newPedido.detalles
-          .find( dtll => dtll.idDetallePedido === cambio.detallePedido).cantidades
-          .find( ctd => ctd.talla === cambio.talla ).etiquetas
-          .find( etq => etq.idProduccion === cambio.produccion )
-          .estacionActual = cambio.estacionNueva
-        } )
+            .find(dtll => dtll.idDetallePedido === cambio.detallePedido).cantidades
+            .find(ctd => ctd.talla === cambio.talla).etiquetas
+            .find(etq => etq.idProduccion === cambio.produccion)
+            .estacionActual = cambio.estacionNueva
+        })
+        // Aplicamos los cambios a cada lista de progresos
+        newPedido.detalles.forEach(detalle => {
+          detalle.cantidades.forEach(cantidad => {
+            cantidad.progreso =
+              // Sacar las estaciones Unicas
+              [...new Set(cantidad.etiquetas.map(etiqueta => etiqueta.estacionActual))]
+                // Devolver una matris con el nombre de la estacion y la cantidad de etiquetas en esa estacion
+                .map(uniqueEstacion => [
+                  uniqueEstacion,
+                  [...cantidad.etiquetas.filter(et => et.estacionActual === uniqueEstacion)].length
+                ])
+          })
+        })
         return newPedido
       })
-      //setPedido(detallesSocket)
     }
   }, [detallesSocket])
 
@@ -115,11 +120,9 @@ const DetailPedido = () => {
           </div>
 
           {pedido === null ? <Loader /> :
-
             <form
               id='frmPedido'
-              className='flex flex-col h-full w-full relative '
-            //onSubmit={formik.handleSubmit}
+              className='flex flex-col h-full w-full relative'
             >
               <div className="w-full flex flex-col">
                 {/* DATOS DEL PEDIDO */}
@@ -161,7 +164,6 @@ const DetailPedido = () => {
                         label='Fecha de Registro'
                         type='text'
                       />
-
                     </div>
                   </div>
                 </div>
@@ -177,14 +179,14 @@ const DetailPedido = () => {
                     <div className='flex'>
                       <button
                         disabled={allEtiquetas.length === 0}
-                        onClick={(e) => { e.preventDefault(); handleOpenModal(setModalVisible) }}
+                        type="button"
+                        onClick={() => handleOpenModal(setModalVisible)}
                         className='normal-button h-10 w-10 rounded-lg total-center'
                       >
                         <ICONS.Print size='25px' />
                       </button>
                     </div>
                   </div>
-
                   <div className="flex flex-col relative h-full bg-white rounded-lg ">
                     {/*  MONITOREO DE LA PRODUCCION */}
                     <div className="flex w-full relative h-full">
@@ -220,98 +222,96 @@ const DetailPedido = () => {
                       {/*  DETALLES DEL PEDIDO  */}
                       <div className="flex-1 relative h-full bg-white">
                         <div className="absolute w-full h-full">
-                          {
-                            <div className="flex flex-col w-full h-full ">
-                              {/*  CHARTS  */}
-                              <div className="relative w-full h-2/5">
-                                <div className="flex absolute w-full h-full ">
-                                  <div className="flex overflow-x-scroll bg-gray-50 w-full px-2">
-                                    {pedido?.detalles[selectedFichaIndx]?.cantidades.map((cantidad, j) => {
-
-                                      //por cada cantidad renderizamos una grafica
-                                      //Especificamos las opciones de la grafica
-                                      let options = {
-                                        title: "Talla: " + cantidad.talla,
-                                        titleTextStyle: { fontSize: 18, bold: false, color: '#0f766e', },
-                                        colors: chroma.scale(['#2A4858', '#fafa6e']).mode('lch').colors(7),
-                                        pieHole: 0.4,
-                                        legend: { textStyle: { color: '#1f2937', fontSize: 17 } },
-                                        //tooltip: { isHtml: true },
-                                        tooltip: { backgroundColor: '#000', textStyle: { color: '#1f2937', fontSize: 17 } },
-                                        pieSliceTextStyle: { color: '#fff', fontSize: 14, textAlign: 'center' },
-                                        backgroundColor: "transparent",
-
+                          <div className="flex flex-col w-full h-full ">
+                            {/*  CHARTS  */}
+                            <div className="relative w-full h-2/5">
+                              <div className="flex absolute w-full h-full ">
+                                <div className="flex overflow-x-scroll bg-gray-50 w-full px-2">
+                                  {pedido?.detalles[selectedFichaIndx]?.cantidades.map((cantidad, j) => {
+                                    //Especificamos las opciones de la grafica
+                                    let options = {
+                                      title: "Talla: " + cantidad.talla,
+                                      titleTextStyle: { fontSize: 18, bold: false, color: '#0f766e', },
+                                      colors: chroma.scale(['#2A4858', '#fafa6e']).mode('lch').colors(7),
+                                      pieHole: 0.4,
+                                      legend: { textStyle: { color: '#1f2937', fontSize: 17 } },
+                                      //tooltip: { isHtml: true },
+                                      tooltip: { backgroundColor: '#000', textStyle: { color: '#1f2937', fontSize: 17 } },
+                                      pieSliceTextStyle: { color: '#fff', fontSize: 14, textAlign: 'center' },
+                                      backgroundColor: "transparent",
+                                      animation: {
+                                        duration: 1000,
+                                        easing: 'out',
                                       }
-                                      //Ajustamos el arreglo de datos para la grafica
-                                      let data = [["Departamentos", "Número de etiquetas"]]
-                                      cantidad.progreso.forEach(progreso => {
-                                        data.push(progreso);
-                                      });
-                                      //Renderizamos la grafica
-                                      return (
-                                        <div
-                                          key={`PieChart-${j}`}
-                                          className="flex-shrink-0 w-[33.33%] min-w-[220px]  h-full p-2 py-4">
-                                          <div
-                                            onClick={() => setSelectedTallaIndx(j)}
-                                            className={(selectedTallaIndx === j ? "shadow-md rounded-lg bg-white" : "bg-gray-50 hover:bg-white") + " h-full cursor-pointer duration-200"}>
-                                            {<Chart
-                                              chartType="PieChart"
-                                              data={data}
-                                              options={options}
-                                              loader={<Loader />}
-                                              width={"100%"}
-                                              height={"100%"}
-                                            />}
-
-                                          </div>
-                                        </div>
-                                      );
-                                    })
                                     }
-                                  </div>
-                                </div>
-                                <div className="flex flex-row w-full overflow-x-scroll overflow-y-hidden py-2">
+                                    //Ajustamos el arreglo de datos para la grafica
+                                    let data = [["Departamentos", "Número de etiquetas"]]
+                                    cantidad.progreso.forEach(progreso => {
+                                      data.push(progreso);
+                                    });
+                                    //Renderizamos la grafica
+                                    return (
+                                      <div
+                                        key={`PieChart-${j}`}
+                                        className="flex-shrink-0 w-[33.33%] min-w-[320px]  h-full p-2 py-4">
+                                        <div
+                                          onClick={() => setSelectedTallaIndx(j)}
+                                          className={(selectedTallaIndx === j ? "shadow-md rounded-lg bg-white" : "bg-gray-50 hover:bg-white") + " h-full cursor-pointer duration-200"}>
+                                          <Chart
+                                            chartType="PieChart"
+                                            data={data}
+                                            options={options}
+                                            loader={<Loader />}
+                                            width={"100%"}
+                                            height={"100%"}
+                                          />
+                                        </div>
+                                      </div>
+                                    );
+                                  })
+                                  }
                                 </div>
                               </div>
-                              {/*  Tabla de Etiquetas */}
-                              <div className="relative flex-grow overflow-y-scroll">
-                                <div className="absolute w-full">
-                                  <table className="customTable clic-row">
-                                    <thead>
-                                      <tr className="h-10">
-                                        <th>Etiqueta</th>
-                                        <th>Cantidad</th>
-                                        <th>Progreso</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {
-                                        (pedido.detalles[selectedFichaIndx]?.cantidades[selectedTallaIndx]?.etiquetas)
-                                          .map((etiqueta, fila) =>
-                                            <tr
-                                              key={'E' + fila}
-                                              onClick={() => {
-                                                handleOpenModal(setDetalleEtiquetaModalVisible)
-                                                setSelectedEtiqueta(etiqueta)
-                                              }}
-                                              className="w-full text-center">
-                                              <td> {etiqueta.numEtiqueta} </td>
-                                              <td> {etiqueta.cantidad} </td>
-                                              <td>
-                                                <Progreso
-                                                  last={fila === pedido.detalles[selectedFichaIndx]?.cantidades[selectedTallaIndx]?.etiquetas.length - 1}
-                                                  estacion={etiqueta.estacionActual}
-                                                  ruta={pedido.detalles[selectedFichaIndx]?.rutaProduccion} />
-                                              </td>
-                                            </tr>)
-                                      }
-                                    </tbody>
-                                  </table>
-                                </div>
+                              <div className="flex flex-row w-full overflow-x-scroll overflow-y-hidden py-2">
                               </div>
                             </div>
-                          }
+                            {/*  Tabla de Etiquetas */}
+                            <div className="relative flex-grow overflow-y-scroll">
+                              <div className="absolute w-full">
+                                <table className="customTable clic-row">
+                                  <thead>
+                                    <tr className="h-10">
+                                      <th>Etiqueta</th>
+                                      <th>Cantidad</th>
+                                      <th>Progreso</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {
+                                      (pedido.detalles[selectedFichaIndx]?.cantidades[selectedTallaIndx]?.etiquetas)
+                                        .map((etiqueta, fila) =>
+                                          <tr
+                                            key={'E' + fila}
+                                            onClick={() => {
+                                              handleOpenModal(setDetalleEtiquetaModalVisible)
+                                              setSelectedEtiqueta(etiqueta)
+                                            }}
+                                            className="w-full text-center">
+                                            <td> {etiqueta.numEtiqueta} </td>
+                                            <td> {etiqueta.cantidad} </td>
+                                            <td>
+                                              <Progreso
+                                                last={fila === pedido.detalles[selectedFichaIndx]?.cantidades[selectedTallaIndx]?.etiquetas.length - 1}
+                                                estacion={etiqueta.estacionActual}
+                                                ruta={pedido.detalles[selectedFichaIndx]?.rutaProduccion} />
+                                            </td>
+                                          </tr>)
+                                    }
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>

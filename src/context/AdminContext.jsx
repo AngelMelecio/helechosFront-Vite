@@ -1,14 +1,10 @@
 import React, { useState } from "react";
-import { useEffect } from "react";
 import { useContext } from "react";
-import { GiConsoleController } from "react-icons/gi";
-import { toast } from "react-toastify";
-import { useApp } from "./AppContext";
 import { useAuth } from "./AuthContext";
-import {entorno} from "../constants/entornos.jsx"
+import { API_URL } from "../constants/HOSTS";
 
 
-const apiUsersUrl = entorno+"/users/"
+const apiUsersUrl = API_URL+"/users/"
 
 const ct_JSON = { "Content-Type": "application/json" }
 

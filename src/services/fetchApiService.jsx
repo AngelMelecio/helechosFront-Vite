@@ -1,4 +1,4 @@
-import {API_URL} from "../constants/API_URL"
+import {API_URL} from "../constants/HOSTS"
 
 async function fetchAPI(path, options = {}) {
     const url = `${API_URL}/${path}`
