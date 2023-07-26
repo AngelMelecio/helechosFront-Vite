@@ -3,21 +3,14 @@ import { useAuth } from "../../../context/AuthContext";
 import { useState, useEffect} from "react";
 import { useContext } from "react";
 import { fetchAPI } from "../../../services/fetchApiService";
-import { entorno } from "../../../constants/entornos";
-import { set } from "lodash";
-
-import useWebSocket from "../../../components/useWebSockets";
-import { data } from "autoprefixer";
-const WS_PEDIDOS_URL = "ws://localhost:8000/ws/pedidos/"
+import { API_URL } from "../../../constants/HOSTS";
 
 const API_PEDIDOS_URL = "api/pedidos/"
 const API_PEDIDO_URL = "api/pedido/"
-const API_FICHAS_MATERIALES = "/api/fichas_tecnicas_materiales/"
 const API_FICHAS_BY_MODELO = "api/fichas_by_modelo/"
 const API_GET_ETIQUETAS = "api/produccionByPedido/"
 const API_IMPRESION_ETIQUETAS = "api/produccionPrint/"
 const API_PROGRESS_ETIQUETA = "api/progresoByEtiqueta/"
-
 
 const PedidosContext = React.createContext('PedidosContext')
 
@@ -44,11 +37,19 @@ function formatPedidos(pedidos) {
                 
             }))]
         }))],
-        isSelected: false,
         fechaRegistro: new Date(pedido.fechaRegistro).toLocaleString(),
         fechaEntrega: new Date(pedido.fechaEntrega).toLocaleDateString()
     }))
     return formatData
+}
+
+function formatPedidosListar(pedidos) {
+    return pedidos.map( p =>({
+        ...p,
+        fechaRegistro: new Date(p.fechaRegistro).toLocaleString(),
+        fechaEntrega: new Date(p.fechaEntrega).toLocaleDateString(),
+        isSelected:false
+    }) )
 }
 
 function formatFichas(fichas) {
@@ -56,7 +57,7 @@ function formatFichas(fichas) {
         ...ficha,
         fechaCreacion: new Date(ficha.fechaCreacion).toLocaleString(),
         fechaUltimaEdicion: new Date(ficha.fechaUltimaEdicion).toLocaleString(),
-        fotografia: entorno + ficha.fotografia
+        fotografia: `${API_URL}/${ficha.fotografia}`
     }))
     return formatedFichas
 }
@@ -140,7 +141,7 @@ export function PedidosProvider({ children }) {
             headers: { 'Authorization': 'Bearer ' + session.access }
         }
         const pedidos = await fetchAPI(API_PEDIDOS_URL, options)
-        return formatPedidosTodos(pedidos)
+        return formatPedidosListar(pedidos)
     }
     /*async function getEtiquetas(idPedido) {
         let options = {

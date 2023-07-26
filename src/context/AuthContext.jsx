@@ -3,13 +3,12 @@ import { useEffect } from "react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom"
 import { toast, ToastContainer } from "react-toastify";
-import { useApp } from "./AppContext";
 import 'react-toastify/dist/ReactToastify.css';
-import {entorno} from "../constants/entornos.jsx"
+import { API_URL } from "../constants/HOSTS";
 
 
-const apiLoginUrl = entorno+"/login/"
-const apiRefreshTokenUrl = entorno+"/api/token/refresh/"
+const apiLoginUrl = API_URL+"/login/"
+const apiRefreshTokenUrl = API_URL+"/api/token/refresh/"
 
 const AuthContext = React.createContext()
 

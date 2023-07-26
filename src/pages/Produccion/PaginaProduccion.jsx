@@ -227,7 +227,16 @@ const PaginaProduccion = () => {
                           /* Boton Escanear Etiqueta  */
                           etiqueta === null ?
                             <button
-                              onClick={e => handleOpenModal(setScannModalVisible)}
+                              onClick={async () => {
+                                try {
+                                  await navigator.mediaDevices.getUserMedia({ video: true }).then((stream)=>{
+                                    console.log(stream)
+                                    handleOpenModal(setScannModalVisible);
+                                  })
+                                } catch (e) {
+                                  console.log(e)
+                                }
+                              }}
                               disabled={empleado === null}
                               type="button"
                               className="normal-button h-8 w-8 rounded-md total-center">
