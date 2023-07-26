@@ -38,10 +38,7 @@ const PaginaProduccion = () => {
   const modalContainerRef = useRef()
   const [scannModalVisible, setScannModalVisible] = useState(false)
 
-  const [departamento, setDepartamento] = useState(optionsDepartamento[0])
-
   const { allEmpleados, refreshEmpleados, loading: gettingEmpleados, getEmpleadoMaquinas } = useEmpleados()
-  const [optionsEmpleado, setOptionsEmpleado] = useState([])
   const [empleado, setEmpleado] = useState(null)
 
   const { allMaquinas, refreshMaquinas, loading: gettingMaquinas } = useMaquinas()
@@ -65,14 +62,6 @@ const PaginaProduccion = () => {
     refreshMaquinas()
   }, [])
 
-  useEffect(() => {
-    setOptionsEmpleado(allEmpleados
-      .filter(e => e.departamento === departamento)
-      .map(e => ({ value: e.idEmpleado, label: e.nombre }))
-    )
-    setEmpleado(null)
-  }, [departamento])
-
   useEffect(async () => {
     if (!empleado) return
     let maquinas = await getEmpleadoMaquinas(empleado.idEmpleado)
@@ -81,7 +70,7 @@ const PaginaProduccion = () => {
       [
         ...allMaquinas.filter(m => mqnasIds.includes(m.idMaquina)), // Maquinas del empleado
         ...allMaquinas.filter(m => !mqnasIds.includes(m.idMaquina)) // Maquinas no asignadas
-      ].map(m => ({ value: m.idMaquina, label: "L-" + m.linea + " M-" + m.numero }))
+      ].map(m => ({ value: m.idMaquina, label: "M" + m.numero + " - L" + m.linea }))
     )
 
     let p1 = new Date().setHours(6, 0, 0)
@@ -106,7 +95,12 @@ const PaginaProduccion = () => {
 
   const handleScan = (result, error) => {
     if (result) {
-      setEtiqueta(JSON.parse(result.text))
+      const objScan = JSON.parse(result.text)
+
+      objScan.idEmpleado && empleado === null? 
+      (setEmpleado(allEmpleados.find(empl => empl.idEmpleado === objScan.idEmpleado)))
+      : (empleado !== null && !objScan.idEmpleado && setEtiqueta(objScan))
+
       handleCloseModal(setScannModalVisible)
     }
   }
@@ -151,11 +145,13 @@ const PaginaProduccion = () => {
                   <div className="w-1/3 relative pr-1.5 pb-1.5">
                     <div className="flex flex-col w-full h-full relative bg-white rounded-lg shadow-md">
                       {/*  Card Header */}
-                      <div className="w-full p-2 mb-2 flex items-center justify-between">
+                      <div className="w-full p-2 flex items-center justify-between">
                         <p className="text-teal-700 text-lg font-semibold px-2">Datos del Empleado</p>
                         <button
                           type="button"
-                          className="normal-button h-8 w-8 rounded-md total-center">
+                          disabled={empleado !== null}
+                          className="normal-button h-8 w-8 rounded-md total-center"
+                          onClick={e => handleOpenModal(setScannModalVisible)}>
                           <ICONS.Qr size="22px" />
                         </button>
                       </div>
@@ -163,28 +159,13 @@ const PaginaProduccion = () => {
                         empleado === null ?
                           <>
                             {/* Selector de Empleado */}
-                            <div className="relative w-full h-full flex flex-col">
-                              <div className="absolute w-full h-full px-2">
-                                <div className="flex w-full">
-                                  <CustomSelect
-                                    className="z-[11]"
-                                    label="Departamento"
-                                    options={optionsDepartamento}
-                                    value={departamento}
-                                    onChange={e => setDepartamento(e.value)}
-                                  />
-                                </div>
-                                <div className="flex w-full">
-                                  <CustomSelect
-                                    className="z-10"
-                                    label="Trabajador"
-                                    options={optionsEmpleado}
-                                    value={empleado}
-                                    onChange={e => setEmpleado(allEmpleados.find(empl => empl.idEmpleado === e.value))}
-                                  />
-                                </div>
+                            
+                              <div className=" w-full h-full px-2 total-center bg-gray-100">
+                                  <p className="italic font-semibold text-gray-600">
+                                    Escaneé un empleado ...
+                                  </p>
                               </div>
-                            </div>
+                            
                           </> :
                           <>
                             {/* Empleado Seleccionado */}
@@ -314,7 +295,7 @@ const PaginaProduccion = () => {
                     <p className={(empleado === null ? "text-gray-400" : "text-teal-700") + " text-lg font-semibold px-2"}>Datos de la Captura</p>
                     <button
                       onClick={handleCapturar}
-                      disabled={loading || empleado === null || etiquetasList.length === 0}
+                      disabled={loading || empleado === null || etiquetasList.length === 0 || maquina === null || turno === null}
                       type="button"
                       className="normal-button h-8 rounded-md px-6">Capturar</button>
                   </div>
