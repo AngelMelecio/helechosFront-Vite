@@ -46,8 +46,8 @@ function formatPedidos(pedidos) {
 function formatPedidosListar(pedidos) {
     return pedidos.map( p =>({
         ...p,
-        fechaRegistro: new Date(p.fechaRegistro).toLocaleString(),
-        fechaEntrega: new Date(p.fechaEntrega).toLocaleDateString(),
+        fechaRegistro: new Date(p.fechaRegistro),
+        fechaEntrega: new Date(p.fechaEntrega),
         isSelected:false
     }) )
 }

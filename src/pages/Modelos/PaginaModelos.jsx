@@ -95,8 +95,8 @@ const PaginaModelos = () => {
         setElements={setListaModelos}
         columns={[
           { name: 'Nombre', attribute: 'nombre' },
-          {name: 'Cliente', attribute: 'nombreCliente'},
-          {name: 'Fecha de Creación', attribute: 'fechaCreacion'},
+          { name: 'Cliente', attribute: 'nombreCliente' },
+          { name: 'Fecha de Creación', attribute: 'fechaCreacion', type:'dateTime' },
         ]}
         onDelete={() => handleOpenModal(setDeleteModalVisible)}
       />
