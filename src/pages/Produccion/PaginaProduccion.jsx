@@ -8,20 +8,11 @@ import { QrReader } from "react-qr-reader"
 import { sleep } from "../../constants/functions"
 import { useProduccion } from './hooks/useProduccion'
 import ResponseModal from "./components/ResponseModal"
+import { set } from "lodash"
 
 const optsTurno = [
   { value: 'Mañana', label: 'Mañana' },
   { value: 'Tarde', label: 'Tarde' },
-]
-
-const optionsDepartamento = [
-  { value: 'Seleccione', label: 'Seleccione' },
-  { value: 'Tejido', label: 'Tejido' },
-  { value: 'Corte', label: 'Corte' },
-  { value: 'Plancha', label: 'Plancha' },
-  { value: 'Calidad', label: 'Calidad' },
-  { value: 'Empaque', label: 'Empaque' },
-  { value: 'Transporte', label: 'Transporte' },
 ]
 
 const etiquetaColumns = [{ label: 'Modelo', atr: 'modelo' },
@@ -38,7 +29,10 @@ const PaginaProduccion = () => {
   const modalContainerRef = useRef()
   const [scannModalVisible, setScannModalVisible] = useState(false)
 
-  const { allEmpleados, refreshEmpleados, loading: gettingEmpleados, getEmpleadoMaquinas } = useEmpleados()
+  const [scanEmpleadoModalVisible, setScanEmpleadoModalVisible] = useState(true)
+  const [scanEtiquetaModalVisible, setScanEtiquetaModalVisible] = useState(false)
+
+  const { refreshEmpleados, loading: gettingEmpleados, getEmpleadoMaquinas } = useEmpleados()
   const [empleado, setEmpleado] = useState(null)
 
   const { allMaquinas, refreshMaquinas, loading: gettingMaquinas } = useMaquinas()
@@ -97,9 +91,9 @@ const PaginaProduccion = () => {
     if (result) {
       const objScan = JSON.parse(result.text)
 
-      objScan.idEmpleado && empleado === null? 
-      (setEmpleado(allEmpleados.find(empl => empl.idEmpleado === objScan.idEmpleado)))
-      : (empleado !== null && !objScan.idEmpleado && setEtiqueta(objScan))
+      objScan.idEmpleado && empleado === null ?
+        (setEmpleado(objScan))
+        : (empleado !== null && !objScan.idEmpleado && setEtiqueta(objScan))
 
       handleCloseModal(setScannModalVisible)
     }
@@ -151,7 +145,7 @@ const PaginaProduccion = () => {
                           type="button"
                           disabled={empleado !== null}
                           className="normal-button h-8 w-8 rounded-md total-center"
-                          onClick={e => handleOpenModal(setScannModalVisible)}>
+                          onClick={e => handleOpenModal(setScanEmpleadoModalVisible)}>
                           <ICONS.Qr size="22px" />
                         </button>
                       </div>
@@ -159,13 +153,13 @@ const PaginaProduccion = () => {
                         empleado === null ?
                           <>
                             {/* Selector de Empleado */}
-                            
-                              <div className=" w-full h-full px-2 total-center bg-gray-100">
-                                  <p className="italic font-semibold text-gray-600">
-                                    Escaneé un empleado ...
-                                  </p>
-                              </div>
-                            
+
+                            <div className=" w-full h-full px-2 total-center bg-gray-100">
+                              <p className="italic font-semibold text-gray-600">
+                                Escaneé un empleado ...
+                              </p>
+                            </div>
+
                           </> :
                           <>
                             {/* Empleado Seleccionado */}
@@ -229,7 +223,7 @@ const PaginaProduccion = () => {
                             <button
                               onClick={async () => {
                                 try {
-                                  await navigator.mediaDevices.getUserMedia({ video: true }).then((stream)=>{
+                                  await navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
                                     console.log(stream)
                                     handleOpenModal(setScannModalVisible);
                                   })
@@ -334,29 +328,47 @@ const PaginaProduccion = () => {
       </div>
       {/*  Contenedor del Modal */}
       <div className='modal absolute z-50 h-full w-full' ref={modalContainerRef}>
-        {scannModalVisible &&
-          <div className="flex grayTrans w-full h-full total-center">
-            <div className="relative" style={{ width: '200px', height: '200px' }}>
-              <QrReader
-                scanDelay={300}
-                className="w-full h-full absolute"
-                onResult={handleScan}
-              />
-              <button
-                type="button"
-                onClick={e => handleCloseModal(setScannModalVisible)}
-                className="absolute h-8 w-8 neutral-button rounded-full -top-1.5 -left-1.5 ">
-                <ICONS.Cancel size="20px" />
-              </button>
-            </div>
-          </div>
-        }
         {
           responseModalVisible &&
           <ResponseModal
             onClose={() => handleCloseModal(setResponseModalVisible)}
             response={response}
           />
+        }
+        {
+          scanEmpleadoModalVisible &&
+          <div className="flex grayTrans w-full h-full total-center">
+
+            <div className="relative w-2/6 h-3/6">
+              <div className="flex flex-col w-full h-full px-2 total-center bg-gray-100">
+                <div className="p-5">
+                  <ICONS.Qr size="120px" color="#0f766e" />
+                </div>
+                <p className="italic font-semibold text-gray-600">
+                  Escaneando ...
+                </p>
+                <input
+                  className="visible opacity-0 h-0 w-0"
+                  type="text"
+                  autoFocus={true}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      console.log(e.target.value);
+                      e.target.value = '';
+                    }
+                  }}
+                />
+
+              </div>
+
+              <button
+                type="button"
+                onClick={e => handleCloseModal(setScanEmpleadoModalVisible)}
+                className="absolute h-8 w-8 neutral-button rounded-full -top-1.5 -left-1.5 ">
+                <ICONS.Cancel size="20px" />
+              </button>
+            </div>
+          </div>
         }
       </div>
     </>

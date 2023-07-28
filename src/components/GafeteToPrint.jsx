@@ -57,7 +57,6 @@ const GafetToPrint = ({ list, onCloseModal }) => {
                                             // Clonamos el objeto
                                             let obj = { ...originalObj };
                                             
-                                            delete obj.fotografia;
                                             delete obj.direccion;
                                             delete obj.telefono;
                                             delete obj.fechaEntrada;
@@ -80,7 +79,10 @@ const GafetToPrint = ({ list, onCloseModal }) => {
                                                         </View>
 
                                                         <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginHorizontal: '3', height: '30%' }}>
-                                                                <View style={{ border: 0.4, width: '27%', height: '100%', }} />
+                                                                {obj.fotografia !== null && obj.fotografia !== "" ?
+                                                                <Image style={{ border: 0.4, width: '27%', height: '100%', position:'absolute' }} src={obj.fotografia} />:
+                                                                <View style={{ border: 0.4, width: '27%', height: '100%', }} />}
+                                                                
                                                         </View>
 
                                                         <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginHorizontal: '3', marginVertical: '2' }}>
@@ -107,7 +109,7 @@ const GafetToPrint = ({ list, onCloseModal }) => {
                                                                     </View>
 
                                                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: 3, marginVertical: 2 }}>
-                                                                        <Text style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: 4 }}>NS: </Text>
+                                                                        <Text style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: 4 }}>NSS: </Text>
                                                                         <Text style={{ fontFamily: 'Roboto', fontWeight: 400, fontSize: 4 }}>{obj.ns}</Text>
                                                                     </View>
                                                                 </View>
