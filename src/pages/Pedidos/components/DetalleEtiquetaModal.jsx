@@ -59,7 +59,7 @@ const DetalleEtiquetaModal = ({ onClose, etiqueta }) => {
           </div>
         </div>
         <div className="flex flex-col total-center w-full h-full justify-center">
-          <div className="flex flex-row justify-center w-full">
+          <div className="flex flex-row h-full py-5 justify-center w-full">
             {ready && rows.length > 0 &&
               <Chart chartType="Timeline"
                 data={[columns, ...rows]}
