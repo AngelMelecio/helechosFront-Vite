@@ -6,7 +6,7 @@ import CustomSelect from './CustomSelect';
 import { usePedidos } from "../pages/Pedidos/hooks/usePedidos";
 import { get } from 'lodash';
 
-const EtiquetasModal = ({ columns, list, unique, onClose, title }) => {
+const EtiquetasModal = ({ columns, list, setList, unique, onClose, title, onPrint }) => {
 
     const {putProduccion} = usePedidos();
 
@@ -49,7 +49,8 @@ const EtiquetasModal = ({ columns, list, unique, onClose, title }) => {
     const [data, setData] = useState([])
 
     useEffect(() => {
-        let updatedData = [...list];
+       
+        /*let updatedData = [...list];
         data.map(item => {
             const index = updatedData.findIndex(i => i.idProduccion === item.idProduccion);
             if (index !== -1) {
@@ -66,7 +67,8 @@ const EtiquetasModal = ({ columns, list, unique, onClose, title }) => {
             updatedData = updatedData.slice(0, cantidadLabels);
         }
 
-        setData(updatedData);
+        setData(updatedData);*/
+    
     }, [list, selectedOption, cantidadLabels]);
 
 
@@ -79,17 +81,26 @@ const EtiquetasModal = ({ columns, list, unique, onClose, title }) => {
     const unSelectAll = () => { setData(data.map(d => ({ ...d, isSelected: false }))); setSelectedItems([]) }
 
     const handleCheck = (id) => {
+
+        setList( prev => {
+            let i = prev.findIndex(e => e[unique] === id)
+            let c = [...prev]
+            c[i].isSelected = !c[i].isSelected
+            return c
+        } )
+
+        /*
         let i = data.findIndex(e => e[unique] === id)
         let c = [...data]
         c[i].isSelected = !c[i].isSelected
         setData(c)
-        setSelectedItems(prev => prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id])
+        setSelectedItems(prev => prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id])*/
 
     }
     const handleCheckAll = (e) => {
         let v = e.target.checked
-        setData(prev => prev.map(e => ({ ...e, isSelected: v })))
-        setSelectedItems(v ? data.map(e => e[unique]) : [])
+        setList(prev => prev.map(e => ({ ...e, isSelected: v })))
+        //setSelectedItems(v ? data.map(e => e[unique]) : [])
     }
 
     let someSelected = data.some(d => d.isSelected)
@@ -112,13 +123,8 @@ const EtiquetasModal = ({ columns, list, unique, onClose, title }) => {
                             type='button'
                             className='bg-teal-500 p-1 w-28 text-white normal-button rounded-lg text-center'
                             value="Imprimir"
-                            disabled={selectedItems.length === 0}
-                            onClick={async (e) => {
-                                e.preventDefault();
-                                await getListToPrint();
-                                setShowLabelToPrint(true);
-                                putProduccion(await getListToUpdete());
-                            }}
+                            disabled={ !list.some( e=>e.isSelected ) }
+                            onClick={ onPrint }
                         />
                     </div>
 
@@ -167,7 +173,7 @@ const EtiquetasModal = ({ columns, list, unique, onClose, title }) => {
                         <thead>
                             <tr className="h-8 shadow-sm">
                                 <th className="px-2 sticky top-0 z-10 bg-white">
-                                    <input onChange={handleCheckAll} checked={someSelected} type="checkbox" /></th>
+                                    <input onChange={handleCheckAll} checked={ list.some( e => e.isSelected ) } type="checkbox" /></th>
 
                                 {columns.map((column, index) => (
                                     <th className="hover-modal text-teal-700 pl-2 pr-8 whitespace-nowrap sticky top-0 z-10 bg-white" key={index}>
@@ -183,7 +189,7 @@ const EtiquetasModal = ({ columns, list, unique, onClose, title }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {data.filter(d => Object.keys(d).some(k => d[k]?.toString().toLowerCase().includes(search.toLowerCase())))
+                            {list.filter(d => Object.keys(d).some(k => d[k]?.toString().toLowerCase().includes(search.toLowerCase())))
                                 .sort((a, b) => {
                                     if (filter.ord === 1) return a[filter.atr] > b[filter.atr] ? 1 : -1
                                     if (filter.ord === 2) return a[filter.atr] < b[filter.atr] ? 1 : -1
@@ -207,7 +213,7 @@ const EtiquetasModal = ({ columns, list, unique, onClose, title }) => {
 
 
             </div>
-            {showLabelToPrint && <LabelToPrint list={listToPrint} onCloseModal={setShowLabelToPrint} />}
+            {/*showLabelToPrint && <LabelToPrint list={listToPrint} onCloseModal={setShowLabelToPrint} />*/}
         </div>
 
     )

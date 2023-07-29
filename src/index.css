@@ -644,55 +644,59 @@ input[type="checkbox"]:checked::after {
 }
 
 .twinkling {
-  animation: radar 2s infinite ease-in-out;
+  animation: radar 1.2s infinite ease-in-out;
 }
 
 @keyframes radar {
   0% {
-    -webkit-box-shadow: 0 0 0 -0.5px #a7f3d0;
-    -moz-box-shadow: 0 0 0 -0.5px #a7f3d0;
-    box-shadow: 0 0 0 -0.5px #a7f3d0;
+    -webkit-box-shadow: 0 0 0 -0.5px #6ee7b7;
+    -moz-box-shadow: 0 0 0 -0.5px #6ee7b7;
+    box-shadow: 0 0 0 -0.5px #6ee7b7;
   }
 
   10% {
-    -webkit-box-shadow: 0 0 1px 1.1px #a7f3d0;
-    -moz-box-shadow: 0 0 1px 1.1px #a7f3d0;
-    box-shadow: 0 0 1px 1.1px #a7f3d0;
+    -webkit-box-shadow: 0 0 1px 1.1px #6ee7b7;
+    -moz-box-shadow: 0 0 1px 1.1px #6ee7b7;
+    box-shadow: 0 0 1px 1.1px #6ee7b7;
   }
 
   15% {
-    -webkit-box-shadow: 0 0 5px 1.2 #a7f3d0;
-    -moz-box-shadow: 0 0 5px 1.2 #a7f3d0;
-    box-shadow: 0 0 5px 1.2 #a7f3d0;
+    -webkit-box-shadow: 0 0 5px 1.2 #6ee7b7;
+    -moz-box-shadow: 0 0 5px 1.2 #6ee7b7;
+    box-shadow: 0 0 5px 1.2 #6ee7b7;
   }
   90%{
-    -webkit-box-shadow: 0 0 6px 4px #a7f3d000;
-    -moz-box-shadow: 0 0 6px 4px #a7f3d000;
-    box-shadow: 0 0 6px 4px #a7f3d000;
+    -webkit-box-shadow: 0 0 6px 4px #6ee7b700;
+    -moz-box-shadow: 0 0 6px 4px #6ee7b700;
+    box-shadow: 0 0 6px 4px #6ee7b700;
   }
   100%{
     -webkit-box-shadow: 0 0 6px 4px #a7f3d000;
     -moz-box-shadow: 0 0 6px 4px #a7f3d000;
     box-shadow: 0 0 6px 4px #a7f3d000;
   }
-  /*
-  0%,
-  100% {
-    -webkit-box-shadow: 0 0 3px 0px #a7f3d0;
-    -moz-box-shadow: 0 0 3px 0px #a7f3d0;
-    box-shadow: 0 0 3px 0px #a7f3d0;
-  }
-
-  5% {
-    -webkit-box-shadow: 0 0 1px 1.3px #a7f3d0;
-    -moz-box-shadow: 0 0 1px 1.3px #a7f3d0;
-    box-shadow: 0 0 1px 1.3px #a7f3d0;
-  }
-  40% {
-    -webkit-box-shadow: 0 0 4px 1px #a7f3d0;
-    -moz-box-shadow: 0 0 4px 1px #a7f3d0;
-    box-shadow: 0 0 4px 1px #a7f3d0;
-  }
-  */
-
 }
+
+.scann-icon::after{
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 17%;
+  width: 65%;
+  height: 0.3rem;
+  background: radial-gradient(circle, #e11d48 0%, #e11d474d 80%);
+  filter: blur(1.4px);
+  border-radius: 100%;
+  transform: translateX(-50%);
+  animation: scann-animation 2.3s ease-in-out infinite alternate;
+}
+
+@keyframes scann-animation {
+  0% {
+    top: 17%;
+  }
+  100% {
+    top: 80%;
+  }
+}
+

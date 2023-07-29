@@ -21,6 +21,23 @@ const initPedido = {
   fechaEntrega: "",
   detalles: []
 }
+const initRoute = {
+  "creada": "tjeido",
+  "tejido": null,
+  "plancha": null,
+  "corte": null,
+  "calidad": null,
+  "empaque": "empacado",
+}
+
+const defaultRoute = {
+  "creada": "tejido",
+  "tejido": "plancha",
+  "plancha": "corte",
+  "corte": "calidad",
+  "calidad": "empaque",
+  "empaque": "empacado",
+}
 
 const NuevoPedido = () => {
 

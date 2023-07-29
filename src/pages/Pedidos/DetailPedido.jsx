@@ -14,6 +14,7 @@ import { sleep } from '../../constants/functions';
 import useWebSocket from "../../components/useWebSockets";
 import Progreso from "./components/Progreso";
 import DetalleEtiquetaModal from "./components/DetalleEtiquetaModal";
+import LabelToPrint from "../../components/LabelToPrint";
 
 const DetailPedido = () => {
 
@@ -30,10 +31,10 @@ const DetailPedido = () => {
 
   const [modalVisible, setModalVisible] = useState(false)
   const [detalleEtiquetaModalVisible, setDetalleEtiquetaModalVisible] = useState(false)
-
+  const [printEtiquetasModalVisible, setPrintEtiquetasModalVisible] = useState(false)
   const [pageScrollBottom, setPageScrollBottom] = useState(false)
 
-  const { findPedido, allEtiquetas } = usePedidos()
+  const { findPedido, allEtiquetas, setAllEtiquetas } = usePedidos()
 
   const [pedido, setPedido] = useState(null)
 
@@ -44,6 +45,7 @@ const DetailPedido = () => {
 
   useEffect(async () => {
     let p = await findPedido(id)
+    console.log(allEtiquetas)
     setPedido(p)
   }, [])
 
@@ -323,6 +325,7 @@ const DetailPedido = () => {
           <EtiquetasModal
             title="Selección de etiquetas"
             list={allEtiquetas}
+            setList={setAllEtiquetas}
             unique='idProduccion'
             columns={[
               { name: 'ID', atr: 'idProduccion' },
@@ -332,7 +335,17 @@ const DetailPedido = () => {
               { name: 'Estado', atr: 'estado' },
             ]}
             onClose={() => { handleCloseModal(setModalVisible); }}
+            onPrint={async () => {
+              handleOpenModal(setPrintEtiquetasModalVisible);
+              //await handleCloseModal(setModalVisible);
+            }}
           />
+        }
+        {
+          printEtiquetasModalVisible &&
+          <LabelToPrint
+            list={allEtiquetas.filter(e => e.isSelected)}
+            onCloseModal={() => handleCloseModal(setPrintEtiquetasModalVisible)} />
         }
         {
           detalleEtiquetaModalVisible &&

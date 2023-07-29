@@ -27,6 +27,8 @@ const PaginaProduccion = () => {
   const { postProduccion, loading } = useProduccion()
 
   const modalContainerRef = useRef()
+  const pageRef = useRef()
+  const scannerInpRef = useRef()
   const [scannModalVisible, setScannModalVisible] = useState(false)
 
   const [scanEmpleadoModalVisible, setScanEmpleadoModalVisible] = useState(true)
@@ -80,17 +82,18 @@ const PaginaProduccion = () => {
     setState(true)
     await sleep(150)
     modalContainerRef.current.classList.add('visible')
+    //pageRef.current.classList.add('blurred')
   }
   const handleCloseModal = async (setState) => {
     modalContainerRef.current.classList.remove('visible')
+    //pageRef.current.classList.remove('blurred')
     await sleep(150)
     setState(false)
   }
 
-  const handleScan = (result, error) => {
+  const handleScan = (result) => {
     if (result) {
       const objScan = JSON.parse(result.text)
-
       objScan.idEmpleado && empleado === null ?
         (setEmpleado(objScan))
         : (empleado !== null && !objScan.idEmpleado && setEtiqueta(objScan))
@@ -129,7 +132,7 @@ const PaginaProduccion = () => {
   return (
     <>
       <div className="flex w-full h-full relative pl-18 bg-slate-100">
-        <div id="tbl-page" className="flex flex-col h-full w-full absolute p-4 overflow-hidden">
+        <div id="tbl-page" ref={pageRef} className="flex flex-col h-full w-full absolute p-4 overflow-hidden">
           <div className="flex flex-col h-full">
             <h1 className="font-bold text-2xl pb-4 pl-3 text-teal-700">Captura de Producción</h1>
             <div className="h-full flex flex-col overflow-hidden bg-slate-100">
@@ -145,7 +148,8 @@ const PaginaProduccion = () => {
                           type="button"
                           disabled={empleado !== null}
                           className="normal-button h-8 w-8 rounded-md total-center"
-                          onClick={e => handleOpenModal(setScanEmpleadoModalVisible)}>
+                          onClick={e => { handleOpenModal(setScanEmpleadoModalVisible); scannerInpRef.current?.focus() }}>
+
                           <ICONS.Qr size="22px" />
                         </button>
                       </div>
@@ -221,16 +225,8 @@ const PaginaProduccion = () => {
                           /* Boton Escanear Etiqueta  */
                           etiqueta === null ?
                             <button
-                              onClick={async () => {
-                                try {
-                                  await navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
-                                    console.log(stream)
-                                    handleOpenModal(setScannModalVisible);
-                                  })
-                                } catch (e) {
-                                  console.log(e)
-                                }
-                              }}
+                              onClick={() => { handleOpenModal(setScannModalVisible); scannerInpRef.current?.focus() }}
+
                               disabled={empleado === null}
                               type="button"
                               className="normal-button h-8 w-8 rounded-md total-center">
@@ -311,7 +307,9 @@ const PaginaProduccion = () => {
                                   <button
                                     onClick={e => setEtiquetasList(prev => prev.filter((etiqueta, index) => index !== i))}
                                     type="button"
-                                    className="trash-button h-7 w-7 total-center rounded-md"><ICONS.Trash size="16px" /></button>
+                                    className="total-center flex w-8 h-8 duration-150 active:bg-rose-500 active:duration-0 active:text-white text-gray-700 hover:bg-rose-400 hover:text-white  rounded-lg">
+                                    <ICONS.Trash size="16px" />
+                                  </button>
                                 </td>
                               </tr>)
                             }
@@ -339,17 +337,26 @@ const PaginaProduccion = () => {
           scanEmpleadoModalVisible &&
           <div className="flex grayTrans w-full h-full total-center">
 
-            <div className="relative w-2/6 h-3/6">
-              <div className="flex flex-col w-full h-full px-2 total-center bg-gray-100">
-                <div className="p-5">
-                  <ICONS.Qr size="120px" color="#0f766e" />
+            <div className="relative flex bg-white p-2 shadow-md rounded-lg w-1/3 h-1/2">
+              <div className="flex flex-col w-full h-full total-center ">
+                <div className="flex relative w-full h-8">
+                  <button
+                    type="button"
+                    onClick={e => handleCloseModal(setScanEmpleadoModalVisible)}
+                    className="absolute h-8 w-8 neutral-button rounded-md top-0 left-0 ">
+                    <ICONS.Cancel size="20px" />
+                  </button>
+                  <p className="italic text-center w-full font-semibold text-teal-700 text-xl">
+                    Escaneando ...
+                  </p>
                 </div>
-                <p className="italic font-semibold text-gray-600">
-                  Escaneando ...
-                </p>
+                <div className="scann-icon relative">
+                  <ICONS.Qr size="270px" color="#0f766e" />
+                </div>
                 <input
                   className="visible opacity-0 h-0 w-0"
                   type="text"
+                  ref={scannerInpRef}
                   autoFocus={true}
                   onKeyDown={e => {
                     if (e.key === 'Enter') {
@@ -358,15 +365,8 @@ const PaginaProduccion = () => {
                     }
                   }}
                 />
-
               </div>
 
-              <button
-                type="button"
-                onClick={e => handleCloseModal(setScanEmpleadoModalVisible)}
-                className="absolute h-8 w-8 neutral-button rounded-full -top-1.5 -left-1.5 ">
-                <ICONS.Cancel size="20px" />
-              </button>
             </div>
           </div>
         }

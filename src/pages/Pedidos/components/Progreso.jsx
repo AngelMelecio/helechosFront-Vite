@@ -34,7 +34,7 @@ const Progreso = ({ estacion, ruta, last }) => {
                 transition: '0.5s ease',
                 //                                boxShadow: (indx && estaciones[indx - 1].completada && !estacion.completada) ? '0 0 5px 0.5px #34d399' : 'none'
               }}
-                className={"h-5 w-5 rounded-full peer " + (indx && estaciones[indx - 1].completada && !estacion.completada ? "twinkling border-2 border-emerald-200" : "")}></div>
+                className={"h-5 w-5 rounded-full peer " + ((indx && estaciones[indx - 1].completada && !estacion.completada) || !indx && !estacion.completada ? "twinkling border-2 border-emerald-300" : "")}></div>
               {/* Raya */}
               {indx < estaciones.length - 1 &&
                 <div
