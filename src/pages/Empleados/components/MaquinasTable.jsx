@@ -42,7 +42,7 @@ const MaquinasTable = ({
                     {m[c.atr]}
                   </td>)
                 }
-                <td className="total-center flex w-8 h-8 duration-150 text-gray-700 hover:bg-rose-400 hover:text-white  rounded-lg">
+                <td className="total-center flex w-8 h-8 duration-150 active:bg-rose-500 active:duration-0 active:text-white text-gray-700 hover:bg-rose-400 hover:text-white  rounded-lg">
                   <button
                     onClick={() => onUnassing(i)}
                     type="button"
