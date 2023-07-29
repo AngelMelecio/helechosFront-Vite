@@ -126,8 +126,6 @@ const CRUD = ({
       <>
         {
           columns.map((c, i) => {
-
-            console.log(typeof get(element, c.attribute), get(element, c.attribute))
             let value
             if (c.type && c.type === 'dateTime' && element[c.attribute]!==null) 
               value = new Date(element[c.attribute]).toLocaleString()
@@ -169,14 +167,14 @@ const CRUD = ({
   const ThIcon = ({ attribute }) => {
     if (attribute === sortParams.attribute) {
       if (sortParams.criteria === 0)
-        return <ICONS.Filter className="filter-button" />
+        return <ICONS.Filter size="20px" className="filter-button" />
       else if (sortParams.criteria === 1)
-        return <ICONS.DownFill />
+        return <ICONS.DownFill size="20px" />
       else
-        return <ICONS.UpFill />
+        return <ICONS.UpFill size="20px" />
     }
     else
-      return <ICONS.Filter className="filter-button" />
+      return <ICONS.Filter size="20px" className="filter-button" />
   }
 
   const navigate = useNavigate();
@@ -267,7 +265,7 @@ const CRUD = ({
                                   <p className="px-6">{c.name} </p>
                                   <button
                                     onClick={() => onSortCriteriaChange(c.attribute)}
-                                    className="absolute right-0 h-4 w-4 total-center">
+                                    className="absolute right-0 h-6 w-6 total-center">
                                     <ThIcon attribute={c.attribute} />
                                   </button>
                                 </div>}

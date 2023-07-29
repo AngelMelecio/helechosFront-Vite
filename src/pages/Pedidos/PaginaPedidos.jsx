@@ -21,7 +21,6 @@ const PaginaPedidos = () => {
 
   useEffect(() => {
     setListaPedidos(allPedidos)
-    console.table(allPedidos)
   }, [allPedidos])
 
   const handleOpenModal = async (setState) => {
