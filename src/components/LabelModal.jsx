@@ -6,104 +6,56 @@ import CustomSelect from './CustomSelect';
 import { usePedidos } from "../pages/Pedidos/hooks/usePedidos";
 import { get } from 'lodash';
 
-const EtiquetasModal = ({ columns, list, setList, unique, onClose, title, onPrint }) => {
+const optionsLabel = [
+    { value: 'Impresa', label: 'Impresas' },
+    { value: 'No impresa', label: 'No impresas' },
+    { value: 'Todas', label: 'Todas' },
+]
 
-    const {putProduccion} = usePedidos();
+const formatListToPrint = (list) => {
+    return list.filter(e => e.isSelected).map(e => ({
+        idProduccion: e.idProduccion,
+        idPedido: e.idPedido,
+        modelo: e.modelo,
+        color: e.color,
+        talla: e.tallaReal,
+        numEtiqueta: e.numEtiqueta,
+        cantidad: e.cantidad,
+    }))
+}
 
-    const [selectedItems, setSelectedItems] = useState([]);
+const EtiquetasModal = ({ columns, allEtiquetas, unique, onClose, title, onPrint }) => {
 
-    const [showLabelToPrint, setShowLabelToPrint] = useState(false);
-    const optionsLabel = [
-        { value: 'Impresa', label: 'Impresas' },
-        { value: 'No impresa', label: 'No impresas' },
-        { value: 'Todas', label: 'Todas' },
-    ]
-
-    const [listToPrint, setListToPrint] = useState([]);
-
-    async function getListToPrint() {
-        const listToPrint = list.filter(item => selectedItems.includes(item.idProduccion));
-        listToPrint.forEach(element => {
-            delete element.isSelected;
-            delete element.estado;
-            delete element.detallePedido;
-            delete element.fechaImpresion;
-            delete element.tallaReal;
-            element.estado='Impresa';
-        });
-        setListToPrint(listToPrint);
-    }
-
-    async function getListToUpdete() {
-        const listToUpdete = []
-        selectedItems.forEach(id => {
-            listToUpdete.push({idProduccion: id});
-        });
-        return listToUpdete;
-    }
+    const [list, setList] = useState(allEtiquetas)
+    
+    useEffect(()=>{
+        console.log(allEtiquetas)
+        setList(allEtiquetas.map( e =>({...e, isSelected:false}) ))
+    },[allEtiquetas])
+     
 
     const [selectedOption, setSelectedOption] = useState('Todas');
-    const [cantidadLabels, setCantidadLabels] = useState(list?.length);
+    const [cantidadLabels, setCantidadLabels] = useState(allEtiquetas?.length);
 
-    /***   Table Controls  ***/
-    const [data, setData] = useState([])
-
-    useEffect(() => {
-       
-        /*let updatedData = [...list];
-        data.map(item => {
-            const index = updatedData.findIndex(i => i.idProduccion === item.idProduccion);
-            if (index !== -1) {
-                updatedData[index] = item;
-                list[index] = item;
-            }
-        });
-        
-        if (selectedOption !== 'Todas') {
-            updatedData = updatedData.filter(item => item.estado === selectedOption);
-        }
-
-        if (cantidadLabels <=updatedData.length) {
-            updatedData = updatedData.slice(0, cantidadLabels);
-        }
-
-        setData(updatedData);*/
-    
-    }, [list, selectedOption, cantidadLabels]);
-
-
-    useEffect(() => setData(list), [list])
 
     const searchRef = useRef(null)
     const [search, setSearch] = useState("")
     const [filter, setFilter] = useState({ atr: unique, ord: 1 })
 
-    const unSelectAll = () => { setData(data.map(d => ({ ...d, isSelected: false }))); setSelectedItems([]) }
+    const unSelectAll = () => { setList(prev => prev.map(d => ({ ...d, isSelected: false }))) }
 
     const handleCheck = (id) => {
-
-        setList( prev => {
-            let i = prev.findIndex(e => e[unique] === id)
-            let c = [...prev]
-            c[i].isSelected = !c[i].isSelected
-            return c
-        } )
-
-        /*
-        let i = data.findIndex(e => e[unique] === id)
-        let c = [...data]
-        c[i].isSelected = !c[i].isSelected
-        setData(c)
-        setSelectedItems(prev => prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id])*/
-
+        setList(prev => prev.map(e => e[unique] === id ? ({ ...e, isSelected: !e.isSelected }) : e))
     }
     const handleCheckAll = (e) => {
         let v = e.target.checked
-        setList(prev => prev.map(e => ({ ...e, isSelected: v })))
+        setList(prev => prev.filter(d => Object.keys(d).some(k => d[k]?.toString().toLowerCase().includes(search.toLowerCase())))
+            .sort((a, b) => {
+                if (filter.ord === 1) return a[filter.atr] > b[filter.atr] ? 1 : -1
+                if (filter.ord === 2) return a[filter.atr] < b[filter.atr] ? 1 : -1
+            }).slice(0, cantidadLabels).map(e => ({ ...e, isSelected: v })))
         //setSelectedItems(v ? data.map(e => e[unique]) : [])
     }
-
-    let someSelected = data.some(d => d.isSelected)
 
     return (
         <div className='z-10 total-center h-screen w-full grayTrans absolute'>
@@ -123,8 +75,8 @@ const EtiquetasModal = ({ columns, list, setList, unique, onClose, title, onPrin
                             type='button'
                             className='bg-teal-500 p-1 w-28 text-white normal-button rounded-lg text-center'
                             value="Imprimir"
-                            disabled={ !list.some( e=>e.isSelected ) }
-                            onClick={ onPrint }
+                            disabled={!list.some(e => e.isSelected)}
+                            onClick={() => onPrint(formatListToPrint(list))}
                         />
                     </div>
 
@@ -134,7 +86,7 @@ const EtiquetasModal = ({ columns, list, setList, unique, onClose, title, onPrin
                     <div className='flex w-2/4'>
                         <CustomSelect
                             className='input z-50'
-                            onChange={option =>{ setSelectedOption(option.value); option.value === 'Todas' && setCantidadLabels(list.length)}}
+                            onChange={option => { setSelectedOption(option.value); option.value === 'Todas' && setCantidadLabels(list.length) }}
                             value={selectedOption}
                             options={optionsLabel}
                             label='Mostrando:'
@@ -146,9 +98,9 @@ const EtiquetasModal = ({ columns, list, setList, unique, onClose, title, onPrin
                         <Input
                             label='Cantidad:'
                             type={'number'}
-                            value={data.length > cantidadLabels ? cantidadLabels : data.length}
+                            value={list.length > cantidadLabels ? cantidadLabels : list.length}
                             onChange={(e) => setCantidadLabels(e.target.value)}
-                            max={data.length}
+                            max={list.length}
                         />
                     </div>
 
@@ -169,11 +121,11 @@ const EtiquetasModal = ({ columns, list, setList, unique, onClose, title, onPrin
                     </div>
                 </div>
                 <div className='max-h-95 overflow-y-scroll '>
-                    {data.length > 0 && <table className="w-full bg-white customTable">
+                    {list.length > 0 && <table className="w-full bg-white customTable">
                         <thead>
                             <tr className="h-8 shadow-sm">
                                 <th className="px-2 sticky top-0 z-10 bg-white">
-                                    <input onChange={handleCheckAll} checked={ list.some( e => e.isSelected ) } type="checkbox" /></th>
+                                    <input onChange={handleCheckAll} checked={list.some(e => e.isSelected)} type="checkbox" /></th>
 
                                 {columns.map((column, index) => (
                                     <th className="hover-modal text-teal-700 pl-2 pr-8 whitespace-nowrap sticky top-0 z-10 bg-white" key={index}>
@@ -193,7 +145,7 @@ const EtiquetasModal = ({ columns, list, setList, unique, onClose, title, onPrin
                                 .sort((a, b) => {
                                     if (filter.ord === 1) return a[filter.atr] > b[filter.atr] ? 1 : -1
                                     if (filter.ord === 2) return a[filter.atr] < b[filter.atr] ? 1 : -1
-                                })
+                                }).slice(0, cantidadLabels)
                                 .map((row, i) => (
                                     <tr
                                         onClick={() => handleCheck(row[unique])}

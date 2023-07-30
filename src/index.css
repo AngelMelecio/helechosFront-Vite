@@ -677,7 +677,7 @@ input[type="checkbox"]:checked::after {
   }
 }
 
-.scann-icon::after{
+.scan-icon::after{
   content: "";
   position: absolute;
   left: 50%;
@@ -688,7 +688,7 @@ input[type="checkbox"]:checked::after {
   filter: blur(1.4px);
   border-radius: 100%;
   transform: translateX(-50%);
-  animation: scann-animation 2.3s ease-in-out infinite alternate;
+  animation: scann-animation 1.8s ease-in-out infinite alternate;
 }
 
 @keyframes scann-animation {

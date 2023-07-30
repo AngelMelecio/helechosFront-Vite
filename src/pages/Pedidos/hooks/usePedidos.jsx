@@ -98,7 +98,7 @@ export function PedidosProvider({ children }) {
             let colores ="";
             detalle?.fichaTecnica?.materiales.forEach((material) => {colores += material?.color+"\n"})
             detalle?.cantidades?.forEach((cantidad) => {
-                cantidad?.etiquetas?.map((etiqueta) => {
+                cantidad?.etiquetas?.forEach((etiqueta) => {
                     etiquetasFormated.push({
                         ...etiqueta,
                         modelo: modelo,
@@ -181,6 +181,7 @@ export function PedidosProvider({ children }) {
         return response
     }
     async function putProduccion(listIds) {
+
         let options = {
             method: 'PUT',
             headers: {

@@ -32,9 +32,9 @@ const ResponseModal = ({ response, onClose }) => {
           </table>
         </div>
         <h3 className=" mt-2 relative h-7 border-t-2 total-center">
-              <p className="absolute -top-4 bg-white font-medium px-2 text-center italic text-teal-700">
-                Resultados
-              </p>
+          <p className="absolute -top-4 bg-white font-medium px-2 text-center italic text-teal-700">
+            Resultados
+          </p>
         </h3>
         <div className="overflow-y-scroll h-full">
           <table className="customTable text-center">
@@ -50,14 +50,16 @@ const ResponseModal = ({ response, onClose }) => {
               {
                 response.registros.map((etiqueta, index) =>
                   <tr key={'etiqueta' + index} > {
-                    ['modelo', 'numEtiqueta', 'ok', 'Detalles'].map((atr,j) => <td key={'D'+index +j}>
+                    ['modelo', 'numEtiqueta', 'ok', 'Detalles'].map((atr, j) => <td key={'D' + index + j}>
                       <div className="total-center">
                         {typeof etiqueta[atr] === 'boolean' ?
                           (etiqueta[atr] ?
-                            <ICONS.Check size="18px" color="#14b8a6"/> :
+                            <ICONS.Check size="18px" color="#14b8a6" /> :
                             <ICONS.Cancel size="18px" color="#e11d48" />)
                           :
-                          etiqueta[atr]
+                          <>
+                            {etiqueta[atr]}
+                          </>
                         }
                       </div>
                     </td>)
