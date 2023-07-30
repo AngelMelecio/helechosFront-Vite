@@ -19,17 +19,7 @@ const LabelToPrint = ({ list, onCloseModal }) => {
 
   useEffect(() => {
     const generateQrUrls = async () => {
-      const urls = await Promise.all(list.map( data => (
-        {
-          idProduccion: data.idProduccion,
-          idPedido: data.idPedido,
-          modelo: data.modelo,
-          color: data.color,
-          talla: data.tallaReal,
-          numEtiqueta: data.numEtiqueta,
-          cantidad: data.cantidad,
-        }
-      ) ).map((obj) => GenerateQrUrl(obj)));
+      const urls = await Promise.all(list.map((obj) => GenerateQrUrl(obj)));
       setQrUrls(urls);
     };
     generateQrUrls();

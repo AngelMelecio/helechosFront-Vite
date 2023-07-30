@@ -34,7 +34,7 @@ const DetailPedido = () => {
   const [printEtiquetasModalVisible, setPrintEtiquetasModalVisible] = useState(false)
   const [pageScrollBottom, setPageScrollBottom] = useState(false)
 
-  const { findPedido, allEtiquetas, setAllEtiquetas } = usePedidos()
+  const { findPedido, allEtiquetas, setAllEtiquetas, putProduccion } = usePedidos()
 
   const [pedido, setPedido] = useState(null)
 
@@ -42,10 +42,12 @@ const DetailPedido = () => {
   const [selectedTallaIndx, setSelectedTallaIndx] = useState(0)
   const [selectedEtiqueta, setSelectedEtiqueta] = useState(null)
 
+  const [etiquetasToPrint, setEtiquetasToPrint] = useState([])
 
   useEffect(async () => {
+    console.log('Effect detalle ', id)
     let p = await findPedido(id)
-    console.log(allEtiquetas)
+    console.log(p)
     setPedido(p)
   }, [])
 
@@ -88,7 +90,8 @@ const DetailPedido = () => {
   const handleCloseModal = async (setState) => {
     modalRef.current.classList.remove('visible')
     await sleep(150)
-    setState(false)
+    setState.map( st => st(false) )
+    //setState(false)
   }
 
   const handleScroll = () => {
@@ -135,14 +138,14 @@ const DetailPedido = () => {
                       <Input
                         readOnly
                         name='Cliente'
-                        value={pedido.modelo?.cliente.nombre}
+                        value={pedido?.modelo?.cliente.nombre}
                         label='Cliente'
                         type="text"
                       />
                       <Input
                         readOnly
                         name='Modelo'
-                        value={pedido.modelo.nombre}
+                        value={pedido?.modelo.nombre}
                         label='Modelo'
                         type="text"
                       />
@@ -151,14 +154,14 @@ const DetailPedido = () => {
                       <Input
                         readOnly
                         name='fechaEntrega'
-                        value={pedido.fechaEntrega}
+                        value={pedido?.fechaEntrega}
                         label='Fecha de Entrega'
                         type='text'
                       />
                       <Input
                         readOnly
                         name='fechaRegistro'
-                        value={pedido.fechaRegistro}
+                        value={pedido?.fechaRegistro}
                         label='Fecha de Registro'
                         type='text'
                       />
@@ -176,7 +179,7 @@ const DetailPedido = () => {
                     </div>
                     <div className='flex'>
                       <button
-                        disabled={allEtiquetas.length === 0}
+                        disabled={allEtiquetas?.length === 0}
                         type="button"
                         onClick={() => handleOpenModal(setModalVisible)}
                         className='normal-button h-10 w-10 rounded-lg total-center'
@@ -244,7 +247,7 @@ const DetailPedido = () => {
                                     }
                                     //Ajustamos el arreglo de datos para la grafica
                                     let data = [["Departamentos", "Número de etiquetas"]]
-                                    cantidad.progreso.forEach(progreso => {
+                                    cantidad.progreso?.forEach(progreso => {
                                       data.push(progreso);
                                     });
                                     //Renderizamos la grafica
@@ -298,10 +301,14 @@ const DetailPedido = () => {
                                             <td> {etiqueta.numEtiqueta} </td>
                                             <td> {etiqueta.cantidad} </td>
                                             <td>
-                                              <Progreso
-                                                last={fila === pedido.detalles[selectedFichaIndx]?.cantidades[selectedTallaIndx]?.etiquetas.length - 1}
-                                                estacion={etiqueta.estacionActual}
-                                                ruta={pedido.detalles[selectedFichaIndx]?.rutaProduccion} />
+                                              {
+
+                                                <Progreso
+                                                  last={fila === pedido.detalles[selectedFichaIndx]?.cantidades[selectedTallaIndx]?.etiquetas.length - 1}
+                                                  estacion={etiqueta.estacionActual}
+                                                  ruta={pedido.detalles[selectedFichaIndx]?.rutaProduccion}
+                                                />
+                                              }
                                             </td>
                                           </tr>)
                                     }
@@ -324,33 +331,48 @@ const DetailPedido = () => {
         {modalVisible &&
           <EtiquetasModal
             title="Selección de etiquetas"
-            list={allEtiquetas}
-            setList={setAllEtiquetas}
+            allEtiquetas={allEtiquetas}
+            //            list={allEtiquetas}
+            //          setList={setAllEtiquetas}
             unique='idProduccion'
             columns={[
-              { name: 'ID', atr: 'idProduccion' },
+              { name: 'Número etiqueta', atr: 'numEtiqueta' },
               { name: 'Talla', atr: 'talla' },
               { name: 'Cantidad', atr: 'cantidad' },
-              { name: 'Número etiqueta', atr: 'numEtiqueta' },
               { name: 'Estado', atr: 'estado' },
             ]}
-            onClose={() => { handleCloseModal(setModalVisible); }}
-            onPrint={async () => {
-              handleOpenModal(setPrintEtiquetasModalVisible);
-              //await handleCloseModal(setModalVisible);
-            }}
+            onClose={() => { handleCloseModal([setModalVisible]); }}
+            onPrint={async (etqList) => {
+              setEtiquetasToPrint(etqList)
+              handleOpenModal(setPrintEtiquetasModalVisible)
+              putProduccion(etqList?.map(e => ({ idProduccion: e.idProduccion })))
+              
+            } // setEtiquetasToPrint( etqList )
+              /*async () => {
+              setAllEtiquetas(prev => {
+                prev.map(e => {
+                  e.estado = 'Impresa'
+                  e.isSelected = false
+                  return e
+                })
+              })
+            }*/
+
+            }
           />
         }
         {
           printEtiquetasModalVisible &&
           <LabelToPrint
-            list={allEtiquetas.filter(e => e.isSelected)}
-            onCloseModal={() => handleCloseModal(setPrintEtiquetasModalVisible)} />
+            list={etiquetasToPrint}
+            onCloseModal={() => handleCloseModal(
+              [setPrintEtiquetasModalVisible,setModalVisible]
+            )} />
         }
         {
           detalleEtiquetaModalVisible &&
           <DetalleEtiquetaModal
-            onClose={() => handleCloseModal(setDetalleEtiquetaModalVisible)}
+            onClose={() => handleCloseModal([setDetalleEtiquetaModalVisible])}
             etiqueta={selectedEtiqueta}
           />
         }
