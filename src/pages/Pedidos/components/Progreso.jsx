@@ -9,7 +9,7 @@ const Progreso = ({ estacion, ruta, last }) => {
     let pos = "creada"
     let est = []
     let f = true
-    while (pos != "entregado") {
+    while (pos != "empacado") {
       if (pos === estacion) {
         f = false
       }
