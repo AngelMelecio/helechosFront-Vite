@@ -8,7 +8,7 @@ const ScanModal = ({ title, onScan, onClose }) => {
           <button
             type="button"
             onClick={onClose}
-            className="absolute h-8 w-8 neutral-button rounded-full top-0 left-0 ">
+            className="absolute h-8 w-8 neutral-button rounded-full top-0 left-0">
             <ICONS.Cancel size="20px" />
           </button>
         </div>
