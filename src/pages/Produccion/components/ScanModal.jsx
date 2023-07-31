@@ -3,12 +3,12 @@ import { ICONS } from "../../../constants/icons";
 const ScanModal = ({ title, onScan, onClose }) => {
   return (
     <div className="flex grayTrans w-full h-full total-center">
-      <div className="relative flex flex-col w-1/3 h-1/2 ">
-        <div className="flex w-full items-center h-10">
+      <div className="relative flex flex-col  h-1/2 total-center">
+        <div className="flex relative w-full">
           <button
             type="button"
             onClick={onClose}
-            className="absolute h-8 w-8 neutral-button rounded-full top-0 left-0 ">
+            className=" h-8 w-8 neutral-button rounded-full top-0 left-0 ">
             <ICONS.Cancel size="20px" />
           </button>
         </div>
@@ -29,8 +29,8 @@ const ScanModal = ({ title, onScan, onClose }) => {
           }}
         />
         <p className="text-center w-full font-bold italic text-gray-700 text-2xl">
-            {title}
-          </p>
+          {title}
+        </p>
       </div>
     </div>
   )
