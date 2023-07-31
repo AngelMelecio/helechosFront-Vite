@@ -15,6 +15,7 @@ import useWebSocket from "../../components/useWebSockets";
 import Progreso from "./components/Progreso";
 import DetalleEtiquetaModal from "./components/DetalleEtiquetaModal";
 import LabelToPrint from "../../components/LabelToPrint";
+import { DPTO_COLOR } from "../../constants/Despartamentos";
 
 const DetailPedido = () => {
 
@@ -45,7 +46,8 @@ const DetailPedido = () => {
   const [etiquetasToPrint, setEtiquetasToPrint] = useState([])
 
   useEffect(async () => {
-    console.log('Effect detalle ', id)
+
+
     let p = await findPedido(id)
     setPedido(p)
   }, [])
@@ -101,7 +103,7 @@ const DetailPedido = () => {
   const handleCloseModal = async (setState) => {
     modalRef.current.classList.remove('visible')
     await sleep(150)
-    setState.map( st => st(false) )
+    setState.map(st => st(false))
     //setState(false)
   }
 
@@ -241,10 +243,12 @@ const DetailPedido = () => {
                                 <div className="flex overflow-x-scroll bg-gray-50 w-full px-2">
                                   {pedido?.detalles[selectedFichaIndx]?.cantidades.map((cantidad, j) => {
                                     //Especificamos las opciones de la grafica
+                                    let color1 = DPTO_COLOR[cantidad.progreso[cantidad.progreso.length - 1][0]]
+                                    let color2 = DPTO_COLOR[cantidad.progreso[0][0]]
                                     let options = {
                                       title: "Talla: " + cantidad.talla,
                                       titleTextStyle: { fontSize: 18, bold: false, color: '#0f766e', },
-                                      colors: chroma.scale(['#2A4858', '#fafa6e']).mode('lch').colors(7),
+                                      colors: chroma.scale([color2, color1]).mode('lch').colors(cantidad.progreso.length + 1),
                                       pieHole: 0.3,
                                       legend: { textStyle: { color: '#1f2937', fontSize: 17 } },
                                       //tooltip: { isHtml: true },
@@ -287,6 +291,20 @@ const DetailPedido = () => {
                               <div className="flex flex-row w-full overflow-x-scroll overflow-y-hidden py-2">
                               </div>
                             </div>
+                            {/* 
+                              <div className="w-full flex">
+                                {(chroma.scale(['#082f49', '#5eead4']).mode('lch').colors(8))
+                                  .map((color, i) => <div style={{backgroundColor:color}} className="flex-1 h-10">
+                                    {color}
+                                  </div>)}
+                              </div>
+                              <div className="w-full flex">
+                                {(chroma.scale(['#083344', '#fde047']).mode('lch').colors(8))
+                                  .map((color, i) => <div style={{backgroundColor:color}} className="flex-1 h-10">
+                                    {color}
+                                  </div>)}
+                              </div>
+                            */}
                             {/*  Tabla de Etiquetas */}
                             <div className="relative flex-grow overflow-y-scroll">
                               <div className="absolute w-full">
@@ -357,7 +375,7 @@ const DetailPedido = () => {
               setEtiquetasToPrint(etqList)
               handleOpenModal(setPrintEtiquetasModalVisible)
               putProduccion(etqList?.map(e => ({ idProduccion: e.idProduccion })))
-              
+
             } // setEtiquetasToPrint( etqList )
               /*async () => {
               setAllEtiquetas(prev => {
@@ -377,7 +395,7 @@ const DetailPedido = () => {
           <LabelToPrint
             list={etiquetasToPrint}
             onCloseModal={() => handleCloseModal(
-              [setPrintEtiquetasModalVisible,setModalVisible]
+              [setPrintEtiquetasModalVisible, setModalVisible]
             )} />
         }
         {
