@@ -9,6 +9,7 @@ import { sleep } from "../../constants/functions"
 import { useProduccion } from './hooks/useProduccion'
 import ResponseModal from "./components/ResponseModal"
 import { set } from "lodash"
+import { API_URL } from "../../constants/HOSTS";
 import ScanModal from "./components/ScanModal"
 import { useAuth } from "../../context/AuthContext"
 
@@ -207,7 +208,7 @@ const PaginaProduccion = () => {
                                 <div className="flex py-2">
                                   <div className="pl-6 pr-4">
                                     <div className="foto relative">
-                                      <img className="foto" src={empleado.fotografia} alt="" />
+                                      <img className="foto" src={API_URL+empleado.fotografia} alt="" />
                                       <button
                                         type="button"
                                         onClick={e => {

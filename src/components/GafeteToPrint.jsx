@@ -2,9 +2,10 @@ import RobotoBold from '../fonts/Roboto/Roboto-Bold.ttf'
 import RobotoRegular from '../fonts/Roboto/Roboto-Regular.ttf'
 import { Document, Image, PDFViewer, Page, Text, View, Font } from "@react-pdf/renderer";
 import QRCode from 'qrcode';
-import { useState, useEffect } from 'react';
 import { ICONS } from "../constants/icons";
 import Loader from "./Loader/Loader";
+import { API_URL } from "../constants/HOSTS";
+
 
 const GafetToPrint = ({ list, onCloseModal }) => {
     
@@ -16,6 +17,7 @@ const GafetToPrint = ({ list, onCloseModal }) => {
     });
 
     const GenerateQrUrl = async (data) => {
+        data.fotografia=data.fotografia.substring(API_URL.length);
         const jsonString = JSON.stringify(data);
         return await QRCode.toDataURL(jsonString)
     }
@@ -116,6 +118,7 @@ const GafetToPrint = ({ list, onCloseModal }) => {
                                                             </View>
 
                                                         </View>
+                                                       
                                                     </View>
 
                                                 </Page>

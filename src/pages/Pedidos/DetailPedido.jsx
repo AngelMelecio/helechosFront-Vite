@@ -47,9 +47,20 @@ const DetailPedido = () => {
   useEffect(async () => {
     console.log('Effect detalle ', id)
     let p = await findPedido(id)
-    console.log(p)
     setPedido(p)
   }, [])
+
+  useEffect(() => {
+    console.log(pedido)
+  }, [pedido])  
+
+  useEffect(() => {
+    console.log('ficha: ',selectedFichaIndx)
+  }, [selectedFichaIndx])
+
+  useEffect(() => {
+    console.log('talla: ',selectedTallaIndx)
+  }, [selectedTallaIndx])
 
   useEffect(() => {
     if (detallesSocket) {
