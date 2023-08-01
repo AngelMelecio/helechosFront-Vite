@@ -20,7 +20,7 @@ const Progreso = ({ estacion, ruta, last }) => {
       pos = ruta[pos]
     }
     setEstaciones(est)
-  }, [estacion])
+  }, [estacion,ruta])
 
   return (
     <div className="w-full flex  total-center">

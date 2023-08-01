@@ -54,15 +54,11 @@ const DetailPedido = () => {
 
   useEffect(() => {
     console.log(pedido)
-  }, [pedido])  
+  }, [pedido])
 
   useEffect(() => {
-    console.log('ficha: ',selectedFichaIndx)
+    console.log('ficha: ', selectedFichaIndx)
   }, [selectedFichaIndx])
-
-  useEffect(() => {
-    console.log('talla: ',selectedTallaIndx)
-  }, [selectedTallaIndx])
 
   useEffect(() => {
     if (detallesSocket) {
@@ -223,7 +219,7 @@ const DetailPedido = () => {
                                       + (indx === selectedFichaIndx ?
                                         " bg-white shadow-md text-teal-700" :
                                         " hover:bg-white text-gray-600 duration-200")}
-                                    onClick={() => { setSelectedFichaIndx(indx); setSelectedTallaIndx(0) }}>
+                                    onClick={() => { setSelectedFichaIndx(indx); setSelectedTallaIndx(0);}}>
                                     <p className="font-medium">
                                       {detalle.fichaTecnica.nombre}
                                     </p>
@@ -243,13 +239,12 @@ const DetailPedido = () => {
                                 <div className="flex overflow-x-scroll bg-gray-50 w-full px-2">
                                   {pedido?.detalles[selectedFichaIndx]?.cantidades.map((cantidad, j) => {
                                     //Especificamos las opciones de la grafica
-                                    let color1 = DPTO_COLOR[cantidad.progreso[cantidad.progreso.length - 1][0]]
-                                    let color2 = DPTO_COLOR[cantidad.progreso[0][0]]
+
                                     let options = {
                                       title: "Talla: " + cantidad.talla,
                                       titleTextStyle: { fontSize: 18, bold: false, color: '#0f766e', },
-                                      colors: chroma.scale([color2, color1]).mode('lch').colors(cantidad.progreso.length + 1),
-                                      pieHole: 0.3,
+                                      colors: cantidad.progreso.map(p => DPTO_COLOR[p[0]]),
+                                      pieHole: 0.35,
                                       legend: { textStyle: { color: '#1f2937', fontSize: 17 } },
                                       //tooltip: { isHtml: true },
                                       tooltip: { backgroundColor: '#000', textStyle: { color: '#1f2937', fontSize: 17 } },
@@ -271,7 +266,7 @@ const DetailPedido = () => {
                                         key={`PieChart-${j}`}
                                         className="flex-shrink-0 w-[33.33%] min-w-[320px]  h-full p-2 py-4">
                                         <div
-                                          onClick={() => setSelectedTallaIndx(j)}
+                                          onClick={() => { setSelectedTallaIndx(j) }}
                                           className={(selectedTallaIndx === j ? "shadow-md rounded-lg bg-white" : "bg-gray-50 hover:bg-white") + " h-full cursor-pointer duration-200"}>
                                           <Chart
                                             chartType="PieChart"
@@ -291,20 +286,22 @@ const DetailPedido = () => {
                               <div className="flex flex-row w-full overflow-x-scroll overflow-y-hidden py-2">
                               </div>
                             </div>
-                            {/* 
-                              <div className="w-full flex">
-                                {(chroma.scale(['#082f49', '#5eead4']).mode('lch').colors(8))
-                                  .map((color, i) => <div style={{backgroundColor:color}} className="flex-1 h-10">
-                                    {color}
-                                  </div>)}
-                              </div>
-                              <div className="w-full flex">
-                                {(chroma.scale(['#083344', '#fde047']).mode('lch').colors(8))
-                                  .map((color, i) => <div style={{backgroundColor:color}} className="flex-1 h-10">
-                                    {color}
-                                  </div>)}
-                              </div>
-                            */}
+
+                            {/*
+                            <div className="w-full flex flex-wrap">
+                              {(chroma.scale(['#0c5f79', '#dcfce7']).mode('lch').colors(5))
+                                .map((color, i) => <div style={{ backgroundColor: color, color:'white' }} className="w-[20%] h-10">
+                                  {color}
+                                </div>)}
+                            </div>
+                             <div className="w-full flex">
+                               {(chroma.scale(['#eeffb7', '#126560']).mode('lch').colors(5))
+                                 .map((color, i) => <div style={{ backgroundColor: color, color:'white' }} className="flex-1 h-10">
+                                   {color}
+                                 </div>)}
+                             </div>
+                             */}
+
                             {/*  Tabla de Etiquetas */}
                             <div className="relative flex-grow overflow-y-scroll">
                               <div className="absolute w-full">
@@ -331,7 +328,6 @@ const DetailPedido = () => {
                                             <td> {etiqueta.cantidad} </td>
                                             <td>
                                               {
-
                                                 <Progreso
                                                   last={fila === pedido.detalles[selectedFichaIndx]?.cantidades[selectedTallaIndx]?.etiquetas.length - 1}
                                                   estacion={etiqueta.estacionActual}
