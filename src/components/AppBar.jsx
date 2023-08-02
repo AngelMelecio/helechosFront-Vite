@@ -50,6 +50,7 @@ const AppBar = () => {
       { to: '/proveedores', content: 'Proveedores', Icon: ICONS.Truck},
       { to: '/materiales', content: 'Materiales', Icon: ICONS.Thread},
       { to: '/pedidos', content: 'Pedidos', Icon: ICONS.Diablito},
+      { to: '/Produccion', content: 'Captura de Producción', Icon: ICONS.Qr }
     ],
     'Produccion':[
       { to: '/Produccion', content: 'Captura de Producción', Icon: ICONS.Qr }
