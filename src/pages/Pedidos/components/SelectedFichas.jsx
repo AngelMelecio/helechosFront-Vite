@@ -34,8 +34,6 @@ const SelectedFichas = ({
     }
   }, [pageScrollBottom])
 
-  //console.log(pageScrollBottom)
-
   return (
     <>
       {formik?.values.detalles?.length > 0 ?
@@ -45,7 +43,7 @@ const SelectedFichas = ({
             className={(pageScrollBottom ? "overflow-y-scroll" : "overflow-y-hidden pr-3") + " flex-col w-full h-full absolute bg-slate-100"}>
             {/*  Detalles  */}
             {formik?.values.detalles.map((d, i) =>
-              <div className="w-full px-4">
+              <div className="w-full px-4" key={i}>
                 <div className="bg-white flex w-full rounded-md shadow-md mb-6 " key={"det" + i}>
                   <div className="w-full flex flex-col px-6">
                     {/* CARD HEADER */}
@@ -74,7 +72,7 @@ const SelectedFichas = ({
                             </div>
                             <table className=" customTable w-full">
                               <thead>
-                                <tr >
+                                <tr key={'tr-main'+i}>
                                   <th>Talla</th>
                                   <th>Cantidad</th>
                                   <th>C / Paquete</th>
@@ -83,7 +81,7 @@ const SelectedFichas = ({
                               </thead>
                               <tbody>
                                 {d.cantidades.map((c, j) =>
-                                  <tr key={"Can" + j}>
+                                  <tr key={"can"+i+'-'+j}>
                                     <td className="text-center">
                                       {c.talla}
                                     </td>
@@ -184,8 +182,8 @@ const SelectedFichas = ({
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {d.fichaTecnica.materiales.map(m =>
-                                      <tr className="border-b-2 text-center">
+                                    {d.fichaTecnica.materiales.map((m, k) =>
+                                      <tr className="border-b-2 text-center" key={'ftm'+k}>
                                         <td className="flex w-full">
                                           <div className="flex w-full justify-around items-center">
                                             <p>
