@@ -53,14 +53,6 @@ const DetailPedido = () => {
   }, [])
 
   useEffect(() => {
-    console.log(pedido)
-  }, [pedido])
-
-  useEffect(() => {
-    console.log('ficha: ', selectedFichaIndx)
-  }, [selectedFichaIndx])
-
-  useEffect(() => {
     if (detallesSocket) {
       setPedido(prev => {
         // Aplicamos los cambios a cada lista de etiquetas

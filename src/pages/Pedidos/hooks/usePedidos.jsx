@@ -212,6 +212,24 @@ export function PedidosProvider({ children }) {
         const registros = await fetchAPI(API_PROGRESS_ETIQUETA + idProduccion, options)
         return registros
     }
+    const deletePedidos = async (listaPedidos) => {
+        for (let i = 0; i < listaPedidos.length; i++) {
+            let e = listaPedidos[i]
+            const options = {method: 'DELETE', headers: {'Authorization': 'Bearer ' + session.access}}
+            if (e.isSelected) { 
+                try {
+                    setLoading(true)
+                    const { message } = await fetchAPI(API_PEDIDO_URL + e.idPedido, options)
+                    notify(message)
+                } catch (err) {
+                    setErrors(err)
+                    notify('Error al eliminar el pedido', true)
+                } finally {
+                    setLoading(false)
+                }
+            }
+        }
+    }
 
     return (
         <PedidosContext.Provider
@@ -227,7 +245,8 @@ export function PedidosProvider({ children }) {
                 findPedido,
                 putProduccion,
                 setAllEtiquetas,
-                getRegistrosByIdProduccion
+                getRegistrosByIdProduccion,
+                deletePedidos
             }}
         >
             {children}

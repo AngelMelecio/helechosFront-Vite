@@ -22,7 +22,6 @@ const ScanModal = ({ title, onScan, onClose }) => {
           onBlur={e => e.target.focus()}
           onKeyDown={e => {
             if (e.key === 'Enter') {
-              console.log(e.target.value);
               onScan(e.target.value);
               e.target.value = '';
             }
