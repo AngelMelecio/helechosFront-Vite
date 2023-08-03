@@ -5,10 +5,11 @@ import CRUD from '../../components/CRUD'
 import { sleep } from '../../constants/functions'
 import { usePedidos } from './hooks/usePedidos'
 import ProgressBar from "@ramonak/react-progress-bar";
+import { get } from 'lodash'
 
 const PaginaPedidos = () => {
 
-  const { allPedidos, loading, refreshPedidos } = usePedidos()
+  const { allPedidos, loading, refreshPedidos, deletePedidos} = usePedidos()
 
   const modalContainerRef = useRef()
   const [listaPedidos, setListaPedidos] = useState([])
@@ -78,7 +79,7 @@ const PaginaPedidos = () => {
             onCancel={() => handleCloseModal(setDeleteModalVisible)}
             onConfirm={handleDeletePedidos}
             elements={listaPedidos}
-            representation={['modelo.nombre', 'idPedido']}
+            representation={['idPedido']}
             message='Los siguientes Pedidos se eliminarán permanentemente:'
           />
         }
