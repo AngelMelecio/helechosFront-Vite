@@ -1,10 +1,10 @@
 const DPTO_COLOR = {
-    "creada": "#0c5f79",
-    "tejido": "#408593",
-    "plancha": "#71adac",
-    "corte": "#a5d4c8",
-    "calidad": "#77b28b",
-    "empaque": "#458b77",
-    "empacado": "#126560"
+    "creada": "#2a4858",
+    "tejido": "#176877",
+    "plancha": "#00898a",
+    "corte": "#23aa8f",
+    "calidad": "#64c987",
+    "empaque": "#aae479",
+    "empacado": "#fafa6e"
 }
 export { DPTO_COLOR }

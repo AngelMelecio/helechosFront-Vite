@@ -1,6 +1,6 @@
 import React from "react";
 import { useAuth } from "../../../context/AuthContext";
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import { useContext } from "react";
 import { fetchAPI } from "../../../services/fetchApiService";
 import { API_URL } from "../../../constants/HOSTS";
@@ -20,36 +20,43 @@ export function usePedidos() {
 
 
 function formatPedidos(pedidos) {
-    let formatData = pedidos.map((pedido) => ({
-        ...pedido,
-        detalles: [...pedido.detalles.map((detalle) => ({
-            ...detalle,
-            cantidades: [...detalle.cantidades.map((cantidad) => ({
-                ...cantidad,
-                progreso: 
-                    // Sacar las estaciones Unicas
-                    [...new Set(cantidad.etiquetas.map(etiqueta => etiqueta.estacionActual))]
-                        // Devolver una matris con el nombre de la estacion y la cantidad de etiquetas en esa estacion
-                        .map(uniqueEstacion => [
-                            uniqueEstacion,
-                            [...cantidad.etiquetas.filter(et => et.estacionActual === uniqueEstacion)].length
-                        ])
-                
-            }))]
-        }))],
-        fechaRegistro: new Date(pedido.fechaRegistro).toLocaleString(),
-        fechaEntrega: new Date(pedido.fechaEntrega).toLocaleDateString()
-    }))
+    let formatData = pedidos.map((pedido) => {
+        let fch = pedido.fechaEntrega.split('-')
+        return ({
+            ...pedido,
+            detalles: [...pedido.detalles.map((detalle) => ({
+                ...detalle,
+                cantidades: [...detalle.cantidades.map((cantidad) => ({
+                    ...cantidad,
+                    progreso:
+                        // Sacar las estaciones Unicas
+                        [...new Set(cantidad.etiquetas.map(etiqueta => etiqueta.estacionActual))]
+                            // Devolver una matris con el nombre de la estacion y la cantidad de etiquetas en esa estacion
+                            .map(uniqueEstacion => [
+                                uniqueEstacion,
+                                [...cantidad.etiquetas.filter(et => et.estacionActual === uniqueEstacion)].length
+                            ])
+
+                }))]
+            }))],
+            fechaRegistro: new Date(pedido.fechaRegistro).toLocaleString(),
+            fechaEntrega: new Date(fch[0], fch[1], fch[2]).toLocaleDateString()
+        })
+    }
+    )
     return formatData
 }
 
 function formatPedidosListar(pedidos) {
-    return pedidos.map( p =>({
-        ...p,
-        fechaRegistro: new Date(p.fechaRegistro),
-        fechaEntrega: new Date(p.fechaEntrega),
-        isSelected:false
-    }) )
+    return pedidos.map(p => {
+        let fch = p.fechaEntrega.split('-')
+        return ({
+            ...p,
+            fechaRegistro: new Date(p.fechaRegistro),
+            fechaEntrega: new Date(fch[0], fch[1], fch[2]),
+            isSelected: false
+        })
+    })
 }
 
 function formatFichas(fichas) {
@@ -62,14 +69,6 @@ function formatFichas(fichas) {
     return formatedFichas
 }
 
-/*function formatEtiquetas(etiquetas) {
-    let formatedEtiquetas = etiquetas.map((etiqueta) => ({
-        ...etiqueta,
-        isSelected: false
-    }))
-    return formatedEtiquetas
-}*/
-
 export function PedidosProvider({ children }) {
 
     const { session, notify } = useAuth()
@@ -78,45 +77,6 @@ export function PedidosProvider({ children }) {
     const [allEtiquetas, setAllEtiquetas] = useState([])
     const [loading, setLoading] = useState(true)
     const [errors, setErrors] = useState(false)
-    const [dataPedido, setDataPedido] = useState(null)
-
-    function formatPedidosTodos(pedidos) {
-        let formatData = pedidos.map((pedido) => ({
-            ...pedido,
-            isSelected: false,
-            fechaRegistro: new Date(pedido.fechaRegistro).toLocaleString(),
-            fechaEntrega: new Date(pedido.fechaEntrega).toLocaleDateString()
-        }))
-        return formatData
-    }
-    
-    useEffect(() => {
-        let etiquetasFormated=[]
-        let modelo= dataPedido?.modelo.nombre
-        let idPedido = dataPedido?.idPedido
-        dataPedido?.detalles?.forEach((detalle) => {
-            let colores ="";
-            detalle?.fichaTecnica?.materiales.forEach((material) => {colores += material?.color+"\n"})
-            detalle?.cantidades?.forEach((cantidad) => {
-                cantidad?.etiquetas?.forEach((etiqueta) => {
-                    etiquetasFormated.push({
-                        ...etiqueta,
-                        modelo: modelo,
-                        idPedido: idPedido,
-                        color: colores,
-                        estado: etiqueta.fechaImpresion!==null?"Impresa":"No impresa",
-                        isSelected: false,
-                        talla: etiqueta.tallaReal,
-                        numEtiqueta: Number(etiqueta.numEtiqueta)
-                    })
-                })
-        
-            })
-        })
-        setAllEtiquetas(etiquetasFormated)
-    }, [dataPedido])
-    
-
 
     async function findPedido(id) {
         let options = {
@@ -126,7 +86,6 @@ export function PedidosProvider({ children }) {
         try {
             setLoading(true)
             let pedido = await fetchAPI(API_PEDIDO_URL + id, options)
-            setDataPedido(pedido)
             return formatPedidos([pedido])[0]
         } catch (err) {
             setErrors(err)
@@ -143,18 +102,7 @@ export function PedidosProvider({ children }) {
         const pedidos = await fetchAPI(API_PEDIDOS_URL, options)
         return formatPedidosListar(pedidos)
     }
-    /*async function getEtiquetas(idPedido) {
-        let options = {
-            method: 'GET',
-            headers: { 'Authorization': 'Bearer ' + session.access }
-        }
-        try {
-            const etiquetas = await fetchAPI(API_GET_ETIQUETAS + idPedido, options)
-            setAllEtiquetas(formatEtiquetas(etiquetas))
-        } catch (e) {
-            setErrors(e)
-        }
-    }*/
+
     async function refreshPedidos() {
         try {
             setLoading(true)
