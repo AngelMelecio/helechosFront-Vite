@@ -30,35 +30,52 @@ const DetailPedido = () => {
   const pageRef = useRef()
   const modalRef = useRef()
 
+  const { findPedido, putProduccion } = usePedidos()
+  
   const [modalVisible, setModalVisible] = useState(false)
   const [detalleEtiquetaModalVisible, setDetalleEtiquetaModalVisible] = useState(false)
   const [printEtiquetasModalVisible, setPrintEtiquetasModalVisible] = useState(false)
   const [pageScrollBottom, setPageScrollBottom] = useState(false)
 
-  const { findPedido, allEtiquetas, setAllEtiquetas, putProduccion } = usePedidos()
-
   const [pedido, setPedido] = useState(null)
+  const [allEtiquetas, setAllEtiquetas] = useState([])
+  const [etiquetasToPrint, setEtiquetasToPrint] = useState([])
 
   const [selectedFichaIndx, setSelectedFichaIndx] = useState(0)
   const [selectedTallaIndx, setSelectedTallaIndx] = useState(0)
   const [selectedEtiqueta, setSelectedEtiqueta] = useState(null)
 
-  const [etiquetasToPrint, setEtiquetasToPrint] = useState([])
 
   useEffect(async () => {
-
-
     let p = await findPedido(id)
     setPedido(p)
   }, [])
 
+  // settear las etiquetas cada que el pedido cambie
   useEffect(() => {
-    console.log(pedido)
+    let etiquetasFormated = []
+    let modelo = pedido?.modelo.nombre
+    let idPedido = pedido?.idPedido
+    pedido?.detalles?.forEach((detalle) => {
+      let colores = "";
+      detalle?.fichaTecnica?.materiales.forEach((material) => { colores += material?.color + "\n" })
+      detalle?.cantidades?.forEach((cantidad) => {
+        cantidad?.etiquetas?.forEach((etiqueta) => {
+          etiquetasFormated.push({
+            ...etiqueta,
+            modelo: modelo,
+            idPedido: idPedido,
+            color: colores,
+            estado: etiqueta.estacionActual !== 'creada' ? "Impresa" : "No impresa",
+            isSelected: false,
+            talla: etiqueta.tallaReal,
+            numEtiqueta: Number(etiqueta.numEtiqueta)
+          })
+        })
+      })
+    })
+    setAllEtiquetas(etiquetasFormated)
   }, [pedido])
-
-  useEffect(() => {
-    console.log('ficha: ', selectedFichaIndx)
-  }, [selectedFichaIndx])
 
   useEffect(() => {
     if (detallesSocket) {
@@ -219,7 +236,7 @@ const DetailPedido = () => {
                                       + (indx === selectedFichaIndx ?
                                         " bg-white shadow-md text-teal-700" :
                                         " hover:bg-white text-gray-600 duration-200")}
-                                    onClick={() => { setSelectedFichaIndx(indx); setSelectedTallaIndx(0);}}>
+                                    onClick={() => { setSelectedFichaIndx(indx); setSelectedTallaIndx(0); }}>
                                     <p className="font-medium">
                                       {detalle.fichaTecnica.nombre}
                                     </p>
@@ -287,21 +304,6 @@ const DetailPedido = () => {
                               </div>
                             </div>
 
-                            {/*
-                            <div className="w-full flex flex-wrap">
-                              {(chroma.scale(['#0c5f79', '#dcfce7']).mode('lch').colors(5))
-                                .map((color, i) => <div style={{ backgroundColor: color, color:'white' }} className="w-[20%] h-10">
-                                  {color}
-                                </div>)}
-                            </div>
-                             <div className="w-full flex">
-                               {(chroma.scale(['#eeffb7', '#126560']).mode('lch').colors(5))
-                                 .map((color, i) => <div style={{ backgroundColor: color, color:'white' }} className="flex-1 h-10">
-                                   {color}
-                                 </div>)}
-                             </div>
-                             */}
-
                             {/*  Tabla de Etiquetas */}
                             <div className="relative flex-grow overflow-y-scroll">
                               <div className="absolute w-full">
@@ -357,8 +359,6 @@ const DetailPedido = () => {
           <EtiquetasModal
             title="Selección de etiquetas"
             allEtiquetas={allEtiquetas}
-            //            list={allEtiquetas}
-            //          setList={setAllEtiquetas}
             unique='idProduccion'
             columns={[
               { name: 'Número etiqueta', atr: 'numEtiqueta' },
@@ -367,22 +367,12 @@ const DetailPedido = () => {
               { name: 'Estado', atr: 'estado' },
             ]}
             onClose={() => { handleCloseModal([setModalVisible]); }}
-            onPrint={async (etqList) => {
-              setEtiquetasToPrint(etqList)
-              handleOpenModal(setPrintEtiquetasModalVisible)
-              putProduccion(etqList?.map(e => ({ idProduccion: e.idProduccion })))
-
-            } // setEtiquetasToPrint( etqList )
-              /*async () => {
-              setAllEtiquetas(prev => {
-                prev.map(e => {
-                  e.estado = 'Impresa'
-                  e.isSelected = false
-                  return e
-                })
-              })
-            }*/
-
+            onPrint={
+              async (etqList) => {
+                setEtiquetasToPrint(etqList)
+                handleOpenModal(setPrintEtiquetasModalVisible)
+                putProduccion(etqList?.map(e => ({ idProduccion: e.idProduccion })))
+              }
             }
           />
         }
