@@ -11,6 +11,7 @@ import Loader from "../../components/Loader/Loader";
 import { sleep, toUrl } from "../../constants/functions";
 import SelectorMaquinas from "./components/SelectorMaquinas";
 import { useMaquinas } from "../Maquinas/hooks/useMaquinas";
+import { useAuth } from "../../context/AuthContext";
 
 const initobj = {
   idEmpleado: "",
@@ -47,15 +48,17 @@ const DetailEmpleado = () => {
 
   const navigate = useNavigate()
   const { id } = useParams();
-
+  const {notify} = useAuth()
   const isEdit = (id !== '0')
+  const [saving, setSaving] = useState(false)
   const [assignedMaquinas, setAssignedMaquinas] = useState([])
   const [theresChanges, setTheresChanges] = useState(false)
-
+  const [theresMaquinasChanges, setTheresMaquinasChanges] = useState(false)
 
   const {
     getEmpleado,
-    saveEmpleado,
+    postEmpleado,
+    assignMaquinas,
     loading
   } = useEmpleados()
 
@@ -105,13 +108,28 @@ const DetailEmpleado = () => {
     initialValues: null,
     validate,
     onSubmit: async (values) => {
-     await saveEmpleado({
-        values: values,
-        maquinas: assignedMaquinas.map(m => ({ id: m.idMaquina })),
-        method: isEdit ? 'PUT' : 'POST'
-      })
-      navigate('/empleados/')
 
+      try {
+        setSaving(true)
+        let idEmpleado = id !== '0' ? Number(id) : null
+        if( theresChanges ){
+          const { empleado:empleadoResponse, message } = await postEmpleado(values, isEdit ? 'PUT' : 'POST')
+          idEmpleado = empleadoResponse.idEmpleado
+          notify(message)
+        }
+        if (theresMaquinasChanges) {
+          const { message: messageMaquinas } = await assignMaquinas({
+            idEmpleado: idEmpleado,
+            maquinasIds: assignedMaquinas.map(m => ({ id: m.idMaquina }))
+          })
+          notify(messageMaquinas)
+        }
+        navigate('/empleados/')
+      } catch (e) {
+        notify(e.message, true)
+      } finally{
+        setSaving(false)
+      }
     },
   });
 
@@ -148,7 +166,7 @@ const DetailEmpleado = () => {
             </div>
             <div>
               <input
-                disabled={loading || !theresChanges}
+                disabled={ loading || saving || (!theresChanges && !theresMaquinasChanges) }
                 className='bg-teal-500 p-1 text-md w-40 h-10 text-white normal-button  right-5 z-10 top-5 rounded-lg'
                 type="submit"
                 value={isEdit ? "Guardar" : "Agregar"}
@@ -172,23 +190,23 @@ const DetailEmpleado = () => {
                         {/**
                          * FOTOGRAFIA
                          */}
-                        
-                          <div className='flex flex-row w-full h-full total-center pt-4 pb-6'>
-                            <div className="flex relative w-full items-center justify-center foto text-center">
-                              {(toUrl(formik?.values?.fotografia) !== null) ? <img
-                                className='object-cover foto'
-                                src={toUrl(formik?.values?.fotografia)}
-                                alt='' />
-                                : <ICONS.Person className='' size='80px' style={{ color: '#0f766e' }} />}
-                              <input id='file' type="file" name='fotografia' accept='image/*' onChange={handleSelectImage} className='inputfile' />
-                              <label
-                                className='absolute -bottom-2 -right-1 bg-teal-500 p-2 text-white normal-button rounded-full'
-                                htmlFor='file' >
-                                <ICONS.Upload style={{ color: 'white' }} size='18px' />
-                              </label>
-                            </div>
+
+                        <div className='flex flex-row w-full h-full total-center pt-4 pb-6'>
+                          <div className="flex relative w-full items-center justify-center foto text-center">
+                            {(toUrl(formik?.values?.fotografia) !== null) ? <img
+                              className='object-cover foto'
+                              src={toUrl(formik?.values?.fotografia)}
+                              alt='' />
+                              : <ICONS.Person className='' size='80px' style={{ color: '#0f766e' }} />}
+                            <input id='file' type="file" name='fotografia' accept='image/*' onChange={handleSelectImage} className='inputfile' />
+                            <label
+                              className='absolute -bottom-2 -right-1 bg-teal-500 p-2 text-white normal-button rounded-full'
+                              htmlFor='file' >
+                              <ICONS.Upload style={{ color: 'white' }} size='18px' />
+                            </label>
                           </div>
-                        
+                        </div>
+
                       </div>
                       <div className="flex w-full flex-col xl:flex-row">
                         {/**
@@ -300,7 +318,7 @@ const DetailEmpleado = () => {
                             allMaquinas={allMaquinas}
                             assignedMaquinas={assignedMaquinas}
                             setAssignedMaquinas={setAssignedMaquinas}
-                            setTheresChanges={setTheresChanges}
+                            setTheresChanges={setTheresMaquinasChanges}
                             departamentoEmpleado={formik.values.departamento}
                           />
                         }

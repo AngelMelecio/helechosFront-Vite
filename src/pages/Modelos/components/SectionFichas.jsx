@@ -64,8 +64,8 @@ const SectionFichas = ({
   const{
     selectedFichaIndx,
     setSelectedFichaIndx,
-    theresChangesFicha,
-    setTheresChangesFicha,
+    theresChangesFicha,setTheresChangesFicha,
+    theresChangesMateriales,setTheresChangesMateriales
   } = useDetailModelos()
   
   const {
@@ -74,32 +74,29 @@ const SectionFichas = ({
 
   const handleSelectFicha = (indx) => {
     if (indx === selectedFichaIndx) return
-    if (theresChangesFicha) {
+    if (theresChangesFicha || theresChangesMateriales) {
       setModalMessage('Hay cambios sin guardar, ¿Desea descartarlos?')
       setModalCancelText('Permanecer')
       setModalConfirmText('Descartar')
       setOnDiscardChanges(() => () => {
+        closeModal()
         setSelectedFichaIndx(indx)
         setTheresChangesFicha(false)
-        closeModal()
+        setTheresChangesMateriales(false)
       })
       setOnSaveChanges(() => () => {
-        /*dummySave()
-        setSelectedFichaIndx(indx)
-        setTheresChanges(false)*/
         closeModal()
       })
       openModal()
       return
     }
-    setTheresChangesFicha(false)
     setSelectedFichaIndx(indx)
-
-    //handleGetFichaMateriales(fichasModeloList[indx].idFichaTecnica)
+    setTheresChangesFicha(false)
+    setTheresChangesMateriales(false)
   }
 
   const handleAddFicha = () => {
-    if (theresChangesFicha) {
+    if (theresChangesFicha || theresChangesMateriales) {
       setModalMessage('Hay cambios sin guardar, ¿Desea descartarlos?')
       setModalCancelText('Permanecer')
       setModalConfirmText('Descartar')
@@ -107,6 +104,7 @@ const SectionFichas = ({
         addFicha()
         closeModal()
         setTheresChangesFicha(false)
+        setTheresChangesMateriales(false)
       })
       setOnSaveChanges(() => () => {
         closeModal()
@@ -118,7 +116,6 @@ const SectionFichas = ({
   }
 
   const addFicha = () => {
-    //fichaFormik.setValues(initFichaObj)
     setSelectedFichaIndx(fichasList?.length)
     if (fichasList.length === 0) {
       setFichasList([initFichaObj])
@@ -131,16 +128,16 @@ const SectionFichas = ({
   }
 
   const handleDeleteFicha = (indx) => {
-
-    if (theresChangesFicha || fichasList[indx].idFichaTecnica) {
+    if (theresChangesFicha || fichasList[indx].idFichaTecnica || theresChangesMateriales ) {
       setModalMessage('Se eliminará la ficha técnica de forma permanente')
       setModalCancelText('Cancelar')
       setModalConfirmText('Eliminar')
       setOnSaveChanges(() => () => closeModal())
       setOnDiscardChanges(() => () => {
         deleteFicha(indx)
-        setTheresChangesFicha(false)
         closeModal()
+        setTheresChangesFicha(false)
+        setTheresChangesMateriales(false)
       })
       openModal()
     }
@@ -163,20 +160,21 @@ const SectionFichas = ({
 
   useEffect(() => {
     setFichasList(allFichasModelo)
-    return () => { 
+    /*return () => { 
       setFetchingFichas(true) 
       setSelectedFichaIndx(null)
-    }
+    }*/
   }, [allFichasModelo])
 
   const handleCopyFicha = async (indx) => {
-    //let materiales = await getFichaMateriales( fichasList[indx].idFichaTecnica )
     setFichasList(prev => [
       ...prev,
       {
-        ...fichasList[indx],
+        ...prev[indx],
         nombre: prev[indx].nombre + ' Copia',
         idFichaTecnica: undefined,
+        fechaCreacion:'',
+        fechaUltimaEdicion:'',
         fotografia:'',
         archivoPrograma: null,
         materiales: allFichaMateriales,
@@ -210,7 +208,7 @@ const SectionFichas = ({
                     className={"rounded-sm my-1 flex w-full p-3 items-center relative cursor-pointer" + (indx === selectedFichaIndx ? " bg-white shadow-md text-teal-700" : " hover:bg-gray-200 text-gray-600 duration-200")}
                   >
                     <p className="font-medium">{ficha.nombre !== '' ? ficha.nombre : 'Nueva Ficha'}</p>
-                    {indx === selectedFichaIndx &&
+                    {indx === selectedFichaIndx && // Botones de eliminar y copiar
                       <>
                         <button
                           onClick={e => {
@@ -236,7 +234,7 @@ const SectionFichas = ({
         </div>
       </div>
       {/* Formulario Fichas */
-        selectedFichaIndx !== null && !fetchingFichas ?
+        selectedFichaIndx !== null && !fetchingFichas && fichasList[selectedFichaIndx] ?
           <FrmFichas
             ficha={fichasList[selectedFichaIndx]}
           />

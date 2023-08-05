@@ -251,7 +251,6 @@ const PaginaProduccion = () => {
                                           onChange={e => setMaquina(e.value)}
                                         />
                                       }
-
                                     </div>
                                   </div>
                                   <div className="flex flex-row w-full">

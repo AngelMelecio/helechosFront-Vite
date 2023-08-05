@@ -10,6 +10,7 @@ const Th = ({ children }) => <th className="sticky top-0 z-10 bg-slate-100">{chi
 const SelectorMateriales = ({
   fichaTecnicaObj,
   onPassMateriales,
+  setTheresChanges,
 }) => {
 
   const selectorContentRef = useRef()
@@ -20,10 +21,6 @@ const SelectorMateriales = ({
     refreshMateriales,
     loading,
   } = useMateriales()
-
-  const {
-    setTheresChangesFicha
-  } = useDetailModelos()
 
   const [availableMateriales, setAvailableMateriales] = useState([])
   const [selectorVisible, setSelectorVisible] = useState(false)
@@ -36,10 +33,6 @@ const SelectorMateriales = ({
   useEffect(() => {
     loadData()
   }, [])
-
-  /*useEffect(()=>{
-    calcularPesos( fichaTecnicaObj?.values?.materiales )
-  },[fichaTecnicaObj?.values?.materiales])*/
 
   useEffect(() => {
     let formated = allMateriales?.map(m => ({ ...m, count: 0 }))
@@ -96,7 +89,7 @@ const SelectorMateriales = ({
     let newMateriales = [...fichaTecnicaObj.values.materiales]
     newMateriales[indx][e.target.name] = e.target.value
     fichaTecnicaObj.setValues(prev => ({ ...prev, materiales: newMateriales }))
-    setTheresChangesFicha(true)
+    setTheresChanges(true)
   }
 
   const handleDeleteMaterial = (e, indx) => {
@@ -104,7 +97,7 @@ const SelectorMateriales = ({
     let newMateriales = [...fichaTecnicaObj.values.materiales]
     newMateriales.splice(indx, 1)
     fichaTecnicaObj.setValues(prev => ({ ...prev, materiales: newMateriales }))
-    setTheresChangesFicha(true)
+    setTheresChanges(true)
   }
   const swapMaterials = (index1, index2) => {
     const newMateriales = [...fichaTecnicaObj.values.materiales];
@@ -112,7 +105,7 @@ const SelectorMateriales = ({
     newMateriales[index1] = newMateriales[index2];
     newMateriales[index2] = temp;
     fichaTecnicaObj.setValues(prev => ({ ...prev, materiales: newMateriales }));
-    setTheresChangesFicha(true)
+    setTheresChanges(true)
   };
 
   let sel_width = selectorVisible ? 'w-full' : 'w-10'
@@ -133,7 +126,7 @@ const SelectorMateriales = ({
 
           </div>
           <div ref={selectorContentRef} className="modal  w-full h-full overflow-scroll ">
-            { loading ? <Loader/> :
+            {loading ? <Loader /> :
               <>
                 {
                   selectorVisible &&
@@ -163,7 +156,9 @@ const SelectorMateriales = ({
                       </div>
                       <button
                         disabled={!someMaterialSelected}
-                        onClick={() => { onPassMateriales(availableMateriales); handleCloseSelector(); }}
+                        onClick={() => {
+                          onPassMateriales(availableMateriales); setTheresChanges(true); handleCloseSelector();
+                        }}
                         type="button"
                         className={`flex items-center justify-center normal-button w-8 h-8 rounded-lg duration-500 `} >
                         <ICONS.Right size="25px" />

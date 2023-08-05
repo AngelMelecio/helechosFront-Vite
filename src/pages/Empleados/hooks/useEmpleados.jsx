@@ -88,7 +88,7 @@ export function EmpleadosProvider({ children }) {
     }
   }
 
-  async function assignMaquinas(idEmpleado, maquinasIds) {
+  async function assignMaquinas({ idEmpleado, maquinasIds }) {
     let options = {
       method: 'POST',
       headers: {
@@ -98,10 +98,10 @@ export function EmpleadosProvider({ children }) {
       body: JSON.stringify({ idEmpleado: idEmpleado, maquinas: maquinasIds }),
     }
     let { message } = await fetchAPI(API_EMPLEADO_MAQUINAS_URL, options)
-    notify(message)
+    return { message }
   }
 
-  async function postEmpleado(values, maquinas, method) {
+  async function postEmpleado(values, method) {
     let Keys = [
       'nombre',
       'apellidos',
@@ -117,7 +117,7 @@ export function EmpleadosProvider({ children }) {
     let formData = new FormData()
     Keys.forEach(k => {
       if (k === 'fotografia' && !(values[k] instanceof File)) return
-      if (values[k] !== null && values[k]!=='') formData.append(k, values[k])
+      if (values[k] !== null && values[k] !== '') formData.append(k, values[k])
     })
     const options = {
       method: method,
@@ -125,10 +125,8 @@ export function EmpleadosProvider({ children }) {
       body: formData
     }
     let { empleado, message } = await fetchAPI(API_EMPLEADOS_URL + (method === 'PUT' ? values.idEmpleado : ''), options)
-    await assignMaquinas(empleado.idEmpleado, maquinas)
-
-    return { message }
-
+    //await assignMaquinas(empleado.idEmpleado, maquinas)
+    return { empleado, message }
   }
 
   async function deleteEmpleados(ids) {
@@ -151,21 +149,6 @@ export function EmpleadosProvider({ children }) {
     }
   }
 
-  async function saveEmpleado({ values, maquinas = [], method = "POST" }) {
-    try {
-      setLoading(true)
-      const { message } = await postEmpleado(values, maquinas, method)
-      notify(message)
-    } catch (err) {
-      setErrors(err)
-      notify('Error al guardar empleado', true)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-
-
   return (
     <EmpleadosContext.Provider
       value={{
@@ -174,7 +157,10 @@ export function EmpleadosProvider({ children }) {
         errors,
         refreshEmpleados,
         getEmpleado,
-        saveEmpleado,
+
+        postEmpleado,
+        assignMaquinas,
+
         deleteEmpleados,
 
         getEmpleadoMaquinas,
