@@ -46,10 +46,12 @@ const DetailModelo = () => {
   } = useMaquinas()
 
   const {
+    saving,
     disablePrint,
     selectedFichaIndx,
     theresChangesModelo, setTheresChangesModelo,
     theresChangesFicha, setTheresChangesFicha,
+    theresChangesMateriales,
     setPageScrollBottom
   } = useDetailModelos()
 
@@ -161,7 +163,7 @@ const DetailModelo = () => {
                   <ICONS.Print size='25px' />
                 </button>
                 {<input
-                  disabled={fetchingFichas || !theresChangesFicha}
+                  disabled={ saving || fetchingFichas || (!theresChangesFicha && !theresChangesMateriales) }
                   className='bg-teal-500 h-10 p-1 w-40 text-white normal-button z-10 rounded-lg'
                   type="submit"
                   value={"Guardar Ficha"}
@@ -170,7 +172,7 @@ const DetailModelo = () => {
               </div>
             </div>
             <div className="flex flex-col relative h-full bg-white rounded-lg shadow-lg">
-              {fetchingFichas && id !== '0' ? <Loader />
+              { fetchingFichas && id !== '0' ? <Loader />
                 :
                 <SectionFichas
                   openModal={() => handleOpenModal(setModalVisible)}

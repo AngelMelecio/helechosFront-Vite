@@ -16,23 +16,28 @@ import { useMateriales } from "../../Materiales/hooks/useMateriales";
 import { useParams } from "react-router-dom";
 import { useDetailModelos } from "../hooks/useDetailModelos";
 import { useFichaMateriales } from "../hooks/useFichaMateriales";
+import { useAuth } from "../../../context/AuthContext";
 
 const FrmFichas = ({
   ficha,
 }) => {
-
+  useEffect(()=>{console.log(ficha)},[ficha])
+  const {notify} = useAuth()
   const { id } = useParams()
   const formRef = useRef(null)
+
 
   const { allMaquinas, refreshMaquinas } = useMaquinas()
   const [tejidoOptions, setTejidoOptions] = useState([])
   const [planchaOptions, setPlanchaOptions] = useState([])
 
   const {
-    setTheresChangesFicha,
-    pageScrollBottom
+    theresChangesFicha, setTheresChangesFicha,
+    theresChangesMateriales, setTheresChangesMateriales,
+    pageScrollBottom,
+    setSelectedFichaIndx,
+    setSaving,
   } = useDetailModelos()
-
 
   const {
     refreshFichaMateriales,
@@ -40,7 +45,10 @@ const FrmFichas = ({
     fetchingFichaMateriales,
   } = useFichaMateriales()
 
-  const { saveFicha } = useFichas()
+  const {
+    postFicha,
+    saveFichaMateriales,
+  } = useFichas()
 
   const validate = values => {
     const errors = {};
@@ -71,15 +79,34 @@ const FrmFichas = ({
     initialValues: ficha,
     validate,
     onSubmit: async (values) => {
-      setTheresChangesFicha(false)
-      await saveFicha({
-        values: {
-          ...values,
-          modelo: id,
-        },
-        materiales: values.materiales,
-        method: ficha.idFichaTecnica ? 'PUT' : 'POST'
-      })
+
+      try {
+        setSaving(true)
+        let idFicha = ficha.idFichaTecnica
+        if (theresChangesFicha) {
+          const { ficha: newFicha, message } = await postFicha({
+            values: { ...values, modelo: id },
+            method: ficha.idFichaTecnica ? 'PUT' : 'POST'
+          })
+          idFicha = newFicha.idFichaTecnica
+          setSelectedFichaIndx(null)
+          setTheresChangesFicha(false)
+          notify(message)
+        }
+        if (theresChangesMateriales || ficha.copied ) { 
+          const { message } = await saveFichaMateriales({
+            idFichaTecnica: idFicha,
+            materiales: values.materiales
+          })
+          setSelectedFichaIndx(null)
+          setTheresChangesMateriales(false)
+          notify(message)
+        }
+      } catch (e) {
+        console.log(e)
+      }finally{
+        setSaving(false)
+      }
     }
   })
 
@@ -97,12 +124,12 @@ const FrmFichas = ({
     setTejidoOptions(
       allMaquinas
         .filter(m => (m.departamento === 'Tejido'))
-        .map(m => ({ value: m.idMaquina.toString(), label:((m.linea!=='0')?'L'+m.linea+' - ':'')+ 'M' + m.numero }))
+        .map(m => ({ value: m.idMaquina.toString(), label: ((m.linea !== '0') ? 'L' + m.linea + ' - ' : '') + 'M' + m.numero }))
     )
     setPlanchaOptions(
       allMaquinas
         .filter(m => (m.departamento === 'Plancha'))
-        .map(m => ({ value: m.idMaquina.toString(), label: ((m.linea!=='0')?'L'+m.linea+' - ':'')+ 'M' + m.numero }))
+        .map(m => ({ value: m.idMaquina.toString(), label: ((m.linea !== '0') ? 'L' + m.linea + ' - ' : '') + 'M' + m.numero }))
     )
   }, [allMaquinas])
 
@@ -157,7 +184,6 @@ const FrmFichas = ({
     setTheresChangesFicha(true)
   }
 
-
   return (
     <div
       ref={formRef}
@@ -200,14 +226,14 @@ const FrmFichas = ({
                 <Input
                   label='Talla' type='text' name='talla' value={fichaFormik?.values?.talla} placeholder='25,26,...'
                   onKeyDown={(e) => ((e.keyCode < 48 || e.keyCode > 57) && e.keyCode !== 188 && e.keyCode !== 8) && e.preventDefault()}
-                  onChange={ handleFichaChange} onBlur={fichaFormik?.handleBlur}
+                  onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
                   errores={fichaFormik?.errors.talla && fichaFormik?.touched.talla ? fichaFormik?.errors.talla : null}
                 />
                 <Input
-                    label='Nombre del Programa' type='text' name='nombrePrograma' value={fichaFormik?.values?.nombrePrograma}
-                    onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
-                    errores={fichaFormik?.errors.nombrePrograma && fichaFormik?.touched.nombrePrograma ? fichaFormik?.errors.nombrePrograma : null}
-                  />
+                  label='Nombre del Programa' type='text' name='nombrePrograma' value={fichaFormik?.values?.nombrePrograma}
+                  onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
+                  errores={fichaFormik?.errors.nombrePrograma && fichaFormik?.touched.nombrePrograma ? fichaFormik?.errors.nombrePrograma : null}
+                />
               </div>
               <div className="flex flex-row w-full">
                 <Input
@@ -217,11 +243,11 @@ const FrmFichas = ({
                   errores={fichaFormik?.errors.fechaCreacion && fichaFormik?.touched.fechaCreacion ? fichaFormik?.errors.fechaCreacion : null}
                 />
                 <Input
-                    readOnly
-                    label='Ultima Modificación' type='text' name='fechaUltimaEdicion' value={fichaFormik?.values?.fechaUltimaEdicion}
-                    onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
-                    errores={fichaFormik?.errors.fechaUltimaEdicion && fichaFormik?.touched.fechaUltimaEdicion ? fichaFormik?.errors.fechaUltimaEdicion : null}
-                  />
+                  readOnly
+                  label='Ultima Modificación' type='text' name='fechaUltimaEdicion' value={fichaFormik?.values?.fechaUltimaEdicion}
+                  onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
+                  errores={fichaFormik?.errors.fechaUltimaEdicion && fichaFormik?.touched.fechaUltimaEdicion ? fichaFormik?.errors.fechaUltimaEdicion : null}
+                />
               </div>
             </div>
             <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
@@ -316,6 +342,7 @@ const FrmFichas = ({
                     {<SelectorMateriales
                       fichaTecnicaObj={fichaFormik}
                       onPassMateriales={onPassMateriales}
+                      setTheresChanges={setTheresChangesMateriales}
                     />}
                   </div>
                 </>

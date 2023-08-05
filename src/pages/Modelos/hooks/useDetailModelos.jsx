@@ -10,8 +10,10 @@ export function useDetailModelos() {
 
 export function DetailModelosProvider({ children }) {
 
+    const [saving, setSaving] = useState(false)
     const [theresChangesModelo, setTheresChangesModelo] = useState(false)
     const [theresChangesFicha, setTheresChangesFicha] = useState(false)
+    const [theresChangesMateriales, setTheresChangesMateriales] = useState(false)
     const [selectedFichaIndx, setSelectedFichaIndx] = useState(null)
     const [disablePrint, setDisablePrint] = useState(true)
     const [pageScrollBottom, setPageScrollBottom] = useState(false)
@@ -38,9 +40,11 @@ export function DetailModelosProvider({ children }) {
     return (
         <DetailModelos.Provider
             value={{
+                saving, setSaving,
                 theresChangesModelo, setTheresChangesModelo,
                 theresChangesFicha, setTheresChangesFicha,
                 selectedFichaIndx, setSelectedFichaIndx,
+                theresChangesMateriales, setTheresChangesMateriales,
                 disablePrint,
                 pageScrollBottom, setPageScrollBottom
 

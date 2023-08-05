@@ -50,7 +50,7 @@ export function FichasProvider({ children }) {
     return formatFichas(fichas)
   }
 
-  async function postFicha(values, materiales, method) {
+  async function postFicha({values, method}) {
     let keys = [
       'idFichaTecnica',
       'modelo',
@@ -94,16 +94,19 @@ export function FichasProvider({ children }) {
         "authorization": "Bearer " + session.access
       }
     }
+
     const response = await fetchAPI(API_FICHAS_URL + (method === 'PUT' ? values.idFichaTecnica : ''), options)
     const { fichas, ficha, message } = response
-    notify(message)
+    setAllFichasModelo(formatFichas(fichas))
+   
+    return { ficha, message }
 
-    const { message: message2 } = await saveFichaMateriales({
+    //notify(message)
+    /*const { message: message2 } = await saveFichaMateriales({
       idFichaTecnica: ficha.idFichaTecnica,
       materiales: materiales
     })
-    notify(message2)
-    return formatFichas(fichas)
+    notify(message2)*/
   }
 
   async function saveFichaMateriales(fichaMateriales) {
@@ -115,8 +118,8 @@ export function FichasProvider({ children }) {
         'Authorization': 'Bearer ' + session.access
       }
     }
-    const response = await fetchAPI(API_FICHAS_MATERIALES_URL, options)
-    return response
+    const {message} = await fetchAPI(API_FICHAS_MATERIALES_URL, options)
+    return {message}
   }
 
   async function deleteFicha(idFicha) {
@@ -148,6 +151,7 @@ export function FichasProvider({ children }) {
         setAllFichasModelo([])
       }
     } catch (err) {
+      console.log('error al refrescar las fichas')
       setError(err)
     } finally {
       setFetchingFichas(false)
@@ -173,7 +177,11 @@ export function FichasProvider({ children }) {
         allFichasModelo, 
         fetchingFichas, setFetchingFichas,
         error,
-        saveFicha,
+        //saveFicha,
+
+        postFicha,
+        saveFichaMateriales,
+
         refreshFichas,
         deleteFicha
       }}

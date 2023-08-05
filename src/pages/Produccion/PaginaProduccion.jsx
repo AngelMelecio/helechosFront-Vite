@@ -244,7 +244,7 @@ const PaginaProduccion = () => {
                                         onChange={e => setMaquina(e.value)}
                                       />
                                     </div>
-                                    <div className="flex justify-center flex-col">
+                                    <div className="flex justify-end pb-3 flex-col">
                                       <div className="flex flex-row mt-2">
                                         <input
                                           onChange={() => {
