@@ -48,7 +48,7 @@ const SelectorMaquinas = ({
         .filter(maquina => !empleadoMaquinasIds.includes(maquina.idMaquina)).filter(m => m.departamento === departamentoEmpleado)
         .map(maquina => ({ ...maquina, isSelected: false }))
     )
-  },[allMaquinas])
+  },[allMaquinas,departamentoEmpleado])
 
   const handleShowSelector = async () => {
     setSelectorVisible(true)
