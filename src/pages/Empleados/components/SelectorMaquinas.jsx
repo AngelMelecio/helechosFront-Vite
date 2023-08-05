@@ -12,6 +12,7 @@ const SelectorMaquinas = ({
   assignedMaquinas,
   setAssignedMaquinas,
   setTheresChanges,
+  departamentoEmpleado
 }) => {
 
   const {
@@ -40,11 +41,11 @@ const SelectorMaquinas = ({
       allMaquinas.filter(maquina => empleadoMaquinasIds.includes(maquina.idMaquina))
     )
     setAvailableMaquinas(
-      allMaquinas.filter(maquina => !empleadoMaquinasIds.includes(maquina.idMaquina))
+      allMaquinas.filter(maquina => !empleadoMaquinasIds.includes(maquina.idMaquina)).filter(m => m.departamento === departamentoEmpleado)
     )
     setAvailableMaquinasList(
       allMaquinas
-        .filter(maquina => !empleadoMaquinasIds.includes(maquina.idMaquina))
+        .filter(maquina => !empleadoMaquinasIds.includes(maquina.idMaquina)).filter(m => m.departamento === departamentoEmpleado)
         .map(maquina => ({ ...maquina, isSelected: false }))
     )
   },[allMaquinas])
@@ -180,7 +181,7 @@ const SelectorMaquinas = ({
                             </div>
                           </div>
                           <div className="text-gray-700 w-full text-start" >
-                            {maquina.numero + ' ' + maquina.linea + ' ' + maquina.marca + ' ' + maquina.departamento}
+                            {((maquina.linea!=='0')?'L'+maquina.linea+' - ':'')+ 'M' + maquina.numero + ' / ' + maquina.departamento}
                           </div>
                         </button>
                       )
