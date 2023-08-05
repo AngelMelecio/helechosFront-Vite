@@ -97,12 +97,12 @@ const FrmFichas = ({
     setTejidoOptions(
       allMaquinas
         .filter(m => (m.departamento === 'Tejido'))
-        .map(m => ({ value: m.idMaquina.toString(), label: 'Línea: ' + m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca }))
+        .map(m => ({ value: m.idMaquina.toString(), label:((m.linea!=='0')?'L'+m.linea+' - ':'')+ 'M' + m.numero }))
     )
     setPlanchaOptions(
       allMaquinas
         .filter(m => (m.departamento === 'Plancha'))
-        .map(m => ({ value: m.idMaquina.toString(), label: 'Línea: ' + m.linea + ' Número: ' + m.numero + ' Marca: ' + m.marca }))
+        .map(m => ({ value: m.idMaquina.toString(), label: ((m.linea!=='0')?'L'+m.linea+' - ':'')+ 'M' + m.numero }))
     )
   }, [allMaquinas])
 

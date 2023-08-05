@@ -301,6 +301,7 @@ const DetailEmpleado = () => {
                             assignedMaquinas={assignedMaquinas}
                             setAssignedMaquinas={setAssignedMaquinas}
                             setTheresChanges={setTheresChanges}
+                            departamentoEmpleado={formik.values.departamento}
                           />
                         }
                       </div>

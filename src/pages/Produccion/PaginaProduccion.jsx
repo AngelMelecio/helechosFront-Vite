@@ -36,6 +36,7 @@ const PaginaProduccion = () => {
 
   const [scanEmpleadoModalVisible, setScanEmpleadoModalVisible] = useState(false)
   const [scanEtiquetaModalVisible, setScanEtiquetaModalVisible] = useState(false)
+  const [noAplica, setNoAplica] = useState(false)
 
   const { getEmpleadoMaquinas } = useEmpleados()
   const [empleado, setEmpleado] = useState(null)
@@ -66,10 +67,10 @@ const PaginaProduccion = () => {
     setOptsMaquinas(
       [
         ...allMaquinas.filter(m => mqnasIds.includes(m.idMaquina)), // Maquinas del empleado
-        ...allMaquinas.filter(m => !mqnasIds.includes(m.idMaquina)) // Maquinas no asignadas
-      ].map(m => ({ value: m.idMaquina, label: "M" + m.numero + " - L" + m.linea }))
+        ...allMaquinas.filter(m => !mqnasIds.includes(m.idMaquina)).filter(m => m.departamento === empleado.departamento) // Maquinas no asignadas pero del mismo departamento
+      ].map(m => ({ value: m.idMaquina, label: ((m.linea !== '0') ? 'L' + m.linea + ' - ' : '') + 'M' + m.numero }))
     )
-    setOptsMaquinas(prev => [...prev, { value: null, label: 'No aplica' }])
+    setOptsMaquinas(prev => [...prev, { value: null, label: 'Sin maquina' }])
 
     let p1 = new Date().setHours(6, 0, 0)
     let p2 = new Date().setHours(14, 30, 0)
@@ -80,6 +81,10 @@ const PaginaProduccion = () => {
 
     setMaquina(0)
   }, [empleado])
+
+  useEffect(() => {
+    if(maquina == null) setNoAplica(true); else setNoAplica(false);
+  }, [maquina])
 
   const handleOpenModal = async (setState) => {
     setState(true)
@@ -109,7 +114,7 @@ const PaginaProduccion = () => {
         setEtiquetasList(prev => [...prev, { ...objScan }])
       }
     } catch (e) {
-      notify( e+"", true)
+      notify(e + "", true)
     }
   }
 
@@ -208,7 +213,7 @@ const PaginaProduccion = () => {
                                 <div className="flex py-2">
                                   <div className="pl-6 pr-4">
                                     <div className="foto relative">
-                                      <img className="foto" src={API_URL+empleado.fotografia} alt="" />
+                                      <img className="foto" src={API_URL + empleado.fotografia} alt="" />
                                       <button
                                         type="button"
                                         onClick={e => {
@@ -229,20 +234,40 @@ const PaginaProduccion = () => {
                                   </div>
                                 </div>
                                 <div className="flex flex-col px-4 w-full my-4 bottom-7">
-                                  <CustomSelect
-                                    className="z-[10]"
-                                    label="Maquina"
-                                    options={optsMaquinas}
-                                    value={maquina}
-                                    onChange={e => setMaquina(e.value)}
-                                  />
-                                  <CustomSelect
-                                    className="z-[9]"
-                                    label="Turno"
-                                    options={optsTurno}
-                                    value={turno}
-                                    onChange={e => setTurno(e.value)}
-                                  />
+                                  <div className="flex flex-row justify-between">
+                                    <div className="flex w-3/4">
+                                      <CustomSelect
+                                        className="z-[10]"
+                                        label="Maquina"
+                                        options={optsMaquinas}
+                                        value={maquina}
+                                        onChange={e => setMaquina(e.value)}
+                                      />
+                                    </div>
+                                    <div className="flex justify-center flex-col">
+                                      <div className="flex flex-row mt-2">
+                                        <input
+                                          onChange={() => {
+                                            setNoAplica(prev => !prev);
+                                            (noAplica)?setMaquina(optsMaquinas[0].value):setMaquina(null);
+                                          }}
+                                          checked={noAplica} type="checkbox" className="inp-check w-5 h-5" />
+                                        <p className="text-teal-700 text-sm font-semibold px-2">No aplica</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex flex-row w-full">
+                                    <div className="flex w-full">
+                                      <CustomSelect
+                                        className="z-[9]"
+                                        label="Turno"
+                                        options={optsTurno}
+                                        value={turno}
+                                        onChange={e => setTurno(e.value)}
+                                      />
+                                    </div>
+                                  </div>
+
                                 </div>
                               </div>
                             </div>
