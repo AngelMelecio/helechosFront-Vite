@@ -36,7 +36,7 @@ const PaginaProduccion = () => {
 
   const [scanEmpleadoModalVisible, setScanEmpleadoModalVisible] = useState(false)
   const [scanEtiquetaModalVisible, setScanEtiquetaModalVisible] = useState(false)
-  const [noAplica, setNoAplica] = useState(false)
+  const [showMaquina, setShowMaquina] = useState(true)
 
   const { getEmpleadoMaquinas } = useEmpleados()
   const [empleado, setEmpleado] = useState(null)
@@ -62,16 +62,25 @@ const PaginaProduccion = () => {
   // Settear opciones de máquinas y turno cuando el empleado cambia
   useEffect(async () => {
     if (!empleado) return
-    let maquinas = await getEmpleadoMaquinas(empleado.idEmpleado)
-    let mqnasIds = maquinas.map(m => m.idMaquina)
-    setOptsMaquinas(
-      [
-        ...allMaquinas.filter(m => mqnasIds.includes(m.idMaquina)), // Maquinas del empleado
-        ...allMaquinas.filter(m => !mqnasIds.includes(m.idMaquina)).filter(m => m.departamento === empleado.departamento) // Maquinas no asignadas pero del mismo departamento
-      ].map(m => ({ value: m.idMaquina, label: ((m.linea !== '0') ? 'L' + m.linea + ' - ' : '') + 'M' + m.numero }))
-    )
-    setOptsMaquinas(prev => [...prev, { value: null, label: 'Sin maquina' }])
+    //Validar que necesita capturar maquina
+    if (empleado.departamento !== "Empaque" && empleado.departamento !== "Calidad") {
+      let maquinas = await getEmpleadoMaquinas(empleado.idEmpleado);
+      let mqnasIds = maquinas.map(m => m.idMaquina);
+      setOptsMaquinas(
+        [
+          ...allMaquinas.filter(m => mqnasIds.includes(m.idMaquina)), // Maquinas del empleado
+          ...allMaquinas.filter(m => !mqnasIds.includes(m.idMaquina)).filter(m => m.departamento === empleado.departamento) // Maquinas no asignadas pero del mismo departamento
+        ].map(m => ({ value: m.idMaquina, label: ((m.linea !== '0') ? 'L' + m.linea + ' - ' : '') + 'M' + m.numero }))
+      );
+      setMaquina(0);
+      setShowMaquina(true)
+    } else {
+      setShowMaquina(false);
+      setMaquina(null)
+      setOptsMaquinas([]);
+    }
 
+    //Turno
     let p1 = new Date().setHours(6, 0, 0)
     let p2 = new Date().setHours(14, 30, 0)
 
@@ -79,12 +88,9 @@ const PaginaProduccion = () => {
       (Date.now() >= p1 &&
         Date.now() < p2) ? 'Mañana' : 'Tarde')
 
-    setMaquina(0)
+
   }, [empleado])
 
-  useEffect(() => {
-    if(maquina == null) setNoAplica(true); else setNoAplica(false);
-  }, [maquina])
 
   const handleOpenModal = async (setState) => {
     setState(true)
@@ -235,25 +241,17 @@ const PaginaProduccion = () => {
                                 </div>
                                 <div className="flex flex-col px-4 w-full my-4 bottom-7">
                                   <div className="flex flex-row justify-between">
-                                    <div className="flex w-3/4">
-                                      <CustomSelect
-                                        className="z-[10]"
-                                        label="Maquina"
-                                        options={optsMaquinas}
-                                        value={maquina}
-                                        onChange={e => setMaquina(e.value)}
-                                      />
-                                    </div>
-                                    <div className="flex justify-center flex-col">
-                                      <div className="flex flex-row mt-2">
-                                        <input
-                                          onChange={() => {
-                                            setNoAplica(prev => !prev);
-                                            (noAplica)?setMaquina(optsMaquinas[0].value):setMaquina(null);
-                                          }}
-                                          checked={noAplica} type="checkbox" className="inp-check w-5 h-5" />
-                                        <p className="text-teal-700 text-sm font-semibold px-2">No aplica</p>
-                                      </div>
+                                    <div className="flex w-full">
+                                      {showMaquina&&
+                                        <CustomSelect
+                                          className="z-[10]"
+                                          label="Maquina"
+                                          options={optsMaquinas}
+                                          value={maquina}
+                                          onChange={e => setMaquina(e.value)}
+                                        />
+                                      }
+
                                     </div>
                                   </div>
                                   <div className="flex flex-row w-full">
