@@ -29,7 +29,6 @@ const EtiquetasModal = ({ columns, allEtiquetas, unique, onClose, title, onPrint
   const [list, setList] = useState(allEtiquetas)
 
   useEffect(() => {
-    console.log(allEtiquetas)
     setList(allEtiquetas.map(e => ({ ...e, isSelected: false })))
   }, [allEtiquetas])
 
