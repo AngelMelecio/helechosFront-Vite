@@ -41,8 +41,8 @@ const DetailCliente = () => {
     }
     if (!values.rfc) {
       errors.rfc = 'Ingresa el RFC';
-    } else if (values.rfc.toString().length !== 13) {
-      errors.rfc = 'Ingresa 13 digitos';
+    } else if (values.rfc.toString().length < 12 || values.rfc.toString().length > 13) {
+      errors.rfc = 'RFC Inválido';
     }
     if (!values.correo) {
       errors.correo = 'Ingresa el correo';
