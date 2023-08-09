@@ -68,9 +68,9 @@ const NuevoPedido = () => {
 
     values.detalles?.forEach((detalle, i) => {
       detalle.cantidades.forEach((cantidad, j) => {
-        if (cantidad.cantidad === "" || cantidad.cantidad === 0)
+        if (cantidad.cantidad === "")
           errors[`detalles[${i}].cantidades[${j}].cantidad`] = "Ingrese una cantidad"
-        if (cantidad.paquete === "" || cantidad.paquete === 0 || Number(cantidad.paquete) > Number(cantidad.cantidad))
+        if (cantidad.paquete === "" || Number(cantidad.paquete) > Number(cantidad.cantidad))
           errors[`detalles[${i}].cantidades[${j}].paquete`] = "Ingrese un paquete válido"
       })
     })
@@ -104,6 +104,7 @@ const NuevoPedido = () => {
           delete detalle.estaciones
           detalle.cantidades.forEach(cantidad => { cantidad.cantidad = Number(cantidad.cantidad); cantidad.paquete = Number(cantidad.paquete) })
         })
+        console.log(formatValues)
         const { message, pedido } = await postPedido(formatValues)
         notify(message)
         navigate('/pedidos')
