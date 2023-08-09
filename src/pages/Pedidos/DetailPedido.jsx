@@ -57,15 +57,15 @@ const DetailPedido = () => {
     let modelo = pedido?.modelo.nombre
     let idPedido = pedido?.idPedido
     pedido?.detalles?.forEach((detalle) => {
-      let colores = "";
-      detalle?.fichaTecnica?.materiales.forEach((material) => { colores += material?.color + "\n" })
+      let clrs = new Set()
+      detalle?.fichaTecnica?.materiales.forEach((material) => { clrs.add(material?.color) })
       detalle?.cantidades?.forEach((cantidad) => {
         cantidad?.etiquetas?.forEach((etiqueta) => {
           etiquetasFormated.push({
             ...etiqueta,
             modelo: modelo,
             idPedido: idPedido,
-            color: colores,
+            color: Array.from(clrs).join("\n"),
             estado: etiqueta.estacionActual !== 'creada' ? "Impresa" : "No impresa",
             isSelected: false,
             talla: etiqueta.tallaReal,
