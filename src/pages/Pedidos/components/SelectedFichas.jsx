@@ -20,7 +20,7 @@ const SelectedFichas = ({
   const [fichaHover, setFichaHover] = useState(null)
 
   const calculateDescription = (cantidad, paquete) => {
-
+    if( Number(paquete) === 0 ) return <></>
     let paquetes = Math.floor(cantidad / paquete)
     let sobrante = cantidad % paquete
     let descripcion = ""
