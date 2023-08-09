@@ -89,12 +89,12 @@ const DetailModelo = () => {
           allModelos.length > 0 ? allModelos.find(m => m.idModelo + '' === id) :
             await getModelo(id)
       )
-    }catch(e){
+    } catch (e) {
       console.log('Error en detalles del modelo: ', e)
-    }finally{
+    } finally {
       setLoadingModelo(false)
     }
-  
+
   }, [id])
 
   const pageRef = useRef()
@@ -163,7 +163,7 @@ const DetailModelo = () => {
                   <ICONS.Print size='25px' />
                 </button>
                 {<input
-                  disabled={ saving || fetchingFichas || (!theresChangesFicha && !theresChangesMateriales) }
+                  disabled={saving || fetchingFichas || (!theresChangesFicha && !theresChangesMateriales)}
                   className='bg-teal-500 h-10 p-1 w-40 text-white normal-button z-10 rounded-lg'
                   type="submit"
                   value={"Guardar Ficha"}
@@ -172,7 +172,7 @@ const DetailModelo = () => {
               </div>
             </div>
             <div className="flex flex-col relative h-full bg-white rounded-lg shadow-lg">
-              { fetchingFichas && id !== '0' ? <Loader />
+              {fetchingFichas && id !== '0' ? <Loader />
                 :
                 <SectionFichas
                   openModal={() => handleOpenModal(setModalVisible)}

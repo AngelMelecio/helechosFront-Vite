@@ -235,7 +235,7 @@ const SectionFichas = ({
       </div>
       {/* Formulario Fichas */
         selectedFichaIndx !== null && !fetchingFichas && fichasList[selectedFichaIndx] ?
-          <FrmFichas
+            <FrmFichas
             ficha={fichasList[selectedFichaIndx]}
           />
           :

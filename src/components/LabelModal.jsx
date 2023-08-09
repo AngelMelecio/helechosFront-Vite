@@ -46,7 +46,9 @@ const EtiquetasModal = ({ columns, allEtiquetas, unique, onClose, title, onPrint
   }
   const handleCheckAll = (e) => {
     let v = e.target.checked
-    setList(prev => prev
+    setList(prev => {
+      let newList = [...prev]
+      newList
       // filtro del searchBar
       .filter(d => Object.keys(d).some(k => d[k]?.toString().toLowerCase().includes(search.toLowerCase())))
       // filtro de estado
@@ -57,7 +59,9 @@ const EtiquetasModal = ({ columns, allEtiquetas, unique, onClose, title, onPrint
         if (filter.ord === 2) return a[filter.atr] < b[filter.atr] ? 1 : -1
       })
       // subarray de cantidad
-      .slice(0, cantidadLabels).map(e => ({ ...e, isSelected: v })))
+      .forEach( (e,i) => { if(i < cantidadLabels) e.isSelected = v })
+      return newList
+    })
   }
 
   return (
@@ -89,7 +93,7 @@ const EtiquetasModal = ({ columns, allEtiquetas, unique, onClose, title, onPrint
           <div className='flex w-2/4'>
             <CustomSelect
               className='input z-50'
-              onChange={e => { setSelectedOption(e.value); e.value === 'Todas' && setCantidadLabels(list.length) }}
+              onChange={e => { setSelectedOption(e.value); e.value === 'Todas' && setCantidadLabels(list.length); unSelectAll() }}
               value={selectedOption}
               options={optionsLabel}
               label='Mostrando:'
@@ -101,9 +105,9 @@ const EtiquetasModal = ({ columns, allEtiquetas, unique, onClose, title, onPrint
             <Input
               label='Cantidad:'
               type={'number'}
-              value={list.length > cantidadLabels ? cantidadLabels : list.length}
-              onChange={(e) => setCantidadLabels(e.target.value)}
-              max={list.length}
+              value={allEtiquetas.length > cantidadLabels ? cantidadLabels : allEtiquetas.length}
+              onChange={(e) => {setCantidadLabels(e.target.value); unSelectAll()}}
+              max={allEtiquetas.length}
             />
           </div>
 
