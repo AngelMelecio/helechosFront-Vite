@@ -167,7 +167,7 @@ const NuevoPedido = () => {
           "empaque": true,
         },
         cantidades: [
-          ...f.talla.split(',').map(t => ({
+          ...f.talla.split('/').map(t => ({
             talla: t,
             cantidad: 0,
             paquete: 0

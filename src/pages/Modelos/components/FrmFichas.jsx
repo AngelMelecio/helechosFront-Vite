@@ -21,8 +21,8 @@ import { useAuth } from "../../../context/AuthContext";
 const FrmFichas = ({
   ficha,
 }) => {
-  useEffect(()=>{console.log(ficha)},[ficha])
-  const {notify} = useAuth()
+  useEffect(() => { console.log(ficha) }, [ficha])
+  const { notify } = useAuth()
   const { id } = useParams()
   const formRef = useRef(null)
 
@@ -52,9 +52,12 @@ const FrmFichas = ({
 
   const validate = values => {
     const errors = {};
+    const regex = /^(\d+(\.\d+)?(\/(?=\d))?)+$/;
 
     if (!values.talla) {
       errors.talla = 'Ingresa la talla';
+    } else if (!regex.test(values.talla)) {
+      errors.talla ="Las tallas no coincide con el patrón";
     }
     if (!values.maquinaTejido) {
       errors.maquinaTejido = 'Selecciona una maquina ';
@@ -93,7 +96,7 @@ const FrmFichas = ({
           setTheresChangesFicha(false)
           notify(message)
         }
-        if (theresChangesMateriales || ficha.copied ) { 
+        if (theresChangesMateriales || ficha.copied) {
           const { message } = await saveFichaMateriales({
             idFichaTecnica: idFicha,
             materiales: values.materiales
@@ -104,7 +107,7 @@ const FrmFichas = ({
         }
       } catch (e) {
         console.log(e)
-      }finally{
+      } finally {
         setSaving(false)
       }
     }
@@ -224,8 +227,7 @@ const FrmFichas = ({
               </div>
               <div className="flex flex-row w-full">
                 <Input
-                  label='Talla' type='text' name='talla' value={fichaFormik?.values?.talla} placeholder='25,26,...'
-                  onKeyDown={(e) => ((e.keyCode < 48 || e.keyCode > 57) && e.keyCode !== 188 && e.keyCode !== 8) && e.preventDefault()}
+                  label='Talla' type='text' name='talla' value={fichaFormik?.values?.talla} placeholder='25/26.5/...'
                   onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
                   errores={fichaFormik?.errors.talla && fichaFormik?.touched.talla ? fichaFormik?.errors.talla : null}
                 />
