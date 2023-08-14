@@ -33,7 +33,6 @@ ReactDOM.render(
                           <ClientesProvider>
                             <PedidosProvider>
                               <ProduccionProvider>
-
                                 <Main />
                               </ProduccionProvider>
                             </PedidosProvider>

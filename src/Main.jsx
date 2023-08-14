@@ -27,6 +27,7 @@ import PaginaProduccion from "./pages/Produccion/PaginaProduccion"
 import PdfTest from "./pages/PdfTest"
 import NuevoPedido from "./pages/Pedidos/NuevoPedido"
 import TestComp from "./components/TestComp"
+import PaginaReportes from "./pages/Reportes/PaginaReportes"
 
 const getRoutesForRole = (role) => {
   const routesByRole = {
@@ -49,6 +50,7 @@ const getRoutesForRole = (role) => {
       { path: "/pedidos/0", element: <NuevoPedido /> },
       { path: "/pedidos/:id", element: <DetailPedido /> },
       { path: "/produccion", element: <PaginaProduccion /> },
+      { path: "/reportes", element: <PaginaReportes /> }
     ],
     'Desarrollador': [
       { path: "/modelos", element: <PaginaModelos /> },
@@ -70,7 +72,8 @@ const getRoutesForRole = (role) => {
       { path: "/pedidos", element: <PaginaPedidos /> },
       { path: "/pedidos/0", element: <NuevoPedido /> },
       { path: "/pedidos/:id", element: <DetailPedido /> },
-      { path: "/produccion", element: <PaginaProduccion /> }
+      { path: "/produccion", element: <PaginaProduccion /> },
+      { path: "/reportes", element: <PaginaReportes />}
     ],
     'Produccion': [
       { path: "/produccion", element: <PaginaProduccion /> },

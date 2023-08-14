@@ -87,6 +87,10 @@ import {
 
 } from 'react-icons/ri'
 
+import {
+    IoStatsChartSharp as Charts,
+} from 'react-icons/io5'
+
 
 import { TbNeedleThread as Thread } from 'react-icons/tb';
 
@@ -136,5 +140,6 @@ export const ICONS = {
     Copy,
     Thread,
     Qr,
-    Check
+    Check,
+    Charts,
 }
