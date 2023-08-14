@@ -19,23 +19,24 @@ const initPedido = {
     cliente: "",
   },
   fechaEntrega: "",
-  detalles: []
+  detalles: [],
+  ordenCompra: "",
 }
 const initRoute = {
   "creada": "tjeido",
   "tejido": null,
   "plancha": null,
-  "corte": null,
   "calidad": null,
+  "corte": null,
   "empaque": "empacado",
 }
 
 const defaultRoute = {
   "creada": "tejido",
   "tejido": "plancha",
-  "plancha": "corte",
-  "corte": "calidad",
-  "calidad": "empaque",
+  "plancha": "calidad",
+  "calidad": "corte",
+  "corte": "empaque",
   "empaque": "empacado",
 }
 
@@ -43,19 +44,19 @@ const NuevoPedido = () => {
 
   const navigate = useNavigate();
   const { notify } = useAuth()
-  
+
   const pageRef = useRef(null)
-  
+
   const [saving, setSaving] = useState(false)
   const [pageScrollBottom, setPageScrollBottom] = useState(false)
 
   const { allClientes, refreshClientes } = useClientes()
   const [optionsCliente, setOptionsCliente] = useState([])
-  
+
   const { getModelosCliente } = useModelos()
   const [optionsModelo, setOptionsModelo] = useState([])
   const [loadingModelos, setLoadingModelos] = useState(false)
-  
+
   const { getFichas, postPedido } = usePedidos()
   const [allFichas, setAllFichas] = useState([])
   const [availableFichas, setAvailableFichas] = useState([])
@@ -65,6 +66,7 @@ const NuevoPedido = () => {
     if (values.modelo === "") errors.modelo = "Seleccione un modelo"
     if (values.fechaEntrega === "") errors.fechaEntrega = "Seleccione una fecha de entrega"
     if (values.detalles?.length === 0) errors.detalles = "Seleccione al menos una ficha"
+    if (values.ordenCompra === "") errors.ordenCompra = "Ingrese una orden de compra"
 
     values.detalles?.forEach((detalle, i) => {
       detalle.cantidades.forEach((cantidad, j) => {
@@ -104,7 +106,6 @@ const NuevoPedido = () => {
           delete detalle.estaciones
           detalle.cantidades.forEach(cantidad => { cantidad.cantidad = Number(cantidad.cantidad); cantidad.paquete = Number(cantidad.paquete) })
         })
-        console.log(formatValues)
         const { message, pedido } = await postPedido(formatValues)
         notify(message)
         navigate('/pedidos')
@@ -124,7 +125,7 @@ const NuevoPedido = () => {
   useEffect(() => {
     setOptionsCliente(allClientes.map(cliente => ({ value: cliente.idCliente, label: cliente.nombre })))
   }, [allClientes])
-  
+
   // Obtener modelos disponibles cuando el cliente seleccionado cambia
   useEffect(async () => {
     if (!formik?.values?.modelo.cliente) return
@@ -138,7 +139,7 @@ const NuevoPedido = () => {
       setLoadingModelos(false)
     }
   }, [formik?.values?.modelo?.cliente])
-  
+
   // Obtener fichas disponibles cuando el modelo seleccionado cambia
   useEffect(async () => {
     let idmod = formik?.values?.modelo.idModelo
@@ -147,7 +148,7 @@ const NuevoPedido = () => {
       let fichas = await getFichas(idmod)
       setAllFichas(fichas)
     } catch (e) {
-      
+
     }
   }, [formik?.values?.modelo?.idModelo])
 
@@ -162,8 +163,8 @@ const NuevoPedido = () => {
         estaciones: {
           "tejido": true,
           "plancha": true,
-          "corte": true,
           "calidad": true,
+          "corte": true,
           "empaque": true,
         },
         cantidades: [
@@ -251,6 +252,13 @@ const NuevoPedido = () => {
                           options={optionsModelo}
                           label='Modelo'
                           errores={formik.errors.modelo && formik.touched.modelo ? formik.errors.modelo : null}
+                        />
+                      </div>
+                      <div className='flex flex-row'>
+                        <Input
+                          label='Orden de compra' type='text' name='ordenCompra' value={formik.values ? formik.values.ordenCompra : ''}
+                          onChange={formik.handleChange} onBlur={formik.handleBlur}
+                          errores={formik.errors.ordenCompra && formik.touched.ordenCompra ? formik.errors.ordenCompra : null}
                         />
                         <Input
                           name='fechaEntrega'

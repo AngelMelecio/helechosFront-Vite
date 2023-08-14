@@ -63,6 +63,7 @@ const PaginaPedidos = () => {
           { name: 'Fecha de entrega', attribute: 'fechaEntrega', type: 'date'},
           { name: 'Cliente', attribute: 'modelo.cliente.nombre' },
           { name: 'Modelo', attribute: 'modelo.nombre' },
+          { name: 'Orden de compra', attribute: 'ordenCompra' },
           {
             name: 'Progreso del pedido', attribute: (e) => <ProgressBar completed={e.progressBar.progress}
               maxCompleted={e.progressBar.goal}
