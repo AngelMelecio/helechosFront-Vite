@@ -11,6 +11,7 @@ const API_FICHAS_BY_MODELO = "api/fichas_by_modelo/"
 const API_GET_ETIQUETAS = "api/produccionByPedido/"
 const API_IMPRESION_ETIQUETAS = "api/produccionPrint/"
 const API_PROGRESS_ETIQUETA = "api/progresoByEtiqueta/"
+const API_PRODUCCION_MODELO_EMPLEADO_ALL = "api/produccion_por_modelo_y_empleado/"
 
 const PedidosContext = React.createContext('PedidosContext')
 
@@ -128,6 +129,20 @@ export function PedidosProvider({ children }) {
         const response = await fetchAPI(API_PEDIDOS_URL, options)
         return response
     }
+    async function produccion_por_modelo_y_empleado(restricciones) {
+        let fechaInicio = restricciones.fechaInicio
+        let fechaFin = restricciones.fechaFinal
+        let departamento = restricciones.departamento
+
+        let options = {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + session.access
+            },
+        }
+        const response = await fetchAPI(API_PRODUCCION_MODELO_EMPLEADO_ALL+fechaInicio+"/"+fechaFin+"/"+departamento, options)
+        return response
+    }
     async function putProduccion(listIds) {
 
         let options = {
@@ -163,8 +178,8 @@ export function PedidosProvider({ children }) {
     const deletePedidos = async (listaPedidos) => {
         for (let i = 0; i < listaPedidos.length; i++) {
             let e = listaPedidos[i]
-            const options = {method: 'DELETE', headers: {'Authorization': 'Bearer ' + session.access}}
-            if (e.isSelected) { 
+            const options = { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + session.access } }
+            if (e.isSelected) {
                 try {
                     setLoading(true)
                     const { message } = await fetchAPI(API_PEDIDO_URL + e.idPedido, options)
@@ -194,7 +209,8 @@ export function PedidosProvider({ children }) {
                 putProduccion,
                 setAllEtiquetas,
                 getRegistrosByIdProduccion,
-                deletePedidos
+                deletePedidos,
+                produccion_por_modelo_y_empleado
             }}
         >
             {children}

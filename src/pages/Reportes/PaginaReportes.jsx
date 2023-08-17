@@ -6,12 +6,35 @@ import { useAuth } from "../../context/AuthContext"
 import Input from "../../components/Input";
 import { useFormik } from "formik";
 import CustomSelect from "../../components/CustomSelect";
+import { usePedidos } from "../Pedidos/hooks/usePedidos";
+import { set } from "lodash";
+import { Chart } from "react-google-charts";
+import Loader from "../../components/Loader/Loader";
+
 
 
 
 const PaginaReportes = () => {
 
     const { notify } = useAuth()
+    const { produccion_por_modelo_y_empleado } = usePedidos()
+    const [readyToRender, setReadyToRender] = useState(false)
+    const [data, setData] = useState([])
+    const [solicitud, setSolicitud] = useState(null)
+    const [options, setOptions] = useState({
+        title: "Pares tejidos por empleado",
+        colors: ["#00898a", "#23aa8f", "#64c987", "#aae479"]
+    })
+
+    useEffect(() => {
+        if (solicitud) {
+            produccion_por_modelo_y_empleado(solicitud)
+                .then((data) => {
+                    setData(data)
+                    setReadyToRender(true)
+                })
+        }
+    }, [solicitud])
 
     const initobj = {
         tipo: "Seleccione",
@@ -70,8 +93,7 @@ const PaginaReportes = () => {
         initialValues: initobj,
         validate,
         onSubmit: (values) => {
-            console.log(values)
-
+            setSolicitud(values)
         },
     });
 
@@ -168,9 +190,29 @@ const PaginaReportes = () => {
                                             </div>
                                             {/* Body */}
                                             <div className=" w-full h-full px-2 total-center bg-white">
-                                                <p className="italic font-semibold text-gray-600">
-                                                    Graficas
-                                                </p>
+                                                {
+                                                    readyToRender ?
+                                                        data.length > 2 ?
+                                                            < Chart
+                                                                chartType="Bar"
+                                                                loader={<Loader />}
+                                                                width={"100%"}
+                                                                height={"100%"}
+                                                                data={data}
+                                                                options={options}
+                                                            />
+                                                            : 
+                                                            <p className="italic font-semibold text-gray-600">
+                                                                No hay suficientes datos para generar un grafico
+                                                            </p>
+
+                                                        :
+                                                        <p className="italic font-semibold text-gray-600">
+                                                            Graficas
+                                                        </p>
+
+                                                }
+
                                             </div>
                                         </div>
                                     </div>
