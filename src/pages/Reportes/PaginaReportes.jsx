@@ -23,7 +23,7 @@ const PaginaReportes = () => {
     const [solicitud, setSolicitud] = useState(null)
     const [options, setOptions] = useState({
         title: "Pares tejidos por empleado",
-        colors: ["#00898a", "#23aa8f", "#64c987", "#aae479"]
+        colors: ["#00898a", "#23aa8f", "#64c987", "#aae479"],
     })
 
     useEffect(() => {
@@ -164,15 +164,15 @@ const PaginaReportes = () => {
                         <div className="h-full flex flex-col overflow-hidden bg-slate-100">
                             <div className="w-full h-full">
                                 <div className="flex w-full h-full">
-                                    {/* Columna lateral  */}
+                                    {/* Columna lateral 
                                     <div className="w-1/4 relative pr-1.5 pb-1.5 rounded-lg">
                                         <div className="flex flex-col w-full h-full relative bg-white rounded-lg shadow-md">
-                                            {/* Header */}
+                                            {/* Header 
                                             <div className="w-full p-2 flex items-center justify-between">
                                                 <p className="text-teal-700 text-lg font-semibold px-2">Totales</p>
                                             </div>
 
-                                            {/* Body */}
+                                            {/* Body 
                                             <div className=" w-full h-full px-2 total-center bg-white">
                                                 <p className="italic font-semibold text-gray-600">
                                                     Información extra
@@ -180,7 +180,7 @@ const PaginaReportes = () => {
                                             </div>
                                         </div>
                                     </div>
-
+                                    */}
                                     {/*  Datos de la Captura  */}
                                     <div className="w-full h-full relative pr-0.5 pb-1.5">
                                         <div className="flex flex-col w-full h-full bg-white rounded-lg shadow-md">
@@ -192,7 +192,7 @@ const PaginaReportes = () => {
                                             <div className=" w-full h-full px-2 total-center bg-white">
                                                 {
                                                     readyToRender ?
-                                                        data.length > 2 ?
+                                                        data.length > 1 ?
                                                             < Chart
                                                                 chartType="Bar"
                                                                 loader={<Loader />}
@@ -201,7 +201,7 @@ const PaginaReportes = () => {
                                                                 data={data}
                                                                 options={options}
                                                             />
-                                                            : 
+                                                            :
                                                             <p className="italic font-semibold text-gray-600">
                                                                 No hay suficientes datos para generar un grafico
                                                             </p>
