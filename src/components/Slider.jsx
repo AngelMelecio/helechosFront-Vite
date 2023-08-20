@@ -139,7 +139,7 @@ const Slider = ({
               </div>}
             </div>
 
-            {/*  Pass Button  */}
+            {/*  OPEN Button  */}
             <div className="absolute w-10 h-10 p-1 top-0 left-0">
               <button
                 type="button"

@@ -691,12 +691,13 @@ input[type="checkbox"]:checked::after {
   animation: scann-animation 1.8s ease-in-out infinite alternate;
 }
 
+
 @keyframes scann-animation {
   0% {
-    top: 17%;
+    top: 20%;
   }
   100% {
-    top: 80%;
+    top: 70%;
   }
 }
 
