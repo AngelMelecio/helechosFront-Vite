@@ -71,7 +71,8 @@ const DetailPedido = () => {
             estado: etiqueta.estacionActual !== 'creada' ? "Impresa" : "No impresa",
             isSelected: false,
             talla: etiqueta.tallaReal,
-            numEtiqueta: Number(etiqueta.numEtiqueta)
+            numEtiqueta: Number(etiqueta.numEtiqueta),
+            od: pedido.ordenCompra,
           })
         })
       })
@@ -192,6 +193,7 @@ const DetailPedido = () => {
                         label='Cliente'
                         type="text"
                       />
+
                       <Input
                         readOnly
                         name='Modelo'
@@ -199,15 +201,16 @@ const DetailPedido = () => {
                         label='Modelo'
                         type="text"
                       />
-                    </div>
-                    <div className="flex flex-row">
                       <Input
                         readOnly
-                        name='fechaEntrega'
-                        value={pedido?.fechaEntrega}
-                        label='Fecha de Entrega'
-                        type='text'
+                        name='orderCompra'
+                        value={pedido?.ordenCompra}
+                        label='Orden de compra'
+                        type="text"
                       />
+                    </div>
+
+                    <div className="flex flex-row">
                       <Input
                         readOnly
                         name='fechaRegistro'
@@ -215,6 +218,22 @@ const DetailPedido = () => {
                         label='Fecha de Registro'
                         type='text'
                       />
+                      <Input
+                        readOnly
+                        name='space'
+                        value=''
+                        label=''
+                        type='text'
+                      />
+                      <Input
+                        readOnly
+                        name='fechaEntrega'
+                        value={pedido?.fechaEntrega}
+                        label='Fecha de Entrega'
+                        type='text'
+                      />
+
+
                     </div>
                   </div>
                 </div>
@@ -289,7 +308,7 @@ const DetailPedido = () => {
                                     //Especificamos las opciones de la grafica
 
                                     let options = {
-                                      title: "Talla: " + cantidad.talla,
+                                      title: "Talla: " + cantidad.talla + "\n" +"Etiquetas: " +cantidad.etiquetas.length,
                                       titleTextStyle: { fontSize: 18, bold: false, color: '#0f766e', },
                                       colors: cantidad.progreso.map(p => DPTO_COLOR[p[0]]),
                                       pieHole: 0.35,

@@ -95,6 +95,10 @@ const LabelToPrint = ({ list, onCloseModal }) => {
                                 <Text style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: 5 }}>Cantidad: </Text>
                                 <Text style={{ fontFamily: 'Roboto', fontWeight: 400, fontSize: 5 }}>{obj.cantidad}</Text>
                               </View>
+                              <View style={{ display: 'flex', flexDirection: 'row' }}>
+                                <Text style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: 5 }}>O.C.: </Text>
+                                <Text style={{ fontFamily: 'Roboto', fontWeight: 400, fontSize: 5 }}>{obj.od}</Text>
+                              </View>
                             </View>
 
                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '3', marginTop: '3' }}>

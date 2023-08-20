@@ -37,7 +37,8 @@ const AppBar = () => {
       { to: '/proveedores', content: 'Proveedores', Icon: ICONS.Truck},
       { to: '/materiales', content: 'Materiales', Icon: ICONS.Thread},
       { to: '/pedidos', content: 'Pedidos', Icon: ICONS.Diablito},
-      { to: '/Produccion', content: 'Captura de Producción', Icon: ICONS.Qr }
+      { to: '/Produccion', content: 'Captura de Producción', Icon: ICONS.Qr },
+      { to: '/reportes', content: 'Reportes', Icon: ICONS.Charts}
     ],
     'Desarrollador': [
       { to: '/modelos', content: 'Modelos', Icon: ICONS.Shoe },
@@ -50,7 +51,8 @@ const AppBar = () => {
       { to: '/proveedores', content: 'Proveedores', Icon: ICONS.Truck},
       { to: '/materiales', content: 'Materiales', Icon: ICONS.Thread},
       { to: '/pedidos', content: 'Pedidos', Icon: ICONS.Diablito},
-      { to: '/Produccion', content: 'Captura de Producción', Icon: ICONS.Qr }
+      { to: '/Produccion', content: 'Captura de Producción', Icon: ICONS.Qr },
+      { to: '/reportes', content: 'Reportes', Icon: ICONS.Charts}
     ],
     'Produccion':[
       { to: '/Produccion', content: 'Captura de Producción', Icon: ICONS.Qr }

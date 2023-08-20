@@ -140,8 +140,6 @@ const PaginaProduccion = () => {
 
   const handleCapturar = async () => {
     setEtiquetasList([])
-    setEmpleado(null)
-    setMaquina(0)
     let {
       empleado: empleadoResponse,
       fecha,

@@ -12,6 +12,7 @@ const API_GET_ETIQUETAS = "api/produccionByPedido/"
 const API_IMPRESION_ETIQUETAS = "api/produccionPrint/"
 const API_PROGRESS_ETIQUETA = "api/progresoByEtiqueta/"
 const API_REPOSICION_URL = "api/reposicion/"
+const API_PRODUCCION_MODELO_EMPLEADO_ALL = "api/produccion_por_modelo_y_empleado/"
 
 const PedidosContext = React.createContext('PedidosContext')
 
@@ -139,6 +140,20 @@ export function PedidosProvider({ children }) {
         const response = await fetchAPI(API_PEDIDOS_URL, options)
         return response
     }
+    async function produccion_por_modelo_y_empleado(restricciones) {
+        let fechaInicio = restricciones.fechaInicio
+        let fechaFin = restricciones.fechaFinal
+        let departamento = restricciones.departamento
+
+        let options = {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + session.access
+            },
+        }
+        const response = await fetchAPI(API_PRODUCCION_MODELO_EMPLEADO_ALL+fechaInicio+"/"+fechaFin+"/"+departamento, options)
+        return response
+    }
     async function putProduccion(listIds) {
 
         let options = {
@@ -233,6 +248,7 @@ export function PedidosProvider({ children }) {
                 deletePedidos,
                 saveReposicion,
                 getReposiciones
+                produccion_por_modelo_y_empleado
             }}
         >
             {children}

@@ -5,8 +5,8 @@ import { ICONS } from "../../../constants/icons"
 const STATIONS = [
   { name: "Tejido", atr: "tejido" },
   { name: "Plancha", atr: "plancha" },
-  { name: "Corte", atr: "corte" },
   { name: "Calidad", atr: "calidad" },
+  { name: "Corte", atr: "corte" },
 ]
 
 const SelectedFichas = ({
