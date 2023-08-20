@@ -16,6 +16,7 @@ import Progreso from "./components/Progreso";
 import DetalleEtiquetaModal from "./components/DetalleEtiquetaModal";
 import LabelToPrint from "../../components/LabelToPrint";
 import { DPTO_COLOR } from "../../constants/Despartamentos";
+import ScanModal from "../Produccion/components/ScanModal";
 
 const DetailPedido = () => {
 
@@ -35,6 +36,7 @@ const DetailPedido = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [detalleEtiquetaModalVisible, setDetalleEtiquetaModalVisible] = useState(false)
   const [printEtiquetasModalVisible, setPrintEtiquetasModalVisible] = useState(false)
+  const [scanModalVisible, setScanModalVisible] = useState(false)
   const [pageScrollBottom, setPageScrollBottom] = useState(false)
 
   const [pedido, setPedido] = useState(null)
@@ -126,6 +128,28 @@ const DetailPedido = () => {
       Math.ceil(pageRef.current.scrollTop + pageRef.current.clientHeight) >=
       pageRef.current.scrollHeight
     )
+  }
+
+  const handleSearchProduccion = (etiqueta) => {
+    let prd = JSON.parse(etiqueta).idProduccion
+    pedido?.detalles
+      .forEach((dtll, i) => dtll.cantidades
+        .forEach((cntd, j) => cntd.etiquetas
+          .forEach(async (etq) => {
+            if (etq.idProduccion === prd) {
+              setSelectedFichaIndx(i)
+              setSelectedTallaIndx(j)
+              setSelectedEtiqueta(etq)
+
+              await handleCloseModal([setScanModalVisible])
+              await sleep(95)
+              await handleOpenModal(setDetalleEtiquetaModalVisible)
+              return
+            }
+          })
+        )
+      )
+
   }
 
   return (
@@ -224,12 +248,19 @@ const DetailPedido = () => {
                     </div>
                     <div className='flex'>
                       <button
+                        type="button"
+                        className="normal-button h-10 w-10 rounded-lg total-center mr-3"
+                        onClick={() => handleOpenModal(setScanModalVisible)}
+                      >
+                        <ICONS.Qr size='27px' />
+                      </button>
+                      <button
                         disabled={allEtiquetas?.length === 0}
                         type="button"
                         onClick={() => handleOpenModal(setModalVisible)}
                         className='normal-button h-10 w-10 rounded-lg total-center'
                       >
-                        <ICONS.Print size='25px' />
+                        <ICONS.Print size='27px' />
                       </button>
                     </div>
                   </div>
@@ -408,6 +439,17 @@ const DetailPedido = () => {
           <DetalleEtiquetaModal
             onClose={() => handleCloseModal([setDetalleEtiquetaModalVisible])}
             etiqueta={selectedEtiqueta}
+            modelo={pedido?.modelo?.nombre}
+            ficha={pedido?.detalles[selectedFichaIndx]?.fichaTecnica?.nombre}
+            talla={pedido?.detalles[selectedFichaIndx]?.cantidades[selectedTallaIndx]?.talla}
+          />
+        }
+        {
+          scanModalVisible &&
+          <ScanModal
+            onClose={() => handleCloseModal([setScanModalVisible])}
+            onScan={(value) => handleSearchProduccion(value)}
+            title="Buscar Etiqueta..."
           />
         }
       </div>

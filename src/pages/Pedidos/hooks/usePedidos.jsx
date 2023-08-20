@@ -11,6 +11,7 @@ const API_FICHAS_BY_MODELO = "api/fichas_by_modelo/"
 const API_GET_ETIQUETAS = "api/produccionByPedido/"
 const API_IMPRESION_ETIQUETAS = "api/produccionPrint/"
 const API_PROGRESS_ETIQUETA = "api/progresoByEtiqueta/"
+const API_REPOSICION_URL = "api/reposicion/"
 const API_PRODUCCION_MODELO_EMPLEADO_ALL = "api/produccion_por_modelo_y_empleado/"
 
 const PedidosContext = React.createContext('PedidosContext')
@@ -19,6 +20,16 @@ export function usePedidos() {
     return useContext(PedidosContext)
 }
 
+function formatReposiciones(reposiciones) {
+    return reposiciones.map((rp, indx) => ({
+        ...rp,
+        indx: indx + 1,
+        empleadoFalla: rp.empleadoFalla.nombre + " " + rp.empleadoFalla.apellidos + " - " + rp.empleadoFalla.departamento,
+        empleadoReponedor: rp.empleadoReponedor.nombre + " " + rp.empleadoReponedor.apellidos + " - " + rp.empleadoReponedor.departamento,
+        maquina: "M:" + rp.maquina.numero + " L:" + rp.maquina.linea,
+        fecha: new Date(rp.fecha).toLocaleString()
+    }))
+}
 
 function formatPedidos(pedidos) {
     let formatData = pedidos.map((pedido) => {
@@ -194,6 +205,31 @@ export function PedidosProvider({ children }) {
         }
     }
 
+    async function saveReposicion(values) {
+        let options = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + session.access
+            },
+            body: JSON.stringify(values)
+        }
+        const response = await fetchAPI(API_REPOSICION_URL, options)
+        return ({
+            message: response.message,
+            reposiciones: formatReposiciones(response.reposiciones)
+        })
+    }
+
+    async function getReposiciones(idProduccion) {
+        let options = {
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + session.access }
+        }
+        const { reposiciones } = await fetchAPI(API_REPOSICION_URL + idProduccion, options)
+        return formatReposiciones(reposiciones)
+    }
+
     return (
         <PedidosContext.Provider
             value={{
@@ -210,6 +246,8 @@ export function PedidosProvider({ children }) {
                 setAllEtiquetas,
                 getRegistrosByIdProduccion,
                 deletePedidos,
+                saveReposicion,
+                getReposiciones
                 produccion_por_modelo_y_empleado
             }}
         >

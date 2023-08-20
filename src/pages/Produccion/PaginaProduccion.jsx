@@ -183,7 +183,7 @@ const PaginaProduccion = () => {
                 <div className="flex w-full h-full">
                   {/* Datos del Empleado  */}
                   <div className="w-2/4 relative pr-1.5 pb-1.5 rounded-lg">
-                    <div className="flex flex-col w-full h-full relative bg-white rounded-lg shadow-md">
+                    <div className="border-2 border-teal-200  flex flex-col w-full h-full relative bg-white rounded-lg shadow-md">
                       {/*  Card Header */}
                       <div className="w-full p-2 flex items-center justify-between">
                         <p className="text-teal-700 text-lg font-semibold px-2">Datos del Empleado</p>
@@ -201,7 +201,7 @@ const PaginaProduccion = () => {
                           <>
                             {/* Selector de Empleado */}
 
-                            <div className=" w-full h-full px-2 total-center bg-gray-100">
+                            <div className=" w-full h-full px-2 rounded-b-md total-center bg-gray-100">
                               <p className="italic font-semibold text-gray-600">
                                 Escaneé un empleado ...
                               </p>
