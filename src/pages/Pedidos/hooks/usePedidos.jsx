@@ -24,9 +24,9 @@ function formatReposiciones(reposiciones) {
     return reposiciones.map((rp, indx) => ({
         ...rp,
         indx: indx + 1,
-        empleadoFalla: rp.empleadoFalla.nombre + " " + rp.empleadoFalla.apellidos + " - " + rp.empleadoFalla.departamento,
+        empleadoFalla: rp.empleadoFalla!==null?rp.empleadoFalla.nombre + " " + rp.empleadoFalla.apellidos + " - " + rp.empleadoFalla.departamento : "---",
         empleadoReponedor: rp.empleadoReponedor.nombre + " " + rp.empleadoReponedor.apellidos + " - " + rp.empleadoReponedor.departamento,
-        maquina: "M:" + rp.maquina.numero + " L:" + rp.maquina.linea,
+        maquina: rp.maquina!==null? "L" + rp.maquina.linea+" - " +"M" + rp.maquina.numero :"---",
         fecha: new Date(rp.fecha).toLocaleString()
     }))
 }

@@ -6,6 +6,7 @@ import { ICONS } from "../../../constants/icons"
 import { sleep } from "../../../constants/functions"
 import { useAuth } from "../../../context/AuthContext"
 import { FormikProvider } from "formik"
+import { set } from "lodash"
 
 const FormReposicion = ({ formik, empleados, maquinas, saving }) => {
 
@@ -17,25 +18,30 @@ const FormReposicion = ({ formik, empleados, maquinas, saving }) => {
   }, {})
 
   const [scaning, setScaning] = useState(null)
-  const [empleadosOptions, setEmpleadosOptions] = useState([])
-  const [maquinasOptions, setMaquinasOptions] = useState([])
+  const [empleadosReponedores, setEmpleadosReponedores] = useState([])
+  const [empleadosFallas, setEmpleadosFallas] = useState([{ value: null, label: "No aplica" }])
+  const [maquinasOptions, setMaquinasOptions] = useState([{ value: null, label: "No aplica" }])
 
   useEffect(() => {
-    setEmpleadosOptions(empleados.map(item => ({
+    setEmpleadosReponedores((empleados.map(item => ({
       value: item.idEmpleado,
       label: item.nombre + " " + item.apellidos
-    })))
+    }))))
+    setEmpleadosFallas(prev => ([...prev, ...(empleados.map(item => ({
+      value: item.idEmpleado,
+      label: item.nombre + " " + item.apellidos
+    })))]))
   }, [empleados])
 
   useEffect(() => {
     let dpto_reponedor = empleados.find(e => e.idEmpleado === formik.values.empleadoReponedor)?.departamento
-    setMaquinasOptions(
-      maquinas.filter(m => m.departamento === dpto_reponedor)
+    setMaquinasOptions(prev => ([...prev, ...
+      (maquinas.filter(m => m.departamento === dpto_reponedor)
         .map(item => ({
           value: item.idMaquina,
-          label: "L:" + item.linea + " - " + "M:" + item.numero,
+          label: "L" + item.linea + " - " + "M" + item.numero,
         }))
-    )
+      )]))
   }, [formik.values.empleadoReponedor])
 
   function openScan(empleado) {
@@ -95,7 +101,7 @@ const FormReposicion = ({ formik, empleados, maquinas, saving }) => {
                 label="Cantidad"
                 name="cantidad"
                 value={formik.values.cantidad}
-                onChange={(e) => formik.setFieldValue("cantidad", Number(e.target.value) )}
+                onChange={(e) => formik.setFieldValue("cantidad", Number(e.target.value))}
                 type="number"
                 placeholder="Ingrese cantidad"
                 errores={formik.errors.cantidad}
@@ -118,13 +124,13 @@ const FormReposicion = ({ formik, empleados, maquinas, saving }) => {
             {/* Empleado Falla */}
             <div className="flex w-full">
               <CustomSelect
-                options={empleadosOptions}
+                options={empleadosFallas}
                 value={formik.values.empleadoFalla}
                 onChange={(e) => formik.setFieldValue("empleadoFalla", e.value)}
                 label="Empleado Falla"
                 errores={formik.errors.empleadoFalla}
               />
-              <div className={( formik.errors.empleadoFalla ? "mb-[24px]" : "" )+" self-end relative mr-2"}>
+              <div className={(formik.errors.empleadoFalla ? "mb-[24px]" : "") + " self-end relative mr-2"}>
                 <button
                   type="button"
                   onClick={() => openScan("empleadoFalla")}
@@ -144,13 +150,13 @@ const FormReposicion = ({ formik, empleados, maquinas, saving }) => {
             {/* Empleado Repositor */}
             <div className="flex w-full">
               <CustomSelect
-                options={empleadosOptions}
+                options={empleadosReponedores}
                 value={formik.values.empleadoReponedor}
                 onChange={(e) => formik.setFieldValue("empleadoReponedor", e.value)}
                 label="Empleado Repositor"
                 errores={formik.errors.empleadoReponedor}
               />
-              <div className={( formik.errors.empleadoReponedor ? "mb-[24px]" : "" )+" self-end relative mr-2"}>
+              <div className={(formik.errors.empleadoReponedor ? "mb-[24px]" : "") + " self-end relative mr-2"}>
                 <button
                   onClick={() => openScan("empleadoReponedor")}
                   className={(scaning === "empleadoReponedor" ? "text-teal-700 scan-icon pointer-events-none" : "normal-button") + " relative w-10 h-10 total-center rounded-md"}>

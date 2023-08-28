@@ -64,13 +64,13 @@ const ReposicionesCrud = ({ produccion }) => {
         if (values.motivos && values.motivos === "") {
             errors.motivos = "Requerido"
         }
-        if (!values.empleadoFalla) {
+        if (values.empleadoFalla===-1) {
             errors.empleadoFalla = "Requerido"
         }
         if (!values.empleadoReponedor) {
             errors.empleadoReponedor = "Requerido"
         }
-        if (!values.maquina) {
+        if (values.maquina===-1) {
             errors.maquina = "Requerido"
         }
         return errors
