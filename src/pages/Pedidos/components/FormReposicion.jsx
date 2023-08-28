@@ -78,16 +78,16 @@ const FormReposicion = ({ formik, empleados, maquinas, saving }) => {
         {/* Submit */}
         <div className="pb-4 ">
           <div className="flex total-center h-8 relative">
-            <p className="text-teal-700 text-lg font-semibold">Nueva Reposición</p>
             <input
               disabled={saving}
-              className="normal-button px-5 rounded-md absolute right-0 h-8"
+              className="normal-button px-5 rounded-md absolute right-0 h-8 mr-4"
               type="submit" value={ saving ? "Guardando..." : "Guardar"} />
           </div>
         </div>
         {/* Formulario */}
         <div className="relative h-full overflow-y-scroll">
 
+          <p className="text-teal-700 text-lg font-bold">Nueva Reposición</p>
           <div className="absolute w-full ">
             {/* Cantidad */}
             <div className="flex w-full">
@@ -129,7 +129,7 @@ const FormReposicion = ({ formik, empleados, maquinas, saving }) => {
                   type="button"
                   onClick={() => openScan("empleadoFalla")}
                   className={(scaning === "empleadoFalla" ? "text-teal-700 scan-icon pointer-events-none" : "normal-button") + " relative w-10 h-10 total-center rounded-md"}>
-                  <ICONS.Qr size="26px" />
+                  <ICONS.Qr size="28px" />
                 </button>
                 <input
                   ref={refs["empleadoFalla"]}
@@ -154,7 +154,7 @@ const FormReposicion = ({ formik, empleados, maquinas, saving }) => {
                 <button
                   onClick={() => openScan("empleadoReponedor")}
                   className={(scaning === "empleadoReponedor" ? "text-teal-700 scan-icon pointer-events-none" : "normal-button") + " relative w-10 h-10 total-center rounded-md"}>
-                  <ICONS.Qr size="26px" />
+                  <ICONS.Qr size="28px" />
                 </button>
                 <input
                   ref={refs['empleadoReponedor']}

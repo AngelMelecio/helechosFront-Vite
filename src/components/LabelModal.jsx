@@ -50,35 +50,35 @@ const EtiquetasModal = ({ columns, allEtiquetas, unique, onClose, title, onPrint
     setList(prev => {
       let newList = [...prev]
       newList
-      // filtro del searchBar
-      .filter(d => Object.keys(d).some(k => d[k]?.toString().toLowerCase().includes(search.toLowerCase())))
-      // filtro de estado
-      .filter(d => selectedOption === 'Todas' ? true : d.estado === selectedOption)
-      // ordenamiento
-      .sort((a, b) => {
-        if (filter.ord === 1) return a[filter.atr] > b[filter.atr] ? 1 : -1
-        if (filter.ord === 2) return a[filter.atr] < b[filter.atr] ? 1 : -1
-      })
-      // subarray de cantidad
-      .forEach( (e,i) => { if(i < cantidadLabels) e.isSelected = v })
+        // filtro del searchBar
+        .filter(d => Object.keys(d).some(k => d[k]?.toString().toLowerCase().includes(search.toLowerCase())))
+        // filtro de estado
+        .filter(d => selectedOption === 'Todas' ? true : d.estado === selectedOption)
+        // ordenamiento
+        .sort((a, b) => {
+          if (filter.ord === 1) return a[filter.atr] > b[filter.atr] ? 1 : -1
+          if (filter.ord === 2) return a[filter.atr] < b[filter.atr] ? 1 : -1
+        })
+        // subarray de cantidad
+        .forEach((e, i) => { if (i < cantidadLabels) e.isSelected = v })
       return newList
     })
   }
 
   return (
     <div className='z-10 total-center h-screen w-full grayTrans absolute'>
-      <div className='flex flex-col h-4/5 w-3/6 rounded-xl bg-white shadow-lg p-4 modal-box'>
-        <div className='flex flex-row justify-between'>
+      <div className='flex flex-col h-4/5 w-2/3 rounded-xl bg-white shadow-lg p-4 modal-box'>
+        <div className='flex flex-row justify-center relative'>
           <button
-            className='neutral-button p-1 text-white rounded-lg'
+            className='neutral-button p-1 h-8 w-8 text-white rounded-lg absolute left-0'
             onClick={onClose}
           >
             <ICONS.Cancel className='m-0' size='25px' />
           </button>
-          <div className="font-semibold text-3xl text-teal-700 ">
+          <div className="font-bold text-xl text-teal-700 ">
             {title}
           </div>
-          <div className='flex justify-end'>
+          <div className='flex absolute right-0'>
             <input
               type='button'
               className='bg-teal-500 p-1 w-28 text-white normal-button rounded-lg text-center'
@@ -89,9 +89,8 @@ const EtiquetasModal = ({ columns, allEtiquetas, unique, onClose, title, onPrint
           </div>
 
         </div>
-        <div className="flex flex-row my-3">
-
-          <div className='flex w-2/4'>
+        <div className="flex flex-row py-4">
+          <div className='flex flex-[2]'>
             <CustomSelect
               className='input z-50'
               onChange={e => { setSelectedOption(e.value); e.value === 'Todas' && setCantidadLabels(list.length); unSelectAll() }}
@@ -102,36 +101,36 @@ const EtiquetasModal = ({ columns, allEtiquetas, unique, onClose, title, onPrint
             />
 
           </div>
-          <div className='flex w-1/4'>
+          <div className='flex flex-[1]'>
             <Input
               label='Cantidad:'
               type={'number'}
               value={allEtiquetas.length > cantidadLabels ? cantidadLabels : allEtiquetas.length}
-              onChange={(e) => {setCantidadLabels(e.target.value); unSelectAll()}}
+              onChange={(e) => { setCantidadLabels(e.target.value); unSelectAll() }}
               max={allEtiquetas.length}
             />
           </div>
-
-        </div>
-        <div className="flex flex-row my-3 ">
-          <div className="flex-grow flex items-center h-full bg-gray-100 shadow-sm rounded-full border-2">
-            <input
-              ref={searchRef}
-              value={search}
-              onChange={e => { setSearch(e.target.value); unSelectAll() }}
-              className="w-full h-full pl-2 pr-10 py-1 outline-none bg-transparent rounded-lg" type="text" />
-            <button
-              type="button"
-              onClick={() => search.length > 0 ? setSearch("") : searchRef?.current?.focus()}
-              className="total-center h-6 w-6 neutral-button right-2 rounded-full">
-              {search.length > 0 ? <ICONS.Cancel /> : <ICONS.Lupa />}
-            </button>
+          <div className='flex flex-[4] h-10 self-end'>
+            <div className="flex-grow flex items-center bg-gray-100 shadow-sm rounded-full relative ">
+              <input
+                ref={searchRef}
+                value={search}
+                onChange={e => { setSearch(e.target.value); unSelectAll() }}
+                className="w-full h-full pl-2 pr-10 py-1 outline-none bg-transparent rounded-lg" type="text" />
+              <button
+                type="button"
+                onClick={() => search.length > 0 ? setSearch("") : searchRef?.current?.focus()}
+                className="total-center h-8 w-8 neutral-button right-1 absolute rounded-full">
+                {search.length > 0 ? <ICONS.Cancel /> : <ICONS.Lupa />}
+              </button>
+            </div>
           </div>
         </div>
+
         <div className='max-h-95 overflow-y-scroll '>
           {list.length > 0 && <table className="w-full bg-white customTable">
             <thead>
-              <tr className="h-8 shadow-sm">
+              <tr className="h-10 ">
                 <th className="px-2 sticky top-0 z-10 bg-white">
                   <input onChange={handleCheckAll} checked={list.some(e => e.isSelected)} type="checkbox" /></th>
 
