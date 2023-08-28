@@ -247,7 +247,7 @@ export function PedidosProvider({ children }) {
                 getRegistrosByIdProduccion,
                 deletePedidos,
                 saveReposicion,
-                getReposiciones
+                getReposiciones,
                 produccion_por_modelo_y_empleado
             }}
         >
