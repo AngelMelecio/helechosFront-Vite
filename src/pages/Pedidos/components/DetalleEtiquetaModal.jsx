@@ -13,7 +13,7 @@ const DetalleEtiquetaModal = ({ onClose, etiqueta, modelo, ficha, talla }) => {
       type="button"
       onClick={props.onClick}
       className="total-center px-10 relative duration-200  hover:bg-slate-100 active:opacity-70 active:duration-0">
-      <div className={"total-center flex-1 font-semibold text-md " + (props.active ? "text-gray-700" : "text-gray-400")}>
+      <div className={"total-center flex-1 font-semibold text-md " + (props.active ? "text-teal-700" : "text-gray-400")}>
         {props.children}
       </div>
       <div className={(props.active ? "bg-teal-500" : "bg-gray-200") + " z-10 w-full absolute h-1 bottom-0 "}>
@@ -35,12 +35,12 @@ const DetalleEtiquetaModal = ({ onClose, etiqueta, modelo, ficha, talla }) => {
           <div className="font-bold text-xl text-teal-700 ">
             Detalles de la etiqueta: {etiqueta.numEtiqueta}
           </div>
-          <div className="flex items-end pt-2">
-            <p className="text-gray-600 font-semibold text-sm pr-1"> Modelo: </p>
+          <div className="flex items-end pb-4">
+            <p className="text-gray-600 font-normal text-sm pr-1"> Modelo: </p>
             <p className=" text-gray-800 text-sm pr-3 font-semibold"> {modelo} </p>
-            <p className="text-gray-600 font-semibold text-sm pr-1"> Ficha: </p>
+            <p className="text-gray-600 font-normal text-sm pr-1"> Ficha: </p>
             <p className=" text-gray-800 text-sm pr-3 font-semibold"> {ficha} </p>
-            <p className="text-gray-600 font-semibold text-sm pr-1"> Talla: </p>
+            <p className="text-gray-600 font-normal text-sm pr-1"> Talla: </p>
             <p className=" text-gray-800 text-sm pr-3 font-semibold"> {talla} </p>
           </div>
         </div>

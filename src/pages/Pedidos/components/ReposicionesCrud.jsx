@@ -19,7 +19,7 @@ const ReposicionesCrud = ({ produccion }) => {
     const { allMaquinas, refreshMaquinas, loading: loadingMaquinas } = useMaquinas()
     const { saveReposicion, getReposiciones } = usePedidos()
     const [reposiciones, setReposiciones] = useState([])
-    const [fetching, setFetching] = useState(false)
+    const [fetching, setFetching] = useState(true)
 
     const [saving, setSaving] = useState(false)
 

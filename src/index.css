@@ -682,22 +682,22 @@ input[type="checkbox"]:checked::after {
   position: absolute;
   left: 50%;
   top: 17%;
-  width: 65%;
-  height: 0.3rem;
+  width: 80%;
+  height: 10%;
   background: radial-gradient(circle, #e11d48 0%, #e11d474d 80%);
-  filter: blur(1.4px);
+  filter: blur(1.3px);
   border-radius: 100%;
   transform: translateX(-50%);
-  animation: scann-animation 1.8s ease-in-out infinite alternate;
+  animation: scann-animation 1.2s ease-in-out infinite alternate;
 }
 
 
 @keyframes scann-animation {
   0% {
-    top: 20%;
+    top: 15%;
   }
   100% {
-    top: 70%;
+    top: 75%;
   }
 }
 

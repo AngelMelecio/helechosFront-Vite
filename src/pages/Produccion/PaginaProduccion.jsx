@@ -32,10 +32,12 @@ const PaginaProduccion = () => {
   const { notify } = useAuth()
   const modalContainerRef = useRef()
   const pageRef = useRef()
-  const scannerInpRef = useRef()
+  const scanEmpleadoInputRef = useRef()
+  const scanProduccionInputRef = useRef()
 
-  const [scanEmpleadoModalVisible, setScanEmpleadoModalVisible] = useState(false)
-  const [scanEtiquetaModalVisible, setScanEtiquetaModalVisible] = useState(false)
+  const [scaningEmpleado, setScaningEmpleado] = useState(false)
+  const [scaningProduccion, setScaningProduccion] = useState(false)
+
   const [showMaquina, setShowMaquina] = useState(true)
 
   const { getEmpleadoMaquinas } = useEmpleados()
@@ -72,7 +74,7 @@ const PaginaProduccion = () => {
           ...allMaquinas.filter(m => !mqnasIds.includes(m.idMaquina)).filter(m => m.departamento === empleado.departamento) // Maquinas no asignadas pero del mismo departamento
         ].map(m => ({ value: m.idMaquina, label: ((m.linea !== '0') ? 'L' + m.linea + ' - ' : '') + 'M' + m.numero }))
       );
-      setMaquina(0);
+      setMaquina(null);
       setShowMaquina(true)
     } else {
       setShowMaquina(false);
@@ -130,7 +132,7 @@ const PaginaProduccion = () => {
         const objScan = JSON.parse(result)
         if (objScan.idEmpleado) {
           setEmpleado(objScan)
-          handleCloseModal(setScanEmpleadoModalVisible)
+          scanEmpleadoInputRef.current?.blur()
         }
       }
     } catch (e) {
@@ -138,29 +140,39 @@ const PaginaProduccion = () => {
     }
   }
 
+  const validate = () => {
+    if (maquina === null) throw new Error('Selecciona una máquina')
+  }
+
   const handleCapturar = async () => {
-    setEtiquetasList([])
-    let {
-      empleado: empleadoResponse,
-      fecha,
-      registros,
-      departamento
-    } = await postProduccion(etiquetasList.map(etq => ({
-      "empleado": empleado.idEmpleado,
-      "maquina": maquina,
-      "produccion": etq.idProduccion,
-      "turno": turno,
-      "departamento": empleado.departamento
-    })))
+    try {
+      validate()
+      setEtiquetasList([])
 
-    setResponse({
-      empleado: empleadoResponse,
-      fecha: new Date(fecha).toLocaleString(),
-      registros,
-      departamento
-    })
+      let {
+        empleado: empleadoResponse,
+        fecha,
+        registros,
+        departamento
+      } = await postProduccion(etiquetasList.map(etq => ({
+        "empleado": empleado.idEmpleado,
+        "maquina": maquina,
+        "produccion": etq.idProduccion,
+        "turno": turno,
+        "departamento": empleado.departamento
+      })))
 
-    handleOpenModal(setResponseModalVisible)
+      setResponse({
+        empleado: empleadoResponse,
+        fecha: new Date(fecha).toLocaleString(),
+        registros,
+        departamento
+      })
+
+      handleOpenModal(setResponseModalVisible)
+    } catch (e) {
+      notify(e + "", true)
+    }
   }
 
   return (
@@ -169,13 +181,26 @@ const PaginaProduccion = () => {
         <div id="tbl-page" ref={pageRef} className="flex flex-col h-full w-full absolute p-4 overflow-hidden">
           <div className="flex flex-col h-full">
             {/* Header */}
-            <div className="flex flex-row w-full justify-between pr-1">
-              <h1 className="font-bold text-2xl pb-4 pl-3 text-teal-700">Captura de Producción</h1>
+            <div className="flex flex-row w-full items-center justify-between pr-1 pb-4">
+              <h1 className="font-bold text-2xl  pl-3 text-teal-700">Captura de Producción</h1>
               <button
                 onClick={handleCapturar}
-                disabled={loading || empleado === null || etiquetasList.length === 0 || maquina === 0 || turno === null}
+                disabled={loading || empleado === null || etiquetasList.length === 0 || turno === null}
                 type="button"
-                className="normal-button h-8 rounded-md px-6 ">Capturar</button>
+                className="normal-button h-10 rounded-md flex total-center">
+                {
+                  loading ?
+                    <p className="px-6">
+                      Capturando...
+                    </p> :
+                    <>
+                      <p className="px-6">
+                        Capturar
+                      </p>
+                      <ICONS.Right className="mr-1" size="22px" />
+                    </>
+                }
+              </button>
             </div>
 
             <div className="h-full flex flex-col overflow-hidden bg-slate-100">
@@ -183,18 +208,53 @@ const PaginaProduccion = () => {
                 <div className="flex w-full h-full">
                   {/* Datos del Empleado  */}
                   <div className="w-2/4 relative pr-1.5 pb-1.5 rounded-lg">
-                    <div className="border-2 border-teal-200  flex flex-col w-full h-full relative bg-white rounded-lg shadow-md">
+                    <div className="  flex flex-col w-full h-full relative bg-white rounded-lg shadow-md">
                       {/*  Card Header */}
                       <div className="w-full p-2 flex items-center justify-between">
-                        <p className="text-teal-700 text-lg font-semibold px-2">Datos del Empleado</p>
-                        <button
-                          type="button"
-                          disabled={empleado !== null}
-                          className="normal-button h-8 w-8 rounded-md total-center"
-                          onClick={e => { handleOpenModal(setScanEmpleadoModalVisible); scannerInpRef.current?.focus() }}>
-
-                          <ICONS.Qr size="22px" />
-                        </button>
+                        {
+                          // Escanear Gafete
+                          empleado === null ?
+                            <>
+                              <button
+                                type="button"
+                                disabled={empleado !== null || scaningEmpleado}
+                                className={(scaningEmpleado ? "pointer-events-none" : "") + " flex normal-button h-10 px-2 rounded-md total-center font-bold"}
+                                onClick={e => { setScaningEmpleado(true); scanEmpleadoInputRef.current?.focus() }}>
+                                <div className={"relative " + (scaningEmpleado ? "scan-icon" : "")}>
+                                  <ICONS.Qr size="28px" />
+                                </div>
+                                <p className="px-2">{scaningEmpleado ? "Escaneando Gafete..." : "Escanear Gafete"}</p>
+                              </button>
+                              {/* Invisible Input */}
+                              <input
+                                ref={scanEmpleadoInputRef}
+                                className="visible opacity-0 h-0 w-0"
+                                type="text"
+                                autoFocus={true}
+                                onBlur={e => setScaningEmpleado(false)}
+                                onKeyDown={e => {
+                                  if (e.key === 'Enter') {
+                                    handleScanEmpleado(e.target.value);
+                                    e.target.value = '';
+                                  }
+                                }}
+                              />
+                            </> :
+                            // Cambiar Gafete
+                            <>
+                              <button
+                                onClick={e => {
+                                  setEmpleado(null);
+                                  setEtiquetasList([])
+                                }}
+                                className="h-10 px-2 flex neutral-button rounded-md ">
+                                <ICONS.Left size="21px" />
+                                <p className="font-bold  px-2">
+                                  Cambiar Gafete
+                                </p>
+                              </button>
+                            </>
+                        }
                       </div>
                       {
                         empleado === null ?
@@ -203,7 +263,7 @@ const PaginaProduccion = () => {
 
                             <div className=" w-full h-full px-2 rounded-b-md total-center bg-gray-100">
                               <p className="italic font-semibold text-gray-600">
-                                Escaneé un empleado ...
+                                Aún no has escaneado tu gafete...
                               </p>
                             </div>
 
@@ -218,15 +278,6 @@ const PaginaProduccion = () => {
                                   <div className="pl-6 pr-4">
                                     <div className="foto relative">
                                       <img className="foto" src={API_URL + empleado.fotografia} alt="" />
-                                      <button
-                                        type="button"
-                                        onClick={e => {
-                                          setEmpleado(null);
-                                          setEtiquetasList([])
-                                        }}
-                                        className="absolute h-8 w-8 neutral-button rounded-full -top-1.5 -left-1.5 ">
-                                        <ICONS.Cancel size="20px" />
-                                      </button>
                                     </div>
                                   </div>
                                   <div className="flex flex-col border-t border-b flex-1 p-2 mr-1">
@@ -240,7 +291,7 @@ const PaginaProduccion = () => {
                                 <div className="flex flex-col px-4 w-full my-4 bottom-7">
                                   <div className="flex flex-row justify-between">
                                     <div className="flex w-full">
-                                      {showMaquina&&
+                                      {showMaquina &&
                                         <CustomSelect
                                           className="z-[10]"
                                           label="Maquina"
@@ -274,23 +325,39 @@ const PaginaProduccion = () => {
                   <div className="w-full h-full relative pr-1.5 pb-1.5">
                     <div className="flex flex-col w-full h-full bg-white rounded-lg shadow-md">
                       {/* Card Header */}
-                      <div className="w-full h-12 p-2 flex items-center  justify-between">
-                        <p className={(empleado === null ? "text-gray-400" : "text-teal-700") + " text-lg font-semibold px-2"}>Etiquetas escaneadas</p>
-
+                      <div className="w-full p-2 flex items-center  ">
                         <button
-                          onClick={e => handleOpenModal(setScanEtiquetaModalVisible)}
-                          disabled={empleado === null}
                           type="button"
-                          className="normal-button h-8 w-8 rounded-md total-center mx-4">
-                          <ICONS.Qr size="22px" />
+                          disabled={empleado === null || scaningProduccion}
+                          className={(scaningProduccion ? "pointer-events-none" : "") + " flex normal-button h-10 px-2 rounded-md total-center font-bold"}
+                          onClick={e => { setScaningProduccion(true); scanProduccionInputRef.current?.focus() }}>
+                          <div className={"relative " + (scaningProduccion ? "scan-icon" : "")}>
+                            <ICONS.Qr size="28px" />
+                          </div>
+                          <p className="px-2">{scaningProduccion ? "Escanenado Producción..." : "Escanear Produccion"}</p>
                         </button>
+                        {/* Invisible Input */}
+                        <input
+                          ref={scanProduccionInputRef}
+                          className="visible opacity-0 h-0 w-0"
+                          type="text"
+                          autoFocus={true}
+                          onBlur={e => setScaningProduccion(false)}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter') {
+                              handleScanEtiqueta(e.target.value);
+                              e.target.value = '';
+                            }
+                          }}
+                        />
+
                       </div>
                       <div className="w-full h-full relative">
                         <div className="w-full h-full absolute flex-col overflow-y-scroll">
                           <div className="flex pt-2 px-4">
                             <table className="customTable">
                               <thead>
-                                <tr>
+                                <tr className="h-8">
                                   {etiquetaColumns.map((column, i) => <th key={"he" + i}>{column.label}</th>)}
                                   <th></th>
                                 </tr>
@@ -303,7 +370,7 @@ const PaginaProduccion = () => {
                                       <button
                                         onClick={e => setEtiquetasList(prev => prev.filter((etiqueta, index) => index !== i))}
                                         type="button"
-                                        className="trash-button h-7 w-7 total-center rounded-md"><ICONS.Trash size="16px" /></button>
+                                        className="hover:bg-rose-400 hover:text-white duration-200 h-7 w-7 total-center rounded-md"><ICONS.Trash size="16px" /></button>
                                     </td>
                                   </tr>)
                                 }
@@ -329,21 +396,21 @@ const PaginaProduccion = () => {
             response={response}
           />
         }
-        {
+        {/*
           scanEmpleadoModalVisible &&
           <ScanModal
             title="Escanea tu gafete..."
             onClose={() => handleCloseModal(setScanEmpleadoModalVisible)}
             onScan={handleScanEmpleado}
-          />
+          />*/
         }
-        {
+        {/*
           scanEtiquetaModalVisible &&
           <ScanModal
             title="Escanea tu producción..."
             onClose={() => handleCloseModal(setScanEtiquetaModalVisible)}
             onScan={handleScanEtiqueta}
-          />
+          />*/
         }
       </div>
     </>
