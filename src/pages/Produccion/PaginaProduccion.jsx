@@ -74,7 +74,7 @@ const PaginaProduccion = () => {
           ...allMaquinas.filter(m => !mqnasIds.includes(m.idMaquina)).filter(m => m.departamento === empleado.departamento) // Maquinas no asignadas pero del mismo departamento
         ].map(m => ({ value: m.idMaquina, label: ((m.linea !== '0') ? 'L' + m.linea + ' - ' : '') + 'M' + m.numero }))
       );
-      setMaquina(null);
+      setMaquina(0);
       setShowMaquina(true)
     } else {
       setShowMaquina(false);
@@ -140,13 +140,9 @@ const PaginaProduccion = () => {
     }
   }
 
-  const validate = () => {
-    if (maquina === null) throw new Error('Selecciona una máquina')
-  }
-
+ 
   const handleCapturar = async () => {
     try {
-      validate()
       setEtiquetasList([])
 
       let {
@@ -168,7 +164,7 @@ const PaginaProduccion = () => {
         registros,
         departamento
       })
-
+      setMaquina(0)
       handleOpenModal(setResponseModalVisible)
     } catch (e) {
       notify(e + "", true)
@@ -185,7 +181,7 @@ const PaginaProduccion = () => {
               <h1 className="font-bold text-2xl  pl-3 text-teal-700">Captura de Producción</h1>
               <button
                 onClick={handleCapturar}
-                disabled={loading || empleado === null || etiquetasList.length === 0 || turno === null}
+                disabled={loading || empleado === null || etiquetasList.length === 0 || turno === null || maquina === 0}
                 type="button"
                 className="normal-button h-10 rounded-md flex total-center">
                 {
