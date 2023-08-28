@@ -10,6 +10,8 @@ import { usePedidos } from "../Pedidos/hooks/usePedidos";
 import { set } from "lodash";
 import { Chart } from "react-google-charts";
 import Loader from "../../components/Loader/Loader";
+import chroma from "chroma-js";
+
 
 
 
@@ -21,8 +23,11 @@ const PaginaReportes = () => {
     const [readyToRender, setReadyToRender] = useState(false)
     const [data, setData] = useState([])
     const [solicitud, setSolicitud] = useState(null)
+    const [transformedData, setTransformedData] = useState([]);
+    const [consolidatedData, setConsolidatedData] = useState([]);
+    const [modelosTotales, setModelosTotales] = useState([]);
+
     const [options, setOptions] = useState({
-        title: "Pares tejidos por empleado",
         colors: ["#00898a", "#23aa8f", "#64c987", "#aae479"],
     })
 
@@ -31,10 +36,88 @@ const PaginaReportes = () => {
             produccion_por_modelo_y_empleado(solicitud)
                 .then((data) => {
                     setData(data)
-                    setReadyToRender(true)
+                    const transformedData = data.map(empleado => transformDataEmpleado(empleado));
+                    const consolidatedData = transformDataConsolidada(data);
+                    const totalData = calculateModelosTotales(consolidatedData);
+                    setModelosTotales(totalData);
+                    // Guardamos los datos en el estado para usarlos en las graficas
+                    setTransformedData(transformedData);
+                    setConsolidatedData(consolidatedData);
+                    setReadyToRender(true);
                 })
         }
     }, [solicitud])
+
+    function transformDataEmpleado(empleadoData) {
+        const header = ["Modelos", "Produccion", "Reposiciones", "Fallas"];
+        const modelosData = empleadoData.modelos.map(modelo => [
+            modelo.modelo,
+            modelo.produccion,
+            modelo.reposicion,
+            modelo.falla
+        ]);
+        return { empleado: empleadoData.empleado, data: [header, ...modelosData] };
+    }
+
+    function transformDataConsolidada(data) {
+        const modelosSet = new Set();
+        data.forEach(empleado => {
+            empleado.modelos.forEach(modelo => {
+                modelosSet.add(modelo.modelo);
+            });
+        });
+
+        const modelos = [...modelosSet];
+        const header = ["Empleado", ...modelos];
+        const empleadosData = data.map(empleado => {
+            const row = [empleado.empleado];
+            modelos.forEach(modeloName => {
+                const modelo = empleado.modelos.find(m => m.modelo === modeloName);
+                if (modelo) {
+                    row.push(modelo.produccion + modelo.reposicion - modelo.falla);
+                } else {
+                    row.push(0);
+                }
+            });
+            return row;
+        });
+
+        return [header, ...empleadosData];
+    }
+
+    const calculateModelosTotales = (consolidatedData) => {
+        const header = consolidatedData[0];
+        const rows = consolidatedData.slice(1); // Eliminamos los titulos
+
+        const totalByModelo = {};
+        let totalGeneral = 0;
+
+        rows.forEach(row => {
+            header.forEach((modelo, idx) => {
+                if (idx === 0) return; // Saltamos la primera columna (que es el nombre del empleado)
+
+                if (!totalByModelo[modelo]) {
+                    totalByModelo[modelo] = 0;
+                }
+
+                totalByModelo[modelo] += row[idx];
+                totalGeneral += row[idx];
+            });
+        });
+
+        const totales = Object.entries(totalByModelo).map(([modelo, total]) => ({
+            modelo,
+            total
+        }));
+
+        return {
+            total: totalGeneral,
+            totales
+        };
+    };
+
+
+
 
     const initobj = {
         tipo: "Seleccione",
@@ -164,55 +247,98 @@ const PaginaReportes = () => {
                         <div className="h-full flex flex-col overflow-hidden bg-slate-100">
                             <div className="w-full h-full">
                                 <div className="flex w-full h-full">
-                                    {/* Columna lateral 
-                                    <div className="w-1/4 relative pr-1.5 pb-1.5 rounded-lg">
+                                    { /* Columna lateral */}
+                                    <div className="w-1/6 relative pr-1.5 pb-1.5 rounded-lg">
                                         <div className="flex flex-col w-full h-full relative bg-white rounded-lg shadow-md">
-                                            {/* Header 
+                                            {/* Header */}
                                             <div className="w-full p-2 flex items-center justify-between">
-                                                <p className="text-teal-700 text-lg font-semibold px-2">Totales</p>
+                                                <p className="text-teal-700 text-lg font-bold px-2">Totales</p>
                                             </div>
 
-                                            {/* Body 
-                                            <div className=" w-full h-full px-2 total-center bg-white">
-                                                <p className="italic font-semibold text-gray-600">
-                                                    Información extra
-                                                </p>
+                                            {/* Body */}
+                                            <div className="flex w-full h-full px-2 total-center bg-white flex-col">
+                                                {
+                                                    readyToRender ?
+
+                                                        modelosTotales.totales.length > 0 &&
+                                                        <div className="w-full h-full justify-start">
+                                                            <p className="text-teal-700 text-2xl font-extrabold p-2">{modelosTotales.total + " pares"}</p>
+                                                            {
+                                                                modelosTotales.totales.map((modelo, index) => (
+                                                                    <div className="w-full flex justify-between" key={index}>
+                                                                        <p className="text-teal-700 text-md font-normal px-2">{modelo.modelo + " :"}</p>
+                                                                        <p className="text-teal-700 text-md font-medium px-2">{modelo.total}</p>
+                                                                    </div>
+                                                                ))}
+                                                        </div>
+                                                        :
+                                                        <p className="italic font-semibold text-gray-600">
+                                                            Totales
+                                                        </p>
+                                                }
                                             </div>
                                         </div>
                                     </div>
-                                    */}
+
                                     {/*  Datos de la Captura  */}
                                     <div className="w-full h-full relative pr-0.5 pb-1.5">
                                         <div className="flex flex-col w-full h-full bg-white rounded-lg shadow-md">
                                             {/* Header */}
                                             <div className="w-full h-12 p-2 flex items-center  justify-between">
-                                                <p className="text-teal-700 text-lg font-semibold px-2">Graficos</p>
+                                                <p className="text-teal-700 text-lg font-bold px-2">Reportes</p>
                                             </div>
                                             {/* Body */}
                                             <div className=" w-full h-full px-2 total-center bg-white">
                                                 {
                                                     readyToRender ?
-                                                        data.length > 1 ?
-                                                            < Chart
-                                                                chartType="Bar"
-                                                                loader={<Loader />}
-                                                                width={"100%"}
-                                                                height={"100%"}
-                                                                data={data}
-                                                                options={options}
-                                                            />
+                                                        data.length > 0 ?
+                                                            //Renderizado de graficos
+                                                            <div className="w-full h-full flex-col overflow-y-scroll">
+                                                                <div className="flex h-full w-full">
+                                                                    {/* Empleados */}
+                                                                    {transformedData.map((dataEmpleado, index) => (
+                                                                        <div className="flex flex-col w-full h-full" key={'divEmpleado' + index}>
+                                                                            <p className="text-teal-700 text-md font-semibold px-2">{dataEmpleado.empleado}</p>
+                                                                            <Chart
+                                                                                key={'char' + index}
+                                                                                chartType="Bar"
+                                                                                width="100%"
+                                                                                height="400px"
+                                                                                data={dataEmpleado.data}
+                                                                                options={{
+                                                                                    colors: ["#23aa8f", "#64c987", "#DC2626"]
+                                                                                }}
+                                                                            />
+                                                                        </div>
+
+                                                                    ))}
+
+                                                                </div>
+                                                                <div className="flex h-full w-full overflow-x-scroll ">
+                                                                    {/* Concentrado */}
+                                                                    <Chart
+                                                                        chartType="Bar"
+                                                                        width="100%"
+                                                                        height="400px"
+                                                                        data={consolidatedData}
+                                                                        options={{
+                                                                            colors: chroma.scale(['#23aa8f','#fafa6e']).colors( modelosTotales.totales.length)
+                                                                        }}
+                                                                    />
+
+                                                                </div>
+
+
+                                                            </div>
                                                             :
                                                             <p className="italic font-semibold text-gray-600">
                                                                 No hay suficientes datos para generar un grafico
                                                             </p>
-
                                                         :
                                                         <p className="italic font-semibold text-gray-600">
                                                             Graficas
                                                         </p>
-
                                                 }
-
                                             </div>
                                         </div>
                                     </div>
