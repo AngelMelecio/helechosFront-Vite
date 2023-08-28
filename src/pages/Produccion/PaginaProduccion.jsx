@@ -96,12 +96,6 @@ const PaginaProduccion = () => {
 
   }, [empleado])
 
-
-
-  useEffect(() => {
-    console.log(etiquetasList)
-  }, [etiquetasList])
-
   const handleOpenModal = async (setState) => {
     setState(true)
     await sleep(150)
