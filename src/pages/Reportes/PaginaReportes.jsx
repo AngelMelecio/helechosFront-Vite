@@ -227,8 +227,6 @@ const PaginaReportes = () => {
                                             label='Departamento'
                                             errores={formik.errors.departamento && formik.touched.departamento ? formik.errors.departamento : null}
                                         />
-                                    </div>
-                                    <div className='flex flex-row w-full'>
                                         <Input
                                             label='Fecha inicio' type='date' name='fechaInicio' value={formik.values ? formik.values.fechaInicio : ''}
                                             onChange={handleChange} onBlur={formik.handleBlur}
@@ -240,6 +238,7 @@ const PaginaReportes = () => {
                                             errores={formik.errors.fechaFinal && formik.touched.fechaFinal ? formik.errors.fechaFinal : null}
                                         />
                                     </div>
+
                                 </div>
                             </form>
                         </div>
@@ -254,19 +253,27 @@ const PaginaReportes = () => {
                                             <div className="w-full p-2 flex items-center justify-between">
                                                 <p className="text-teal-700 text-lg font-bold px-2">Totales</p>
                                             </div>
+                                            {
+                                                readyToRender && modelosTotales.totales.length > 0 &&
+                                                <div className="w-full p-2 flex items-center justify-between">
+                                                    <p className="text-teal-700 text-2xl font-extrabold p-2">{modelosTotales.total + " pares"}</p>
+                                                </div>
+
+                                            }
+
 
                                             {/* Body */}
-                                            <div className="flex w-full h-full px-2 total-center bg-white flex-col">
-                                                {
-                                                    readyToRender ?
+                                            <div className="flex w-full h-full px-2 total-center bg-white flex-col overflow-y-scroll">
 
+                                                {
+
+                                                    readyToRender ?
                                                         modelosTotales.totales.length > 0 &&
                                                         <div className="w-full h-full justify-start">
-                                                            <p className="text-teal-700 text-2xl font-extrabold p-2">{modelosTotales.total + " pares"}</p>
                                                             {
                                                                 modelosTotales.totales.map((modelo, index) => (
-                                                                    <div className="w-full flex justify-between" key={index}>
-                                                                        <p className="text-teal-700 text-md font-normal px-2">{modelo.modelo + " :"}</p>
+                                                                    <div className="w-full flex justify-between border-b-2 py-1" key={index}>
+                                                                        <p className="text-teal-700 text-md font-normal px-2">{modelo.modelo}</p>
                                                                         <p className="text-teal-700 text-md font-medium px-2">{modelo.total}</p>
                                                                     </div>
                                                                 ))}
@@ -294,35 +301,40 @@ const PaginaReportes = () => {
                                                         data.length > 0 ?
                                                             //Renderizado de graficos
                                                             <div className="w-full h-full flex-col overflow-y-scroll">
-                                                                <div className="flex h-full w-full">
-                                                                    {/* Empleados */}
-                                                                    {transformedData.map((dataEmpleado, index) => (
-                                                                        <div className="flex flex-col w-full h-full" key={'divEmpleado' + index}>
-                                                                            <p className="text-teal-700 text-md font-semibold px-2">{dataEmpleado.empleado}</p>
-                                                                            <Chart
-                                                                                key={'char' + index}
-                                                                                chartType="Bar"
-                                                                                width="100%"
-                                                                                height="400px"
-                                                                                data={dataEmpleado.data}
-                                                                                options={{
-                                                                                    colors: ["#23aa8f", "#64c987", "#DC2626"]
-                                                                                }}
-                                                                            />
-                                                                        </div>
 
-                                                                    ))}
+                                                                <div className="relative w-full h-full overflow-x-scroll flex-row">
+                                                                    <div className="absolute h-full flex-row flex  min-w-[400px]">
+                                                                        {/* Empleados */}
+                                                                        {transformedData.map((dataEmpleado, index) => (
+                                                                            <div className="flex flex-row h-full w-full mx-5 px-5" key={'divEmpleado' + index}>
+                                                                                <p className="text-teal-700 text-md font-semibold px-2">{dataEmpleado.empleado}</p>
+                                                                                <Chart
+                                                                                    key={'char' + index}
+                                                                                    chartType="Bar"
+                                                                                    width="100%"
+                                                                                    height="100%"
+                                                                                    data={dataEmpleado.data}
+                                                                                    options={{
+                                                                                        colors: ["#23aa8f", "#64c987", "#DC2626"]
+                                                                                    }}
+                                                                                />
 
+                                                                            </div>
+
+                                                                        ))}
+
+                                                                    </div>
                                                                 </div>
+
                                                                 <div className="flex h-full w-full overflow-x-scroll ">
                                                                     {/* Concentrado */}
                                                                     <Chart
                                                                         chartType="Bar"
                                                                         width="100%"
-                                                                        height="400px"
+                                                                        height="100%"
                                                                         data={consolidatedData}
                                                                         options={{
-                                                                            colors: chroma.scale(['#23aa8f','#fafa6e']).colors( modelosTotales.totales.length)
+                                                                            colors: chroma.scale(['#23aa8f', '#fafa6e']).colors(modelosTotales.totales.length)
                                                                         }}
                                                                     />
 

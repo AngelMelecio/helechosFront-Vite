@@ -24,6 +24,7 @@ const etiquetaColumns = [
   { label: 'Color', atr: 'color' },
   { label: 'Talla', atr: 'talla' },
   { label: 'Cantidad', atr: 'cantidad' },
+  { label: 'Maquina', atr: 'maquinaLabel' }
 ]
 
 const PaginaProduccion = () => {
@@ -46,6 +47,7 @@ const PaginaProduccion = () => {
   const { allMaquinas, refreshMaquinas, loading: gettingMaquinas } = useMaquinas()
   const [optsMaquinas, setOptsMaquinas] = useState([])
   const [maquina, setMaquina] = useState(0)
+  const [maquinalbl, setMaquinalbl] = useState("--")
 
   const [turno, setTurno] = useState(null)
 
@@ -80,6 +82,7 @@ const PaginaProduccion = () => {
       setShowMaquina(false);
       setMaquina(null)
       setOptsMaquinas([]);
+      setMaquinalbl("--")
     }
 
     //Turno
@@ -93,6 +96,11 @@ const PaginaProduccion = () => {
 
   }, [empleado])
 
+
+
+  useEffect(() => {
+    console.log(etiquetasList)
+  }, [etiquetasList])
 
   const handleOpenModal = async (setState) => {
     setState(true)
@@ -118,8 +126,8 @@ const PaginaProduccion = () => {
           throw new Error('Etiqueta invalida')
         if (etiquetasList.some(e => e.idProduccion === objScan.idProduccion))
           throw new Error('Etiqueta duplicada')
-
-        setEtiquetasList(prev => [...prev, { ...objScan }])
+        
+        setEtiquetasList(prev => [...prev, { ...objScan, maquina:maquina, maquinaLabel:maquinalbl }])
       }
     } catch (e) {
       notify(e + "", true)
@@ -140,7 +148,7 @@ const PaginaProduccion = () => {
     }
   }
 
- 
+
   const handleCapturar = async () => {
     try {
       setEtiquetasList([])
@@ -152,7 +160,7 @@ const PaginaProduccion = () => {
         departamento
       } = await postProduccion(etiquetasList.map(etq => ({
         "empleado": empleado.idEmpleado,
-        "maquina": maquina,
+        "maquina": etq.maquina,//etq.maquina
         "produccion": etq.idProduccion,
         "turno": turno,
         "departamento": empleado.departamento
@@ -164,8 +172,9 @@ const PaginaProduccion = () => {
         registros,
         departamento
       })
-      setMaquina(0)
       handleOpenModal(setResponseModalVisible)
+      setMaquina(0)
+      setMaquinalbl("--")
     } catch (e) {
       notify(e + "", true)
     }
@@ -293,7 +302,7 @@ const PaginaProduccion = () => {
                                           label="Maquina"
                                           options={optsMaquinas}
                                           value={maquina}
-                                          onChange={e => setMaquina(e.value)}
+                                          onChange={(e) => {setMaquina(e.value); setMaquinalbl(e.label);}}
                                         />
                                       }
                                     </div>
@@ -324,7 +333,7 @@ const PaginaProduccion = () => {
                       <div className="w-full p-2 flex items-center  ">
                         <button
                           type="button"
-                          disabled={empleado === null || scaningProduccion}
+                          disabled={empleado === null || scaningProduccion || maquina === 0}
                           className={(scaningProduccion ? "pointer-events-none" : "") + " flex normal-button h-10 px-2 rounded-md total-center font-bold"}
                           onClick={e => { setScaningProduccion(true); scanProduccionInputRef.current?.focus() }}>
                           <div className={"relative " + (scaningProduccion ? "scan-icon" : "")}>
