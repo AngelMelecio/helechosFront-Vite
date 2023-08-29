@@ -306,7 +306,7 @@ const PaginaReportes = () => {
                                                                     <div className="absolute h-full flex-row flex  min-w-[400px]">
                                                                         {/* Empleados */}
                                                                         {transformedData.map((dataEmpleado, index) => (
-                                                                            <div className="flex flex-row h-full w-full mx-5 px-5" key={'divEmpleado' + index}>
+                                                                            <div className="flex flex-col h-full w-full mx-5 px-5" key={'divEmpleado' + index}>
                                                                                 <p className="text-teal-700 text-md font-semibold px-2">{dataEmpleado.empleado}</p>
                                                                                 <Chart
                                                                                     key={'char' + index}
