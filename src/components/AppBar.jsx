@@ -56,6 +56,9 @@ const AppBar = () => {
     ],
     'Produccion':[
       { to: '/Produccion', content: 'Captura de Producción', Icon: ICONS.Qr }
+    ],
+    'Reportes':[
+      { to: '/reportes', content: 'Reportes', Icon: ICONS.Charts}
     ]
   };
 

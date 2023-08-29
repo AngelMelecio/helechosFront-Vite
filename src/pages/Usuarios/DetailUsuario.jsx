@@ -25,6 +25,7 @@ const optionsRol = [
   { value: 'Desarrollador', label: 'Desarrollador' },
   { value: 'Administrador', label: 'Administrador' },
   { value: 'Produccion', label: 'Producción' },
+  { value: 'Reportes', label: 'Reportes' },
 ]
 
 const optionsActivo = [

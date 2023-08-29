@@ -77,6 +77,9 @@ const getRoutesForRole = (role) => {
     ],
     'Produccion': [
       { path: "/produccion", element: <PaginaProduccion /> },
+    ],
+    'Reportes': [
+      { path: "/reportes", element: <PaginaReportes /> },
     ]
   };
 
