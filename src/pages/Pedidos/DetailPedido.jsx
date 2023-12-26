@@ -71,7 +71,7 @@ const DetailPedido = () => {
             estado: etiqueta.estacionActual !== 'creada' ? "Impresa" : "No impresa",
             isSelected: false,
             talla: etiqueta.tallaReal,
-            numEtiqueta: Number(etiqueta.numEtiqueta),
+            numEtiqueta: etiqueta.numEtiqueta,
             od: pedido.ordenCompra,
           })
         })
@@ -157,15 +157,15 @@ const DetailPedido = () => {
       <div
         ref={pageRef}
         onScroll={handleScroll}
-        className="w-full relative overflow-y-scroll h-full">
-        <div id="tbl-page" className="flex flex-col w-full bg-slate-100 relative p-4">
+        className="relative w-full h-full overflow-y-scroll">
+        <div id="tbl-page" className="relative flex flex-col w-full p-4 bg-slate-100">
           {/*  PAGE HEADER  */}
-          <div className="flex pb-4 justify-between">
+          <div className="flex justify-between pb-4">
             <div className="flex items-center">
               <button
                 onClick={() => navigate('/pedidos')}
-                className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
-              <p className="font-bold text-2xl pl-3 text-teal-700">
+                className="w-10 h-10 rounded-full neutral-button"> <ICONS.Left size="30px" /> </button>
+              <p className="pl-3 text-2xl font-bold text-teal-700">
                 Detalles del Pedido
               </p>
             </div>
@@ -174,14 +174,14 @@ const DetailPedido = () => {
           {pedido === null ? <Loader /> :
             <form
               id='frmPedido'
-              className='flex flex-col h-full w-full relative'
+              className='relative flex flex-col w-full h-full'
             >
-              <div className="w-full flex flex-col">
+              <div className="flex flex-col w-full">
                 {/* DATOS DEL PEDIDO */}
-                <div className="bg-white p-6 shadow-md rounded-md">
-                  <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
+                <div className="p-6 bg-white rounded-md shadow-md">
+                  <div className="relative px-2 py-4 mx-2 my-4 border-2 border-slate-300">
                     <div className="absolute w-full total-center -top-3">
-                      <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                      <div className='px-3 text-base italic font-bold text-teal-700 bg-white' >
                         Datos del Pedido
                       </div>
                     </div>
@@ -238,18 +238,18 @@ const DetailPedido = () => {
                   </div>
                 </div>
                 {/*  MONITOREO DE LA PRODUCCION */}
-                <div className="screen flex flex-col">
+                <div className="flex flex-col screen">
                   {/*  HEADER */}
-                  <div className="flex pt-8 pb-4 justify-between ">
+                  <div className="flex justify-between pt-8 pb-4 ">
                     <div className="flex items-center">
-                      <p className="font-bold text-2xl pl-3 text-teal-700">
+                      <p className="pl-3 text-2xl font-bold text-teal-700">
                         Monitoreo de la producción
                       </p>
                     </div>
                     <div className='flex'>
                       <button
                         type="button"
-                        className="normal-button h-10 w-10 rounded-lg total-center mr-3"
+                        className="w-10 h-10 mr-3 rounded-lg normal-button total-center"
                         onClick={() => handleOpenModal(setScanModalVisible)}
                       >
                         <ICONS.Qr size='27px' />
@@ -258,15 +258,15 @@ const DetailPedido = () => {
                         disabled={allEtiquetas?.length === 0}
                         type="button"
                         onClick={() => handleOpenModal(setModalVisible)}
-                        className='normal-button h-10 w-10 rounded-lg total-center'
+                        className='w-10 h-10 rounded-lg normal-button total-center'
                       >
                         <ICONS.Print size='27px' />
                       </button>
                     </div>
                   </div>
-                  <div className="flex flex-col relative h-full bg-white rounded-lg ">
+                  <div className="relative flex flex-col h-full bg-white rounded-lg ">
                     {/*  MONITOREO DE LA PRODUCCION */}
-                    <div className="flex w-full relative h-full">
+                    <div className="relative flex w-full h-full">
                       {/*  SIDE MENU  */}
                       <div className="h-full w-60 bg-gray-50">
                         <div className="flex flex-col w-full h-full overflow-hidden">
@@ -275,7 +275,7 @@ const DetailPedido = () => {
                               Modelos
                             </p>
                           </div>
-                          <div className="flex flex-col w-full h-full relative overflow-y-scroll">
+                          <div className="relative flex flex-col w-full h-full overflow-y-scroll">
                             <div className="flex flex-col w-full h-full px-3 pb-3">
                               {
                                 pedido?.detalles.map((detalle, indx) =>
@@ -297,13 +297,13 @@ const DetailPedido = () => {
                         </div>
                       </div>
                       {/*  DETALLES DEL PEDIDO  */}
-                      <div className="flex-1 relative h-full bg-white">
+                      <div className="relative flex-1 h-full bg-white">
                         <div className="absolute w-full h-full">
                           <div className="flex flex-col w-full h-full ">
                             {/*  CHARTS  */}
                             <div className="relative w-full h-2/5">
-                              <div className="flex absolute w-full h-full ">
-                                <div className="flex overflow-x-scroll bg-gray-50 w-full px-2">
+                              <div className="absolute flex w-full h-full ">
+                                <div className="flex w-full px-2 overflow-x-scroll bg-gray-50">
                                   {pedido?.detalles[selectedFichaIndx]?.cantidades.map((cantidad, j) => {
                                     //Especificamos las opciones de la grafica
 
@@ -350,7 +350,7 @@ const DetailPedido = () => {
                                   }
                                 </div>
                               </div>
-                              <div className="flex flex-row w-full overflow-x-scroll overflow-y-hidden py-2">
+                              <div className="flex flex-row w-full py-2 overflow-x-scroll overflow-y-hidden">
                               </div>
                             </div>
 
@@ -404,7 +404,7 @@ const DetailPedido = () => {
           }
         </div>
       </div>
-      <div className='modal absolute z-50 h-full w-full' ref={modalRef}>
+      <div className='absolute z-50 w-full h-full modal' ref={modalRef}>
         {modalVisible &&
           <EtiquetasModal
             title="Selección de etiquetas"

@@ -21,7 +21,8 @@ const formatListToPrint = (list) => {
     talla: e.tallaReal,
     numEtiqueta: e.numEtiqueta,
     cantidad: e.cantidad,
-    od: e.od
+    od: e.od,
+    tipo: e.tipo,
   }))
 }
 
@@ -66,22 +67,22 @@ const EtiquetasModal = ({ columns, allEtiquetas, unique, onClose, title, onPrint
   }
 
   return (
-    <div className='z-10 total-center h-screen w-full grayTrans absolute'>
-      <div className='flex flex-col h-4/5 w-2/3 rounded-xl bg-white shadow-lg p-4 modal-box'>
-        <div className='flex flex-row justify-center relative'>
+    <div className='absolute z-10 w-full h-screen total-center grayTrans'>
+      <div className='flex flex-col w-2/3 p-4 bg-white shadow-lg h-4/5 rounded-xl modal-box'>
+        <div className='relative flex flex-row justify-center'>
           <button
-            className='neutral-button p-1 h-8 w-8 text-white rounded-lg absolute left-0'
+            className='absolute left-0 w-8 h-8 p-1 text-white rounded-lg neutral-button'
             onClick={onClose}
           >
             <ICONS.Cancel className='m-0' size='25px' />
           </button>
-          <div className="font-bold text-xl text-teal-700 ">
+          <div className="text-xl font-bold text-teal-700 ">
             {title}
           </div>
-          <div className='flex absolute right-0'>
+          <div className='absolute right-0 flex'>
             <input
               type='button'
-              className='bg-teal-500 p-1 w-28 text-white normal-button rounded-lg text-center'
+              className='p-1 text-center text-white bg-teal-500 rounded-lg w-28 normal-button'
               value="Imprimir"
               disabled={!list.some(e => e.isSelected)}
               onClick={() => onPrint(formatListToPrint(list))}
@@ -92,7 +93,7 @@ const EtiquetasModal = ({ columns, allEtiquetas, unique, onClose, title, onPrint
         <div className="flex flex-row py-4">
           <div className='flex flex-[2]'>
             <CustomSelect
-              className='input z-50'
+              className='z-50 input'
               onChange={e => { setSelectedOption(e.value); e.value === 'Todas' && setCantidadLabels(list.length); unSelectAll() }}
               value={selectedOption}
               options={optionsLabel}
@@ -111,33 +112,33 @@ const EtiquetasModal = ({ columns, allEtiquetas, unique, onClose, title, onPrint
             />
           </div>
           <div className='flex flex-[4] h-10 self-end'>
-            <div className="flex-grow flex items-center bg-gray-100 shadow-sm rounded-full relative ">
+            <div className="relative flex items-center flex-grow bg-gray-100 rounded-full shadow-sm ">
               <input
                 ref={searchRef}
                 value={search}
                 onChange={e => { setSearch(e.target.value); unSelectAll() }}
-                className="w-full h-full pl-2 pr-10 py-1 outline-none bg-transparent rounded-lg" type="text" />
+                className="w-full h-full py-1 pl-2 pr-10 bg-transparent rounded-lg outline-none" type="text" />
               <button
                 type="button"
                 onClick={() => search.length > 0 ? setSearch("") : searchRef?.current?.focus()}
-                className="total-center h-8 w-8 neutral-button right-1 absolute rounded-full">
+                className="absolute w-8 h-8 rounded-full total-center neutral-button right-1">
                 {search.length > 0 ? <ICONS.Cancel /> : <ICONS.Lupa />}
               </button>
             </div>
           </div>
         </div>
 
-        <div className='max-h-95 overflow-y-scroll '>
+        <div className='overflow-y-scroll max-h-95 '>
           {list.length > 0 && <table className="w-full bg-white customTable">
             <thead>
               <tr className="h-10 ">
-                <th className="px-2 sticky top-0 z-10 bg-white">
+                <th className="sticky top-0 z-10 px-2 bg-white">
                   <input onChange={handleCheckAll} checked={list.some(e => e.isSelected)} type="checkbox" /></th>
 
                 {columns.map((column, index) => (
-                  <th className="hover-modal text-teal-700 pl-2 pr-8 whitespace-nowrap sticky top-0 z-10 bg-white" key={index}>
+                  <th className="sticky top-0 z-10 pl-2 pr-8 text-teal-700 bg-white hover-modal whitespace-nowrap" key={index}>
                     {column.name}
-                    <div className="absolute p-1 right-0 w-8 h-8 top-0">
+                    <div className="absolute top-0 right-0 w-8 h-8 p-1">
                       <button type="button" onClick={() => { setFilter(prev => ({ atr: column.atr, ord: (prev.atr === column.atr ? (prev.ord + 1) % 3 : 1) })) }}
                         className={((filter.atr === column.atr && filter.ord !== 0) ? "" : "elmt ") + "h-full w-full flex items-center justify-center"} >
                         {filter.atr === column.atr ? (filter.ord === 1 ? <ICONS.Down /> : (filter.ord === 2 ? <ICONS.Up /> : <ICONS.Filter />)) : <ICONS.Filter />}
@@ -163,9 +164,9 @@ const EtiquetasModal = ({ columns, allEtiquetas, unique, onClose, title, onPrint
                 .map((row, i) => (
                   <tr
                     onClick={() => handleCheck(row[unique])}
-                    className="cursor-pointer h-8 duration-200 hover:bg-gray-100"
+                    className="h-8 duration-200 cursor-pointer hover:bg-gray-100"
                     key={"R" + i}>
-                    <td className="px-2 sticky">
+                    <td className="sticky px-2">
                       <input readOnly checked={row?.isSelected | false} className="pointer-events-none" type="checkbox" />
                     </td>
                     {columns.map((column, j) => (
