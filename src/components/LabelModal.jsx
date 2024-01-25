@@ -88,8 +88,8 @@ const EtiquetasModal = ({ columns, allEtiquetas, unique, onClose, title, onPrint
               onClick={() => onPrint(formatListToPrint(list))}
             />
           </div>
-
         </div>
+        
         <div className="flex flex-row py-4">
           <div className='flex flex-[2]'>
             <CustomSelect

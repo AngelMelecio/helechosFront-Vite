@@ -1,78 +1,43 @@
 import { useEffect, useRef } from "react"
 import { useState } from "react"
 import { sleep } from "../../../constants/functions"
-import { useFormik } from "formik"
+import { FormikProvider, useFormik } from "formik"
 import FormReposicion from "./FormReposicion"
 import { useEmpleados } from "../../Empleados/hooks/useEmpleados"
 import Loader from "../../../components/Loader/Loader"
 import { useMaquinas } from "../../Maquinas/hooks/useMaquinas"
 import { usePedidos } from "../hooks/usePedidos"
 import { useAuth } from "../../../context/AuthContext"
-import { ICONS } from "../../../constants/icons"
-import Table from "../../../components/Table"
 
-const ReposicionesCrud = ({ produccion }) => {
+const ReposicionesCrud = ({ produccion, etiquetas, allDetalles }) => {
 
     const { notify } = useAuth()
 
     const { allEmpleados, refreshEmpleados, loading } = useEmpleados()
     const { allMaquinas, refreshMaquinas, loading: loadingMaquinas } = useMaquinas()
     const { saveReposicion, getReposiciones } = usePedidos()
-    const [reposiciones, setReposiciones] = useState([])
-    const [fetching, setFetching] = useState(true)
+
+    const [empleadosFallasOpts, setEmpleadosFallasOpts] = useState([])
+    const [maquinasOptions, setMaquinasOptions] = useState([])
+    const [etiquetasOpts, setEtiquetasOpts] = useState([])
 
     const [saving, setSaving] = useState(false)
 
-    async function fetchReposiciones() {
-        try {
-            setFetching(true)
-            let reposiciones = await getReposiciones(produccion)
-            setReposiciones(reposiciones)
-        } catch (e) {
-            notify(e.message, true)
-        } finally {
-            setFetching(false)
-        }
-    }
-
-    useEffect(() => {
-        refreshEmpleados()
-        refreshMaquinas()
-        fetchReposiciones()
-    }, [])
-
-    const [leftShow, setLeftShow] = useState(false)
-    const leftRef = useRef(null)
-
-    const openSlider = async () => {
-        setLeftShow(prev => !prev)
-        await sleep(120)
-        leftRef.current.classList.toggle('visible')
-    }
-
-    const closeSlider = async () => {
-        leftRef.current.classList.toggle('visible')
-        await sleep(250)
-        setLeftShow(prev => !prev)
-    }
 
     const validate = values => {
         const errors = {}
-        if (values.cantidad && !values.cantidad) {
+        /*if (values.cantidad && !values.cantidad) {
             errors.cantidad = "Requerido"
         }
         if (values.motivos && values.motivos === "") {
             errors.motivos = "Requerido"
         }
-        if (values.empleadoFalla===-1) {
+        if (values.empleadoFalla === -1) {
             errors.empleadoFalla = "Requerido"
         }
-        if (!values.empleadoReponedor) {
-            errors.empleadoReponedor = "Requerido"
-        }
-        if (values.maquina===-1) {
+        if (values.maquina === -1) {
             errors.maquina = "Requerido"
-        }
+        }*/
         return errors
     }
 
@@ -80,7 +45,6 @@ const ReposicionesCrud = ({ produccion }) => {
         cantidad: null,
         motivos: "",
         empleadoFalla: null,
-        empleadoReponedor: null,
         maquina: null,
         produccion: produccion
     }
@@ -90,69 +54,78 @@ const ReposicionesCrud = ({ produccion }) => {
         onSubmit: async (values) => {
             try {
                 setSaving(true)
-                let { message, reposiciones } = await saveReposicion(values)
-                setReposiciones(reposiciones)
+                console.log(values)
+                //let { message, reposiciones } = await saveReposicion(values)
                 //console.log(reposiciones)
                 formik.setValues(initValues)
-                closeSlider()
-                notify(message)
+
+                //notify(message)
             } catch (e) {
 
             } finally {
                 setSaving(false)
             }
-            console.log(values)
         }
     })
 
-    return (
-        <div className="flex flex-1">
-            {/* leftSide */}
-            <div className={(leftShow ? "w-1/2 " : "w-10 ") + " relative duration-500 h-full flex "}>
-                <div className={"flex h-full w-full relative "}>
-                    <div ref={leftRef} className="h-full w-full modal ">
-                        {loading || loadingMaquinas ? <Loader /> :
-                            <FormReposicion
-                                formik={formik}
-                                empleados={allEmpleados}
-                                maquinas={allMaquinas}
-                                saving={saving}
-                            />}
-                    </div>
-                </div>
-                <button
-                    onClick={leftShow ? closeSlider : openSlider}
-                    className={"absolute total-center top-0 h-8 w-8 rounded-md " + (!leftShow ? "normal-button" : "neutral-button")}>
-                    {!leftShow ?
-                        <ICONS.Plus size="20px" />
-                        :
-                        <ICONS.Left size="23px" />}
-                </button>
-            </div>
-            {/* RightSide */}
-            <div className="flex flex-1">
-                {fetching ? <Loader /> :
-                    <div className="flex  flex-1 relative">
-                        <div className="absolute w-full h-full">
-                            <Table
-                                data={reposiciones}
-                                columns={[
-                                    { label: 'ID', atr: 'indx' },
-                                    { label: 'Cantidad', atr: 'cantidad' },
-                                    { label: 'Motivos', atr: 'motivos' },
-                                    { label: 'Falla', atr: 'empleadoFalla' },
-                                    { label: 'Reponedor', atr: 'empleadoReponedor' },
-                                    { label: 'Maquina', atr: 'maquina' },
-                                    { label: 'Fecha', atr: 'fecha' },
-                                ]}
-                                unique={"indx"}
-                            />
+    useEffect(() => {
+        refreshEmpleados()
+        refreshMaquinas()
+    }, [])
 
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
+    // Settear las opciones para empleados 
+    useEffect(() => {
+        setEmpleadosFallasOpts(allEmpleados.map(item => ({
+            value: item.idEmpleado,
+            label: item.nombre + " " + item.apellidos
+        })))
+    }, [allEmpleados])
+
+    // settear las opciones para maquinas
+    useEffect(() => {
+        let dpto_falla = allEmpleados.find(e => e.idEmpleado === formik.values.empleadoFalla)?.departamento
+        setMaquinasOptions([{ value: null, label: "No aplica" },
+        ...(allMaquinas.filter(m => m.departamento === dpto_falla)
+            .map(item => ({
+                value: item.idMaquina,
+                label: "L" + item.linea + " - " + "M" + item.numero,
+            }))
+        )])
+    }, [formik.values.empleadoFalla])
+
+    // settear las opciones para etiquetas
+    useEffect(() => {
+        setEtiquetasOpts(etiquetas.map(et => ({
+            value: et.idProduccion,
+            label: et.numEtiqueta + " - Talla: " + et.talla
+        })))
+    }, [etiquetas])
+
+
+    return (
+        <FormikProvider value={formik}>
+            <form className="flex flex-col h-full overflow-y-hidden" onSubmit={formik.handleSubmit} action="">
+
+                <input value="Guardar" type="submit" className="absolute flex h-8 px-5 rounded-md focus:outline-none right-2 top-2 normal-button" />
+
+                <div className="flex flex-col h-14 total-center">
+                    <h1 className="text-xl font-bold text-teal-700">
+                        Produccion Extra
+                    </h1>
+                </div>
+
+                <FormReposicion
+                    formik={formik}
+                    etiquetasOpts={etiquetasOpts}
+                    empleadosFallasOpts={empleadosFallasOpts}
+                    maquinasOptions={maquinasOptions}
+                    allDetalles={allDetalles}
+                    empleados={allEmpleados}
+                    maquinas={allMaquinas}
+                    saving={saving}
+                />
+            </form>
+        </FormikProvider>
     )
 }
 export default ReposicionesCrud

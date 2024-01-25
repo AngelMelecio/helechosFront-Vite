@@ -13,7 +13,8 @@ import {
     MdOutlineMail as Email,
     MdDone as Done,
     MdOutlineFileCopy as Copy,
-    MdQrCodeScanner as Qr
+    MdQrCodeScanner as Qr,
+    MdOutlineNewLabel as NewLabel,
 } from 'react-icons/md'
 
 import {
@@ -142,4 +143,5 @@ export const ICONS = {
     Qr,
     Check,
     Charts,
+    NewLabel,
 }

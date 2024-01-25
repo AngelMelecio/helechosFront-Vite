@@ -40,6 +40,7 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
+    console.log('useEffect AuthContext')
     if (loading)
       updateToken()
 
@@ -102,6 +103,7 @@ export function AuthProvider({ children }) {
     let data = await response.json()
 
     if (response.status === 200) {
+      console.log('token refreshed!!')
       let newSession = { ...session, access: data.access, refresh: data.refresh }
       setSession(newSession)
       localStorage.setItem('auth', JSON.stringify(newSession))
