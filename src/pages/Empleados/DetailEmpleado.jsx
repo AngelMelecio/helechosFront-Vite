@@ -48,7 +48,7 @@ const DetailEmpleado = () => {
 
   const navigate = useNavigate()
   const { id } = useParams();
-  const {notify} = useAuth()
+  const { notify } = useAuth()
   const isEdit = (id !== '0')
   const [saving, setSaving] = useState(false)
   const [assignedMaquinas, setAssignedMaquinas] = useState([])
@@ -112,8 +112,8 @@ const DetailEmpleado = () => {
       try {
         setSaving(true)
         let idEmpleado = id !== '0' ? Number(id) : null
-        if( theresChanges ){
-          const { empleado:empleadoResponse, message } = await postEmpleado(values, isEdit ? 'PUT' : 'POST')
+        if (theresChanges) {
+          const { empleado: empleadoResponse, message } = await postEmpleado(values, isEdit ? 'PUT' : 'POST')
           idEmpleado = empleadoResponse.idEmpleado
           notify(message)
         }
@@ -127,7 +127,7 @@ const DetailEmpleado = () => {
         navigate('/empleados/')
       } catch (e) {
         notify(e.message, true)
-      } finally{
+      } finally {
         setSaving(false)
       }
     },
@@ -166,7 +166,7 @@ const DetailEmpleado = () => {
             </div>
             <div>
               <input
-                disabled={ loading || saving || (!theresChanges && !theresMaquinasChanges) }
+                disabled={loading || saving || (!theresChanges && !theresMaquinasChanges)}
                 className='bg-teal-500 p-1 text-md w-40 h-10 text-white normal-button  right-5 z-10 top-5 rounded-lg'
                 type="submit"
                 value={isEdit ? "Guardar" : "Agregar"}
@@ -192,15 +192,18 @@ const DetailEmpleado = () => {
                          */}
 
                         <div className='flex flex-row w-full h-full total-center pt-4 pb-6'>
-                          <div className="flex relative w-full items-center justify-center foto text-center">
-                            {(toUrl(formik?.values?.fotografia) !== null) ? <img
-                              className='object-cover foto'
-                              src={toUrl(formik?.values?.fotografia)}
-                              alt='' />
-                              : <ICONS.Person className='' size='80px' style={{ color: '#0f766e' }} />}
-                            <input id='file' type="file" name='fotografia' accept='image/*' onChange={handleSelectImage} className='inputfile' />
+                          <div className="relative total-center w-28 h-28 bg-gray-100 rounded-full">
+                            {(toUrl(formik?.values?.fotografia) !== null) ?
+                              <img
+                                className='object-cover foto'
+                                src={toUrl(formik?.values?.fotografia)}
+                                alt='' />
+                              : <ICONS.Person className='' size='80px' style={{ color: '#0f766e' }} />
+                            }
+                            <input id='file' type="file" name='fotografia' accept='image/*' 
+                            onChange={handleSelectImage} className='hidden' />
                             <label
-                              className='absolute -bottom-2 -right-1 bg-teal-500 p-2 text-white normal-button rounded-full'
+                              className='absolute -bottom-1.5 -right-1.5 p-2 text-white normal-button rounded-full'
                               htmlFor='file' >
                               <ICONS.Upload style={{ color: 'white' }} size='18px' />
                             </label>

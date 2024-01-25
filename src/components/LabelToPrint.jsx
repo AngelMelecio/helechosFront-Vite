@@ -29,6 +29,7 @@ const LabelToPrint = ({ list, onCloseModal }) => {
 
   const GenerateQrUrl = async (data) => {
     const jsonString = JSON.stringify(data);
+    console.log(jsonString)
     return await QRCode.toDataURL(jsonString)
   }
 

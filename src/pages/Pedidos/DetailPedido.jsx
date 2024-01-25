@@ -17,6 +17,8 @@ import DetalleEtiquetaModal from "./components/DetalleEtiquetaModal";
 import LabelToPrint from "../../components/LabelToPrint";
 import { DPTO_COLOR } from "../../constants/Despartamentos";
 import ScanModal from "../Produccion/components/ScanModal";
+import Modal from "../../components/Modal";
+import ReposicionesCrud from "./components/ReposicionesCrud";
 
 const DetailPedido = () => {
 
@@ -36,6 +38,7 @@ const DetailPedido = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [detalleEtiquetaModalVisible, setDetalleEtiquetaModalVisible] = useState(false)
   const [printEtiquetasModalVisible, setPrintEtiquetasModalVisible] = useState(false)
+  const [extraModalVisible, setExtraModalVisible] = useState(false)
   const [scanModalVisible, setScanModalVisible] = useState(false)
   const [pageScrollBottom, setPageScrollBottom] = useState(false)
 
@@ -71,7 +74,7 @@ const DetailPedido = () => {
             estado: etiqueta.estacionActual !== 'creada' ? "Impresa" : "No impresa",
             isSelected: false,
             talla: etiqueta.tallaReal,
-            numEtiqueta: etiqueta.numEtiqueta,
+            numEtiqueta: Number(etiqueta.numEtiqueta),
             od: pedido.ordenCompra,
           })
         })
@@ -149,7 +152,6 @@ const DetailPedido = () => {
           })
         )
       )
-
   }
 
   return (
@@ -250,6 +252,13 @@ const DetailPedido = () => {
                       <button
                         type="button"
                         className="w-10 h-10 mr-3 rounded-lg normal-button total-center"
+                        onClick={() => handleOpenModal(setExtraModalVisible)}
+                      >
+                        <ICONS.NewLabel size='27px' />
+                      </button>
+                      <button
+                        type="button"
+                        className="w-10 h-10 mr-3 rounded-lg normal-button total-center"
                         onClick={() => handleOpenModal(setScanModalVisible)}
                       >
                         <ICONS.Qr size='27px' />
@@ -308,7 +317,7 @@ const DetailPedido = () => {
                                     //Especificamos las opciones de la grafica
 
                                     let options = {
-                                      title: "Talla: " + cantidad.talla + "\n" +"Etiquetas: " +cantidad.etiquetas.length,
+                                      title: "Talla: " + cantidad.talla + "\n" + "Etiquetas: " + cantidad.etiquetas.length,
                                       titleTextStyle: { fontSize: 18, bold: false, color: '#0f766e', },
                                       colors: cantidad.progreso.map(p => DPTO_COLOR[p[0]]),
                                       pieHole: 0.35,
@@ -450,6 +459,17 @@ const DetailPedido = () => {
             onClose={() => handleCloseModal([setScanModalVisible])}
             onScan={(value) => handleSearchProduccion(value)}
             title="Buscar Etiqueta..."
+          />
+        }
+        {
+          extraModalVisible &&
+          <Modal
+            onClose={() => handleCloseModal([setExtraModalVisible])}
+            component={
+              <ReposicionesCrud
+                etiquetas={allEtiquetas} 
+                allDetalles={pedido?.detalles}
+                />}
           />
         }
       </div>
