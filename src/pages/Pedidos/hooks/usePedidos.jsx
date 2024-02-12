@@ -13,6 +13,8 @@ const API_IMPRESION_ETIQUETAS = "api/produccionPrint/"
 const API_PROGRESS_ETIQUETA = "api/progresoByEtiqueta/"
 const API_REPOSICION_URL = "api/reposicion/"
 const API_PRODUCCION_MODELO_EMPLEADO_ALL = "api/produccion_por_modelo_y_empleado/"
+const API_PRODUCCION_MAQUINA_TURNO_ALL = "api/produccion_por_maquina_y_turno/"
+const API_PRODUCCION_POST_REPOSICION_OR_EXTRA = "api/produccionReposicionExtra/"
 
 const PedidosContext = React.createContext('PedidosContext')
 
@@ -154,6 +156,22 @@ export function PedidosProvider({ children }) {
         const response = await fetchAPI(API_PRODUCCION_MODELO_EMPLEADO_ALL+fechaInicio+"/"+fechaFin+"/"+departamento, options)
         return response
     }
+
+    async function produccion_por_maquina_y_turno(restricciones) {
+        let fechaInicio = restricciones.fechaInicio
+        let fechaFin = restricciones.fechaFinal
+        let departamento = restricciones.departamento
+
+        let options = {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + session.access
+            },
+        }
+        const response = await fetchAPI(API_PRODUCCION_MAQUINA_TURNO_ALL+fechaInicio+"/"+fechaFin+"/"+departamento, options)
+        return response
+    }
+    
     async function putProduccion(listIds) {
 
         let options = {
@@ -221,6 +239,20 @@ export function PedidosProvider({ children }) {
         })
     }
 
+    //Crear reposicion o extra
+    async function saveReposicionOrExtra(values) {
+        let options = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + session.access
+            },
+            body: JSON.stringify(values)
+        }
+        const response = await fetchAPI(API_PRODUCCION_POST_REPOSICION_OR_EXTRA, options)
+        return ({message: response.message})
+    }
+
     async function getReposiciones(idProduccion) {
         let options = {
             method: 'GET',
@@ -229,6 +261,8 @@ export function PedidosProvider({ children }) {
         const { reposiciones } = await fetchAPI(API_REPOSICION_URL + idProduccion, options)
         return formatReposiciones(reposiciones)
     }
+
+
 
     return (
         <PedidosContext.Provider
@@ -248,7 +282,9 @@ export function PedidosProvider({ children }) {
                 deletePedidos,
                 saveReposicion,
                 getReposiciones,
-                produccion_por_modelo_y_empleado
+                produccion_por_modelo_y_empleado,
+                produccion_por_maquina_y_turno,
+                saveReposicionOrExtra
             }}
         >
             {children}

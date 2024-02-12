@@ -56,7 +56,6 @@ const ScanSelect = ({
             ...defaultStyles,
             color: state.isSelected ? "#fff" : "#000",
             backgroundColor: state.isSelected ? "#e5e7eb" : "#fff",
-            color: "#374151",
             select: "#14B8A6"
         }),
 
@@ -79,7 +78,9 @@ const ScanSelect = ({
                             isDisabled={props.readOnly}
                             name={name}
                             value={defaultValue(options, formik.values[name])}
-                            onChange={e => formik.setFieldValue(name, e.value)}
+                            onChange={e => {
+                                formik.setFieldValue(name, e.value)
+                            }}
                             options={options}
                             onBlur={props.onBlur}
                             styles={customStyles} />

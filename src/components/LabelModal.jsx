@@ -23,6 +23,7 @@ const formatListToPrint = (list) => {
     cantidad: e.cantidad,
     od: e.od,
     tipo: e.tipo,
+    destino: e.destino,
   }))
 }
 
