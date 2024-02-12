@@ -19,6 +19,7 @@ import { DPTO_COLOR } from "../../constants/Despartamentos";
 import ScanModal from "../Produccion/components/ScanModal";
 import Modal from "../../components/Modal";
 import ReposicionesCrud from "./components/ReposicionesCrud";
+import { GiConsoleController } from "react-icons/gi";
 
 const DetailPedido = () => {
 
@@ -50,10 +51,13 @@ const DetailPedido = () => {
   const [selectedTallaIndx, setSelectedTallaIndx] = useState(0)
   const [selectedEtiqueta, setSelectedEtiqueta] = useState(null)
 
-
-  useEffect(async () => {
+  const onMountComponent = async () => {
     let p = await findPedido(id)
     setPedido(p)
+  }
+
+  useEffect(() => {
+    onMountComponent()
   }, [])
 
   // settear las etiquetas cada que el pedido cambie
@@ -74,12 +78,14 @@ const DetailPedido = () => {
             estado: etiqueta.estacionActual !== 'creada' ? "Impresa" : "No impresa",
             isSelected: false,
             talla: etiqueta.tallaReal,
-            numEtiqueta: Number(etiqueta.numEtiqueta),
+            numEtiqueta: etiqueta.numEtiqueta,
             od: pedido.ordenCompra,
+            destino: etiqueta.destino
           })
         })
       })
     })
+    //console.log(etiquetasFormated)
     setAllEtiquetas(etiquetasFormated)
   }, [pedido])
 
@@ -281,7 +287,7 @@ const DetailPedido = () => {
                         <div className="flex flex-col w-full h-full overflow-hidden">
                           <div className="p-3">
                             <p className="px-4 py-2 text-xl font-semibold text-teal-700">
-                              Modelos
+                              Fichas técnicas
                             </p>
                           </div>
                           <div className="relative flex flex-col w-full h-full overflow-y-scroll">
@@ -467,9 +473,13 @@ const DetailPedido = () => {
             onClose={() => handleCloseModal([setExtraModalVisible])}
             component={
               <ReposicionesCrud
-                etiquetas={allEtiquetas} 
+                onSubmitted={() => { 
+                  handleCloseModal([setExtraModalVisible]);
+                  onMountComponent();
+                }}
+                etiquetas={allEtiquetas}
                 allDetalles={pedido?.detalles}
-                />}
+              />}
           />
         }
       </div>

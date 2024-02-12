@@ -1,52 +1,53 @@
 import { useEffect, useRef } from "react"
 import { useState } from "react"
-import { sleep } from "../../../constants/functions"
 import { FormikProvider, useFormik } from "formik"
 import FormReposicion from "./FormReposicion"
 import { useEmpleados } from "../../Empleados/hooks/useEmpleados"
-import Loader from "../../../components/Loader/Loader"
 import { useMaquinas } from "../../Maquinas/hooks/useMaquinas"
 import { usePedidos } from "../hooks/usePedidos"
 import { useAuth } from "../../../context/AuthContext"
 
-const ReposicionesCrud = ({ produccion, etiquetas, allDetalles }) => {
+const ReposicionesCrud = ({ etiquetas, allDetalles , onSubmitted}) => {
 
     const { notify } = useAuth()
 
     const { allEmpleados, refreshEmpleados, loading } = useEmpleados()
     const { allMaquinas, refreshMaquinas, loading: loadingMaquinas } = useMaquinas()
-    const { saveReposicion, getReposiciones } = usePedidos()
-
+    const { saveReposicionOrExtra} = usePedidos()
     const [empleadosFallasOpts, setEmpleadosFallasOpts] = useState([])
     const [maquinasOptions, setMaquinasOptions] = useState([])
-    const [etiquetasOpts, setEtiquetasOpts] = useState([])
+    const [etiquetasOpts, setEtiquetasOpts] = useState([{ value: 'Seleccione', label: "Seleccione" }])
+    const turnoOptions = [
+        { value: null, label: 'Seleccione' },
+        { value: 'Mañana', label: 'Mañana' },
+        { value: 'Tarde', label: 'Tarde' },
+    ]
 
     const [saving, setSaving] = useState(false)
 
-
     const validate = values => {
         const errors = {}
-        /*if (values.cantidad && !values.cantidad) {
-            errors.cantidad = "Requerido"
+        if(!values.cantidad){
+            errors.cantidad = 'Requerido'
         }
-        if (values.motivos && values.motivos === "") {
-            errors.motivos = "Requerido"
+        if (values.esReposicion===true) {
+            if (!values.empleadoFalla) {
+                errors.empleadoFalla = 'Requerido'
+            }
+            if (!values.turno ) {
+                errors.turno = 'Requerido'
+            }
         }
-        if (values.empleadoFalla === -1) {
-            errors.empleadoFalla = "Requerido"
-        }
-        if (values.maquina === -1) {
-            errors.maquina = "Requerido"
-        }*/
         return errors
     }
-
     let initValues = {
         cantidad: null,
         motivos: "",
         empleadoFalla: null,
         maquina: null,
-        produccion: produccion
+        esReposicion: false,
+        etiqueta: 'Seleccione',
+        turno: null,
     }
     const formik = useFormik({
         initialValues: initValues,
@@ -54,14 +55,12 @@ const ReposicionesCrud = ({ produccion, etiquetas, allDetalles }) => {
         onSubmit: async (values) => {
             try {
                 setSaving(true)
-                console.log(values)
-                //let { message, reposiciones } = await saveReposicion(values)
-                //console.log(reposiciones)
+                let { message} = await saveReposicionOrExtra(values)
                 formik.setValues(initValues)
-
-                //notify(message)
-            } catch (e) {
-
+                onSubmitted()
+                notify(message)
+            } catch (e) {   
+                notify(e.message + "", true)
             } finally {
                 setSaving(false)
             }
@@ -95,10 +94,10 @@ const ReposicionesCrud = ({ produccion, etiquetas, allDetalles }) => {
 
     // settear las opciones para etiquetas
     useEffect(() => {
-        setEtiquetasOpts(etiquetas.map(et => ({
+        setEtiquetasOpts([{ value: 'Seleccione', label: "Seleccione" }, ...(etiquetas.map(et => ({
             value: et.idProduccion,
             label: et.numEtiqueta + " - Talla: " + et.talla
-        })))
+        })))])
     }, [etiquetas])
 
 
@@ -110,7 +109,7 @@ const ReposicionesCrud = ({ produccion, etiquetas, allDetalles }) => {
 
                 <div className="flex flex-col h-14 total-center">
                     <h1 className="text-xl font-bold text-teal-700">
-                        Produccion Extra
+                        {formik?.values.esReposicion ? 'Reposición' : 'Producción extra'}
                     </h1>
                 </div>
 
@@ -119,6 +118,7 @@ const ReposicionesCrud = ({ produccion, etiquetas, allDetalles }) => {
                     etiquetasOpts={etiquetasOpts}
                     empleadosFallasOpts={empleadosFallasOpts}
                     maquinasOptions={maquinasOptions}
+                    turnoOptions={turnoOptions}
                     allDetalles={allDetalles}
                     empleados={allEmpleados}
                     maquinas={allMaquinas}

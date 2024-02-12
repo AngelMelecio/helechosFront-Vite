@@ -13,7 +13,7 @@ const CustomSelect = ({ name, className, onChange, value, onBlur, options, label
   const customStyles = {
     option: (defaultStyles, state) => ({
       ...defaultStyles,
-      color: state.isSelected ? "#fff" : "#000",
+      //color: state.isSelected ? "#fff" : "#000",
       backgroundColor: state.isSelected ? "#e5e7eb" : "#fff",
       color: "#374151",
       select: "#14B8A6"
@@ -30,7 +30,7 @@ const CustomSelect = ({ name, className, onChange, value, onBlur, options, label
 
   return (
     <div className={`flex flex-col w-full mt-2 ${withoutMargin ? '' : 'mx-2'}`}>
-      <p className='text-teal-700 text-sm font-medium'>{label}</p>
+      <p className='text-sm font-medium text-teal-700'>{label}</p>
       <div className={(errores ? cn_bad : cn_good) + ' bg-gray-100'}>
         {
           loading ? <Loader /> :

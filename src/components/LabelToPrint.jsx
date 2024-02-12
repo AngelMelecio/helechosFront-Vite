@@ -107,16 +107,24 @@ const LabelToPrint = ({ list, onCloseModal }) => {
                               <View style={{ display: 'flex', flexDirection: 'row' }}>
                                 <Text style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: 4.5 }}>Tipo: </Text>
                                 <Text style={{ fontFamily: 'Roboto', fontWeight: 400, fontSize: 4.5 }}>{obj.tipo}</Text>
-                              </View>  
+                              </View>
+                              {
+                                obj.destino !== null &&
+                                <View style={{ display: 'flex', flexDirection: 'row' }}>
+                                  <Text style={{ fontFamily: 'Roboto', fontWeight: 700, fontSize: 4.5 }}>Destino: </Text>
+                                  <Text style={{ fontFamily: 'Roboto', fontWeight: 400, fontSize: 4.5 }}>{obj.destino}</Text>
+                                </View>
+                              }
+
                             </View>
 
                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '3', marginTop: '2' }}>
                               <View><Text style={{ fontSize: 4.5 }}>Tejedor:</Text></View>
-                              <View><Text style={{ fontSize: 4}}>____________________ / ________</Text></View>
+                              <View><Text style={{ fontSize: 4 }}>____________________ / ________</Text></View>
                             </View>
                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '3', marginTop: '1' }}>
                               <View><Text style={{ fontSize: 4.5 }}>Planchador:</Text></View>
-                              <View><Text style={{ fontSize: 4}}>____________________ / ________</Text></View>
+                              <View><Text style={{ fontSize: 4 }}>____________________ / ________</Text></View>
                             </View>
                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '3', marginTop: '1' }}>
                               <View><Text style={{ fontSize: 4.5 }}>Cortador:</Text></View>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { GiConsoleController } from 'react-icons/gi'
 
 const formatEstacion = (nombre) => {
   return nombre.charAt(0).toUpperCase() + nombre.slice(1)
@@ -17,6 +18,7 @@ const RutaSelect = ({
 
   useEffect(() => {
     console.log('rutaBase', rutaBase)
+    //console.log('estacionFinal', estacionFinal)
     let ets = []
     let pos = "tejido"
     let disable = false
@@ -28,10 +30,10 @@ const RutaSelect = ({
       })
       if (pos === estacionFinal) disable = true
       pos = rutaBase[pos]
-      console.log(pos)
+      //console.log(pos)
     } while (pos !== "empacado")
-
     setEstaciones(ets)
+    formik.setFieldValue(name, estacionFinal)
   }, [])
 
   const handleMouseEnter = (index) => {
@@ -51,7 +53,7 @@ const RutaSelect = ({
         ets[i].checked = false
       }
     }
-    formik.setFieldValue(name, estaciones[index].estacion)
+    formik.setFieldValue(name,estaciones[index].estacion)
     setEstaciones(ets)
   }
 
