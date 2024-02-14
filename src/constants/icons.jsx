@@ -94,7 +94,7 @@ import {
 
 
 import { TbNeedleThread as Thread } from 'react-icons/tb';
-
+import { TbWeight as Weight } from "react-icons/tb";
 
 export const ICONS = {
     Lupa,
@@ -144,4 +144,5 @@ export const ICONS = {
     Check,
     Charts,
     NewLabel,
+    Weight
 }
