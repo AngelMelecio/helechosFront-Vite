@@ -436,7 +436,7 @@ table td {
 }
 
 .appear {
-  animation: appear 0.5s ease-out ;
+  animation: appear 0.5s ease-out;
 }
 
 @keyframes appear {
@@ -692,19 +692,21 @@ input[type="checkbox"]:checked::after {
     -moz-box-shadow: 0 0 5px 1.2 #6ee7b7;
     box-shadow: 0 0 5px 1.2 #6ee7b7;
   }
-  90%{
+
+  90% {
     -webkit-box-shadow: 0 0 6px 4px #6ee7b700;
     -moz-box-shadow: 0 0 6px 4px #6ee7b700;
     box-shadow: 0 0 6px 4px #6ee7b700;
   }
-  100%{
+
+  100% {
     -webkit-box-shadow: 0 0 6px 4px #a7f3d000;
     -moz-box-shadow: 0 0 6px 4px #a7f3d000;
     box-shadow: 0 0 6px 4px #a7f3d000;
   }
 }
 
-.scan-icon::after{
+.scan-icon::after {
   content: "";
   position: absolute;
   left: 50%;
@@ -723,8 +725,50 @@ input[type="checkbox"]:checked::after {
   0% {
     top: 15%;
   }
+
   100% {
     top: 75%;
   }
 }
 
+
+.ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ellipsis:hover::after {
+  content: attr(tooltip);
+  position: absolute;
+  /*left: attr(tip-left);
+  /*top: attr(tip-top);
+  /* Place tooltip below the element */
+  white-space: nowrap;
+  /* Keeps the tooltip text on a single line */
+  background-color: #333;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  z-index: 40;
+  pointer-events: none;
+  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+
+
+}
+
+.e-b.ellipsis:hover::after {
+  bottom: 0;
+  transform: translateY(110%);
+
+}
+.e-l.ellipsis:hover::after {
+  left: 0;
+}
+.e-r.ellipsis:hover::after {
+  right: 0;
+}

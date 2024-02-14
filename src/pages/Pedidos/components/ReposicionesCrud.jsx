@@ -7,13 +7,13 @@ import { useMaquinas } from "../../Maquinas/hooks/useMaquinas"
 import { usePedidos } from "../hooks/usePedidos"
 import { useAuth } from "../../../context/AuthContext"
 
-const ReposicionesCrud = ({ etiquetas, allDetalles , onSubmitted}) => {
+const ReposicionesCrud = ({ etiquetas, allDetalles, onSubmitted }) => {
 
     const { notify } = useAuth()
 
     const { allEmpleados, refreshEmpleados, loading } = useEmpleados()
     const { allMaquinas, refreshMaquinas, loading: loadingMaquinas } = useMaquinas()
-    const { saveReposicionOrExtra} = usePedidos()
+    const { saveReposicionOrExtra } = usePedidos()
     const [empleadosFallasOpts, setEmpleadosFallasOpts] = useState([])
     const [maquinasOptions, setMaquinasOptions] = useState([])
     const [etiquetasOpts, setEtiquetasOpts] = useState([{ value: 'Seleccione', label: "Seleccione" }])
@@ -27,14 +27,14 @@ const ReposicionesCrud = ({ etiquetas, allDetalles , onSubmitted}) => {
 
     const validate = values => {
         const errors = {}
-        if(!values.cantidad){
+        if (!values.cantidad) {
             errors.cantidad = 'Requerido'
         }
-        if (values.esReposicion===true) {
+        if (values.esReposicion === true) {
             if (!values.empleadoFalla) {
                 errors.empleadoFalla = 'Requerido'
             }
-            if (!values.turno ) {
+            if (!values.turno) {
                 errors.turno = 'Requerido'
             }
         }
@@ -55,11 +55,11 @@ const ReposicionesCrud = ({ etiquetas, allDetalles , onSubmitted}) => {
         onSubmit: async (values) => {
             try {
                 setSaving(true)
-                let { message} = await saveReposicionOrExtra(values)
+                let { message } = await saveReposicionOrExtra(values)
                 formik.setValues(initValues)
                 onSubmitted()
                 notify(message)
-            } catch (e) {   
+            } catch (e) {
                 notify(e.message + "", true)
             } finally {
                 setSaving(false)
@@ -105,7 +105,11 @@ const ReposicionesCrud = ({ etiquetas, allDetalles , onSubmitted}) => {
         <FormikProvider value={formik}>
             <form className="flex flex-col h-full overflow-y-hidden" onSubmit={formik.handleSubmit} action="">
 
-                <input value="Guardar" type="submit" className="absolute flex h-8 px-5 rounded-md focus:outline-none right-2 top-2 normal-button" />
+                <input
+                    value="Guardar"
+                    type="submit"
+                    className="absolute flex h-8 px-5 rounded-md focus:outline-none right-2 top-2 normal-button"
+                />
 
                 <div className="flex flex-col h-14 total-center">
                     <h1 className="text-xl font-bold text-teal-700">

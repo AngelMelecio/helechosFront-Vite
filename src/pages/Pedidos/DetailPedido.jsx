@@ -20,6 +20,10 @@ import ScanModal from "../Produccion/components/ScanModal";
 import Modal from "../../components/Modal";
 import ReposicionesCrud from "./components/ReposicionesCrud";
 import { GiConsoleController } from "react-icons/gi";
+import PesosModal from "./components/PesosModal";
+import HButton from "./components/HButton";
+
+
 
 const DetailPedido = () => {
 
@@ -41,6 +45,7 @@ const DetailPedido = () => {
   const [printEtiquetasModalVisible, setPrintEtiquetasModalVisible] = useState(false)
   const [extraModalVisible, setExtraModalVisible] = useState(false)
   const [scanModalVisible, setScanModalVisible] = useState(false)
+  const [pesosModalVisible, setPesosModalVisible] = useState(false)
   const [pageScrollBottom, setPageScrollBottom] = useState(false)
 
   const [pedido, setPedido] = useState(null)
@@ -53,6 +58,7 @@ const DetailPedido = () => {
 
   const onMountComponent = async () => {
     let p = await findPedido(id)
+    console.log(p)
     setPedido(p)
   }
 
@@ -254,29 +260,34 @@ const DetailPedido = () => {
                         Monitoreo de la producción
                       </p>
                     </div>
-                    <div className='flex'>
-                      <button
-                        type="button"
-                        className="w-10 h-10 mr-3 rounded-lg normal-button total-center"
-                        onClick={() => handleOpenModal(setExtraModalVisible)}
-                      >
-                        <ICONS.NewLabel size='27px' />
-                      </button>
-                      <button
-                        type="button"
-                        className="w-10 h-10 mr-3 rounded-lg normal-button total-center"
-                        onClick={() => handleOpenModal(setScanModalVisible)}
-                      >
-                        <ICONS.Qr size='27px' />
-                      </button>
-                      <button
+                    <div className='relative flex gap-2'>
+                      
+                      <HButton
+                        openModal={() => handleOpenModal(setPesosModalVisible)}
+                        icon={<ICONS.Weight size='27px' />}
+                        tooltip="Consumo de material"
+                        className='ellipsis e-b e-r'
+                      />
+                      <HButton
+                        openModal={() => handleOpenModal(setExtraModalVisible)}
+                        icon={<ICONS.NewLabel size='27px' />}
+                        tooltip="Agregar extra / reposiciones"
+                        className="ellipsis e-b e-r"
+                      />
+                      <HButton
+                        openModal={() => handleOpenModal(setScanModalVisible)}
+                        icon={<ICONS.Qr size='27px' />}
+                        tooltip="Buscar etiqueta"
+                        className="ellipsis e-b e-r"
+                      />
+                      <HButton
+                        openModal={() => handleOpenModal(setModalVisible)}
+                        icon={<ICONS.Print size='27px' />}
                         disabled={allEtiquetas?.length === 0}
-                        type="button"
-                        onClick={() => handleOpenModal(setModalVisible)}
-                        className='w-10 h-10 rounded-lg normal-button total-center'
-                      >
-                        <ICONS.Print size='27px' />
-                      </button>
+                        tooltip="Imprimir etiquetas"
+                        className="ellipsis e-b e-r"
+                      />
+
                     </div>
                   </div>
                   <div className="relative flex flex-col h-full bg-white rounded-lg ">
@@ -473,13 +484,22 @@ const DetailPedido = () => {
             onClose={() => handleCloseModal([setExtraModalVisible])}
             component={
               <ReposicionesCrud
-                onSubmitted={() => { 
+                onSubmitted={() => {
                   handleCloseModal([setExtraModalVisible]);
                   onMountComponent();
                 }}
                 etiquetas={allEtiquetas}
                 allDetalles={pedido?.detalles}
               />}
+          />
+        }
+        {
+          pesosModalVisible &&
+          <Modal
+            onClose={() => handleCloseModal([setPesosModalVisible])}
+            component={<PesosModal
+              idPedido={id}
+            />}
           />
         }
       </div>
