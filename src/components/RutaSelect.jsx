@@ -17,7 +17,7 @@ const RutaSelect = ({
   const [hoverIndex, setHoverIndex] = useState(null)
 
   useEffect(() => {
-    console.log('rutaBase', rutaBase)
+    //console.log('rutaBase', rutaBase)
     //console.log('estacionFinal', estacionFinal)
     let ets = []
     let pos = "tejido"

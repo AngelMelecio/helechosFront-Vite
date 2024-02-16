@@ -2,42 +2,41 @@ import { ICONS } from "../../../constants/icons"
 
 const ResponseModal = ({ response, onClose }) => {
   return (
-    <div className="flex grayTrans w-full h-full total-center">
-      <div className='flex flex-col h-4/5 w-3/6 rounded-xl bg-white shadow-lg p-4 modal-box'>
-        <div className='flex flex-row total-center relative'>
+    <div className="flex w-full h-full grayTrans total-center">
+      <div className='flex flex-col w-3/6 p-4 bg-white shadow-lg h-4/5 rounded-xl modal-box'>
+        <div className='relative flex flex-row total-center'>
           <button
-            className='normal-button total-center p-1 text-white h-8 w-8 rounded-lg absolute right-0'
+            className='absolute right-0 w-8 h-8 p-1 text-white rounded-lg normal-button total-center'
             onClick={onClose}
           >
             <ICONS.Check className='m-0' size='18px' />
           </button>
-          <div className="font-semibold text-xl text-teal-700">
+          <div className="text-xl font-semibold text-teal-700">
             Resumen de la captura
           </div>
         </div>
         <div className="py-5">
           <table>
             <tbody>
-              {
-                [
-                  { label: 'Empleado', atr: 'empleado' },
-                  { label: 'Departamento', atr: 'departamento' },
-                  { label: 'Fecha de captura', atr: 'fecha' },
-                ].map((column, index) =>
-                  <tr key={"ER" + index} className={(index ? "border-t" : "") + " h-7"}>
-                    <td className="text-sm font-semibold text-teal-700 px-4"> {column.label}:</td>
-                    <td className="text-base text-gray-800 w-full"> {response[column.atr]} </td>
-                  </tr>)}
+              {[
+                { label: 'Empleado', atr: 'empleado' },
+                { label: 'Departamento', atr: 'departamento' },
+                { label: 'Fecha de captura', atr: 'fecha' },
+              ].map((column, index) =>
+                <tr key={"ER" + index} className={(index ? "border-t" : "") + " h-7"}>
+                  <td className="px-4 text-sm font-semibold text-teal-700"> {column.label}:</td>
+                  <td className="w-full text-base text-gray-800"> {response[column.atr]} </td>
+                </tr>)}
             </tbody>
           </table>
         </div>
-        <h3 className=" mt-2 relative h-7 border-t-2 total-center">
-          <p className="absolute -top-4 bg-white font-medium px-2 text-center italic text-teal-700">
+        <h3 className="relative mt-2 border-t-2 h-7 total-center">
+          <p className="absolute px-2 italic font-medium text-center text-teal-700 bg-white -top-4">
             Resultados
           </p>
         </h3>
-        <div className="overflow-y-scroll h-full">
-          <table className="customTable text-center">
+        <div className="h-full overflow-y-scroll">
+          <table className="text-center customTable">
             <thead>
               <tr>
                 <th className="px-2">Modelo</th>
@@ -49,8 +48,8 @@ const ResponseModal = ({ response, onClose }) => {
             <tbody>
               {
                 response.registros.map((etiqueta, index) =>
-                  <tr key={'etiqueta' + index} > {
-                    ['modelo', 'numEtiqueta', 'ok', 'Detalles'].map((atr, j) => <td key={'D' + index + j}>
+                  <tr key={'etiqueta' + index} >
+                    {['modelo', 'numEtiqueta', 'ok', 'Detalles'].map((atr, j) => <td key={'D' + index + j}>
                       <div className="total-center">
                         {typeof etiqueta[atr] === 'boolean' ?
                           (etiqueta[atr] ?
@@ -62,8 +61,7 @@ const ResponseModal = ({ response, onClose }) => {
                           </>
                         }
                       </div>
-                    </td>)
-                  }
+                    </td>)}
                   </tr>)
               }
             </tbody>

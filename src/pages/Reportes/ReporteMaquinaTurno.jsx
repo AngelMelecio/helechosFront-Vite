@@ -68,7 +68,7 @@ const ReporteMaquinaTurno = ({ solicitud }) => {
             totales: totales,
             sumaTotal: sumaTotal
         };
-        console.log(resultado);
+        //console.log(resultado);
         return resultado;
     };
 

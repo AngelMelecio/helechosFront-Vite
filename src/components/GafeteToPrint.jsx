@@ -17,48 +17,47 @@ const GafetToPrint = ({ list, onCloseModal }) => {
     });
 
     const GenerateQrUrl = async (data) => {
-        data.fotografia=data.fotografia.substring(API_URL.length);
+        delete data.fotografia;
         const jsonString = JSON.stringify(data);
         return await QRCode.toDataURL(jsonString)
     }
 
     return (
         <>
-            <div className='z-10 flex absolute h-full w-full grayTrans items-center justify-center '>
-                <div className='modal-box h-full w-3/4 rounded-lg pdf-gray shadow-xl'  >
-                    <div className='w-full flex h-full flex-col p-1'>
-                        <div className="z-10 py-2 px-4 flex w-full h-12 relative">
-                            <div className="flex flex-row w-full total-center relative ">
+            <div className='absolute z-10 flex items-center justify-center w-full h-full grayTrans '>
+                <div className='w-3/4 h-full rounded-lg shadow-xl modal-box pdf-gray'  >
+                    <div className='flex flex-col w-full h-full p-1'>
+                        <div className="relative z-10 flex w-full h-12 px-4 py-2">
+                            <div className="relative flex flex-row w-full total-center ">
                                 <button
                                     onClick={(e) => {
                                         e.preventDefault();
                                         onCloseModal(false);
                                     }}
-                                    className="absolute left-1 p-1 text-white flex items-center justify-center rounded-full hover:bg-gray-500">
+                                    className="absolute flex items-center justify-center p-1 text-white rounded-full left-1 hover:bg-gray-500">
                                     <ICONS.Cancel size="20px" />
                                 </button>
-                                <p className="font-semibold text-white text-2xl">
+                                <p className="text-2xl font-semibold text-white">
                                     Impresión de gafetes
                                 </p>
                             </div>
                         </div>
 
                         <div id="modal-body" className="flex w-full h-full ">
-                            <div className='flex w-full h-full absolute bg-transparent flex-col justify-center'>
-                                <div className='font-extralight text-white text-3xl flex flex-row justify-center'>
+                            <div className='absolute flex flex-col justify-center w-full h-full bg-transparent'>
+                                <div className='flex flex-row justify-center text-3xl text-white font-extralight'>
                                     Generando gafetes...
                                 </div>
                                 <div className='flex flex-row justify-center'>
                                     <Loader color={"white"} />
                                 </div>
                             </div>
-                            <PDFViewer className="w-full z-10 h-full">
+                            <PDFViewer className="z-10 w-full h-full">
                                 <Document>
                                     {
                                         list.map((originalObj, i) => {
                                             // Clonamos el objeto
-                                            let obj = { ...originalObj };
-                                            
+                                            let obj = { ...originalObj };                                            
                                             delete obj.direccion;
                                             delete obj.telefono;
                                             delete obj.fechaEntrada;

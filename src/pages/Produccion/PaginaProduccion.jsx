@@ -41,7 +41,7 @@ const PaginaProduccion = () => {
 
   const [showMaquina, setShowMaquina] = useState(true)
 
-  const { getEmpleadoMaquinas } = useEmpleados()
+  const { getEmpleadoMaquinas, getEmpleado } = useEmpleados()
   const [empleado, setEmpleado] = useState(null)
 
   const { allMaquinas, refreshMaquinas, loading: gettingMaquinas } = useMaquinas()
@@ -120,8 +120,8 @@ const PaginaProduccion = () => {
           throw new Error('Etiqueta invalida')
         if (etiquetasList.some(e => e.idProduccion === objScan.idProduccion))
           throw new Error('Etiqueta duplicada')
-        
-        setEtiquetasList(prev => [...prev, { ...objScan, maquina:maquina, maquinaLabel:maquinalbl }])
+
+        setEtiquetasList(prev => [...prev, { ...objScan, maquina: maquina, maquinaLabel: maquinalbl }])
       }
     } catch (e) {
       notify(e + "", true)
@@ -133,7 +133,10 @@ const PaginaProduccion = () => {
       if (result) {
         const objScan = JSON.parse(result)
         if (objScan.idEmpleado) {
-          setEmpleado(objScan)
+          getEmpleado(objScan.idEmpleado).then((res) => {
+            console.log(res)
+            setEmpleado(res)
+          })
           scanEmpleadoInputRef.current?.blur()
         }
       }
@@ -176,17 +179,17 @@ const PaginaProduccion = () => {
 
   return (
     <>
-      <div className="flex w-full h-full relative pl-18 bg-slate-100">
-        <div id="tbl-page" ref={pageRef} className="flex flex-col h-full w-full absolute p-4 overflow-hidden">
+      <div className="relative flex w-full h-full pl-18 bg-slate-100">
+        <div id="tbl-page" ref={pageRef} className="absolute flex flex-col w-full h-full p-4 overflow-hidden">
           <div className="flex flex-col h-full">
             {/* Header */}
-            <div className="flex flex-row w-full items-center justify-between pr-1 pb-4">
-              <h1 className="font-bold text-2xl  pl-3 text-teal-700">Captura de Producción</h1>
+            <div className="flex flex-row items-center justify-between w-full pb-4 pr-1">
+              <h1 className="pl-3 text-2xl font-bold text-teal-700">Captura de Producción</h1>
               <button
                 onClick={handleCapturar}
                 disabled={loading || empleado === null || etiquetasList.length === 0 || turno === null || maquina === 0}
                 type="button"
-                className="normal-button h-10 rounded-md flex total-center">
+                className="flex h-10 rounded-md normal-button total-center">
                 {
                   loading ?
                     <p className="px-6">
@@ -202,14 +205,14 @@ const PaginaProduccion = () => {
               </button>
             </div>
 
-            <div className="h-full flex flex-col overflow-hidden bg-slate-100">
+            <div className="flex flex-col h-full overflow-hidden bg-slate-100">
               <div className="w-full h-full">
                 <div className="flex w-full h-full">
                   {/* Datos del Empleado  */}
                   <div className="w-2/4 relative pr-1.5 pb-1.5 rounded-lg">
-                    <div className="  flex flex-col w-full h-full relative bg-white rounded-lg shadow-md">
+                    <div className="relative flex flex-col w-full h-full bg-white rounded-lg shadow-md ">
                       {/*  Card Header */}
-                      <div className="w-full p-2 flex items-center justify-between">
+                      <div className="flex items-center justify-between w-full p-2">
                         {
                           // Escanear Gafete
                           empleado === null ?
@@ -227,7 +230,7 @@ const PaginaProduccion = () => {
                               {/* Invisible Input */}
                               <input
                                 ref={scanEmpleadoInputRef}
-                                className="visible opacity-0 h-0 w-0"
+                                className="visible w-0 h-0 opacity-0"
                                 type="text"
                                 autoFocus={true}
                                 onBlur={e => setScaningEmpleado(false)}
@@ -246,9 +249,9 @@ const PaginaProduccion = () => {
                                   setEmpleado(null);
                                   setEtiquetasList([])
                                 }}
-                                className="h-10 px-2 flex neutral-button rounded-md ">
+                                className="flex h-10 px-2 rounded-md neutral-button ">
                                 <ICONS.Left size="21px" />
-                                <p className="font-bold  px-2">
+                                <p className="px-2 font-bold">
                                   Cambiar Gafete
                                 </p>
                               </button>
@@ -260,7 +263,7 @@ const PaginaProduccion = () => {
                           <>
                             {/* Selector de Empleado */}
 
-                            <div className=" w-full h-full px-2 rounded-b-md total-center bg-gray-100">
+                            <div className="w-full h-full px-2 bg-gray-100 rounded-b-md total-center">
                               <p className="italic font-semibold text-gray-600">
                                 Aún no has escaneado tu gafete...
                               </p>
@@ -274,12 +277,17 @@ const PaginaProduccion = () => {
                               {/* Datos del Empleado */}
                               <div className="flex flex-col">
                                 <div className="flex py-2">
-                                  <div className="pl-6 pr-4">
-                                    <div className="foto relative">
-                                      <img className="foto" src={API_URL + empleado.fotografia} alt="" />
-                                    </div>
+                                  <div className="pl-6 pr-4 total-center">
+                                    {
+                                      empleado.fotografia !== "" ?
+                                        <div className="relative foto">
+                                          <img className="foto" src={empleado.fotografia} alt="" />
+                                        </div> : 
+                                        <ICONS.Person size="30px" className="text-gray-400 foto" />
+                                    }
+
                                   </div>
-                                  <div className="flex flex-col border-t border-b flex-1 p-2 mr-1">
+                                  <div className="flex flex-col flex-1 p-2 mr-1 border-t border-b">
                                     <p className="text-lg italic font-semibold text-gray-800">
                                       {empleado.nombre + " "}
                                       {empleado.apellidos}
@@ -287,7 +295,7 @@ const PaginaProduccion = () => {
                                     <p className="text-base italic text-gray-800">{empleado.departamento}</p>
                                   </div>
                                 </div>
-                                <div className="flex flex-col px-4 w-full my-4 bottom-7">
+                                <div className="flex flex-col w-full px-4 my-4 bottom-7">
                                   <div className="flex flex-row justify-between">
                                     <div className="flex w-full">
                                       {showMaquina &&
@@ -296,7 +304,7 @@ const PaginaProduccion = () => {
                                           label="Maquina"
                                           options={optsMaquinas}
                                           value={maquina}
-                                          onChange={(e) => {setMaquina(e.value); setMaquinalbl(e.label);}}
+                                          onChange={(e) => { setMaquina(e.value); setMaquinalbl(e.label); }}
                                         />
                                       }
                                     </div>
@@ -324,7 +332,7 @@ const PaginaProduccion = () => {
                   <div className="w-full h-full relative pr-1.5 pb-1.5">
                     <div className="flex flex-col w-full h-full bg-white rounded-lg shadow-md">
                       {/* Card Header */}
-                      <div className="w-full p-2 flex items-center  ">
+                      <div className="flex items-center w-full p-2 ">
                         <button
                           type="button"
                           disabled={empleado === null || scaningProduccion || maquina === 0}
@@ -338,7 +346,7 @@ const PaginaProduccion = () => {
                         {/* Invisible Input */}
                         <input
                           ref={scanProduccionInputRef}
-                          className="visible opacity-0 h-0 w-0"
+                          className="visible w-0 h-0 opacity-0"
                           type="text"
                           autoFocus={true}
                           onBlur={e => setScaningProduccion(false)}
@@ -351,9 +359,9 @@ const PaginaProduccion = () => {
                         />
 
                       </div>
-                      <div className="w-full h-full relative">
-                        <div className="w-full h-full absolute flex-col overflow-y-scroll">
-                          <div className="flex pt-2 px-4">
+                      <div className="relative w-full h-full">
+                        <div className="absolute flex-col w-full h-full overflow-y-scroll">
+                          <div className="flex px-4 pt-2">
                             <table className="customTable">
                               <thead>
                                 <tr className="h-8">
@@ -369,7 +377,7 @@ const PaginaProduccion = () => {
                                       <button
                                         onClick={e => setEtiquetasList(prev => prev.filter((etiqueta, index) => index !== i))}
                                         type="button"
-                                        className="hover:bg-rose-400 hover:text-white duration-200 h-7 w-7 total-center rounded-md"><ICONS.Trash size="16px" /></button>
+                                        className="duration-200 rounded-md hover:bg-rose-400 hover:text-white h-7 w-7 total-center"><ICONS.Trash size="16px" /></button>
                                     </td>
                                   </tr>)
                                 }
@@ -387,7 +395,7 @@ const PaginaProduccion = () => {
         </div>
       </div>
       {/*  Contenedor de Modales */}
-      <div className='modal absolute z-50 h-full w-full' ref={modalContainerRef}>
+      <div className='absolute z-50 w-full h-full modal' ref={modalContainerRef}>
         {
           responseModalVisible &&
           <ResponseModal
