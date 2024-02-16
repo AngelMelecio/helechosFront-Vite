@@ -50,7 +50,8 @@ const DetailMaterial = () => {
     { value: 'Melting', label: 'Melting' },
     { value: 'Lurex', label: 'Lurex' },
     { value: 'Goma', label: 'Goma' },
-    { value: 'Licra desnuda', label: 'Licra desnuda' }
+    { value: 'Licra desnuda', label: 'Licra desnuda' },
+    { value: 'Division', label: 'Division' },
   ]
 
   const optionsCalibre = [
@@ -124,21 +125,21 @@ const DetailMaterial = () => {
 
   return (
     <>
-      <div className="w-full relative overflow-hidden">
-        <div id="tbl-page" className="flex flex-col h-full w-full bg-slate-100 absolute p-4">
-          <div className="flex pb-4 justify-between">
+      <div className="relative w-full overflow-hidden">
+        <div id="tbl-page" className="absolute flex flex-col w-full h-full p-4 bg-slate-100">
+          <div className="flex justify-between pb-4">
             <div className="flex items-center">
               <button
                 onClick={() => navigate(-1)}
-                className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
-              <p className="font-bold text-2xl pl-3 text-teal-700">
+                className="w-10 h-10 rounded-full neutral-button"> <ICONS.Left size="30px" /> </button>
+              <p className="pl-3 text-2xl font-bold text-teal-700">
                 {isEdit ? `Detalles del material` : "Nuevo material"}
               </p>
             </div>
    
               <input
                 disabled={loading || !theresChanges}
-                className='bg-teal-500 p-1 w-40 text-white normal-button  rounded-lg'
+                className='w-40 p-1 text-white bg-teal-500 rounded-lg normal-button'
                 type="submit"
                 value={isEdit ? "Guardar" : "Agregar"}
                 form="frmMateriales"
@@ -146,23 +147,23 @@ const DetailMaterial = () => {
          
 
           </div>
-          <div className="flex flex-col bg-white h-full rounded-t-lg relative shadow-lg">
-            <div className='w-full flex h-full flex-col '>
+          <div className="relative flex flex-col h-full bg-white rounded-t-lg shadow-lg">
+            <div className='flex flex-col w-full h-full '>
               <div className="flex w-full h-full ">
                 {formik?.values === null ? <Loader /> :
                   <form
                     id='frmMateriales'
-                    className='flex flex-col h-full w-full relative overflow-y-scroll'
+                    className='relative flex flex-col w-full h-full overflow-y-scroll'
                     onSubmit={formik.handleSubmit}>
-                    <div className="absolute w-full flex flex-col  px-4">
+                    <div className="absolute flex flex-col w-full px-4">
                       <div className='flex flex-row w-full h-full p-2 total-center'>
-                        <div className="flex relative w-full items-center justify-center text-center">
+                        <div className="relative flex items-center justify-center w-full text-center">
                           <ICONS.Thread className='' size='100px' style={{ color: '#0f766e' }} />
                         </div>
                       </div>
-                      <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
+                      <div className="relative px-2 py-4 mx-2 my-4 border-2 border-slate-300">
                         <div className="absolute w-full total-center -top-3">
-                          <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
+                          <div className='px-3 text-base italic font-bold text-teal-700 bg-white' >
                             Datos del material
                           </div>
                         </div>
@@ -208,7 +209,7 @@ const DetailMaterial = () => {
                         <div className='flex flex-row'>
                           <div className="flex flex-col w-full mx-2 mt-2">
                             <p className={'font-medium text-teal-700'}>Código de color</p>
-                            <div className="relative flex flex-row border p-1 justify-between">
+                            <div className="relative flex flex-row justify-between p-1 border">
                               <div>{sketchPickerColor}</div>
                               <div
                                 style={{

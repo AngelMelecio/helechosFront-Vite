@@ -8,7 +8,6 @@ import { usePedidos } from "./hooks/usePedidos";
 import { useAuth } from "../../context/AuthContext";
 import { WS_PREFIX } from "../../constants/HOSTS";
 import { Chart } from "react-google-charts";
-import chroma from 'chroma-js';
 import EtiquetasModal from "../../components/LabelModal";
 import { sleep } from '../../constants/functions';
 import useWebSocket from "../../components/useWebSockets";
@@ -19,7 +18,6 @@ import { DPTO_COLOR } from "../../constants/Despartamentos";
 import ScanModal from "../Produccion/components/ScanModal";
 import Modal from "../../components/Modal";
 import ReposicionesCrud from "./components/ReposicionesCrud";
-import { GiConsoleController } from "react-icons/gi";
 import PesosModal from "./components/PesosModal";
 import HButton from "./components/HButton";
 
@@ -58,7 +56,6 @@ const DetailPedido = () => {
 
   const onMountComponent = async () => {
     let p = await findPedido(id)
-    console.log(p)
     setPedido(p)
   }
 

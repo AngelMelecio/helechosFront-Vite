@@ -14,7 +14,7 @@ const ReporteEmpleadoModelo = ({ solicitud }) => {
     const [consolidatedData, setConsolidatedData] = useState([]);
     const [modelosTotales, setModelosTotales] = useState([]);
     const [widthChart2, setWidthChart2] = useState(1600)
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false) 
 
     useEffect(() => {
         if (solicitud) {
@@ -69,7 +69,7 @@ const ReporteEmpleadoModelo = ({ solicitud }) => {
             modelos.forEach(modeloName => {
                 const modelo = empleado.modelos.find(m => m.modelo === modeloName);
                 if (modelo) {
-                    row.push(modelo.ordinario + modelo.reposicion + modelo.extra - modelo.falla);
+                    row.push(((modelo.ordinario + modelo.reposicion + modelo.extra) - modelo.falla));
                 } else {
                     row.push(0);
                 }
@@ -144,7 +144,7 @@ const ReporteEmpleadoModelo = ({ solicitud }) => {
 
                                             {
 
-                                                readyToRender ?
+                                                readyToRender && consolidatedData ?
                                                     modelosTotales.totales.length > 0 &&
                                                     <div className="justify-start w-full h-full">
                                                         {
@@ -213,7 +213,7 @@ const ReporteEmpleadoModelo = ({ solicitud }) => {
                                                             <div className="relative h-full overflow-x-scroll overflow-y-hidden">
                                                                 <div className="absolute h-full ">
                                                                     <div
-                                                                        style={{ width: widthChart2 }}
+                                                                        style={{ width: widthChart2 > 0 ? widthChart2 : 1600}}
                                                                         className="flex w-full h-full ">
                                                                         {/* Concentrado */}
                                                                         <Chart
@@ -222,7 +222,7 @@ const ReporteEmpleadoModelo = ({ solicitud }) => {
                                                                             height="100%"
                                                                             data={consolidatedData}
                                                                             options={{
-                                                                                colors: chroma.scale(['#23aa8f', '#fafa6e']).colors(modelosTotales.totales.length)
+                                                                                colors: chroma.scale(['#23aa8f', '#8fd27f']).colors(modelosTotales.totales.length)
                                                                             }}
                                                                         />
 

@@ -127,10 +127,24 @@ const CRUD = ({
         {
           columns.map((c, i) => {
             let value
-            if (c.type && c.type === 'dateTime' && element[c.attribute]!==null) 
-              value = new Date(element[c.attribute]).toLocaleString()
-            else if (c.type && c.type === 'date' && element[c.attribute]!==null) 
-              value = new Date(element[c.attribute]).toLocaleDateString()
+            if (c.type && c.type === 'dateTime' && element[c.attribute] !== null)
+              
+              value = new Intl.DateTimeFormat('es-ES', {
+                dateStyle: 'medium',
+                hourCycle:'h12',
+                timeStyle: 'medium', 
+                timeZone: 'America/Mexico_City'
+
+              }).format(new Date(element[c.attribute]));
+
+            else if (c.type && c.type === 'date' && element[c.attribute] !== null) {
+
+              value = new Intl.DateTimeFormat('es-ES', {
+                dateStyle: 'medium',
+                timeZone: 'UTC' 
+              }).format(new Date(element[c.attribute]));
+            }
+
             else
               value = typeof c.attribute === 'function' ? c.attribute(element) : get(element, c.attribute) + '';
             let isBool = (value == 'true' || value == 'false' || value == '' || value == 'null')
@@ -180,19 +194,19 @@ const CRUD = ({
   const navigate = useNavigate();
 
   return (
-    <div className="flex w-full h-full relative pl-18 bg-slate-100">
-      <div id="tbl-page" className="flex flex-col h-full w-full absolute p-4 overflow-hidden">
+    <div className="relative flex w-full h-full pl-18 bg-slate-100">
+      <div id="tbl-page" className="absolute flex flex-col w-full h-full p-4 overflow-hidden">
         <div className="flex flex-col h-full">
-          <h1 className="font-bold text-2xl pb-4 pl-3 text-teal-700">{title}</h1>
-          <div className="h-full flex flex-col shadow-lg overflow-hidden bg-white">
-            <div className="flex flex-col py-4 px-5 rounded-t-lg" >
-              <div className="flex w-full justify-between">
+          <h1 className="pb-4 pl-3 text-2xl font-bold text-teal-700">{title}</h1>
+          <div className="flex flex-col h-full overflow-hidden bg-white shadow-lg">
+            <div className="flex flex-col px-5 py-4 rounded-t-lg" >
+              <div className="flex justify-between w-full">
                 <div
                   className="flex flex-row"
                   id="butons">
                   <button
                     onClick={() => navigate(`/${path}/0`)}
-                    className='bg-teal-500 text-white w-8 h-8 total-center normal-button rounded-lg'>
+                    className='w-8 h-8 text-white bg-teal-500 rounded-lg total-center normal-button'>
                     <ICONS.Plus size='16px' />
                   </button>
                   {onPrint &&
@@ -212,10 +226,10 @@ const CRUD = ({
                 {/* Search Bar */}
                 <div
                   id="searchbar"
-                  className="flex relative w-80 items-center">
+                  className="relative flex items-center w-80">
                   <input
                     id='search-input'
-                    className='w-full h-full pr-10 rounded-2xl py-1 pl-3 outline-none bg-slate-100'
+                    className='w-full h-full py-1 pl-3 pr-10 outline-none rounded-2xl bg-slate-100'
                     ref={searchRef}
                     onChange={(e) => {
                       setSearchText(e.target.value)
@@ -226,7 +240,7 @@ const CRUD = ({
                   />
                   <button
                     onClick={handleSearchButtonClick}
-                    className='h-6 w-6 absolute right-1 total-center opacity-white rounded-2xl'>
+                    className='absolute w-6 h-6 right-1 total-center opacity-white rounded-2xl'>
                     {
                       searchText.length > 0 ?
                         <ICONS.Cancel size='18px' style={{ color: '#4b5563' }} /> :
@@ -238,17 +252,17 @@ const CRUD = ({
             </div>
             <div
               id="table-container"
-              className=" flex w-full h-full relative bg-gray-50 overflow-x-scroll">
+              className="relative flex w-full h-full overflow-x-scroll bg-gray-50">
               {loading ?
-                <div className="absolute w-full p-10 flex justify-center">
+                <div className="absolute flex justify-center w-full p-10">
                   <Loader />
                 </div> :
                 <div className="w-full">
                   {
-                    <table className="customTable clic-row bg-white  w-full">
+                    <table className="w-full bg-white customTable clic-row">
                       <thead className='text-center'>
                         <tr>
-                          <th className="px-7 w-10">
+                          <th className="w-10 px-7">
                             <div className="inp-container">
                               <input
                                 onChange={(e) => handleSelectAll(e)}
@@ -261,11 +275,11 @@ const CRUD = ({
                           {
                             columns.map((c, i) =>
                               <th className='p-2 font-medium text-teal-700' key={"C" + i} >
-                                {<div className="flex flex-row relative total-center text-center">
+                                {<div className="relative flex flex-row text-center total-center">
                                   <p className="px-6">{c.name} </p>
                                   <button
                                     onClick={() => onSortCriteriaChange(c.attribute)}
-                                    className="absolute right-0 h-6 w-6 total-center">
+                                    className="absolute right-0 w-6 h-6 total-center">
                                     <ThIcon attribute={c.attribute} />
                                   </button>
                                 </div>}

@@ -15,6 +15,7 @@ const API_REPOSICION_URL = "api/reposicion/"
 const API_PRODUCCION_MODELO_EMPLEADO_ALL = "api/produccion_por_modelo_y_empleado/"
 const API_PRODUCCION_MAQUINA_TURNO_ALL = "api/produccion_por_maquina_y_turno/"
 const API_PRODUCCION_POST_REPOSICION_OR_EXTRA = "api/produccionReposicionExtra/"
+const API_MATERIALES_BY_PEDIDO = "api/materiales_by_pedido/"
 
 const PedidosContext = React.createContext('PedidosContext')
 
@@ -26,16 +27,15 @@ function formatReposiciones(reposiciones) {
     return reposiciones.map((rp, indx) => ({
         ...rp,
         indx: indx + 1,
-        empleadoFalla: rp.empleadoFalla!==null?rp.empleadoFalla.nombre + " " + rp.empleadoFalla.apellidos + " - " + rp.empleadoFalla.departamento : "---",
+        empleadoFalla: rp.empleadoFalla !== null ? rp.empleadoFalla.nombre + " " + rp.empleadoFalla.apellidos + " - " + rp.empleadoFalla.departamento : "---",
         empleadoReponedor: rp.empleadoReponedor.nombre + " " + rp.empleadoReponedor.apellidos + " - " + rp.empleadoReponedor.departamento,
-        maquina: rp.maquina!==null? "L" + rp.maquina.linea+" - " +"M" + rp.maquina.numero :"---",
+        maquina: rp.maquina !== null ? "L" + rp.maquina.linea + " - " + "M" + rp.maquina.numero : "---",
         fecha: new Date(rp.fecha).toLocaleString()
     }))
 }
 
 function formatPedidos(pedidos) {
     let formatData = pedidos.map((pedido) => {
-        let fch = pedido.fechaEntrega.split('-')
         return ({
             ...pedido,
             detalles: [...pedido.detalles.map((detalle) => ({
@@ -53,8 +53,17 @@ function formatPedidos(pedidos) {
 
                 }))]
             }))],
-            fechaRegistro: new Date(pedido.fechaRegistro).toLocaleString(),
-            fechaEntrega: new Date(fch[0], fch[1], fch[2]).toLocaleDateString()
+            fechaRegistro: new Intl.DateTimeFormat('es-ES', {
+                dateStyle: 'full',
+                hourCycle: 'h12',
+                timeStyle: 'short',
+                timeZone: 'America/Mexico_City'
+
+            }).format(new Date(pedido.fechaRegistro)),
+            fechaEntrega: new Intl.DateTimeFormat('es-ES', {
+                dateStyle: 'medium',
+                timeZone: 'UTC'
+            }).format(new Date(pedido.fechaEntrega))
         })
     }
     )
@@ -66,8 +75,8 @@ function formatPedidosListar(pedidos) {
         let fch = p.fechaEntrega.split('-')
         return ({
             ...p,
-            fechaRegistro: new Date(p.fechaRegistro),
-            fechaEntrega: new Date(fch[0], fch[1], fch[2]),
+            //fechaRegistro: new Date(p.fechaRegistro),
+            //fechaEntrega: new Date(fch[0], fch[1], fch[2]),
             isSelected: false
         })
     })
@@ -78,7 +87,7 @@ function formatFichas(fichas) {
         ...ficha,
         fechaCreacion: new Date(ficha.fechaCreacion).toLocaleString(),
         fechaUltimaEdicion: new Date(ficha.fechaUltimaEdicion).toLocaleString(),
-        fotografia: `${API_URL}/${ficha.fotografia}`
+        fotografia: `${API_URL}${ficha.fotografia}`
     }))
     return formatedFichas
 }
@@ -153,7 +162,7 @@ export function PedidosProvider({ children }) {
                 'Authorization': 'Bearer ' + session.access
             },
         }
-        const response = await fetchAPI(API_PRODUCCION_MODELO_EMPLEADO_ALL+fechaInicio+"/"+fechaFin+"/"+departamento, options)
+        const response = await fetchAPI(API_PRODUCCION_MODELO_EMPLEADO_ALL + fechaInicio + "/" + fechaFin + "/" + departamento, options)
         return response
     }
 
@@ -168,10 +177,10 @@ export function PedidosProvider({ children }) {
                 'Authorization': 'Bearer ' + session.access
             },
         }
-        const response = await fetchAPI(API_PRODUCCION_MAQUINA_TURNO_ALL+fechaInicio+"/"+fechaFin+"/"+departamento, options)
+        const response = await fetchAPI(API_PRODUCCION_MAQUINA_TURNO_ALL + fechaInicio + "/" + fechaFin + "/" + departamento, options)
         return response
     }
-    
+
     async function putProduccion(listIds) {
 
         let options = {
@@ -194,6 +203,20 @@ export function PedidosProvider({ children }) {
         }
         const fichas = await fetchAPI(API_FICHAS_BY_MODELO + idModelo, options)
         return formatFichas(fichas)
+    }
+
+    async function getMaterialesByPedido(idPedido) {
+        let options = {
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + session.access }
+        }
+        try {
+            const materiales = await fetchAPI(API_MATERIALES_BY_PEDIDO + idPedido, options)
+            return materiales
+        } catch (err) {
+            console.log(err)
+            return []
+        }
     }
 
     async function getRegistrosByIdProduccion(idProduccion) {
@@ -250,7 +273,7 @@ export function PedidosProvider({ children }) {
             body: JSON.stringify(values)
         }
         const response = await fetchAPI(API_PRODUCCION_POST_REPOSICION_OR_EXTRA, options)
-        return ({message: response.message})
+        return ({ message: response.message })
     }
 
     async function getReposiciones(idProduccion) {
@@ -284,7 +307,8 @@ export function PedidosProvider({ children }) {
                 getReposiciones,
                 produccion_por_modelo_y_empleado,
                 produccion_por_maquina_y_turno,
-                saveReposicionOrExtra
+                saveReposicionOrExtra,
+                getMaterialesByPedido
             }}
         >
             {children}

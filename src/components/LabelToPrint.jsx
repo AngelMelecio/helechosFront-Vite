@@ -18,7 +18,6 @@ const LabelToPrint = ({ list, onCloseModal }) => {
   const [qrUrls, setQrUrls] = useState([]);
 
   useEffect(() => {
-    console.log(list)
     const generateQrUrls = async () => {
       const urls = await Promise.all(list.map((obj) => GenerateQrUrl(obj)));
       setQrUrls(urls);
@@ -29,7 +28,6 @@ const LabelToPrint = ({ list, onCloseModal }) => {
 
   const GenerateQrUrl = async (data) => {
     const jsonString = JSON.stringify(data);
-    console.log(jsonString)
     return await QRCode.toDataURL(jsonString)
   }
 
