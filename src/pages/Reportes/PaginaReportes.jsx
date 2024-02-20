@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Input from "../../components/Input";
 import { useFormik } from "formik";
 import CustomSelect from "../../components/CustomSelect";
 import { usePedidos } from "../Pedidos/hooks/usePedidos";
 import ReporteEmpleadoModelo from "./ReporteEmpleadoModelo";
 import ReporteMaquinaTurno from "./ReporteMaquinaTurno";
-
+import AbsScroll from "../../components/AbsScroll"
 
 const PaginaReportes = () => {
     {/* States and Effects */ }
+
+    const screenRef = useRef()
 
     const [solicitud, setSolicitud] = useState(null)
     const [renderTurno, setRenderTurno] = useState(false)
@@ -74,17 +76,22 @@ const PaginaReportes = () => {
         }
         return errors;
     };
+
     const formik = useFormik({
         initialValues: initobj,
         validate,
-        onSubmit: (values) => setSolicitud(values),
+        onSubmit: (values) => {
+            console.log(values)
+            setSolicitud(values)
+        },
     });
 
     return (
         <>
-            <div className="relative flex w-full h-full pl-18 bg-slate-100">
-                <div id="tbl-page" className="absolute flex flex-col w-full h-full p-4 overflow-hidden">
-                    <div className="flex flex-col h-full">
+            <div ref={screenRef} className="relative flex w-full h-full pl-18 bg-slate-100">
+                <AbsScroll vertical >
+                    <div id="tbl-page" className="flex flex-col w-full h-full p-4 ">
+
                         {/* Titulo de la pagina */}
                         <div className="flex flex-row justify-between w-full pr-1">
                             <h1 className="pb-4 pl-3 text-2xl font-bold text-teal-700">Reportes de producción</h1>
@@ -95,8 +102,9 @@ const PaginaReportes = () => {
                                 value="Generar"
                                 className="h-8 px-6 rounded-md normal-button " />
                         </div>
+
                         {/* Formulario */}
-                        <div className="flex flex-col w-full bg-white rounded-lg shadow-lg mb-2 mr-1.5">
+                        <div className="flex flex-col w-full bg-white rounded-lg shadow-md mb-2 mr-1.5">
                             <form
                                 id='frmReportes'
                                 className="flex flex-col p-4"
@@ -141,19 +149,27 @@ const PaginaReportes = () => {
                                 </div>
                             </form>
                         </div>
-                        {/* Graficas */}
-                        {
-                            renderModelo &&
-                            <ReporteEmpleadoModelo solicitud={solicitud}/>
+                        {solicitud &&
+                            <div
+                                className="flex flex-col"
+                                style={{ height: `${screenRef.current?.clientHeight - 16}px` }}>
+                                <h1 className="pt-4 pb-4 pl-3 text-2xl font-bold text-teal-700">Graficas</h1>
+                                {/* Graficas */}
+                                {
+                                    renderModelo &&
+                                    <ReporteEmpleadoModelo
+                                        solicitud={solicitud} />
+                                }
+                                {
+                                    renderTurno &&
+                                    <ReporteMaquinaTurno solicitud={solicitud} />
+                                }
+                            </div>
                         }
-                        {
-                            renderTurno &&
-                            <ReporteMaquinaTurno solicitud={solicitud} />
-                        }
-
                     </div>
-                </div>
+                </AbsScroll>
             </div>
+
         </>
     )
 }

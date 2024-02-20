@@ -19,7 +19,7 @@ const materialObj = {
 }
 
 const MAX_ROW = 34
-const START_JALON = 21
+const START_JALON = 16
 const START_ECON = 28
 
 const FichaTecnicaPrint = ({ data, onCloseModal }) => {
@@ -37,6 +37,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
         }
       }
     })
+    console.log(data)
     return pesoAcum
   })
 
@@ -172,24 +173,24 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
 
   return (
     <>
-      <div className='z-10 flex absolute h-full w-full grayTrans items-center justify-center '>
-        <div className='modal-box h-full w-3/4 rounded-lg pdf-gray shadow-xl'  >
-          <div className='w-full flex h-full flex-col p-1'>
-            <div className="z-10 py-2 px-4 flex w-full h-12 relative">
-              <div className="flex flex-row w-full total-center relative ">
+      <div className='absolute z-10 flex items-center justify-center w-full h-full grayTrans '>
+        <div className='w-3/4 h-full rounded-lg shadow-xl modal-box pdf-gray'  >
+          <div className='flex flex-col w-full h-full p-1'>
+            <div className="relative z-10 flex w-full h-12 px-4 py-2">
+              <div className="relative flex flex-row w-full total-center ">
                 <button
                   onClick={onCloseModal}
-                  className="absolute left-1 p-1 text-white flex items-center justify-center rounded-full hover:bg-gray-500">
+                  className="absolute flex items-center justify-center p-1 text-white rounded-full left-1 hover:bg-gray-500">
                   <ICONS.Cancel size="20px" />
                 </button>
-                <p className="font-semibold text-white text-2xl">
+                <p className="text-2xl font-semibold text-white">
                   Imprimir Fichas
                 </p>
               </div>
             </div>
             <div id="modal-body" className="flex w-full h-full ">
               <PDFViewer 
-                className="w-full z-10 h-full">
+                className="z-10 w-full h-full">
                 <Document>
                   {
                     formatData?.map((fich, i) =>

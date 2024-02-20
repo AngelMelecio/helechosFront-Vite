@@ -12,7 +12,8 @@ const AbsScroll = ({
     loading,
     children,
     onBottomReached,
-    setBottom
+    setBottom,
+    className
 }) => {
 
     const pageRef = useRef(null)
@@ -30,7 +31,7 @@ const AbsScroll = ({
     }
 
     return (
-        <div className={`w-full h-full`}>
+        <div className={`w-full h-full ${className}`}>
             <div
                 ref={pageRef}
                 onScroll={(onBottomReached || setBottom) && handleScroll}
