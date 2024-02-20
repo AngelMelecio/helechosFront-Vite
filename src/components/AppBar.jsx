@@ -20,7 +20,7 @@ const AppBar = () => {
         <p className='w-14 total-center'>
           {Icon && <Icon size='18px' />}
         </p>
-        <p className='absolute ml-14 appbar-content whitespace-nowrap align-center flex'>
+        <p className='absolute flex ml-14 appbar-content whitespace-nowrap align-center'>
           {content}
         </p>
       </Link>
@@ -69,17 +69,17 @@ const AppBar = () => {
 
   return (
     <>
-      <div id="appbar-container" className={`z-20 flex relative w-20 h-full`} >
-        <div id='appbar' className='w-full h-full overflow-y-scroll overflow-x-hidden absolute ease-in-out bg-teal-600'>
+      <div id="appbar-container" className={`z-50 flex relative w-20 h-full`} >
+        <div id='appbar' className='absolute w-full h-full overflow-x-hidden overflow-y-scroll ease-in-out bg-teal-600'>
           <div className='absolute flex flex-col justify-center w-full h-full'>
-            <div className="appbar-content flex w-full justify-center mt-5 ">
+            <div className="flex justify-center w-full mt-5 appbar-content ">
               <img className="w-24 h-24" src={helechos} alt="" />
             </div>
             <div id="tabs" className="mt-10">
               <Tab to={'/perfil'} content={'Perfil'} Icon={ICONS.Profile} />
               {getTabsForRole(session.usuario.rol)}
             </div>
-            <div className='flex h-full items-end w-full pb-10'>
+            <div className='flex items-end w-full h-full pb-10'>
               <Tab
                 onClick={Logout}
                 to={'/login'}

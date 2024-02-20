@@ -1,7 +1,6 @@
 import React from 'react';
 import Select from 'react-select';
 import Loader from './Loader/Loader';
-import { without } from 'lodash';
 
 const CustomSelect = ({ name, className, onChange, value, onBlur, options, label, readOnly, errores, loading, withoutMargin }) => {
 
@@ -16,7 +15,7 @@ const CustomSelect = ({ name, className, onChange, value, onBlur, options, label
       //color: state.isSelected ? "#fff" : "#000",
       backgroundColor: state.isSelected ? "#e5e7eb" : "#fff",
       color: "#374151",
-      select: "#14B8A6"
+      select: "#14B8A6",
     }),
 
     control: (defaultStyles) => ({
@@ -25,11 +24,11 @@ const CustomSelect = ({ name, className, onChange, value, onBlur, options, label
       border: readOnly ? "#fff" : "#14B8A6",
       boxShadow: "#14B8A6",
     }),
-    singleValue: (defaultStyles) => ({ ...defaultStyles, color: "#374151" }),
+    singleValue: (defaultStyles) => ({ ...defaultStyles,  color: "#374151" }),
   };
 
   return (
-    <div className={`flex flex-col w-full mt-2 ${withoutMargin ? '' : 'mx-2'}`}>
+    <div className={`z-20 flex flex-col w-full mt-2 ${withoutMargin ? '' : 'mx-2'}`}>
       <p className='text-sm font-medium text-teal-700'>{label}</p>
       <div className={(errores ? cn_bad : cn_good) + ' bg-gray-100'}>
         {

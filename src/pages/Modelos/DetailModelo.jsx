@@ -188,6 +188,7 @@ const DetailModelo = () => {
           </div>
         </div>
       </div>
+      
       {/**
        * MODALES
        */}
