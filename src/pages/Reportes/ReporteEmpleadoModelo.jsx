@@ -138,7 +138,7 @@ const ReporteEmpleadoModelo = ({ solicitud }) => {
           <div className="relative z-10 flex flex-col w-full h-full bg-white rounded-lg shadow-md appear">
             {readyToRender && modelosTotales.totales.length > 0 && <>
               <div className="flex flex-col py-6 total-center">
-                <p className="text-xl font-bold text-teal-700"> {modelosTotales.total}</p>
+                <p className="text-xl font-bold text-teal-800/80"> {modelosTotales.total}</p>
                 <p className="text-gray-500">pares totales</p >
               </div>
               <AbsScroll vertical>
@@ -149,7 +149,7 @@ const ReporteEmpleadoModelo = ({ solicitud }) => {
                       {modelosTotales.totales.map((modelo, index) => (
                         <div className="flex items-center justify-between w-full py-1 border-b-2" key={index}>
                           <p className="px-2 font-normal text-gray-600 text-md">{modelo.modelo}</p>
-                          <p className="px-2 font-bold text-teal-700 text-md">{modelo.total}</p>
+                          <p className="px-2 font-bold text-teal-800/80 text-md">{modelo.total}</p>
                         </div>
                       ))}
                     </div> :
@@ -163,9 +163,7 @@ const ReporteEmpleadoModelo = ({ solicitud }) => {
           </div>
 
           {/*  Reportes y graficas  */}
-          <div ref={chartView} 
-          //style={{ paddingRight: scroll ? '0px' : '20px' }}
-          className="relative flex flex-grow h-full bg-slate-200">
+          <div ref={chartView}  className="relative flex flex-grow h-full bg-slate-200">
             <AbsScroll vertical>
               {transformedData.length > 0 ?
                 <>
@@ -183,7 +181,7 @@ const ReporteEmpleadoModelo = ({ solicitud }) => {
                               }}
                               className={`flex flex-col bg-white shadow-md rounded-md p-4`} key={'DE_' + index}
                             >
-                              <p className="px-2 pb-4 font-semibold text-teal-700 text-md">{dataEmpleado.empleado}</p>
+                              <p className="px-2 pb-4 font-semibold text-teal-800/80 text-md">{dataEmpleado.empleado}</p>
                               <Chart
                                 loader={<Loader />}
                                 key={'CE_' + index}

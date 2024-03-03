@@ -51,37 +51,37 @@ const Slider = ({
 
   let someSelected = data.some(d => d.isSelected)
   return (
-    <div className="w-full h-full relative">
-      <div className="w-full h-full flex absolute">
+    <div className="relative w-full h-full">
+      <div className="absolute flex w-full h-full">
 
         {/*  Left Side  */}
         <div className={(leftShow ? "w-full " : "w-10 ") + " bg-slate-100 pt-1 h-full flex duration-500"}>
           <div className={"flex h-full w-full relative "}>
 
             {/*  Search & Table  */}
-            <div ref={leftRef} className="h-full w-full modal">
-              {leftShow && <div className=" h-full flex flex-col">
+            <div ref={leftRef} className="w-full h-full modal">
+              {leftShow && <div className="flex flex-col h-full ">
 
                 {/*  Slide Header  */}
-                <div className="h-10 w-full mb-2 pt-1 flex px-10 flex-row ">
+                <div className="flex flex-row w-full h-10 px-10 pt-1 mb-2 ">
 
                   {/*  Search Bar  */}
-                  <div className="flex-grow flex items-center h-full bg-white shadow-sm relative rounded-full">
+                  <div className="relative flex items-center flex-grow h-full bg-white rounded-full shadow-sm">
                     <input
                       ref={searchRef}
                       value={search}
                       onChange={e => { setSearch(e.target.value); unSelectAll() }}
-                      className="w-full h-full pl-2 pr-10 outline-none absolute bg-transparent" type="text" />
+                      className="absolute w-full h-full pl-2 pr-10 bg-transparent outline-none" type="text" />
                     <button
                       type="button"
                       onClick={() => search.length > 0 ? setSearch("") : searchRef?.current?.focus()}
-                      className="absolute total-center h-6 w-6 neutral-button right-2 rounded-full">
+                      className="absolute w-6 h-6 rounded-full total-center neutral-button right-2">
                       {search.length > 0 ? <ICONS.Cancel /> : <ICONS.Lupa />}
                     </button>
                   </div>
 
                   {/*  Pass Button  */}
-                  <div className="absolute w-10 h-10 p-1 top-0 right-0">
+                  <div className="absolute top-0 right-0 w-10 h-10 p-1">
                     <button
                       disabled={!someSelected}
                       onClick={() => { onPass(data.filter(d => d.isSelected).map(d => d[unique])); closeSlider() }}
@@ -94,17 +94,19 @@ const Slider = ({
                 </div>
 
                 {/*  TABLE  */}
-                <div className="w-full h-full relative overflow-scroll bg-white shadow-md">
+                <div className="relative w-full h-full overflow-scroll bg-white shadow-md">
                   {data.length > 0 && <table className="absolute w-full bg-white customTable">
                     <thead>
                       <tr className="h-8 shadow-sm">
-                        <th className="px-2 sticky top-0 z-10 bg-white">
-                          <input onChange={handleCheckAll} checked={someSelected} type="checkbox" /></th>
-
+                        <th className="sticky top-0 z-10 px-2 bg-white">
+                          <div className="h-full total-center">
+                            <input onChange={handleCheckAll} checked={someSelected} type="checkbox" />
+                          </div>
+                        </th>
                         {columns.map((column, index) => (
-                          <th className="hover-modal text-teal-700 pl-2 pr-8 whitespace-nowrap sticky top-0 z-10 bg-white" key={index}>
+                          <th className="sticky top-0 z-10 pl-2 pr-8 bg-white hover-modal text-teal-800/80 whitespace-nowrap" key={index}>
                             {column.name}
-                            <div className="absolute p-1 right-0 w-8 h-8 top-0">
+                            <div className="absolute top-0 right-0 w-8 h-8 p-1">
                               <button type="button" onClick={() => { setFilter(prev => ({ atr: column.atr, ord: (prev.atr === column.atr ? (prev.ord + 1) % 3 : 1) })) }}
                                 className={((filter.atr === column.atr && filter.ord !== 0) ? "" : "elmt ") + "h-full w-full flex items-center justify-center"} >
                                 {filter.atr === column.atr ? (filter.ord === 1 ? <ICONS.Down /> : (filter.ord === 2 ? <ICONS.Up /> : <ICONS.Filter />)) : <ICONS.Filter />}
@@ -123,10 +125,12 @@ const Slider = ({
                         .map((row, i) => (
                           <tr
                             onClick={() => handleCheck(row[unique])}
-                            className="cursor-pointer h-8 duration-200 hover:bg-gray-100"
+                            className="h-8 duration-200 cursor-pointer hover:bg-gray-100"
                             key={"R" + i}>
-                            <td className="px-2 sticky">
-                              <input readOnly checked={row?.isSelected | false} className="pointer-events-none" type="checkbox" />
+                            <td className="sticky px-2">
+                              <div className="h-full total-center">
+                                <input readOnly checked={row?.isSelected | false} className="pointer-events-none" type="checkbox" />
+                              </div>
                             </td>
                             {columns.map((column, j) => (
                               <td className="px-2 whitespace-nowrap" key={j}>{row[column.atr]}</td>
@@ -140,7 +144,7 @@ const Slider = ({
             </div>
 
             {/*  OPEN Button  */}
-            <div className="absolute w-10 h-10 p-1 top-0 left-0">
+            <div className="absolute top-0 left-0 w-10 h-10 p-1">
               <button
                 type="button"
                 onClick={leftShow ? closeSlider : openSlider}
@@ -150,7 +154,7 @@ const Slider = ({
             </div>
           </div>
         </div>
-        <div className="w-full h-full relative bg-slate-100">
+        <div className="relative w-full h-full bg-slate-100">
           {right}
         </div>
       </div>

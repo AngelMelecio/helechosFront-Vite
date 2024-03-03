@@ -8,7 +8,7 @@ import { usePedidos } from "./../hooks/usePedidos";
 
 const PesosModal = ({ idPedido }) => {
 
-    const { getMaterialesByPedido} = usePedidos()
+    const { getMaterialesByPedido } = usePedidos()
     const [data, setData] = useState([])
     const [tabs, setTabs] = useState()
     const [allPesos, setAllPesos] = useState([])
@@ -29,6 +29,7 @@ const PesosModal = ({ idPedido }) => {
 
     useEffect(() => {
         if (data) {
+            console.log(data)
             setTabs(data.map((ft, i) => ({
                 id: i + 1,
                 label: ft.fichaTecnica.nombre
@@ -72,7 +73,7 @@ const PesosModal = ({ idPedido }) => {
                     onClick={() => handleSelectTab(id)}
                     type="button"
                     className={`w-full h-full rounded-md px-4  font-semibold text-gray-500
-                        ${selectedTab === id ? "text-teal-700 bg-white shadow-md" : "hover:bg-white"}
+                        ${selectedTab === id ? "text-teal-800/80 bg-white shadow-md" : "hover:bg-white"}
                         duration-200 active:opacity-70 active:duration-0 
                         overflow-hidden text-ellipsis  whitespace-nowrap
                         //ellipsis
@@ -91,7 +92,7 @@ const PesosModal = ({ idPedido }) => {
 
 
         <div className="flex flex-col h-full">
-            <h1 className="py-2 text-xl font-bold text-center text-teal-700">
+            <h1 className="py-2 text-xl font-bold text-center text-teal-800/80">
                 Consumo de materiales
             </h1>
 
@@ -121,22 +122,22 @@ const PesosModal = ({ idPedido }) => {
                                 <div className='object-cover w-28 h-28'>
                                     <img src={
                                         //Lupa
-                                        `${API_URL}${allPesos[selectedTab-1].fichaTecnica.fotografia}`
+                                        `${API_URL}${allPesos[selectedTab - 1].fichaTecnica.fotografia}`
                                     }
                                         alt="" />
                                 </div>
                                 <div className='flex justify-around flex-grow'>
                                     <div className='flex-col total-center'>
                                         <p className='text-xl font-bold text-gray-600'>{allPesos[selectedTab - 1].cantidades.ordinario}</p>
-                                        <p className='font-semibold text-emerald-700'>Pares ordinario</p>
+                                        <p className='font-semibold text-teal-800/80'>Pares ordinario</p>
                                     </div>
                                     <div className='flex-col total-center'>
                                         <p className='text-xl font-bold text-gray-600'>{allPesos[selectedTab - 1].cantidades.reposicion}</p>
-                                        <p className='font-semibold text-emerald-700'>Pares reposicion</p>
+                                        <p className='font-semibold text-teal-800/80'>Pares reposicion</p>
                                     </div>
                                     <div className='flex-col total-center'>
                                         <p className='text-xl font-bold text-gray-600'>{allPesos[selectedTab - 1].cantidades.extra}</p>
-                                        <p className='font-semibold text-emerald-700'>Pares extra</p>
+                                        <p className='font-semibold text-teal-800/80'>Pares extra</p>
                                     </div>
                                 </div>
                             </div>

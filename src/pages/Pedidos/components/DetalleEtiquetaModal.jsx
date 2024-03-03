@@ -13,7 +13,7 @@ const DetalleEtiquetaModal = ({ onClose, etiqueta, modelo, ficha, talla }) => {
       type="button"
       onClick={props.onClick}
       className="relative px-10 duration-200 total-center hover:bg-slate-100 active:opacity-70 active:duration-0">
-      <div className={"total-center flex-1 font-semibold text-md " + (props.active ? "text-teal-700" : "text-gray-400")}>
+      <div className={"total-center flex-1 font-semibold text-md " + (props.active ? "text-teal-800/80" : "text-gray-400")}>
         {props.children}
       </div>
       <div className={(props.active ? "bg-teal-500" : "bg-gray-200") + " z-10 w-full absolute h-1 bottom-0 "}>
@@ -32,7 +32,7 @@ const DetalleEtiquetaModal = ({ onClose, etiqueta, modelo, ficha, talla }) => {
           >
             <ICONS.Cancel className='m-0' size='20px' />
           </button>
-          <div className="text-xl font-bold text-teal-700 ">
+          <div className="text-xl font-bold text-teal-800/80 ">
             Detalles de la etiqueta: {etiqueta.numEtiqueta}
           </div>
           <div className="flex items-end pb-4">

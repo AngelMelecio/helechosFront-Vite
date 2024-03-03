@@ -11,7 +11,7 @@ const ResponseModal = ({ response, onClose }) => {
           >
             <ICONS.Check className='m-0' size='18px' />
           </button>
-          <div className="text-xl font-semibold text-teal-700">
+          <div className="text-xl font-semibold text-teal-800/80">
             Resumen de la captura
           </div>
         </div>
@@ -24,14 +24,14 @@ const ResponseModal = ({ response, onClose }) => {
                 { label: 'Fecha de captura', atr: 'fecha' },
               ].map((column, index) =>
                 <tr key={"ER" + index} className={(index ? "border-t" : "") + " h-7"}>
-                  <td className="px-4 text-sm font-semibold text-teal-700"> {column.label}:</td>
+                  <td className="px-4 text-sm font-semibold text-teal-800/80"> {column.label}:</td>
                   <td className="w-full text-base text-gray-800"> {response[column.atr]} </td>
                 </tr>)}
             </tbody>
           </table>
         </div>
         <h3 className="relative mt-2 border-t-2 h-7 total-center">
-          <p className="absolute px-2 italic font-medium text-center text-teal-700 bg-white -top-4">
+          <p className="absolute px-2 italic font-medium text-center text-teal-800/80 bg-white -top-4">
             Resultados
           </p>
         </h3>

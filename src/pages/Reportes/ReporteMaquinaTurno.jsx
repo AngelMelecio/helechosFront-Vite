@@ -98,7 +98,7 @@ const ReporteMaquinaTurno = ({ solicitud }) => {
             <div className="relative z-10 flex flex-col w-full h-full bg-white rounded-lg shadow-md appear">
               {readyToRender && turnosTotales && <>
                 <div className="flex flex-col py-6 total-center">
-                  <p className="text-xl font-bold text-teal-700"> {turnosTotales?.sumaTotal}</p>
+                  <p className="text-xl font-bold text-teal-800/80"> {turnosTotales?.sumaTotal}</p>
                   <p className="text-gray-500">pares totales</p >
                 </div>
                 <AbsScroll vertical>
@@ -112,7 +112,7 @@ const ReporteMaquinaTurno = ({ solicitud }) => {
                         ].map((turno, index) => (
                           <div className="flex items-center justify-between w-full py-1 border-b-2" key={index}>
                             <p className="px-2 font-normal text-gray-600 text-md">{turno.label}</p>
-                            <p className="px-2 font-bold text-teal-700 text-md">{turnosTotales.totales[turno.atr]}</p>
+                            <p className="px-2 font-bold text-teal-800/80 text-md">{turnosTotales.totales[turno.atr]}</p>
                           </div>
                         ))}
                       </div> :

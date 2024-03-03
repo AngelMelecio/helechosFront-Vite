@@ -16,9 +16,8 @@ const ReposicionesCrud = ({ etiquetas, allDetalles, onSubmitted }) => {
     const { saveReposicionOrExtra } = usePedidos()
     const [empleadosFallasOpts, setEmpleadosFallasOpts] = useState([])
     const [maquinasOptions, setMaquinasOptions] = useState([])
-    const [etiquetasOpts, setEtiquetasOpts] = useState([{ value: 'Seleccione', label: "Seleccione" }])
+    const [etiquetasOpts, setEtiquetasOpts] = useState([])
     const turnoOptions = [
-        { value: null, label: 'Seleccione' },
         { value: 'Mañana', label: 'Mañana' },
         { value: 'Tarde', label: 'Tarde' },
     ]
@@ -46,7 +45,7 @@ const ReposicionesCrud = ({ etiquetas, allDetalles, onSubmitted }) => {
         empleadoFalla: null,
         maquina: null,
         esReposicion: false,
-        etiqueta: 'Seleccione',
+        etiqueta: null,
         turno: null,
     }
     const formik = useFormik({
@@ -94,10 +93,10 @@ const ReposicionesCrud = ({ etiquetas, allDetalles, onSubmitted }) => {
 
     // settear las opciones para etiquetas
     useEffect(() => {
-        setEtiquetasOpts([{ value: 'Seleccione', label: "Seleccione" }, ...(etiquetas.map(et => ({
+        setEtiquetasOpts(etiquetas.map(et => ({
             value: et.idProduccion,
             label: et.numEtiqueta + " - Talla: " + et.talla
-        })))])
+        })))
     }, [etiquetas])
 
 
@@ -112,7 +111,7 @@ const ReposicionesCrud = ({ etiquetas, allDetalles, onSubmitted }) => {
                 />
 
                 <div className="flex flex-col h-14 total-center">
-                    <h1 className="text-xl font-bold text-teal-700">
+                    <h1 className="text-xl font-bold text-teal-800/80">
                         {formik?.values.esReposicion ? 'Reposición' : 'Producción extra'}
                     </h1>
                 </div>

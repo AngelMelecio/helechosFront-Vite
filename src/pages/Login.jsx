@@ -6,10 +6,10 @@ import { useAuth } from '../context/AuthContext'
 
 const apiLoginUrl = "http://127.0.0.1:8000/login/"
 
-export default function Login({navigate}) {
-  
-  const{Login} = useAuth()
-  
+export default function Login({ navigate }) {
+
+  const { Login } = useAuth()
+
 
   return (
     <Formik
@@ -22,7 +22,7 @@ export default function Login({navigate}) {
             .required('Ingresa tu contraseña')
         })
       }
-      onSubmit={ (values, { setSubmitting }) => {
+      onSubmit={(values, { setSubmitting }) => {
 
         Login(values)
         setSubmitting(false)
@@ -33,42 +33,41 @@ export default function Login({navigate}) {
         }, 400);*/
       }}
     >
-      <div className='w-full h-screen flex total-center px-4 md:px-0 relative bg-login'>
+      <div className='relative flex w-full h-screen px-4 total-center md:px-0 bg-login'>
         <div className="flex relative max-w-[500px] w-full  mx-auto">
-          <div className="login-box-shadow">
-          </div>
-          <Form id='login-box' className='rounded-lg w-full p-8'>
-            <h2 className='text-2xl  text-teal-700 font-bold text-center'>Inicia Sesión</h2>
-            <div className='flex justify-center mt-4'>
-              <img className='w-32 h-32 object-cover' src={loginImg} alt="" />
+
+          <Form id='login-box' className='w-full p-8 rounded-lg shadow-lg emerge'>
+            <h2 className='text-xl font-bold tracking-wider text-center text-gray-600 '>INICIA SESIÓN</h2>
+            <div className='flex justify-center py-4'>
+              <img src={loginImg} alt='logo' className='w-32 h-32' />
             </div>
-            <div className='flex flex-col text-gay-900 font-medium h-24'>
-              <label className='text-slate-800 pl-1 pb-1'>Usuario *</label>
-              <Field className='rounded-md bg-gray-200 bg-teal-20  p-2 border-2 border-teal-50 focus:border-teal-600 text-gray-800 duration-100 focus:outline-none'
+            <div className='flex flex-col'>
+              <label className='pb-1 font-medium text-gray-600'>Usuario</label>
+              <Field className='px-3 py-2 font-semibold text-gray-800 duration-100 bg-gray-100 border border-gray-300 rounded-md outline-none focus:border-teal-600 hover:border-teal-600'
                 type="text"
                 name='usuario'
               />
-              <div className='text-rose-400 font-normal italic'>
+              <div className='h-10 pl-1 italic font-medium text-rose-400 appear'>
+                <ErrorMessage name="usuario" />
+              </div>
+            </div>
+            <div className='flex flex-col'>
+              <label className='pb-1 font-medium text-gray-600'>Contraseña</label>
+              <Field className='px-3 py-2 font-semibold text-gray-800 duration-100 bg-gray-100 border border-gray-300 rounded-md outline-none focus:border-teal-600 hover:border-teal-600'
+                type="password"
+                name='password'
+              />
+              <div className='h-10 pl-1 italic font-medium text-rose-400 appear'>
                 <ErrorMessage name="usuario" />
               </div>
             </div>
 
-            <div className='flex flex-col text-gay-900 font-medium h-24'>
-              <label className='text-slate-800 pl-1 pb-1'>Contraseña</label>
-              <Field className='rounded-md bg-gray-200  bg-teal-20 p-2  border-2 border-teal-50 focus:border-teal-600 text-gray-800 duration-100 focus:outline-none'
-                type="password"
-                name='password'
-              />
-              <div className='text-rose-400 font-normal italic'>
-                <ErrorMessage name="password" />
-              </div>
 
-            </div>
-            <button 
+            <button
               type='submit  '
-              className='w-full my-5 py-2 bg-teal-600 shadow-lg  hover:shadow-teal-600 hover:bg-slate-700 duration-200 text-white text-lg font-semibold rounded-lg touchable-opacity'>
+              className='w-full py-2 my-5 text-lg font-semibold tracking-wider text-white duration-200 bg-teal-600 rounded-lg shadow-lg hover:shadow-teal-600 hover:bg-slate-700 touchable-opacity'>
               INGRESAR
-              </button>
+            </button>
           </Form>
         </div>
       </div>

@@ -51,10 +51,10 @@ const SelectorMaquinas = ({
     <div className="flex flex-col h-full">
       <div className="flex justify-between">
         <div className="flex justify-center w-full">
-          <p className="font-medium text-teal-700">Disponibles</p>
+          <p className="font-medium text-teal-800/80">Disponibles</p>
         </div>
         <div className="flex justify-center w-full">
-          <p className="font-medium text-teal-700">Asignadas</p>
+          <p className="font-medium text-teal-800/80">Asignadas</p>
         </div>
       </div>
       <div className='flex flex-row h-full '>
