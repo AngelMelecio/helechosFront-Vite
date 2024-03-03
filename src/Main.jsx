@@ -28,8 +28,6 @@ import PdfTest from "./pages/PdfTest"
 import NuevoPedido from "./pages/Pedidos/NuevoPedido"
 import TestComp from "./components/TestComp"
 import PaginaReportes from "./pages/Reportes/PaginaReportes"
-import AppBar2 from "./components/Navigation/AppBar2"
-import Pagina1 from "./components/Navigation/Pagina1"
 
 const getRoutesForRole = (role) => {
   const routesByRole = {
