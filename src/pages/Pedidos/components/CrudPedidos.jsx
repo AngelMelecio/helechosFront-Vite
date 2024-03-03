@@ -1,11 +1,31 @@
+import React from 'react'
 import { useEffect, useRef, useState } from "react"
-import { ICONS } from "../constants/icons"
-import Loader from "./Loader/Loader"
+import { ICONS } from "../../../constants/icons"
+import Loader from "../../../components/Loader/Loader"
 import { useNavigate } from "react-router-dom";
 import { get } from 'lodash'
-import Btton from "./Buttons/Btton";
+import Inpt from '../../../components/Inputs/Inpt';
+import OptsInpt from '../../../components/Inputs/OptsInpt';
+import { useFormik } from 'formik';
 
-const CRUD = ({
+const groupTabs = [
+  { value: 0, label: 'Todos' },
+  { value: 1, label: 'Pendientes' }
+]
+
+const Tab = ({ children, active, ...props }) => {
+  return (
+    <div
+      className={`cursor-pointer hover:bg-white duration-100 rounded-md font-medium text-sm h-6 px-6 total-center ${active ? 'bg-white text-teal-700 shadow-md' : 'text-gray-600'}`}
+      {...props}
+    >
+      {children}
+    </div>
+  )
+
+}
+
+const CrudPedidos = ({
   title,
   path,
   idName,
@@ -30,11 +50,22 @@ const CRUD = ({
   const someSelectedRef = useRef()
   const trashButtonRef = useRef()
 
+  const controls = useFormik({
+    initialValues: { vista: 0 },
+    validate: (values) => {
+      const errors = {}
+      return errors
+    },
+    onSubmit: async (values) => {
+      console.log('submit')
+    }
+  })
 
   useEffect(() => {
     if (someSelectedRef.current) {
       someSelectedRef.current.checked = elements.reduce((or, e) => e.isSelected | or, false)
     }
+    console.log(elements)
   }, [elements])
 
   useEffect(() => {
@@ -198,32 +229,52 @@ const CRUD = ({
     <div className="relative flex w-full h-full pl-18 bg-slate-100">
       <div id="tbl-page" className="absolute flex flex-col w-full h-full p-4 overflow-hidden">
         <div className="flex flex-col h-full">
-          <h1 className="pb-4 pl-3 text-2xl font-bold text-teal-800/80">{title}</h1>
+          <div className="flex justify-between pb-2">
+            <h1 className="pl-3 text-2xl font-bold text-teal-800/80">{title}</h1>
+            <div className="flex flex-row" id="butons">
+              <button
+                onClick={() => navigate(`/${path}/0`)}
+                className='h-10 px-8 font-medium text-white bg-teal-500 rounded-lg total-center normal-button'>
+                Nuevo pedido
+              </button>
+            </div>
+          </div>
+
           <div className="flex flex-col h-full overflow-hidden bg-white shadow-lg">
             <div className="flex flex-col px-5 py-4 rounded-t-lg" >
-              <div className="flex justify-between w-full">
-                <div
-                  className="flex flex-row"
-                  id="butons">
-                  <Btton
-                    onClick={() => navigate(`/${path}/0`)}
-                    className='w-8 h-8 total-center'>
-                    <ICONS.Plus size='19px' />
-                  </Btton>
-                  {onPrint &&
-                    <Btton onClick={onPrint}
-                      disabled={!isSelected()}
-                      className={'total-center ml-4 w-8 h-8 '}>
-                      <ICONS.Print size='22px' />
-                    </Btton>}
-                  <Btton
-                    trash
-                    onClick={onDelete}
-                    disabled={!isSelected()}
-                    ref={trashButtonRef}
-                    className={'total-center ml-4 w-8 h-8 '}>
-                    <ICONS.Trash size='19px' />
-                  </Btton>
+              <div className="flex justify-between w-full gap-4">
+
+                {/* Botones */}
+
+                <div className='flex items-center gap-2'>
+                  <p className='text-sm font-medium text-teal-800/80'>
+                    Agrupar por cliente
+                  </p>
+                  <input
+                    className='switch'
+                    type="checkbox"
+                  />
+                </div>
+                {/* Filtros */}
+                <div className='flex items-center flex-grow gap-6 p-1 px-2 rounded-md bg-slate-100'>
+
+
+
+                  <div className='flex items-center gap-2'>
+                    <p className=' total-center text-teal-800/80'>
+                      <ICONS.Filter size="20px" />
+                    </p>
+
+                    {[groupTabs.map((tab, indx) =>
+                      <Tab
+                        key={indx}
+                        active={controls.values.vista === tab.value}
+                        onClick={() => controls.setFieldValue('vista', tab.value)}
+                      >
+                        {tab.label}
+                      </Tab>)]
+                    }
+                  </div>
                 </div>
                 {/* Search Bar */}
                 <div
@@ -251,6 +302,7 @@ const CRUD = ({
                   </button>
                 </div>
               </div>
+
             </div>
             <div
               id="table-container"
@@ -264,16 +316,7 @@ const CRUD = ({
                     <table className="w-full bg-white customTable clic-row">
                       <thead className='text-center'>
                         <tr>
-                          <th className="w-10 px-7">
-                            <div className="total-center">
-                              <input
-                                className='inpt-check'
-                                onChange={(e) => handleSelectAll(e)}
-                                ref={someSelectedRef}
-                                type="checkbox"
-                              />
-                            </div>
-                          </th>
+
                           {
                             columns.map((c, i) =>
                               <th className='p-2 font-medium text-teal-800/80' key={"C" + i} >
@@ -293,18 +336,6 @@ const CRUD = ({
                         {
                           elements?.map((e, i) =>
                             <tr key={'C' + i}>
-                              <td className="px-7" >
-                                <div className="total-center">
-                                  <input
-                                    value={i}
-                                    className='inpt-check'
-                                    type="checkbox"
-                                    onChange={handleSelection}
-                                    checked={e?.isSelected}
-                                  />
-
-                                </div>
-                              </td>
                               <CustomRow element={e} index={i} onClick={() => navigate(`/${path}/${e[idName]}`)} />
                             </tr>
                           )
@@ -322,4 +353,5 @@ const CRUD = ({
 
   )
 }
-export default CRUD
+
+export default CrudPedidos

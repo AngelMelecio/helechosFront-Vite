@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef } from "react"
-import CustomSelect from "../../../components/CustomSelect"
-import Input from "../../../components/Input"
+import { useState, useEffect } from "react"
 import Textarea from "../../../components/Textarea"
-import ScanSelect from "../../../components/ScanSelect"
 import RutaSelect from "../../../components/RutaSelect"
+import OptsScan from "../../../components/Inputs/OptsScan"
+import AbsScroll from "../../../components/AbsScroll"
+import FieldsBox from "../../../components/FieldsBox"
+import Inpt from "../../../components/Inputs/Inpt"
+import OptsInpt from "../../../components/Inputs/OptsInpt"
 
 const FormReposicion = ({
   formik,
@@ -47,86 +49,54 @@ const FormReposicion = ({
   }, [formik?.values.etiqueta])
 
   return (
-    <div className="flex flex-col h-full ">
 
-      {/* Formulario */}
-      <div className="relative h-full overflow-y-scroll">
-        <div className="absolute w-full p-4">
-
-          {/* Etiquetas */}
-          <div className="flex w-full px-4">
-            <ScanSelect
+    <AbsScroll vertical>
+      <div className="absolute w-full p-4">
+        {/* Etiquetas */}
+        <div className="flex w-full">
+          <FieldsBox title="Datos de la etiqueta">
+            <OptsScan
               options={etiquetasOpts}
               formik={formik}
               label="Etiqueta"
               name="etiqueta"
               unique="idProduccion"
+              placeholder="Seleccione una etiqueta"
             />
-          </div>
-          {
-            detalle && <>
-
-              <div className="flex flex-col px-4 pt-5 pb-4 ">
-                {
-                  [
-                    { label: "Modelo", value: detalle?.fichaTecnica?.nombre },
-                    { label: "Talla", value: detalle?.cantidades ? detalle.cantidades[0].talla : "" },
-                    { label: "Cantidad del paquete", value: detalle?.cantidades ? detalle?.cantidades[0].paquete : "" },
-                    { label: "Etiqueta", value: detalle?.cantidades ? detalle?.cantidades[0].etiquetas[0].numEtiqueta : "" }
-
-                  ].map((item, index) => <div key={`D_${index}`} className="flex items-center h-8 border-b">
-                    <div className="text-gray-700 text-md ">{item.label}: &nbsp; </div>
-                    <div className="font-bold text-teal-700 text-md ">{item.value}</div>
-                  </div>)
-                }
-              </div>
-              {/* Es reposicion */}
-              <div className="flex flex-row w-full px-4 py-3">
-                <label className="pr-2 text-sm font-medium text-teal-700 " htmlFor="">Es reposición</label>
-                <input
-                  value={formik.values.esReposicion}
-                  onChange={(e) => formik.setFieldValue("esReposicion", e.target.checked)}
-                  className="w-5 h-5"
-                  type="checkbox" />
-              </div>
-
-              {/* Cantidad */}
-              <div className="flex w-full px-2">
-                <Input
-                  label="Cantidad"
-                  name="cantidad"
-                  value={formik.values.cantidad}
-                  max={detalle?.cantidades ? detalle?.cantidades[0].paquete : 0}
-                  min={1}
-                  onChange={(e) => formik.setFieldValue("cantidad", Number(e.target.value))}
-                  type="number"
-                  placeholder="Ingrese cantidad"
-                  errores={formik.errors.cantidad}
+            {detalle &&
+              <div className="grid grid-cols-[75%_auto] gap-6">
+                <Inpt
+                  label="Nombre del modelo"
+                  name="nombreModelo"
+                  formik={formik}
+                  value={detalle?.fichaTecnica?.nombre}
+                  readOnly
+                />
+                <Inpt
+                  label="Cant. del paquete"
+                  name="cantidadPaquete"
+                  formik={formik}
+                  value={detalle?.cantidades ? detalle?.cantidades[0].paquete : ""}
+                  readOnly
                 />
               </div>
-
-              {/* Ruta de produccion */}
-              {
-                formik?.values.esReposicion && <>
-
-                  <div className="flex-col w-full px-2 py-4">
-                    <label className="pb-2 pl-1 text-sm font-medium text-teal-700" htmlFor="">Ruta de producción</label>
-                    <RutaSelect
-                      formik={formik}
-                      name="destino"
-                      estacionFinal={(detalle?.cantidades[0].etiquetas[0].estacionActual)}
-                      rutaBase={detalle?.rutaProduccion}
-                    />
-                  </div>
-                </>
-              }
-
-              {/* Motivos */}
-              <div className="flex w-full px-2">
+            }
+          </FieldsBox>
+        </div>
+        {
+          detalle && <>
+            <div className="flex w-full">
+              <FieldsBox title="Datos de producción">
+                <Inpt
+                  label="Cantidad"
+                  name="cantidad"
+                  formik={formik}
+                  type="number"
+                  placeholder="Ingrese cantidad"
+                />
                 <Textarea
-                  resize="none"
                   label="Motivos"
-                  value={formik.values.motivos}
+                  formik={formik}
                   onChange={(e) => formik.setFieldValue("motivos", e.target.value)}
                   name="motivos"
                   type="text"
@@ -134,44 +104,66 @@ const FormReposicion = ({
                   rows="5"
                   errores={formik.errors.motivos}
                 />
-              </div>
+                <div className="flex flex-row w-full pt-8 pb-4">
+                  <label className="pr-2 text-sm font-medium text-teal-800/80 " htmlFor="">Es reposición</label>
+                  <input
+                    value={formik.values.esReposicion}
+                    onChange={(e) => formik.setFieldValue("esReposicion", e.target.checked)}
+                    className="w-5 h-5 switch"
+                    type="checkbox" />
+                </div>
+              </FieldsBox>
+            </div>
 
-              {
-                formik?.values.esReposicion && <>
-                  {/* Empleado Falla */}
-                  <div className="flex w-full px-4">
-                    <ScanSelect
-                      options={empleadosFallasOpts}
+            {/* Es reposicion */}
+            {
+              formik?.values.esReposicion && <div className="flex w-full">
+                <FieldsBox title="Datos de reposición">
+                  <div className="flex-col w-full pt-2 pb-8">
+                    <label className="pb-0.5 text-sm font-medium text-teal-800/80" htmlFor="">Ruta de producción</label>
+                    <RutaSelect
                       formik={formik}
+                      name="destino"
+                      estacionFinal={(detalle?.cantidades[0].etiquetas[0].estacionActual)}
+                      rutaBase={detalle?.rutaProduccion}
+                    />
+                  </div>
+                  <div className="flex w-full ">
+                    <OptsScan
+                      formik={formik}
+                      options={empleadosFallasOpts}
                       label="Empleado Falla"
                       name="empleadoFalla"
                       unique="idEmpleado"
                     />
                   </div>
                   {/* Maquina Falla y Turno*/}
-                  <div className="flex w-full px-2">
-                    <CustomSelect
+                  <div className="flex w-full gap-6">
+                    <OptsInpt
+                      space
                       label="Maquina Falla"
+                      name="maquina"
+                      formik={formik}
                       options={maquinasOptions}
-                      value={formik.values.maquina}
-                      onChange={(e) => formik.setFieldValue("maquina", e.value)}
-                      errores={formik.errors.maquina}
+                      placeholder="Seleccione una máquina"
+
                     />
-                    <CustomSelect
+                    <OptsInpt
+                      space
                       label="Turno"
+                      name="turno"
                       options={turnoOptions}
-                      value={formik.values.turno}
-                      onChange={(e) => formik.setFieldValue("turno", e.value)}
-                      errores={formik.errors.turno}
+                      formik={formik}
+                      placeholder="Seleccione un turno"
                     />
                   </div>
-                </>
-              }
-            </>
-          }
-        </div>
+                </FieldsBox>
+              </div>
+            }
+          </>
+        }
       </div>
-    </div>
+    </AbsScroll>
   )
 }
 

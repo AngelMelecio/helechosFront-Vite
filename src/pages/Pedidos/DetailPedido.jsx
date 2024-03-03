@@ -21,7 +21,7 @@ import ReposicionesCrud from "./components/ReposicionesCrud";
 import PesosModal from "./components/PesosModal";
 import HButton from "./components/HButton";
 
-
+import FieldsBox from '../../components/FieldsBox'
 
 const DetailPedido = () => {
 
@@ -176,7 +176,7 @@ const DetailPedido = () => {
               <button
                 onClick={() => navigate('/pedidos')}
                 className="w-10 h-10 rounded-full neutral-button"> <ICONS.Left size="30px" /> </button>
-              <p className="pl-3 text-2xl font-bold text-teal-700">
+              <p className="pl-3 text-2xl font-bold text-teal-800/80">
                 Detalles del Pedido
               </p>
             </div>
@@ -190,75 +190,67 @@ const DetailPedido = () => {
               <div className="flex flex-col w-full">
                 {/* DATOS DEL PEDIDO */}
                 <div className="p-6 bg-white rounded-md shadow-md">
-                  <div className="relative px-2 py-4 mx-2 my-4 border-2 border-slate-300">
-                    <div className="absolute w-full total-center -top-3">
-                      <div className='px-3 text-base italic font-bold text-teal-700 bg-white' >
-                        Datos del Pedido
+                  <div className="flex w-full">
+                    <FieldsBox title="Datos del pedido">
+                      <div className="flex flex-row gap-6">
+                        <Input
+                          readOnly
+                          name='Cliente'
+                          value={pedido?.modelo?.cliente.nombre}
+                          label='Cliente'
+                          type="text"
+                        />
+
+                        <Input
+                          readOnly
+                          name='Modelo'
+                          value={pedido?.modelo.nombre}
+                          label='Modelo'
+                          type="text"
+                        />
+                        <Input
+                          readOnly
+                          name='orderCompra'
+                          value={pedido?.ordenCompra}
+                          label='Orden de compra'
+                          type="text"
+                        />
                       </div>
-                    </div>
-                    <div className="flex flex-row">
-                      <Input
-                        readOnly
-                        name='Cliente'
-                        value={pedido?.modelo?.cliente.nombre}
-                        label='Cliente'
-                        type="text"
-                      />
 
-                      <Input
-                        readOnly
-                        name='Modelo'
-                        value={pedido?.modelo.nombre}
-                        label='Modelo'
-                        type="text"
-                      />
-                      <Input
-                        readOnly
-                        name='orderCompra'
-                        value={pedido?.ordenCompra}
-                        label='Orden de compra'
-                        type="text"
-                      />
-                    </div>
+                      <div className="flex flex-row gap-6">
+                        <Input
+                          readOnly
+                          name='fechaRegistro'
+                          value={pedido?.fechaRegistro}
+                          label='Fecha de Registro'
+                          type='text'
+                        />
 
-                    <div className="flex flex-row">
-                      <Input
-                        readOnly
-                        name='fechaRegistro'
-                        value={pedido?.fechaRegistro}
-                        label='Fecha de Registro'
-                        type='text'
-                      />
-                      <Input
-                        readOnly
-                        name='space'
-                        value=''
-                        label=''
-                        type='text'
-                      />
-                      <Input
-                        readOnly
-                        name='fechaEntrega'
-                        value={pedido?.fechaEntrega}
-                        label='Fecha de Entrega'
-                        type='text'
-                      />
+                        <Input
+                          readOnly
+                          name='fechaEntrega'
+                          value={pedido?.fechaEntrega}
+                          label='Fecha de Entrega'
+                          type='text'
+                        />
 
 
-                    </div>
+                      </div>
+                    </FieldsBox>
                   </div>
+                  
                 </div>
                 {/*  MONITOREO DE LA PRODUCCION */}
                 <div className="flex flex-col screen">
                   {/*  HEADER */}
                   <div className="flex justify-between pt-8 pb-4 ">
                     <div className="flex items-center">
-                      <p className="pl-3 text-2xl font-bold text-teal-700">
+                      <p className="pl-3 text-2xl font-bold text-teal-800/80">
                         Monitoreo de la producción
                       </p>
                     </div>
                     <div className='relative flex gap-2'>
-                      
+
                       <HButton
                         openModal={() => handleOpenModal(setPesosModalVisible)}
                         icon={<ICONS.Weight size='27px' />}
@@ -294,7 +286,7 @@ const DetailPedido = () => {
                       <div className="h-full w-60 bg-gray-50">
                         <div className="flex flex-col w-full h-full overflow-hidden">
                           <div className="p-3">
-                            <p className="px-4 py-2 text-xl font-semibold text-teal-700">
+                            <p className="px-4 py-2 text-xl font-semibold text-teal-800/80">
                               Fichas técnicas
                             </p>
                           </div>
@@ -307,7 +299,7 @@ const DetailPedido = () => {
                                     type="button"
                                     className={"rounded-sm my-1 flex w-full p-3 items-center relative cursor-pointer"
                                       + (indx === selectedFichaIndx ?
-                                        " bg-white shadow-md text-teal-700" :
+                                        " bg-white shadow-md text-teal-800/80" :
                                         " hover:bg-white text-gray-600 duration-200")}
                                     onClick={() => { setSelectedFichaIndx(indx); setSelectedTallaIndx(0); }}>
                                     <p className="font-medium">

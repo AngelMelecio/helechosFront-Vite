@@ -58,7 +58,7 @@ const Table = ({
             <thead className='text-center'>
               <tr className="h-8">
                 {columns.map((column, index) => (
-                  <th className="sticky top-0 z-10 pl-2 pr-8 text-teal-700 bg-white hover-modal whitespace-nowrap" key={index}>
+                  <th className="sticky top-0 z-10 pl-2 pr-8 text-teal-800/80 bg-white hover-modal whitespace-nowrap" key={index}>
                     {column.label}
                     <div className="absolute top-0 right-0 w-8 h-8 p-1">
                       <button type="button" onClick={() => { setFilter(prev => ({ atr: column.atr, ord: (prev.atr === column.atr ? (prev.ord + 1) % 3 : 1) })) }}

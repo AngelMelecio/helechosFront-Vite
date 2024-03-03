@@ -15,38 +15,38 @@ const MaquinasTable = ({
   onUnassing
 }) => {
   return (
-    <div className=" w-full h-full absolute overflow-scroll ">
+    <div className="absolute w-full h-full px-3 overflow-scroll ">
       <table
-        className="table-auto w-full border-collapse:collapse ">
+        className="w-full table-auto border-collapse:collapse ">
         <thead className='text-center'>
           <tr>
             {
               columns.map((c, i) =>
                 <th
-                  className="px-2 text-teal-700 whitespace-nowrap"
+                  className="px-2 text-sm font-semibold text-teal-800/80 whitespace-nowrap"
                   key={'MH' + i}>
                   {c.name}
                 </th>)
             }
             <th>
-              
+
             </th>
           </tr>
         </thead>
         <tbody>
           {
             maquinas.map((m, i) =>
-              <tr key={"E" + i} className="h-8 border-b-2" >
+              <tr key={"E" + i} className="h-10 font-semibold text-center text-gray-700 border-b-2" >
                 {
                   columns.map((c, j) => <td key={'MD' + j}>
                     {m[c.atr]}
                   </td>)
                 }
-                <td className="total-center flex w-8 h-8 duration-150 active:bg-rose-500 active:duration-0 active:text-white text-gray-700 hover:bg-rose-400 hover:text-white  rounded-lg">
+                <td className="sticky right-0 ">
                   <button
                     onClick={() => onUnassing(i)}
                     type="button"
-                    className="h-full w-full total-center">
+                    className="flex w-8 h-8 text-gray-700 duration-150 bg-gray-200 rounded-lg total-center active:bg-rose-500 active:duration-0 active:text-white hover:bg-rose-400 hover:text-white">
                     <ICONS.Trash size='16px' />
                   </button>
                 </td>

@@ -13,6 +13,7 @@ import FichaTecnicaPrint from './components/FichaTecnicaPrint';
 import { useDetailModelos } from './hooks/useDetailModelos';
 import { useFichaMateriales } from './hooks/useFichaMateriales';
 import { useMaquinas } from '../Maquinas/hooks/useMaquinas';
+import Btton from '../../components/Buttons/Btton';
 
 let initModelo = {
   nombre: '',
@@ -111,28 +112,30 @@ const DetailModelo = () => {
       <div
         ref={pageRef}
         onScroll={handleScroll}
-        className="w-full relative overflow-y-scroll h-full">
-        <div id="tbl-page" className="flex flex-col w-full bg-slate-100 relative p-4">
+        className="relative w-full h-full overflow-y-scroll">
+        <div id="tbl-page" className="relative flex flex-col w-full p-4 bg-slate-100">
           {/**
            * HEADER
            */}
-          <div className="flex pb-4 justify-between">
+          <div className="flex justify-between pb-4">
             <div className="flex items-center">
               <button
                 onClick={() => navigate('/modelos')}
-                className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
-              <p className="font-bold text-2xl pl-3 text-teal-700">
+                className="w-10 h-10 rounded-full neutral-button"> <ICONS.Left size="30px" /> </button>
+              <p className="pl-3 text-2xl font-bold text-teal-800/80">
                 {isEdit ? `Detalles del Modelo` : "Nuevo Modelo"}
               </p>
             </div>
             <div>
-              <input
+              <Btton
                 disabled={loadingModelo || !theresChangesModelo}
-                className='bg-teal-500 h-10 p-1 w-40 text-white normal-button  z-10  rounded-lg'
                 type="submit"
-                value={isEdit ? "Guardar Modelo" : "Crear Modelo"}
                 form="frmModelos"
-              />
+                className={'h-10 px-8'}
+              >
+                {isEdit ? "Guardar Modelo" : "Crear Modelo"}
+              </Btton>
+
             </div>
           </div>
           {/**
@@ -150,28 +153,30 @@ const DetailModelo = () => {
            */}
           <div className='flex flex-col screen'>
             {/*  Header, print / save buttons  */}
-            <div className="pt-8 pb-4 flex w-full justify-between items-center">
-              <p className=" font-bold text-2xl pl-3 text-teal-700">
+            <div className="flex items-center justify-between w-full pt-8 pb-4">
+              <p className="pl-3 text-2xl font-bold text-teal-800/80 ">
                 Fichas Tecnicas
               </p>
               <div className='flex'>
-                <button
+                <Btton
                   onClick={() => handleOpenModal(setPrintModalVisible)}
                   disabled={disablePrint}
-                  className='normal-button h-10 w-10 rounded-lg total-center mr-4'
+                  className='w-10 h-10 mr-4 total-center'
                 >
                   <ICONS.Print size='25px' />
-                </button>
-                {<input
+                </Btton>
+                <Btton
                   disabled={saving || fetchingFichas || (!theresChangesFicha && !theresChangesMateriales)}
-                  className='bg-teal-500 h-10 p-1 w-40 text-white normal-button z-10 rounded-lg'
+                  className="h-10 px-8"
                   type="submit"
-                  value={"Guardar Ficha"}
                   form="frmFichas"
-                />}
+                >
+                  Guardar Ficha
+                </Btton>
+
               </div>
             </div>
-            <div className="flex flex-col relative h-full bg-white rounded-lg shadow-lg">
+            <div className="relative flex flex-col h-full bg-white rounded-lg shadow-lg">
               {fetchingFichas && id !== '0' ? <Loader />
                 :
                 <SectionFichas
@@ -188,11 +193,11 @@ const DetailModelo = () => {
           </div>
         </div>
       </div>
-      
+
       {/**
        * MODALES
        */}
-      <div className='modal absolute z-50 h-full w-full' ref={modalRef}>
+      <div className='absolute z-50 w-full h-full modal' ref={modalRef}>
         {modalVisible &&
           <FichasModal
             onCancel={onSaveChanges}

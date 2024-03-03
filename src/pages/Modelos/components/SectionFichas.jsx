@@ -193,7 +193,7 @@ const SectionFichas = ({
             <button
               disabled={id==='0'}
               onClick={handleAddFicha}
-              className="flex items-center duration-200 border-gray-300 text-teal-700 border rounded-sm w-full p-3 hover:border-teal-500  disabled:border-gray-300 disabled:text-gray-400">
+              className="flex items-center duration-200 border-gray-300 text-teal-800/80 border rounded-sm w-full p-3 hover:border-teal-500  disabled:border-gray-300 disabled:text-gray-400">
               <ICONS.Plus></ICONS.Plus>
               <p className="ml-2 font-semibold">Nueva Ficha</p>
             </button>
@@ -205,7 +205,7 @@ const SectionFichas = ({
                   <div key={'Fich' + indx}
                     type="button"
                     onClick={() => handleSelectFicha(indx)}
-                    className={"rounded-sm my-1 flex w-full p-3 items-center relative cursor-pointer" + (indx === selectedFichaIndx ? " bg-white shadow-md text-teal-700" : " hover:bg-gray-200 text-gray-600 duration-200")}
+                    className={"rounded-sm my-1 flex w-full p-3 items-center relative cursor-pointer" + (indx === selectedFichaIndx ? " bg-white shadow-md text-teal-800/80" : " hover:bg-gray-200 text-gray-600 duration-200")}
                   >
                     <p className="font-medium">{ficha.nombre !== '' ? ficha.nombre : 'Nueva Ficha'}</p>
                     {indx === selectedFichaIndx && // Botones de eliminar y copiar

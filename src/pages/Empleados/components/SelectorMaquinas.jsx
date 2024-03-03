@@ -5,6 +5,7 @@ import { useRef } from "react"
 import { ICONS } from "../../../constants/icons"
 import { sleep } from "../../../constants/functions"
 import MaquinasTable from "./MaquinasTable"
+import Btton from "../../../components/Buttons/Btton"
 
 const SelectorMaquinas = ({
   idEmpleado,
@@ -30,13 +31,13 @@ const SelectorMaquinas = ({
   const selectorContentRef = useRef(null)
 
   useEffect(async () => {
-    if( idEmpleado === '0' ) return 
+    if (idEmpleado === '0') return
     let empleadoMaquinas = await getEmpleadoMaquinas(idEmpleado)
     let ids = empleadoMaquinas.map(m => m.idMaquina)
     setEmpledoMaquinasIds(ids)
   }, [idEmpleado])
 
-  useEffect(()=>{
+  useEffect(() => {
     setAssignedMaquinas(
       allMaquinas.filter(maquina => empleadoMaquinasIds.includes(maquina.idMaquina))
     )
@@ -48,7 +49,7 @@ const SelectorMaquinas = ({
         .filter(maquina => !empleadoMaquinasIds.includes(maquina.idMaquina)).filter(m => m.departamento === departamentoEmpleado)
         .map(maquina => ({ ...maquina, isSelected: false }))
     )
-  },[allMaquinas,departamentoEmpleado])
+  }, [allMaquinas, departamentoEmpleado])
 
   const handleShowSelector = async () => {
     setSelectorVisible(true)
@@ -92,9 +93,9 @@ const SelectorMaquinas = ({
   const handlePassMateriales = () => {
     setAssignedMaquinas(prev => [
       ...prev,
-      ...( availableMaquinasList.filter(m => m.isSelected).map( m => ({...m, isSelected:false}) ) )
+      ...(availableMaquinasList.filter(m => m.isSelected).map(m => ({ ...m, isSelected: false })))
     ])
-    setAvailableMaquinasList(prev=>[
+    setAvailableMaquinasList(prev => [
       ...prev.filter(m => !m.isSelected)
     ])
     handleCloseSelector()
@@ -105,7 +106,7 @@ const SelectorMaquinas = ({
   return (
     <>
       <div className="relative w-full h-full">
-        <div className="absolute w-full h-full flex ">
+        <div className="absolute flex w-full h-full ">
           {/*
            * AvailableMaquinas
            */}
@@ -113,22 +114,23 @@ const SelectorMaquinas = ({
             {/**
              * Hide/show AvailableMaquinas Button
              */}
-            <div className="flex flex-row pb-2 relative justify-between items-center">
-              <button
+            <div className="relative flex flex-row items-center justify-between pb-2">
+              <Btton
                 type="button"
-                className={`flex items-center justify-center w-8 h-8 rounded-lg ${selectorVisible ? 'neutral-button' : 'normal-button'}`}
+                neutral={selectorVisible}
+                className={`total-center size-8`}
                 onClick={() => !selectorVisible ? handleShowSelector() : handleCloseSelector()}>
                 {!selectorVisible ? <ICONS.Plus size='20px' /> : <ICONS.Left size='22px' />}
-              </button>
+              </Btton>
             </div>
-            <div className="modal flex flex-col h-full relative overflow-hidden" ref={selectorContentRef}>
+            <div className="relative flex flex-col h-full overflow-hidden modal" ref={selectorContentRef}>
               {/**
                * Search bar and passButton
                */}
-              <div className="flex relative pb-2 pr-3">
-                <div className="flex relative w-full items-center">
+              <div className="relative flex items-center pb-2 pr-3 h-14 ">
+                <div className="relative flex items-center flex-grow mr-2">
                   <input
-                    className='w-full h-full pr-10 rounded-2xl py-1 pl-3 outline-none bg-gray-100'
+                    className='w-full h-full py-1 pl-3 pr-10 bg-gray-100 outline-none rounded-2xl'
                     ref={searchRef}
                     onChange={(e) => {
                       setMaquinaSearchText(e.target.value)
@@ -139,7 +141,7 @@ const SelectorMaquinas = ({
                   <button
                     type="button"
                     onClick={handleSearchButtonClick}
-                    className='h-6 w-6 absolute right-1 total-center opacity-white rounded-2xl'>
+                    className='absolute w-6 h-6 right-1 total-center opacity-white rounded-2xl'>
                     {
                       maquinaSearchText.length > 0 ?
                         <ICONS.Cancel size='18px' style={{ color: '#4b5563' }} /> :
@@ -147,13 +149,14 @@ const SelectorMaquinas = ({
                     }
                   </button>
                 </div>
-                <button
-                  disabled={ !availableMaquinasList.some( m => m.isSelected ) }
+                <Btton
+                  neutral={!availableMaquinasList.some(m => m.isSelected)}
+                  disabled={!availableMaquinasList.some(m => m.isSelected)}
                   onClick={handlePassMateriales}
                   type="button"
-                  className={`flex items-center justify-center normal-button w-8 h-8 rounded-lg duration-500 `} >
+                  className={`total-center size-8 `} >
                   <ICONS.Right size="25px" />
-                </button>
+                </Btton>
               </div>
               {/**
                * Available list
@@ -173,15 +176,15 @@ const SelectorMaquinas = ({
                           type='button'
                           onClick={() => handleSelectMaquina(i)}
                           key={"AM" + i}
-                          className="border-b-2 flex duration-200 h-8 items-center bg-white hover:bg-gray-100"
+                          className="flex items-center h-8 duration-200 bg-white border-b-2 hover:bg-gray-100"
                         >
-                          <div className="flex h-full total-center px-2">
+                          <div className="flex h-full px-2 total-center">
                             <div className={`rounded-md duration-200 w-5 h-5 p-1 ${maquina.isSelected ? 'bg-teal-400' : 'bg-white'}`}>
-                              <div className="palomita bg-white w-full h-full"></div>
+                              <div className="w-full h-full bg-white palomita"></div>
                             </div>
                           </div>
-                          <div className="text-gray-700 w-full text-start" >
-                            {((maquina.linea!=='0')?'L'+maquina.linea+' - ':'')+ 'M' + maquina.numero + ' / ' + maquina.departamento}
+                          <div className="w-full font-semibold text-gray-700 text-start" >
+                            {((maquina.linea !== '0') ? 'L' + maquina.linea + ' - ' : '') + 'M' + maquina.numero + ' / ' + maquina.departamento}
                           </div>
                         </button>
                       )
@@ -193,14 +196,20 @@ const SelectorMaquinas = ({
           {/**
            * AssignedMaquinas 
            */}
-          <div className="w-full h-full px-3">
-            <div className="w-full relative h-full">
-              <MaquinasTable
-                maquinas={assignedMaquinas}
-                onUnassing={handleUnassign}
-              />
+          {assignedMaquinas.length > 0 ?
+            <div className="w-full h-full">
+              <div className="relative w-full h-full">
+                <MaquinasTable
+                  maquinas={assignedMaquinas}
+                  onUnassing={handleUnassign}
+                />
+              </div>
+            </div> :
+            <div className="w-full h-full bg-gray-200 total-center">
+              <p className="italic font-semibold text-gray-500">No hay maquinas asignadas</p>
             </div>
-          </div>
+
+          }
         </div>
       </div>
     </>

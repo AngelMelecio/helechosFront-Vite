@@ -4,14 +4,15 @@ import { ICONS } from "../../constants/icons";
 import { FormikProvider, useFormik } from "formik";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import CustomSelect from "../../components/CustomSelect";
-import Input from "../../components/Input";
 import Loader from "../../components/Loader/Loader";
 import { useClientes } from "../Clientes/hooks/useClientes";
 import useModelos from "../Modelos/hooks/useModelos";
 import { usePedidos } from "./hooks/usePedidos";
 import Slider from "../../components/Slider";
 import SelectedFichas from "./components/SelectedFichas";
+import OptsInpt from "../../components/Inputs/OptsInpt";
+import FieldsBox from "../../components/FieldsBox";
+import Inpt from "../../components/Inputs/Inpt";
 
 const initPedido = {
   modelo: {
@@ -132,9 +133,10 @@ const NuevoPedido = () => {
     try {
       setLoadingModelos(true)
       let modelos = await getModelosCliente(formik?.values?.modelo.cliente)
+      console.log(modelos)
       setOptionsModelo(modelos.map(modelo => ({ value: modelo.idModelo, label: modelo.nombre })))
     } catch (e) {
-
+      console.log(e)
     } finally {
       setLoadingModelos(false)
     }
@@ -196,21 +198,21 @@ const NuevoPedido = () => {
       <div
         ref={pageRef}
         onScroll={handleScroll}
-        className="w-full relative overflow-y-scroll h-full">
-        <div id="tbl-page" className="flex flex-col w-full bg-slate-100 relative p-4">
+        className="relative w-full h-full overflow-y-scroll">
+        <div id="tbl-page" className="relative flex flex-col w-full p-4 bg-slate-100">
           {/*  PAGE HEADER  */}
-          <div className="flex pb-4 justify-between">
+          <div className="flex justify-between pb-4">
             <div className="flex items-center">
               <button
                 onClick={() => navigate('/pedidos')}
-                className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
-              <p className="font-bold text-2xl pl-3 text-teal-700">
+                className="w-10 h-10 rounded-full neutral-button"> <ICONS.Left size="30px" /> </button>
+              <p className="pl-3 text-2xl font-bold text-teal-800/80">
                 {"Nuevo pedido"}
               </p>
             </div>
             <input
               //disabled={saving}
-              className='bg-teal-500 p-1 w-40 text-white normal-button rounded-lg'
+              className='w-40 p-1 text-white bg-teal-500 rounded-lg normal-button'
               type="submit"
               value="Agregar"
               form="frmPedido"
@@ -220,70 +222,61 @@ const NuevoPedido = () => {
             <FormikProvider value={formik}>
               <form
                 id='frmPedido'
-                className='flex flex-col h-full w-full relative '
+                className='relative flex flex-col w-full h-full '
                 onSubmit={formik.handleSubmit}>
-                <div className="w-full flex flex-col">
+                <div className="flex flex-col w-full">
                   {/* DATOS DEL PEDIDO */}
-                  <div className="bg-white p-6 shadow-md rounded-md">
-                    <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-                      <div className="absolute w-full total-center -top-3">
-                        <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-                          Datos del Pedido
+                  <div className="p-6 bg-white rounded-md shadow-md">
+
+                    <div className="flex w-full">
+
+                      <FieldsBox title="Datos del pedido">
+                        <div className="flex flex-row gap-6">
+                          <OptsInpt
+                            label='Cliente'
+                            name='modelo.cliente'
+                            value={formik.values.modelo.cliente}
+                            options={optionsCliente}
+                            formik={formik}
+                            placeholder='Seleccione'
+                          />
+                          <OptsInpt
+                            loading={loadingModelos}
+                            label='Modelo'
+                            name='modelo.idModelo'
+                            value={formik.values.modelo.idModelo}
+                            options={optionsModelo}
+                            formik={formik}
+                            placeholder='Seleccione'
+                          />
                         </div>
-                      </div>
-                      <div className="flex flex-row">
-                        <CustomSelect
-                          name='Cliente'
-                          className='input'
-                          onChange={value => { formik.setFieldValue('modelo', { ...formik.values.modelo, cliente: value.value }) }}
-                          value={formik?.values.modelo?.cliente}
-                          //onBlur={formik.handleBlur}
-                          options={optionsCliente}
-                          label='Cliente'
-                        //errores={formik.errors.cliente && formik.touched.cliente ? formik.errors.cliente : null}
-                        />
-                        <CustomSelect
-                          loading={loadingModelos}
-                          name='Modelo'
-                          className='input'
-                          onChange={value => { formik.setFieldValue('modelo', { ...formik.values.modelo, idModelo: value.value }) }}
-                          value={formik.values ? formik.values.modelo.idModelo : ""}
-                          //onBlur={formik.handleBlur}
-                          options={optionsModelo}
-                          label='Modelo'
-                          errores={formik.errors.modelo && formik.touched.modelo ? formik.errors.modelo : null}
-                        />
-                      </div>
-                      <div className='flex flex-row'>
-                        <Input
-                          label='Orden de compra' type='text' name='ordenCompra' value={formik.values ? formik.values.ordenCompra : ''}
-                          onChange={formik.handleChange} onBlur={formik.handleBlur}
-                          errores={formik.errors.ordenCompra && formik.touched.ordenCompra ? formik.errors.ordenCompra : null}
-                        />
-                        <Input
-                          name='fechaEntrega'
-                          onChange={formik.handleChange}
-                          value={formik.values ? formik.values.fechaEntrega : ""}
-                          onBlur={formik.handleBlur}
-                          label='Fecha de Entrega'
-                          type="date"
-                          errores={formik.errors.fechaEntrega && formik.touched.fechaEntrega ? formik.errors.fechaEntrega : null}
-                        />
-                      </div>
+                        <div className='flex flex-row gap-6'>
+                          <Inpt
+                            label='Orden de compra' type='text' name='ordenCompra'
+                            formik={formik}
+                          />
+                          <Inpt
+                            name='fechaEntrega'
+                            label='Fecha de Entrega'
+                            type="date"
+                            formik={formik}
+                          />
+                        </div>
+                      </FieldsBox>
                     </div>
                   </div>
                   {/* Seleccion de Fichas */}
-                  <div className="screen flex flex-col">
+                  <div className="flex flex-col screen">
                     {/*  HEADER */}
-                    <div className="flex pt-8 pb-4 justify-between ">
+                    <div className="flex justify-between pt-8 pb-4 ">
                       <div className="flex items-center">
-                        <p className="font-bold text-2xl pl-3 text-teal-700">
+                        <p className="pl-3 text-2xl font-bold text-teal-800/80">
                           Selección de fichas técnicas
                         </p>
                       </div>
                     </div>
                     {/*  SLIDER */}
-                    <div className="flex flex-col relative h-full bg-white rounded-lg ">
+                    <div className="relative flex flex-col h-full bg-white rounded-lg ">
                       <Slider
                         list={availableFichas}
                         unique='idFichaTecnica'

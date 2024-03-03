@@ -4,9 +4,11 @@ import { useUsuarios } from './hooks/useUsuarios'
 import { useFormik } from "formik";
 import { useEffect } from "react";
 import { useState } from "react";
-import CustomSelect from "../../components/CustomSelect";
-import Input from "../../components/Input";
 import Loader from "../../components/Loader/Loader";
+import FieldsBox from "../../components/FieldsBox";
+import Inpt from "../../components/Inputs/Inpt";
+import OptsInpt from "../../components/Inputs/OptsInpt";
+import Btton from "../../components/Buttons/Btton";
 
 const initUsuario = {
   nombre: '',
@@ -20,7 +22,6 @@ const initUsuario = {
 }
 
 const optionsRol = [
-  { value: 'Seleccione', label: 'Seleccione' },
   { value: 'Encargado', label: 'Encargado' },
   { value: 'Desarrollador', label: 'Desarrollador' },
   { value: 'Administrador', label: 'Administrador' },
@@ -29,9 +30,8 @@ const optionsRol = [
 ]
 
 const optionsActivo = [
-  { value: 'Seleccione', label: 'Seleccione' },
-  { value: 'Activo', label: 'Activo' },
-  { value: 'Inactivo', label: 'Inactivo' },
+  { value: true, label: 'Activo' },
+  { value: false, label: 'Inactivo' },
 ]
 
 const DetailUsuario = () => {
@@ -39,7 +39,16 @@ const DetailUsuario = () => {
   const navigate = useNavigate()
   const { id } = useParams();
   const isEdit = (id !== '0')
-  const { getUsuario, handleSaveUsuario, loading, findUsuario, allUsuarios, setLoading, errors, setErrors } = useUsuarios();
+  const {
+    getUsuario,
+    handleSaveUsuario,
+    loading,
+    findUsuario,
+    allUsuarios,
+    setLoading,
+    errors,
+    setErrors
+  } = useUsuarios();
   const [newPass, setNewPass] = useState(false)
   const [theresChanges, setTheresChanges] = useState(false)
 
@@ -91,8 +100,6 @@ const DetailUsuario = () => {
     return errors;
   };
 
-
-
   const formik = useFormik({
     initialValues: null,
     validate,
@@ -124,136 +131,130 @@ const DetailUsuario = () => {
     return () => { setLoading(true); }
   }, [])
 
-  const handleChange = (e) => {
-    formik.setFieldValue(e.target.name, e.target.value)
-    setTheresChanges(true)
-  }
 
   return (
     <>
-      <div className="w-full relative overflow-hidden">
-        <div id="tbl-page" className="flex flex-col h-full w-full bg-slate-100 absolute p-4">
-          <div className="flex pb-4 justify-between">
+      <div className="relative w-full overflow-hidden">
+        <div id="tbl-page" className="absolute flex flex-col w-full h-full p-4 bg-slate-100">
+          <div className="flex justify-between pb-4">
             <div className="flex items-center">
               <button
                 onClick={() => navigate(-1)}
-                className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
-              <p className="font-bold text-2xl pl-3 text-teal-700">
+                className="w-10 h-10 rounded-full neutral-button"> <ICONS.Left size="30px" /> </button>
+              <p className="pl-3 text-2xl font-bold text-teal-800/80">
                 {isEdit ? `Detalles del Usuario` : "Nuevo Usuario"}
               </p>
             </div>
-            <input
+            <Btton
               disabled={loading || !theresChanges}
-              className='bg-teal-500 p-1 w-40 text-white normal-button rounded-lg'
               type="submit"
-              value={isEdit ? "Guardar" : "Agregar"}
               form="frmUsuarios"
-            />
+              className="h-10 px-8"
+            >
+              {isEdit ? "Guardar" : "Agregar"}
+            </Btton>
+
+
           </div>
-          <div className="flex flex-col bg-white h-full rounded-t-lg relative shadow-lg">
-            <div className='w-full flex h-full flex-col '>
+          <div className="relative flex flex-col h-full bg-white rounded-t-lg shadow-lg">
+            <div className='flex flex-col w-full h-full '>
               <div className="flex w-full h-full ">
                 {loading || formik.values === null ? <Loader /> :
                   <form
                     id='frmUsuarios'
-                    className='flex flex-col h-full w-full relative overflow-y-scroll'
+                    className='relative flex flex-col w-full h-full overflow-y-scroll'
                     onSubmit={formik.handleSubmit}>
-                    <div className="absolute w-full flex flex-col  px-4">
+                    <div className="absolute flex flex-col w-full p-4">
+
                       <div className='flex flex-row w-full h-full p-2 total-center'>
-                        <div className="flex relative w-full items-center justify-center text-center">
-                          <ICONS.UsersIdentity className='' size='100px' style={{ color: '#0f766e' }} />
+                        <div className="relative flex items-center justify-center w-full text-center">
+                          <ICONS.UsersIdentity className='text-teal-800/80' size='100px' />
                         </div>
                       </div>
-                      <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-                        <div className="absolute w-full total-center -top-3">
-                          <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-                            Datos Personales
+                      <div className="flex w-full">
+                        <FieldsBox title="Datos Personales">
+                          <div className='flex flex-row gap-6'>
+                            <Inpt
+                              label="Nombre(s)"
+                              name="nombre"
+                              formik={formik}
+                              onKeyDown={() => setTheresChanges(true)}
+                              type="text"
+                            />
+                            <Inpt
+                              label="Apellido(s)"
+                              name="apellidos"
+                              formik={formik}
+                              onKeyDown={() => setTheresChanges(true)}
+                              type="text"
+                            />
                           </div>
-                        </div>
-                        <div className='flex flex-row'>
-                          <Input
-                            label='Nombre(s)' type='text' name='nombre' value={formik.values ? formik.values.nombre : ''}
-                            onChange={handleChange} onBlur={formik.handleBlur}
-                            errores={formik.errors.nombre && formik.touched.nombre ? formik.errors.nombre : null} />
-
-                          <Input
-                            label='Apellido(s)' type='text' name='apellidos' value={formik.values ? formik.values.apellidos : ''}
-                            onChange={handleChange} onBlur={formik.handleBlur}
-                            errores={formik.errors.apellidos && formik.touched.apellidos ? formik.errors.apellidos : null}
-                          />
-                        </div>
-
-                        <div className='flex flex-row'>
-                          <Input
-                            label='Correo' type='text' name='correo' value={formik.values ? formik.values.correo : ''}
-                            onChange={handleChange} onBlur={formik.handleBlur}
-                            errores={formik.errors.correo && formik.touched.correo ? formik.errors.correo : null}
-                            Icon={ICONS.Email}
-                          />
-
-                        </div>
+                          <div className='flex flex-row'>
+                            <Inpt
+                              label="Correo"
+                              name="correo"
+                              formik={formik}
+                              onKeyDown={() => setTheresChanges(true)}
+                              Icon={ICONS.Email}
+                              type="text"
+                            />
+                          </div>
+                        </FieldsBox>
                       </div>
-                      <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-                        <div className="absolute w-full total-center -top-3">
-                          <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-                            Datos de usuario
-                          </div>
-                        </div>
-                        <div className='flex flex-row'>
-                          <Input
-                            label='Usuario' type='text' name='usuario' value={formik.values ? formik.values.usuario : ''}
-                            onChange={handleChange} onBlur={formik.handleBlur}
-                            errores={formik.errors.usuario && formik.touched.usuario ? formik.errors.usuario : null}
-                            Icon={ICONS.User}
-                          />
-                          {isEdit ?
-                            <div className="flex w-full mx-2 ">
-                              <div className="flex items-center px-2 pt-4">
-                                <div className="inp-container ">
-                                  <input
-                                    onChange={() => setNewPass(prev => !prev)}
-                                    value={newPass} type="checkbox" className="inp-check" />
-                                  <label className="check"></label>
-                                </div>
-                              </div>
-                              <Input
-                                label={isEdit ? 'Nueva Contraseña' : 'Contraseña'} type='password' name='password' value={formik.values ? formik.values.password : ''}
-                                onChange={handleChange} onBlur={formik.handleBlur}
-                                errores={formik.errors.password && formik.touched.password ? formik.errors.password : null}
+                      <div className="flex w-full">
+                        <FieldsBox title="Datos de usuario">
+                          <div className='grid grid-cols-2 gap-6'>
+                            <Inpt
+                              label="Usuario"
+                              name="usuario"
+                              formik={formik}
+                              onKeyDown={() => setTheresChanges(true)}
+                              type="text"
+                              Icon={ICONS.User}
+                            />
+                            <div className="flex">
+                              {isEdit &&
+                                <div className="flex p-4 pb-8 total-center">
+                                  <div className="inp-container ">
+                                    <input
+                                      onChange={() => setNewPass(prev => !prev)}
+                                      value={newPass} type="checkbox" className="inp-check" />
+                                    <label className="check"></label>
+                                  </div>
+                                </div>}
+                              <Inpt
+                                label={isEdit ? 'Nueva Contraseña' : 'Contraseña'}
+                                name='password'
+                                formik={formik}
+                                onKeyDown={() => setTheresChanges(true)}
+                                type="password"
                                 Icon={ICONS.Key}
-                                disabled={!newPass}
+                                disabled={isEdit && !newPass}
                               />
                             </div>
-                            :
-                            <Input
-                              label={isEdit ? 'Nueva Contraseña' : 'Contraseña'} type='password' name='password' value={formik.values ? formik.values.password : ''}
-                              onChange={handleChange} onBlur={formik.handleBlur}
-                              errores={formik.errors.password && formik.touched.password ? formik.errors.password : null}
-                              Icon={ICONS.Key}
-                            />}
-                        </div>
-                        <div className="flex flex-row">
-                          <CustomSelect
-                            name='Rol'
-                            className='input'
-                            onChange={value => { formik.setFieldValue('rol', value.value); setTheresChanges(true) }}
-                            value={formik.values?.rol}
-                            onBlur={formik.handleBlur}
-                            options={optionsRol}
-                            label='Rol'
-                            errores={formik.errors.rol && formik.touched.rol ? formik.errors.rol : null}
-                          />
-                          <CustomSelect
-                            name='Estado'
-                            className='input'
-                            onChange={value => { formik.setFieldValue('is_active', value.value === 'Activo' ? true : false); setTheresChanges(true) }}
-                            value={formik.values ? formik.values.is_active ? "Activo" : "Inactivo" : ''}
-                            onBlur={formik.handleBlur}
-                            options={optionsActivo}
-                            label='Estado'
-                            errores={formik.errors.activo && formik.touched.activo ? formik.errors.activo : null}
-                          />
-                        </div>
+                          </div>
+
+                          <div className="flex gap-6">
+                            <OptsInpt
+                              label="Rol"
+                              name="rol"
+                              formik={formik}
+                              options={optionsRol}
+                              fieldChange={() => setTheresChanges(true)}
+                              placeholder="Seleccione"
+                              space
+                            />
+                            <OptsInpt
+                              label="Estado"
+                              name="is_active"
+                              formik={formik}
+                              options={optionsActivo}
+                              fieldChange={() => setTheresChanges(true)}
+                              placeholder="Seleccione"
+                              space
+                            />
+                          </div>
+                        </FieldsBox>
                       </div>
                     </div>
                   </form>

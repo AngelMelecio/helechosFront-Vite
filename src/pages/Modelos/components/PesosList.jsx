@@ -5,7 +5,7 @@ const PesosList = ({ materiales }) => {
 
   const [variety, setVariety] = useState([])
 
-  useEffect(() => {   
+  useEffect(() => {
     let diferent = []
     materiales?.forEach(material => {
       if (!diferent.includes(material.tipo)) {
@@ -26,15 +26,15 @@ const PesosList = ({ materiales }) => {
   }, [materiales])
 
   return (
-    <div className="w-100 flex justify-end pr-10">
-      <div className="flex flex-col border mb-2">
-        <div className="total-center font-bold text-teal-700 bg-slate-100">Peso</div>
+    <div className="flex justify-center mb-4">
+      <div className="flex flex-col p-2 mb-4 border rounded-md">
+        <div className="pb-2 text-sm font-semibold border-b text-teal-800/80 total-center">Peso (g)</div>
         <div className="flex flex-row justify-between p-1">
           {
             variety.map((v, index) =>
-              <div key={'W' + index} className="total-center flex flex-col px-2">
-                <p className="font-semibold text-teal-700">{v.tipo}</p>
-                <p>{v.peso}</p>
+              <div key={'W' + index} className="flex flex-col px-2 total-center">
+                <p className="font-semibold text-gray-700">{v.peso}</p>
+                <p className="font-semibold text-teal-800/80">{v.tipo}</p>
               </div>
             )
           }

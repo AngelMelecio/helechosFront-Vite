@@ -6,10 +6,11 @@ import { sleep } from '../../constants/functions'
 import { usePedidos } from './hooks/usePedidos'
 import ProgressBar from "@ramonak/react-progress-bar";
 import { get } from 'lodash'
+import CrudPedidos from './components/CrudPedidos'
 
 const PaginaPedidos = () => {
 
-  const { allPedidos, loading, refreshPedidos, deletePedidos} = usePedidos()
+  const { allPedidos, loading, refreshPedidos, deletePedidos } = usePedidos()
 
   const modalContainerRef = useRef()
   const [listaPedidos, setListaPedidos] = useState([])
@@ -48,8 +49,7 @@ const PaginaPedidos = () => {
 
   return (
     <>
-
-      <CRUD
+      <CrudPedidos
         title='Pedidos'
         idName='idPedido'
         path='pedidos'
@@ -60,7 +60,7 @@ const PaginaPedidos = () => {
         columns={[
           { name: 'Pedido', attribute: 'idPedido' },
           { name: 'Fecha de registro', attribute: 'fechaRegistro', type: 'dateTime' },
-          { name: 'Fecha de entrega', attribute: 'fechaEntrega', type: 'date'},
+          { name: 'Fecha de entrega', attribute: 'fechaEntrega', type: 'date' },
           { name: 'Cliente', attribute: 'modelo.cliente.nombre' },
           { name: 'Modelo', attribute: 'modelo.nombre' },
           { name: 'Orden de compra', attribute: 'ordenCompra' },
@@ -73,8 +73,36 @@ const PaginaPedidos = () => {
         ]}
         onDelete={() => handleOpenModal(setDeleteModalVisible)}
       />
+      {
+        /*
+          <CRUD
+            title='Pedidos'
+            idName='idPedido'
+            path='pedidos'
+            loading={loading}
+            allElements={allPedidos}
+            elements={listaPedidos}
+            setElements={setListaPedidos}
+            columns={[
+              { name: 'Pedido', attribute: 'idPedido' },
+              { name: 'Fecha de registro', attribute: 'fechaRegistro', type: 'dateTime' },
+              { name: 'Fecha de entrega', attribute: 'fechaEntrega', type: 'date'},
+              { name: 'Cliente', attribute: 'modelo.cliente.nombre' },
+              { name: 'Modelo', attribute: 'modelo.nombre' },
+              { name: 'Orden de compra', attribute: 'ordenCompra' },
+              {
+                name: 'Progreso del pedido', attribute: (e) => <ProgressBar completed={e.progressBar.progress}
+                  maxCompleted={e.progressBar.goal}
+                  className='w-full'
+                  bgColor={e.progressBar.color} />
+              }
+            ]}
+            onDelete={() => handleOpenModal(setDeleteModalVisible)}
+          />
+        */
+      }
 
-      <div className='modal absolute z-50 h-full w-full' ref={modalContainerRef}>
+      <div className='absolute z-50 w-full h-full modal' ref={modalContainerRef}>
         {deleteModalVisible &&
           <DeleteModal
             onCancel={() => handleCloseModal(setDeleteModalVisible)}

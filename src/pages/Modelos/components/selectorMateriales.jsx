@@ -5,7 +5,18 @@ import { ICONS } from "../../../constants/icons";
 import { sleep } from "../../../constants/functions";
 import { useDetailModelos } from "../hooks/useDetailModelos";
 
-const Th = ({ children }) => <th className="sticky top-0 z-10 bg-slate-100">{children}</th>
+const Th = ({ children }) => <th className="sticky top-0 z-10 font-medium bg-white">{children}</th>
+const TableInpt = ({ value, name, onChange, ...props }) => {
+  return (
+    <input
+      name={name}
+      value={value}
+      className="flex w-full h-8 px-2 font-medium text-gray-700 duration-300 border rounded-md outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-400 hover:border-teal-500 "
+      onChange={onChange}
+      {...props}
+    />
+  )
+}
 
 const SelectorMateriales = ({
   fichaTecnicaObj,
@@ -113,10 +124,10 @@ const SelectorMateriales = ({
   let someMaterialSelected = availableMateriales?.reduce((ans, m) => (m.count > 0) | ans, 0)
 
   return (
-    <div className="flex w-full h-80 relative">
+    <div className="relative flex w-full h-80">
       <div className={"flex flex-row absolute w-full h-full"}>
         <div className={"flex flex-col  h-full duration-500 " + sel_width}>
-          <div className="flex flex-row relative justify-between items-center">
+          <div className="relative flex flex-row items-center justify-between">
             <button
               type="button"
               className={"flex items-center justify-center w-8 h-8 rounded-lg " + addButtonClass}
@@ -125,16 +136,16 @@ const SelectorMateriales = ({
             </button>
 
           </div>
-          <div ref={selectorContentRef} className="modal  w-full h-full overflow-scroll ">
+          <div ref={selectorContentRef} className="w-full h-full overflow-scroll modal ">
             {loading ? <Loader /> :
               <>
                 {
                   selectorVisible &&
                   <div>
                     <div className={`flex flex-row py-2 modal w-full h-full ${selectorVisible ? "visible" : ""}`}>
-                      <div className="flex relative w-full items-center">
+                      <div className="relative flex items-center w-full">
                         <input
-                          className='w-full h-full pr-10 rounded-2xl py-1 pl-3 outline-none bg-gray-100'
+                          className='w-full h-full py-1 pl-3 pr-10 bg-gray-100 outline-none rounded-2xl'
                           ref={searchRef}
                           onChange={(e) => {
                             setMaterialSearchText(e.target.value)
@@ -146,7 +157,7 @@ const SelectorMateriales = ({
                         <button
                           type="button"
                           onClick={handleSearchButtonClick}
-                          className='h-6 w-6 absolute right-1 total-center opacity-white rounded-2xl'>
+                          className='absolute w-6 h-6 right-1 total-center opacity-white rounded-2xl'>
                           {
                             materialSearchText.length > 0 ?
                               <ICONS.Cancel size='18px' style={{ color: '#4b5563' }} /> :
@@ -168,11 +179,11 @@ const SelectorMateriales = ({
                       availableMateriales?.map((m, i) =>
                         <div className={`w-full flex flex-row border border-transparent border-b-slate-300`} key={'M' + i}>
                           <div className={`duration-200 w-4 ${m.count && " bg-teal-400"}`}></div>
-                          <div className="w-full flex flex-row p-2">
-                            <div className="flex flex-row control items-center">
-                              <button className="neutral-button rounded-full w-6 h-6" id='sub' type="button" onClick={(e) => handleChangeMaterialCount('sub', i)}> <ICONS.Minus /></button>
+                          <div className="flex flex-row w-full p-2">
+                            <div className="flex flex-row items-center control">
+                              <button className="w-6 h-6 rounded-full neutral-button" id='sub' type="button" onClick={(e) => handleChangeMaterialCount('sub', i)}> <ICONS.Minus /></button>
                               <p className="px-2 text-lg">{m.count}</p>
-                              <button className="neutral-button rounded-full w-6 h-6" id='plus' type="button" onClick={(e) => handleChangeMaterialCount('plus', i)}> <ICONS.Plus size="11px" /></button>
+                              <button className="w-6 h-6 rounded-full neutral-button" id='plus' type="button" onClick={(e) => handleChangeMaterialCount('plus', i)}> <ICONS.Plus size="11px" /></button>
                             </div>
                             <p className="pl-3">
                               {m.tipo} - {m.color} - {m.nombreProveedor}
@@ -187,11 +198,13 @@ const SelectorMateriales = ({
             }
           </div>
         </div>
+        {
+          fichaTecnicaObj?.values?.materiales?.length > 0 ?
         <div className={"flex h-full overflow-scroll duration-500 w-full"}>
           <div className="w-full" >
             <table className="w-full">
               <thead>
-                <tr className="font-medium text-teal-700">
+                <tr className="h-8 text-sm text-teal-800/80">
                   <Th></Th>
                   <Th>Guía Hilos</Th>
                   <Th>calibre</Th>
@@ -207,8 +220,8 @@ const SelectorMateriales = ({
                 {
                   //  ASSIGNED MATERIALES 
                   fichaTecnicaObj?.values?.materiales?.map((f, i) =>
-                    <tr key={'F' + i} className="array-row border border-transparent relative hover:bg-slate-200 duration-200">
-                      <td className="bg-white flex justify-self-auto">
+                    <tr key={'F' + i} className="relative duration-200 border border-transparent array-row hover:bg-gray-100">
+                      <td className="flex bg-white justify-self-auto">
                         <div className="flex justify-between">
                           {/*Implementa en estos botones el swap*/}
                           <button
@@ -226,25 +239,25 @@ const SelectorMateriales = ({
                         </div>
                       </td>
                       <td>
-                        <input
-                          name='guiaHilos'
+                        <TableInpt
+                          name="guiaHilos"
                           value={f.guiaHilos ? f.guiaHilos : ''}
-                          className="flex w-full p-1 outline-none  duration-300 border focus:border-teal-500"
                           onChange={(e) => { handleChangeMaterial(e, i) }}
-                          type="text" />
-                      </td>
-                      <td>
-                        <input
-                          readOnly
-                          className="flex w-full p-1 outline-none border-0 duration-300 bg-transparent focus:border-teal-500"
-                          value={f.calibre}
-                          type="text" />
+                          type="text"
+                        />
 
                       </td>
                       <td>
                         <input
                           readOnly
-                          className="flex w-full p-1 outline-none border-0 duration-300 bg-transparent focus:border-teal-500"
+                          className="flex w-full p-1 font-normal text-gray-500 duration-300 bg-transparent border-0 outline-none focus:border-teal-500"
+                          value={f.calibre}
+                          type="text" />
+                      </td>
+                      <td>
+                        <input
+                          readOnly
+                          className="flex w-full p-1 font-normal text-gray-500 duration-300 bg-transparent border-0 outline-none focus:border-teal-500"
                           value={f.nombreProveedor}
                           type="text" />
 
@@ -253,7 +266,7 @@ const SelectorMateriales = ({
                         <div className="flex flex-row items-center w-full ">
                           <input
                             readOnly
-                            className="flex w-full p-1 outline-none border-0 duration-300 bg-transparent focus:border-teal-500"
+                            className="flex w-full p-1 font-normal text-gray-500 duration-300 bg-transparent border-0 outline-none focus:border-teal-500"
                             value={f.color}
                             type="text" />
                           <div className="w-12 px-2">
@@ -271,37 +284,40 @@ const SelectorMateriales = ({
                           readOnly
                           value={f.tenida}
                           onChange={(e) => { handleChangeMaterial(e, i) }}
-                          className="flex w-full p-1 outline-none border-0 duration-300 bg-transparent focus:border-teal-500"
+                          className="flex w-full p-1 font-normal text-gray-500 duration-300 bg-transparent border-0 outline-none focus:border-teal-500"
                           type="text" />
                       </td>
                       <td>
+
                         <input
                           readOnly
                           value={f.tipo}
                           onChange={(e) => { handleChangeMaterial(e, i) }}
-                          className="flex w-full p-1 outline-none border-0 duration-300 bg-transparent focus:border-teal-500"
+                          className="flex w-full p-1 font-normal text-gray-500 duration-300 bg-transparent border-0 outline-none focus:border-teal-500"
                           type="text" />
                       </td>
                       <td>
-                        <input
+                        <TableInpt
+                          name="hebras"
                           value={f.hebras}
-                          name='hebras'
                           onChange={(e) => { handleChangeMaterial(e, i) }}
-                          className="flex w-full p-1 outline-none  duration-300 border focus:border-teal-500"
-                          type="text" />
+                          type="text"
+                        />
+
                       </td>
                       <td>
-                        <input
+                        <TableInpt
+                          name="peso"
                           value={f.peso}
-                          name='peso'
                           onChange={(e) => { handleChangeMaterial(e, i) }}
-                          className="flex w-full p-1 outline-none  duration-300 border focus:border-teal-500"
-                          type="text" />
+                          type="text"
+                        />
+
                       </td>
                       <td className="bg-white">
                         <button
                           onClick={(e) => handleDeleteMaterial(e, i)}
-                          className="p-1 opacity-0 trash-button rounded-md">
+                          className="p-1 rounded-md opacity-0 trash-button">
                           <ICONS.Trash />
                         </button>
                       </td>
@@ -310,7 +326,11 @@ const SelectorMateriales = ({
               </tbody>
             </table>
           </div>
+        </div> :
+        <div className="italic font-semibold text-gray-500 bg-gray-200 size-full total-center">
+          Asigne materiales ...
         </div>
+        }
       </div>
     </div>
   )

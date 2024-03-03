@@ -28,6 +28,8 @@ import PdfTest from "./pages/PdfTest"
 import NuevoPedido from "./pages/Pedidos/NuevoPedido"
 import TestComp from "./components/TestComp"
 import PaginaReportes from "./pages/Reportes/PaginaReportes"
+import AppBar2 from "./components/Navigation/AppBar2"
+import Pagina1 from "./components/Navigation/Pagina1"
 
 const getRoutesForRole = (role) => {
   const routesByRole = {
@@ -73,7 +75,7 @@ const getRoutesForRole = (role) => {
       { path: "/pedidos/0", element: <NuevoPedido /> },
       { path: "/pedidos/:id", element: <DetailPedido /> },
       { path: "/produccion", element: <PaginaProduccion /> },
-      { path: "/reportes", element: <PaginaReportes />}
+      { path: "/reportes", element: <PaginaReportes /> }
     ],
     'Produccion': [
       { path: "/produccion", element: <PaginaProduccion /> },
@@ -93,12 +95,14 @@ const Main = () => {
   const navigate = useNavigate()
   const { session } = useAuth()
 
+  
+
   return (
     <>
       {session ?
         <>
           <AdminProvider>
-            <div className="flex w-full h-screen overflow-hidden absolute bg-slate-100">
+            <div className="absolute flex w-full h-screen overflow-hidden bg-slate-100">
               <AppBar />
               {<Routes>
                 <Route exact path="*" element={<Navigate replace to="/perfil" />} />

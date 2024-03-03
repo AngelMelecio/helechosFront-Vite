@@ -53,12 +53,12 @@ const RutaSelect = ({
         ets[i].checked = false
       }
     }
-    formik.setFieldValue(name,estaciones[index].estacion)
+    formik.setFieldValue(name, estaciones[index].estacion)
     setEstaciones(ets)
   }
 
   return (
-    <div>
+    <div className='border rounded-md'>
       {
         estaciones.map((e, i) => (
           <button
@@ -73,7 +73,7 @@ const RutaSelect = ({
             `}
           >
             <input
-              className='w-5 h-5 pointer-events-none'
+              className='pointer-events-none inpt-check'
               type="checkbox"
               readOnly
               checked={e.checked}
