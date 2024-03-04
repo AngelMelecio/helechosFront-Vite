@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react"
-import Input from "../../components/Input";
 import { useFormik } from "formik";
-import CustomSelect from "../../components/CustomSelect";
-import { usePedidos } from "../Pedidos/hooks/usePedidos";
 import ReporteEmpleadoModelo from "./ReporteEmpleadoModelo";
 import ReporteMaquinaTurno from "./ReporteMaquinaTurno";
 import AbsScroll from "../../components/AbsScroll"
+
+import Inpt from '../../components/Inputs/Inpt'
+import OptsInpt from '../../components/Inputs/OptsInpt'
+import FieldsBox from "../../components/FieldsBox";
 
 const PaginaReportes = () => {
     {/* States and Effects */ }
@@ -31,7 +32,6 @@ const PaginaReportes = () => {
     {/* Options */ }
 
     const optionsDepartamento = [
-        { value: 'Seleccione', label: 'Seleccione' },
         { value: 'Tejido', label: 'Tejido' },
         { value: 'Plancha', label: 'Plancha' },
         { value: 'Calidad', label: 'Calidad' },
@@ -40,7 +40,6 @@ const PaginaReportes = () => {
     ]
 
     const optionsTipo = [
-        { value: 'Seleccione', label: 'Seleccione' },
         { value: 'Modelo', label: 'Modelo' },
         { value: 'Turno', label: 'Turno' },
     ]
@@ -51,10 +50,10 @@ const PaginaReportes = () => {
 
     {/* Formik */ }
     const initobj = {
-        tipo: "Seleccione",
+        tipo: null,
         fechaInicio: null,
         fechaFinal: null,
-        departamento: "Seleccione",
+        departamento: null,
     }
     const validate = values => {
         const errors = {};
@@ -80,10 +79,7 @@ const PaginaReportes = () => {
     const formik = useFormik({
         initialValues: initobj,
         validate,
-        onSubmit: (values) => {
-            console.log(values)
-            setSolicitud(values)
-        },
+        onSubmit: (values) => setSolicitud(values)
     });
 
     return (
@@ -94,7 +90,7 @@ const PaginaReportes = () => {
 
                         {/* Titulo de la pagina */}
                         <div className="flex flex-row justify-between w-full pr-1">
-                            <h1 className="pb-4 pl-3 text-2xl font-bold text-teal-700">Reportes de producción</h1>
+                            <h1 className="pb-4 pl-3 text-2xl font-bold text-teal-800/80">Reportes de producción</h1>
                             <input
                                 form="frmReportes"
                                 disabled={false}
@@ -109,51 +105,41 @@ const PaginaReportes = () => {
                                 id='frmReportes'
                                 className="flex flex-col p-4"
                                 onSubmit={formik.handleSubmit}>
-                                <div className="relative p-4 mx-1 my-2 border-2 border-slate-300">
-                                    <div className="absolute w-full total-center -top-3">
-                                        <div className='px-3 text-base italic font-bold text-teal-700 bg-white' >
-                                            Datos del reporte
+                                <div className="flex w-full">
+                                    <FieldsBox title="Datos del reporte">
+                                        <div className='flex flex-row w-full gap-6'>
+                                            <OptsInpt
+                                                label='Tipo'
+                                                name='tipo'
+                                                options={optionsTipo}
+                                                formik={formik}
+                                                placeholder='Seleccione'
+                                            />
+                                            <OptsInpt
+                                                label='Departamento'
+                                                name='departamento'
+                                                options={optionsDepartamento}
+                                                formik={formik}
+                                                placeholder='Seleccione'
+                                            />
+                                            <Inpt
+                                                formik={formik}
+                                                label='Fecha inicio' type='date' name='fechaInicio' />
+                                            <Inpt
+                                                formik={formik}
+                                                label='Fecha final' type='date' name='fechaFinal' />
                                         </div>
-                                    </div>
-                                    <div className='flex flex-row w-full'>
-                                        <CustomSelect
-                                            name='tipo'
-                                            onChange={value => formik.setFieldValue('tipo', value.value)}
-                                            value={formik.values ? formik.values.tipo : ''}
-                                            onBlur={formik.handleBlur}
-                                            options={optionsTipo}
-                                            label='Tipo'
-                                            errores={formik.errors.tipo && formik.touched.tipo ? formik.errors.tipo : null}
-                                        />
-                                        <CustomSelect
-                                            name='departamento'
-                                            onChange={value => formik.setFieldValue('departamento', value.value)}
-                                            value={formik.values ? formik.values.departamento : ''}
-                                            onBlur={formik.handleBlur}
-                                            options={optionsDepartamento}
-                                            label='Departamento'
-                                            errores={formik.errors.departamento && formik.touched.departamento ? formik.errors.departamento : null}
-                                        />
-                                        <Input
-                                            label='Fecha inicio' type='date' name='fechaInicio' value={formik.values ? formik.values.fechaInicio : ''}
-                                            onChange={handleChange} onBlur={formik.handleBlur}
-                                            errores={formik.errors.fechaInicio && formik.touched.fechaInicio ? formik.errors.fechaInicio : null}
-                                        />
-                                        <Input
-                                            label='Fecha final' type='date' name='fechaFinal' value={formik.values ? formik.values.fechaFinal : ''}
-                                            onChange={handleChange} onBlur={formik.handleBlur}
-                                            errores={formik.errors.fechaFinal && formik.touched.fechaFinal ? formik.errors.fechaFinal : null}
-                                        />
-                                    </div>
 
+                                    </FieldsBox>
                                 </div>
+
                             </form>
                         </div>
                         {solicitud &&
                             <div
                                 className="flex flex-col"
                                 style={{ height: `${screenRef.current?.clientHeight - 16}px` }}>
-                                <h1 className="pt-4 pb-4 pl-3 text-2xl font-bold text-teal-700">Graficas</h1>
+                                <h1 className="pt-4 pb-4 pl-3 text-2xl font-bold text-teal-800/80">Graficas</h1>
                                 {/* Graficas */}
                                 {
                                     renderModelo &&

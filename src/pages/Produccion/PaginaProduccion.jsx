@@ -4,13 +4,9 @@ import { useEmpleados } from "../Empleados/hooks/useEmpleados"
 import { useMaquinas } from "../Maquinas/hooks/useMaquinas"
 import CustomSelect from "../../components/CustomSelect"
 import { useRef } from "react"
-import { QrReader } from "react-qr-reader"
 import { sleep } from "../../constants/functions"
 import { useProduccion } from './hooks/useProduccion'
 import ResponseModal from "./components/ResponseModal"
-import { set } from "lodash"
-import { API_URL } from "../../constants/HOSTS";
-import ScanModal from "./components/ScanModal"
 import { useAuth } from "../../context/AuthContext"
 
 const optsTurno = [
@@ -184,7 +180,7 @@ const PaginaProduccion = () => {
           <div className="flex flex-col h-full">
             {/* Header */}
             <div className="flex flex-row items-center justify-between w-full pb-4 pr-1">
-              <h1 className="pl-3 text-2xl font-bold text-teal-700">Captura de Producción</h1>
+              <h1 className="pl-3 text-2xl font-bold text-teal-800/80">Captura de Producción</h1>
               <button
                 onClick={handleCapturar}
                 disabled={loading || empleado === null || etiquetasList.length === 0 || turno === null || maquina === 0}

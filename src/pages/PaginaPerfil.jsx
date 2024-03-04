@@ -51,18 +51,18 @@ const PaginaPerfil = () => {
 
   return (
     <>
-      <div className="flex flex-col w-full h-full relative bg-slate-100">
-        <div className=" flex flex-col h-full w-full absolute p-4 overflow-hidden">
-          <h1 className="font-bold text-2xl pb-4 pl-3 text-teal-700">
+      <div className="relative flex flex-col w-full h-full bg-slate-100">
+        <div className="absolute flex flex-col w-full h-full p-4 overflow-hidden ">
+          <h1 className="pb-4 pl-3 text-2xl font-bold text-teal-800/80">
             Mi perfil
           </h1>
-          <div className="bg-white flex flex-col h-full rounded-lg shadow-lg">
-            <div className="flex flex-row w-full items-center px-10 pt-5">
-              <ICONS.UsersIdentity className='mr-5' size='110px' style={{ color: '#0f766e' }} />
-              <div className="text-lg font-medium text-gray-700 italic">
+          <div className="flex flex-col h-full bg-white rounded-lg shadow-lg">
+            <div className="flex flex-row items-center w-full px-10 pt-5">
+              <ICONS.UsersIdentity className='mr-10 text-teal-800/80' size='95px' />
+              <div className="text-xl font-semibold text-gray-700">
                 {user[0].value} {user[1].value}
                 <br />
-                <p className="text-base font-normal">
+                <p className="text-base italic font-medium text-gray-600">
                   {session.usuario.rol}
                 </p>
               </div>
@@ -80,19 +80,19 @@ const PaginaPerfil = () => {
                             setTmpInp(atr.value)
                           }
                         }}
-                        className="h-12 text-gray-700 border-b-1">
-                        <td className="px-3 text-teal-700 font-medium text-sm pointer-events-none">
+                        className="h-12 font-medium text-gray-700 border-b-1">
+                        <td className="px-3 text-sm font-medium pointer-events-none text-teal-800/80">
                           {atr.label}:
                         </td>
-                        <td className="w-full  font-normal">
+                        <td className="w-full font-semibold">
                           {
-                            <p className="border-2 border-transparent px-2">
+                            <p className="px-2 border-2 border-transparent">
                               {atr.value}
                             </p>
                           }
                         </td>
                         <td className="">
-                          <div className="flex flex-row h-full justify-around items-center w-24">
+                          <div className="flex flex-row items-center justify-around w-24 h-full">
                           </div>
                         </td>
                       </tr>)

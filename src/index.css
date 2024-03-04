@@ -59,20 +59,20 @@
 
 /* Track */
 #appbar::-webkit-scrollbar-track {
-  background: #0d9488;
+  background: #ffffff00;
   transition: 0.2s;
 }
 
 
 /* Handle */
 #appbar::-webkit-scrollbar-thumb {
-  background: #0d9488;
+  background: #00000000;
   transition: 0.2s;
 }
 
 #appbar:hover::-webkit-scrollbar-thumb {
   /*background: #4c6e6c;*/
-  background: #08776ebb;
+  background: #0000002e;
   transition: 0.2s;
   transition-delay: 1s;
 }
@@ -80,7 +80,7 @@
 /* Handle on hover */
 #appbar::-webkit-scrollbar-thumb:hover {
   /*background: #425f5d;*/
-  background: #0b6b63d8;
+  background: #00000039;
 }
 
 #appbar {
@@ -88,7 +88,7 @@
 }
 
 #appbar:hover {
-  width: 15rem;
+  width: 13.5rem;
   transition: 0.3s;
   transition-delay: 0.4s;
 }
@@ -628,6 +628,8 @@ table td {
   transition: 0.2s;
 }
 
+/*
+
 input[type="checkbox"] {
   position: relative;
 
@@ -665,7 +667,7 @@ input[type="checkbox"]:checked::after {
   background-color: #ffffff;
   clip-path: polygon(43% 56%, 74% 18%, 89% 28%, 43% 83%, 14% 58%, 28% 43%);
 }
-
+*/
 #ficha-nombre:hover+div {
   background-color: red;
 }
@@ -766,9 +768,128 @@ input[type="checkbox"]:checked::after {
   transform: translateY(110%);
 
 }
+
 .e-l.ellipsis:hover::after {
   left: 0;
 }
+
 .e-r.ellipsis:hover::after {
   right: 0;
+}
+
+.emerge {
+  animation: emerge 0.5s ease-out;
+}
+
+@keyframes emerge {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+.appear {
+  animation: appear 0.5s ease-out;
+}
+
+@keyframes appear {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.custom-bg-blend {
+  --bg-base-color: #000;
+  /* Default base color */
+  --bg-overlay-color: rgba(255, 255, 255, 0.5);
+  /* Default overlay color with opacity */
+  background-color: var(--bg-base-color);
+  position: relative;
+}
+
+.custom-bg-blend::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bg-overlay-color);
+  mix-blend-mode: multiply;
+  /* Adjust as needed */
+}
+
+input[type="checkbox"].switch {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #d1d5db;
+  border-radius: 20px;
+  outline: none;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+input[type="checkbox"].switch::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: white;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 2px;
+  transition: left 0.3s;
+}
+
+input[type="checkbox"].switch:checked {
+  background-color: #14b8a6;
+}
+
+input[type="checkbox"].switch:checked::before {
+  left: 21px;
+}
+
+input[type="checkbox"].inpt-check {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #d1d5db;
+  border-radius: 5px;
+  outline: none;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+input[type="checkbox"].inpt-check::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  clip-path: polygon(71% 20%, 85% 31%, 48% 82%, 35% 82%, 16% 59%, 29% 45%, 42% 60%);
+}
+
+input[type="checkbox"].inpt-check:checked {
+  background-color: #14b8a6;
+}
+
+input[type="checkbox"].inpt-check:checked::before {
+  top: 0;
+  background-color: white;
 }

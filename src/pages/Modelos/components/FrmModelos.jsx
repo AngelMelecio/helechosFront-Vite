@@ -1,12 +1,13 @@
 import { useFormik } from "formik"
-import Input from "../../../components/Input"
-import CustomSelect from "../../../components/CustomSelect"
 import { useState } from "react"
 import useModelos from "../hooks/useModelos"
 import { useEffect } from "react"
 import { useClientes } from "../../Clientes/hooks/useClientes"
 import { useNavigate } from "react-router-dom"
 import { useDetailModelos } from "../hooks/useDetailModelos"
+import FieldsBox from "../../../components/FieldsBox"
+import Inpt from "../../../components/Inputs/Inpt"
+import OptsInpt from "../../../components/Inputs/OptsInpt"
 
 const FrmModelos = ({
   modelo,
@@ -55,16 +56,14 @@ const FrmModelos = ({
   }, [])
 
   useEffect(() => {
-
     modeloFormik.setValues(modelo)
   }, [modelo])
 
   useEffect(() => {
-    let newClientesOptions = [{ value: 'Seleccione', label: 'Seleccione' }]
-    allClientes.forEach(c => {
-      newClientesOptions.push({ value: c.idCliente.toString(), label: c.nombre })
-    })
-    setClientesOptions(newClientesOptions)
+    if (allClientes.length === 0) return
+    setClientesOptions(allClientes.map(
+      c => ({ value: c.idCliente.toString(), label: c.nombre })
+    ))
   }, [allClientes])
 
   const handleChange = (e) => {
@@ -76,37 +75,28 @@ const FrmModelos = ({
     <form
       id='frmModelos'
       onSubmit={modeloFormik.handleSubmit}
-      className="xl:px-32 px-7 py-4 flex flex-col">
-      {/*<input
-        disabled={!theresChanges}
-        className='py-1 px-5 mr-2 text-white normal-button self-end rounded-lg'
-        type="submit"
-        value={isEdit ? "GUARDAR MODELO" : "AGREGAR MODELO"}
-        form="frmModelos"
-  />*/}
-      <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-        <div className="absolute w-full total-center -top-3">
-          <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-            Datos del Modelo
+      className="flex flex-col py-4 xl:px-32 px-7">
+      <div className="flex w-full">
+        <FieldsBox title="Datos del modelo">
+          <div className='flex flex-row w-full gap-6'>
+            <Inpt
+              label="Nombre del modelo"
+              name="nombre"
+              type="text"
+              formik={modeloFormik}
+              onKeyDown={() => setTheresChangesModelo(true)}
+            />
+            <OptsInpt
+              label="Cliente"
+              name="idCliente"
+              formik={modeloFormik}
+              options={clientesOptions}
+              fieldChange={() => setTheresChangesModelo(true)}
+              placeholder="Seleccione"
+            />
+
           </div>
-        </div>
-        <div className='flex flex-row w-full'>
-          <Input
-            label='Nombre del modelo' type='text' name='nombre' value={modeloFormik.values.nombre}
-            onChange={handleChange} onBlur={modeloFormik.handleBlur}
-            errores={modeloFormik.errors.nombre && modeloFormik.touched.nombre ? modeloFormik.errors.nombre : null}
-          />
-          <CustomSelect
-            name='idCliente'
-            className='input z-10'
-            onChange={(value) => handleChange({ target: { name: 'idCliente', value: value.value } })}
-            value={modeloFormik.values.idCliente}
-            onBlur={modeloFormik.handleBlur}
-            options={clientesOptions}
-            label='Cliente'
-            errores={modeloFormik.errors.idCliente && modeloFormik.touched.idCliente ? modeloFormik.errors.idCliente : null}
-          />
-        </div>
+        </FieldsBox>
       </div>
     </form>
   )

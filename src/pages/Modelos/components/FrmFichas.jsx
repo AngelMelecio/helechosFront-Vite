@@ -1,7 +1,5 @@
 import { useFormik, FormikProvider } from "formik"
 import { useEffect } from "react"
-import Input from "../../../components/Input";
-import CustomSelect from "../../../components/CustomSelect";
 import DynamicInput from "../../../components/DynamicInput"
 import SelectorMateriales from "../components/selectorMateriales";
 import { toUrl } from "../../../constants/functions";
@@ -12,11 +10,13 @@ import { useMaquinas } from "../../Maquinas/hooks/useMaquinas";
 import { useState } from "react";
 import Loader from "../../../components/Loader/Loader";
 import { useFichas } from "../hooks/useFichas";
-import { useMateriales } from "../../Materiales/hooks/useMateriales";
 import { useParams } from "react-router-dom";
 import { useDetailModelos } from "../hooks/useDetailModelos";
 import { useFichaMateriales } from "../hooks/useFichaMateriales";
 import { useAuth } from "../../../context/AuthContext";
+import FieldsBox from "../../../components/FieldsBox";
+import Inpt from "../../../components/Inputs/Inpt";
+import OptsInpt from "../../../components/Inputs/OptsInpt";
 
 const FrmFichas = ({
   ficha,
@@ -57,7 +57,7 @@ const FrmFichas = ({
     if (!values.talla) {
       errors.talla = 'Ingresa la talla';
     } else if (!regex.test(values.talla)) {
-      errors.talla ="Las tallas no coincide con el patrón";
+      errors.talla = "Las tallas no coincide con el patrón";
     }
     if (!values.maquinaTejido) {
       errors.maquinaTejido = 'Selecciona una maquina ';
@@ -194,231 +194,221 @@ const FrmFichas = ({
       <FormikProvider value={fichaFormik}>
         <form
           id='frmFichas' onSubmit={fichaFormik.handleSubmit}
-          className='flex flex-col h-full w-full relative '>
-          <div className="absolute w-full flex flex-col p-4">
-            <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-              <div className="absolute w-full total-center -top-3">
-                <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-                  Información de la ficha
+          className='relative flex flex-col w-full h-full '>
+          <div className="absolute flex flex-col w-full p-4">
+            <div className="flex w-full">
+              <FieldsBox title="Información de la ficha">
+                <div className="w-full py-2 total-center">
+                  <div className="relative flex items-center justify-center w-full text-center foto">
+                    { /* Imagen del Modelo */}
+                    {(toUrl(fichaFormik.values?.fotografia) !== null) && <img
+                      className='object-cover foto'
+                      src={toUrl(fichaFormik.values?.fotografia)}
+                      alt='' />}
+                    <input id='file' type="file" name='fotografia' accept='image/*'
+                      onChange={handleSelectFile} className='inputfile' />
+                    <label
+                      className='absolute p-2 rounded-full -bottom-2 -right-1 normal-button'
+                      htmlFor='file' >
+                      <ICONS.Upload style={{ color: 'white' }} size='18px' />
+                    </label>
+                  </div>
                 </div>
-              </div>
-              <div className="w-full total-center">
-                <div className="flex relative w-full items-center justify-center foto text-center">
-                  { /* Imagen del Modelo */}
-                  {(toUrl(fichaFormik.values?.fotografia) !== null) && <img
-                    className='object-cover foto'
-                    src={toUrl(fichaFormik.values?.fotografia)}
-                    alt='' />}
-                  <input id='file' type="file" name='fotografia' accept='image/*'
-                    onChange={handleSelectFile} className='inputfile' />
-                  <label
-                    className='absolute -bottom-2 -right-1 p-2 normal-button rounded-full'
-                    htmlFor='file' >
-                    <ICONS.Upload style={{ color: 'white' }} size='18px' />
-                  </label>
+
+                <div className='flex flex-row w-full'>
+                  <Inpt
+                    label="Nombre de la Ficha"
+                    name="nombre"
+                    type="text"
+                    formik={fichaFormik}
+                    onKeyDown={() => setTheresChangesFicha(true)}
+                  />
                 </div>
-              </div>
-              <div className='flex flex-row w-full'>
-                <Input
-                  label='Nombre de la Ficha' type='text' name='nombre' value={fichaFormik?.values?.nombre}
-                  onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
-                  errores={fichaFormik?.errors.nombre && fichaFormik?.touched.nombre ? fichaFormik?.errors.nombre : null}
-                />
-              </div>
-              <div className="flex flex-row w-full">
-                <Input
-                  label='Talla' type='text' name='talla' value={fichaFormik?.values?.talla} placeholder='25/26.5/...'
-                  onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
-                  errores={fichaFormik?.errors.talla && fichaFormik?.touched.talla ? fichaFormik?.errors.talla : null}
-                />
-                <Input
-                  label='Nombre del Programa' type='text' name='nombrePrograma' value={fichaFormik?.values?.nombrePrograma}
-                  onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
-                  errores={fichaFormik?.errors.nombrePrograma && fichaFormik?.touched.nombrePrograma ? fichaFormik?.errors.nombrePrograma : null}
-                />
-              </div>
-              <div className="flex flex-row w-full">
-                <Input
-                  readOnly
-                  label='Fecha de Creación' type='text' name='fechaCreacion' value={fichaFormik?.values?.fechaCreacion}
-                  onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
-                  errores={fichaFormik?.errors.fechaCreacion && fichaFormik?.touched.fechaCreacion ? fichaFormik?.errors.fechaCreacion : null}
-                />
-                <Input
-                  readOnly
-                  label='Ultima Modificación' type='text' name='fechaUltimaEdicion' value={fichaFormik?.values?.fechaUltimaEdicion}
-                  onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
-                  errores={fichaFormik?.errors.fechaUltimaEdicion && fichaFormik?.touched.fechaUltimaEdicion ? fichaFormik?.errors.fechaUltimaEdicion : null}
-                />
-              </div>
+
+                <div className="flex flex-row w-full gap-6">
+                  <Inpt
+                    label="Talla"
+                    name="talla"
+                    type="text"
+                    formik={fichaFormik}
+                    onKeyDown={() => setTheresChangesFicha(true)}
+                  />
+                  <Inpt
+                    label="Nombre del Programa"
+                    name="nombrePrograma"
+                    type="text"
+                    formik={fichaFormik}
+                    onKeyDown={() => setTheresChangesFicha(true)}
+                  />
+                </div>
+                <div className="flex flex-row w-full gap-6">
+                  <Inpt
+                    readOnly
+                    label='Fecha de Creación'
+                    type='text'
+                    name='fechaCreacion'
+                    formik={fichaFormik}
+                  />
+                  <Inpt
+                    readOnly
+                    label='Ultima Modificación' type='text' name='fechaUltimaEdicion'
+                    formik={fichaFormik}
+                  />
+
+                </div>
+              </FieldsBox>
             </div>
-            <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-              <div className="absolute w-full total-center -top-3">
-                <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-                  Datos del tejido
+            <div className="flex w-full">
+              <FieldsBox title="Datos del tejido">
+                <div className="flex flex-row w-full gap-6">
+                  <div className="flex flex-row w-full gap-6">
+                    <OptsInpt
+                      label="Máquina Tejido"
+                      name="maquinaTejido"
+                      formik={fichaFormik}
+                      options={tejidoOptions}
+                      fieldChange={() => setTheresChangesFicha(true)}
+                      placeholder="Seleccione"
+                    />
+                    <Inpt
+                      label="Tipo Maquina Tejido"
+                      name="tipoMaquinaTejido"
+                      type="text"
+                      formik={fichaFormik}
+                      onKeyDown={() => setTheresChangesFicha(true)}
+                    />
+                  </div>
+                  <div className="flex flex-row w-full gap-6">
+                    <Inpt
+                      label="Galga"
+                      name="galga"
+                      type="text"
+                      formik={fichaFormik}
+                      onKeyDown={() => setTheresChangesFicha(true)}
+                    />
+                    <Inpt
+                      label="Velocidad"
+                      name="velocidadTejido"
+                      type="text"
+                      formik={fichaFormik}
+                      onKeyDown={() => setTheresChangesFicha(true)}
+                    />
+                    <Inpt
+                      label="Tiempo de bajada"
+                      name="tiempoBajada"
+                      type="text"
+                      formik={fichaFormik}
+                      onKeyDown={() => setTheresChangesFicha(true)}
+                    />
+
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-row w-full">
-                <div className="flex flex-row w-full">
-                  <CustomSelect
-                    name='maquinaTejido'
-                    className='input z-[30]'
-                    onChange={value => { fichaFormik.setFieldValue('maquinaTejido', value.value); setTheresChangesFicha(true) }}
-                    value={fichaFormik?.values?.maquinaTejido}
-                    onBlur={fichaFormik.handleBlur}
-                    options={tejidoOptions}
-                    label='Máquina Tejido'
-                    errores={fichaFormik.errors.maquinaTejido && fichaFormik.touched.maquinaTejido ? fichaFormik.errors.maquinaTejido : null}
-                  />
-                  <Input
-                    label='Tipo Maquina Tejido' type='text' name='tipoMaquinaTejido' value={fichaFormik?.values?.tipoMaquinaTejido}
-                    onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
-                    errores={fichaFormik?.errors.tipoMaquinaTejido && fichaFormik?.touched.tipoMaquinaTejido ? fichaFormik?.errors.tipoMaquinaTejido : null}
-                  />
-                </div>
-                <div className="flex flex-row w-full">
-                  <Input
-                    label='Galga' type='text' name='galga' value={fichaFormik?.values?.galga}
-                    onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
-                    errores={fichaFormik?.errors.galga && fichaFormik?.touched.galga ? fichaFormik?.errors.galga : null}
-                  />
-                  <Input
-                    label='Velocidad' type='text' name='velocidadTejido' value={fichaFormik?.values?.velocidadTejido}
-                    onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
-                    errores={fichaFormik?.errors.velocidadTejido && fichaFormik?.touched.velocidadTejido ? fichaFormik?.errors.velocidadTejido : null}
-                  />
-                  <Input
-                    label='Tiempo de bajada' type='text' name='tiempoBajada' value={fichaFormik?.values?.tiempoBajada}
-                    onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
-                    errores={fichaFormik?.errors.tiempoBajada && fichaFormik?.touched.tiempoBajada ? fichaFormik?.errors.tiempoBajada : null}
-                  />
-                </div>
-              </div>
+              </FieldsBox>
             </div>
-            <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-              <div className="absolute w-full total-center -top-3">
-                <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-                  Datos de la plancha
+            <div className="flex w-full">
+              <FieldsBox title="Datos de la plancha">
+                <div className="flex flex-row w-full gap-6">
+                  <div className="flex flex-row w-full gap-6">
+                    <OptsInpt
+                      label="Máquina de Plancha"
+                      name='maquinaPlancha'
+                      formik={fichaFormik}
+                      options={planchaOptions}
+                      fieldChange={() => setTheresChangesFicha(true)}
+                      placeholder="Seleccione"
+                    />
+                  </div>
+                  <div className="flex flex-row w-full gap-6">
+                    <Inpt
+                      label="Velocidad"
+                      name='velocidadPlancha'
+                      type='text'
+                      formik={fichaFormik}
+                      onKeyDown={() => setTheresChangesFicha(true)}
+                    />
+                    <Inpt
+                      label="Temperatura"
+                      name='temperaturaPlancha'
+                      type='text'
+                      formik={fichaFormik}
+                      onKeyDown={() => setTheresChangesFicha(true)}
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-row w-full">
-                <div className="flex flex-row w-full">
-                  <CustomSelect
-                    name='maquinaPlancha'
-                    className='input z-[20]'
-                    onChange={value => { fichaFormik.setFieldValue('maquinaPlancha', value.value); setTheresChangesFicha(true) }}
-                    value={fichaFormik?.values?.maquinaPlancha}
-                    onBlur={fichaFormik.handleBlur}
-                    options={planchaOptions}
-                    label='Máquina de Plancha'
-                    errores={fichaFormik.errors.maquinaPlancha && fichaFormik.touched.maquinaPlancha ? fichaFormik.errors.maquinaPlancha : null}
-                  />
-                </div>
-                <div className="flex flex-row w-full">
-                  <Input
-                    label='Velocidad' type='text' name='velocidadPlancha' value={fichaFormik?.values?.velocidadPlancha}
-                    onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
-                    errores={fichaFormik?.errors.velocidadPlancha && fichaFormik?.touched.velocidadPlancha ? fichaFormik?.errors.velocidadPlancha : null}
-                  />
-                  <Input
-                    label='Temperatura' type='text' name='temperaturaPlancha' value={fichaFormik?.values?.temperaturaPlancha}
-                    onChange={handleFichaChange} onBlur={fichaFormik?.handleBlur}
-                    errores={fichaFormik?.errors.temperaturaPlancha && fichaFormik?.touched.temperaturaPlancha ? fichaFormik?.errors.temperaturaPlancha : null}
-                  />
-                </div>
-              </div>
+              </FieldsBox>
+            </div>
+            <div className="flex w-full">
+              <FieldsBox title="Datos de los hilos">
+                {!fetchingFichaMateriales && fichaFormik?.values?.materiales ?
+                  <>
+                    <PesosList
+                      materiales={fichaFormik?.values?.materiales}
+                    />
+                    <div className="flex flex-row w-full">
+                      {<SelectorMateriales
+                        fichaTecnicaObj={fichaFormik}
+                        onPassMateriales={onPassMateriales}
+                        setTheresChanges={setTheresChangesMateriales}
+                      />}
+                    </div>
+                  </>
+                  :
+                  <Loader />
+                }
+              </FieldsBox>
             </div>
 
-            <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-              <div className="absolute w-full total-center -top-3">
-                <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-                  Datos de los hilos
-                </div>
-              </div>
-              {!fetchingFichaMateriales && fichaFormik?.values?.materiales ?
-                <>
-                  <PesosList
-                    materiales={fichaFormik?.values?.materiales}
-                  />
-                  <div className="flex flex-row w-full">
-                    {<SelectorMateriales
-                      fichaTecnicaObj={fichaFormik}
-                      onPassMateriales={onPassMateriales}
-                      setTheresChanges={setTheresChangesMateriales}
-                    />}
-                  </div>
-                </>
-                :
-                <Loader />
-              }
-            </div>
-            <div className="flex flex-row">
-              <div className="w-full relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-                <div className="absolute w-full total-center -top-3">
-                  <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-                    Número puntos
-                  </div>
-                </div>
-                <div className="flex flex-row h-80  justify-around">
-                  <div className="overflow-y-scroll">
-                    <DynamicInput
-                      columns={[
-                        { name: 'Numero', atr: 'valor' },
-                        { name: 'Puntos', atr: 'posicion' }
-                      ]}
-                      elements={fichaFormik?.values?.numeroPuntos || []}
-                      arrayName='numeroPuntos'
-                      handleChange={fichaFormik.handleChange}
-                      clearObject={{ valor: '', posicion: '' }}
-                      setTheresChanges={setTheresChangesFicha}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="w-full relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-                <div className="absolute w-full total-center -top-3">
-                  <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-                    Economisadores
-                  </div>
-                </div>
-                <div className="flex flex-row h-80  justify-around">
-                  <div className="overflow-y-scroll">
-                    <DynamicInput
-                      columns={[
-                        { name: 'Numero', atr: 'valor' },
-                        { name: 'Puntos', atr: 'posicion' }
-                      ]}
-                      elements={fichaFormik?.values?.economisadores || []}
-                      arrayName='economisadores'
-                      handleChange={fichaFormik.handleChange}
-                      clearObject={{ valor: '', posicion: '' }}
-                      setTheresChanges={setTheresChangesFicha}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="w-full relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
-                <div className="absolute w-full total-center -top-3">
-                  <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-                    Jalones
-                  </div>
-                </div>
-                <div className="flex flex-row h-80  justify-around">
-                  <div className="overflow-y-scroll">
-                    <DynamicInput
-                      columns={[
-                        { name: 'Numero', atr: 'valor' },
-                        { name: 'Puntos', atr: 'posicion' }
-                      ]}
-                      elements={fichaFormik?.values?.jalones || []}
-                      arrayName='jalones'
-                      handleChange={fichaFormik.handleChange}
-                      clearObject={{ valor: '', posicion: '' }}
-                      setTheresChanges={setTheresChangesFicha}
-                    />
-                  </div>
-                </div>
-              </div>
+
+            <div className="flex">
+
+              <FieldsBox title="Número" className="h-80" vertical >
+
+                <DynamicInput
+                  columns={[
+                    { name: 'Numero', atr: 'valor' },
+                    { name: 'Puntos', atr: 'posicion' }
+                  ]}
+                  elements={fichaFormik?.values?.numeroPuntos || []}
+                  arrayName='numeroPuntos'
+                  handleChange={fichaFormik.handleChange}
+                  clearObject={{ valor: '', posicion: '' }}
+                  setTheresChanges={setTheresChangesFicha}
+                />
+
+              </FieldsBox>
+              <FieldsBox title="Economisadores" className="h-80" vertical >
+
+                <DynamicInput
+                  columns={[
+                    { name: 'Numero', atr: 'valor' },
+                    { name: 'Puntos', atr: 'posicion' }
+                  ]}
+                  elements={fichaFormik?.values?.economisadores || []}
+                  arrayName='economisadores'
+                  handleChange={fichaFormik.handleChange}
+                  clearObject={{ valor: '', posicion: '' }}
+                  setTheresChanges={setTheresChangesFicha}
+                />
+
+
+              </FieldsBox>
+              <FieldsBox title="Jalones" className="h-80" vertical >
+
+                <DynamicInput
+                  columns={[
+                    { name: 'Numero', atr: 'valor' },
+                    { name: 'Puntos', atr: 'posicion' }
+                  ]}
+                  elements={fichaFormik?.values?.jalones || []}
+                  arrayName='jalones'
+                  handleChange={fichaFormik.handleChange}
+                  clearObject={{ valor: '', posicion: '' }}
+                  setTheresChanges={setTheresChangesFicha}
+                />
+
+              </FieldsBox>
+
+
             </div>
           </div>
         </form>

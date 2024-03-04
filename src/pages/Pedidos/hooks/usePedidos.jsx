@@ -114,6 +114,7 @@ export function PedidosProvider({ children }) {
             setLoading(false)
         }
     }
+    
     async function getPedidos() {
         let options = {
             method: 'GET',
@@ -135,6 +136,7 @@ export function PedidosProvider({ children }) {
             setLoading(false)
         }
     }
+
     async function postPedido(pedido) {
         let options = {
             method: 'POST',
@@ -149,33 +151,36 @@ export function PedidosProvider({ children }) {
         const response = await fetchAPI(API_PEDIDOS_URL, options)
         return response
     }
-    async function produccion_por_modelo_y_empleado(restricciones) {
-        let fechaInicio = restricciones.fechaInicio
-        let fechaFin = restricciones.fechaFinal
-        let departamento = restricciones.departamento
 
+    async function produccion_por_modelo_y_empleado(restricciones) {
+
+        let { fechaInicio, fechaFinal: fechaFin, departamento } = restricciones
         let options = {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + session.access
             },
         }
-        const response = await fetchAPI(API_PRODUCCION_MODELO_EMPLEADO_ALL + fechaInicio + "/" + fechaFin + "/" + departamento, options)
+        const response = await fetchAPI(
+            API_PRODUCCION_MODELO_EMPLEADO_ALL + fechaInicio + "/" + fechaFin + "/" + departamento,
+            options
+        )
         return response
     }
 
     async function produccion_por_maquina_y_turno(restricciones) {
-        let fechaInicio = restricciones.fechaInicio
-        let fechaFin = restricciones.fechaFinal
-        let departamento = restricciones.departamento
 
+        let { fechaInicio, fechaFinal: fechaFin, departamento } = restricciones
         let options = {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + session.access
             },
         }
-        const response = await fetchAPI(API_PRODUCCION_MAQUINA_TURNO_ALL + fechaInicio + "/" + fechaFin + "/" + departamento, options)
+        const response = await fetchAPI(
+            API_PRODUCCION_MAQUINA_TURNO_ALL + fechaInicio + "/" + fechaFin + "/" + departamento,
+            options
+        )
         return response
     }
 
@@ -194,6 +199,7 @@ export function PedidosProvider({ children }) {
         const response = await fetchAPI(API_IMPRESION_ETIQUETAS, options)
         return response
     }
+
     async function getFichas(idModelo) {
         let options = {
             method: 'GET',
@@ -225,6 +231,7 @@ export function PedidosProvider({ children }) {
         const registros = await fetchAPI(API_PROGRESS_ETIQUETA + idProduccion, options)
         return registros
     }
+
     const deletePedidos = async (listaPedidos) => {
         for (let i = 0; i < listaPedidos.length; i++) {
             let e = listaPedidos[i]
@@ -260,7 +267,6 @@ export function PedidosProvider({ children }) {
         })
     }
 
-    //Crear reposicion o extra
     async function saveReposicionOrExtra(values) {
         let options = {
             method: "POST",

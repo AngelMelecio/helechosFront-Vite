@@ -20,7 +20,7 @@ const DynamicInput = ({
         <div className="w-full">
           <table className="w-full">
             <thead >
-              <tr className="font-medium text-teal-700">
+              <tr className="text-sm font-medium text-teal-800/80">
                 {
                   columns.map((c, i) =>
                     <th key={'H' + i}>
@@ -33,12 +33,12 @@ const DynamicInput = ({
             <tbody>
               {
                 elements.map((element, index) => (
-                  <tr key={'R' + index} className='array-row border border-transparent relative'>
+                  <tr key={'R' + index} className='relative array-row'>
                     {
                       columns.map((c, j) =>
                         <td key={'C' + j}>
                           <input
-                            className="flex w-full p-1 outline-none  duration-300 border focus:border-teal-500 bg-gray-50 hover:bg-slate-200 border-gray-300 "
+                            className="flex w-full h-10 px-4 py-2 font-semibold text-gray-800 duration-150 border rounded-md outline-none focus:border-teal-500 hover:border-teal-500 focus:ring-2 focus:ring-teal-200"
                             type="text"
                             value={elements[index][c.atr]}
                             name={`${arrayName}[${index}][${[c.atr]}]`}
@@ -60,7 +60,7 @@ const DynamicInput = ({
                             setConfirmationIndex(index);
                           }
                         }}
-                        className="p-2 rounded-r-lg bg-gray-200 text-zinc-700	"
+                        className="p-2 bg-gray-200 rounded-r-lg text-zinc-700 "
                       >
                         <ICONS.Trash />
                       </button>}
@@ -108,7 +108,7 @@ const DynamicInput = ({
             <button
               type="button"
               onClick={() => arrayHelpers.push(clearObject)}
-              className='bg-teal-500 text-white w-8 h-8 total-center normal-button rounded-lg'>
+              className='w-8 h-8 text-white bg-teal-500 rounded-lg total-center normal-button'>
               <ICONS.Plus size='16px' />
             </button>
           </div>

@@ -6,6 +6,8 @@ import { sleep } from '../../constants/functions'
 import { usePedidos } from './hooks/usePedidos'
 import ProgressBar from "@ramonak/react-progress-bar";
 import { get, toInteger } from 'lodash'
+import { get } from 'lodash'
+import CrudPedidos from './components/CrudPedidos'
 
 const PaginaPedidos = () => {
 
@@ -62,8 +64,7 @@ const PaginaPedidos = () => {
 
   return (
     <>
-
-      <CRUD
+      <CrudPedidos
         title='Pedidos'
         idName='idPedido'
         path='pedidos'
@@ -73,6 +74,7 @@ const PaginaPedidos = () => {
         setElements={setListaPedidos}
         columns={[
           { name: 'Pedido', attribute: 'idPedido' },
+          { name: 'Fecha de registro', attribute: 'fechaRegistro', type: 'dateTime' },
           { name: 'Fecha de entrega', attribute: 'fechaEntrega', type: 'date' },
           { name: 'Cliente', attribute: 'modelo.cliente.nombre' },
           { name: 'Modelo', attribute: 'modelo.nombre' },
@@ -90,6 +92,34 @@ const PaginaPedidos = () => {
         ]}
         onDelete={() => handleOpenModal(setDeleteModalVisible)}
       />
+      {
+        /*
+          <CRUD
+            title='Pedidos'
+            idName='idPedido'
+            path='pedidos'
+            loading={loading}
+            allElements={allPedidos}
+            elements={listaPedidos}
+            setElements={setListaPedidos}
+            columns={[
+              { name: 'Pedido', attribute: 'idPedido' },
+              { name: 'Fecha de registro', attribute: 'fechaRegistro', type: 'dateTime' },
+              { name: 'Fecha de entrega', attribute: 'fechaEntrega', type: 'date'},
+              { name: 'Cliente', attribute: 'modelo.cliente.nombre' },
+              { name: 'Modelo', attribute: 'modelo.nombre' },
+              { name: 'Orden de compra', attribute: 'ordenCompra' },
+              {
+                name: 'Progreso del pedido', attribute: (e) => <ProgressBar completed={e.progressBar.progress}
+                  maxCompleted={e.progressBar.goal}
+                  className='w-full'
+                  bgColor={e.progressBar.color} />
+              }
+            ]}
+            onDelete={() => handleOpenModal(setDeleteModalVisible)}
+          />
+        */
+      }
 
       <div className='absolute z-50 w-full h-full modal' ref={modalContainerRef}>
         {deleteModalVisible &&

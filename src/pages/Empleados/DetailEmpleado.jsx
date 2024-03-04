@@ -1,17 +1,18 @@
 import { useParams, useNavigate } from "react-router-dom";
-import AppBar from "../../components/AppBar"
 import { useEffect } from "react";
 import { useState } from "react";
 import { useEmpleados } from "./hooks/useEmpleados";
 import { ICONS } from "../../constants/icons";
 import { useFormik } from "formik";
-import Input from "../../components/Input";
-import CustomSelect from "../../components/CustomSelect";
 import Loader from "../../components/Loader/Loader";
-import { sleep, toUrl } from "../../constants/functions";
+import { toUrl } from "../../constants/functions";
 import SelectorMaquinas from "./components/SelectorMaquinas";
 import { useMaquinas } from "../Maquinas/hooks/useMaquinas";
 import { useAuth } from "../../context/AuthContext";
+import FieldsBox from "../../components/FieldsBox";
+import Inpt from "../../components/Inputs/Inpt"
+import OptsInpt from "../../components/Inputs/OptsInpt"
+import Btton from "../../components/Buttons/Btton";
 
 const initobj = {
   idEmpleado: "",
@@ -24,11 +25,9 @@ const initobj = {
   fechaAltaSeguro: null,
   is_active: true,
   fotografia: "",
-  departamento: "Seleccione",
 }
 
 const optionsDepartamento = [
-  { value: 'Seleccione', label: 'Seleccione' },
   { value: 'Tejido', label: 'Tejido' },
   { value: 'Corte', label: 'Corte' },
   { value: 'Plancha', label: 'Plancha' },
@@ -150,58 +149,59 @@ const DetailEmpleado = () => {
 
   return (
     <>
-      <div className="w-full relative overflow-hidden">
-        <div id="tbl-page" className="flex flex-col h-full w-full bg-slate-100 absolute p-4">
+      <div className="relative w-full overflow-hidden">
+        <div id="tbl-page" className="absolute flex flex-col w-full h-full p-4 bg-slate-100">
           {/**
            * HEADER
            */}
-          <div className="flex pb-4 justify-between ">
+          <div className="flex justify-between pb-4 ">
             <div className="flex items-center">
               <button
                 onClick={() => navigate('/empleados')}
-                className="neutral-button h-10 w-10 rounded-full"> <ICONS.Left size="30px" /> </button>
-              <p className="font-bold text-2xl pl-3 text-teal-700">
+                className="w-10 h-10 rounded-full neutral-button"> <ICONS.Left size="30px" /> </button>
+              <p className="pl-3 text-2xl font-bold text-teal-800/80">
                 {isEdit ? `Detalles del Empleado` : "Nuevo Empleado"}
               </p>
             </div>
             <div>
-              <input
-                disabled={loading || saving || (!theresChanges && !theresMaquinasChanges)}
-                className='bg-teal-500 p-1 text-md w-40 h-10 text-white normal-button  right-5 z-10 top-5 rounded-lg'
+              <Btton
+                disabled={(!theresChanges && !theresMaquinasChanges)}
+                className="h-10 px-8"
                 type="submit"
-                value={isEdit ? "Guardar" : "Agregar"}
                 form="frmEmpleados"
-              />
+              >
+                {isEdit ? "Guardar" : "Agregar"}
+              </Btton>
+
             </div>
           </div>
-          <div className="flex flex-col bg-white h-full rounded-t-lg relative shadow-lg">
-            <div className='w-full flex h-full flex-col '>
+          <div className="relative flex flex-col h-full bg-white rounded-t-lg shadow-lg">
+            <div className='flex flex-col w-full h-full '>
               <div className="flex w-full h-full ">
                 {formik.values === null ? <Loader /> :
                   <form
                     id='frmEmpleados'
-                    className='flex flex-col h-full w-full relative overflow-y-scroll'
+                    className='relative flex flex-col w-full h-full overflow-y-scroll'
                     onSubmit={formik.handleSubmit}>
-                    <div className="absolute w-full flex flex-col  px-4">
-                      <div className="flex w-full justify-end pt-3">
+                    <div className="absolute flex flex-col w-full px-4">
 
-                      </div>
-                      <div className="flex w-full">
+
+                      <div className="flex w-full ">
                         {/**
                          * FOTOGRAFIA
                          */}
 
-                        <div className='flex flex-row w-full h-full total-center pt-4 pb-6'>
-                          <div className="relative total-center w-28 h-28 bg-gray-100 rounded-full">
+                        <div className='flex flex-row w-full h-full pt-4 pb-6 total-center'>
+                          <div className="relative bg-gray-100 rounded-full total-center w-28 h-28">
                             {(toUrl(formik?.values?.fotografia) !== null) ?
                               <img
                                 className='object-cover foto'
                                 src={toUrl(formik?.values?.fotografia)}
                                 alt='' />
-                              : <ICONS.Person className='' size='80px' style={{ color: '#0f766e' }} />
+                              : <ICONS.Person className='text-gray-500' size='90px' />
                             }
-                            <input id='file' type="file" name='fotografia' accept='image/*' 
-                            onChange={handleSelectImage} className='hidden' />
+                            <input id='file' type="file" name='fotografia' accept='image/*'
+                              onChange={handleSelectImage} className='hidden' />
                             <label
                               className='absolute -bottom-1.5 -right-1.5 p-2 text-white normal-button rounded-full'
                               htmlFor='file' >
@@ -211,121 +211,119 @@ const DetailEmpleado = () => {
                         </div>
 
                       </div>
-                      <div className="flex w-full flex-col xl:flex-row">
+
+                      <div className="flex flex-col w-full">
                         {/**
                          * DATOS PERSONALES
                          */}
-                        <div className="w-full flex">
-                          <div className="relative px-2 py-4 w-full border-2 mx-2 my-4 border-slate-300">
-                            <div className="absolute w-full total-center -top-3">
-                              <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-                                Datos Personales
-                              </div>
-                            </div>
-                            <div className='flex flex-row'>
-                              <Input
-                                label='Nombre(s)' type='text' name='nombre' value={formik.values ? formik.values.nombre : ''}
-                                onChange={handleChange} onBlur={formik.handleBlur}
-                                errores={formik.errors.nombre && formik.touched.nombre ? formik.errors.nombre : null} />
-
-                              <Input
-                                label='Apellido(s)' type='text' name='apellidos' value={formik.values ? formik.values.apellidos : ''}
-                                onChange={handleChange} onBlur={formik.handleBlur}
-                                errores={formik.errors.apellidos && formik.touched.apellidos ? formik.errors.apellidos : null}
+                        <div className="flex w-full ">
+                          <FieldsBox title="Datos personales">
+                            <div className='flex flex-row gap-6'>
+                              <Inpt
+                                onKeyDown={() => setTheresChanges(true)}
+                                label="Nombre(s)"
+                                name="nombre"
+                                formik={formik}
+                                type="text"
                               />
+                              <Inpt
+                                onKeyDown={() => setTheresChanges(true)}
+                                label="Apellidos(s)"
+                                name="apellidos"
+                                formik={formik}
+                                type="text"
+                              />
+
                             </div>
-                            <div className='flex flex-row'>
-                              <Input
-                                label='Dirección' type='text' name='direccion' value={formik.values ? formik.values.direccion : ''}
-                                onChange={handleChange} onBlur={formik.handleBlur}
-                                errores={formik.errors.direccion && formik.touched.direccion ? formik.errors.direccion : null}
+                            <div className='flex flex-row gap-6'>
+                              <Inpt
+                                onKeyDown={() => setTheresChanges(true)}
+                                label="Dirección"
+                                name="direccion"
+                                formik={formik}
+                                type="text"
                                 Icon={ICONS.House}
                               />
-                              <Input
-                                label='Teléfono' type='number' name='telefono' value={formik.values ? formik.values.telefono : ''}
-                                onChange={handleChange} onBlur={formik.handleBlur}
-                                errores={formik.errors.telefono && formik.touched.telefono ? formik.errors.telefono : null}
+                              <Inpt
+                                onKeyDown={() => setTheresChanges(true)}
+                                label="Teléfono"
+                                name="telefono"
+                                formik={formik}
+                                type="number"
                                 Icon={ICONS.Phone}
                               />
+
                             </div>
-                          </div>
+                          </FieldsBox>
                         </div>
                         {/**
                          * DATOS DEL EMPLEADO
                          */}
-                        <div className="w-full flex">
-                          <div className="relative px-2 py-4 w-full border-2 mx-2 my-4 border-slate-300">
-                            <div className="absolute w-full total-center -top-3">
-                              <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-                                Datos del empleado
-                              </div>
-                            </div>
-                            <div className='flex flex-row'>
-                              <Input
-                                label='Fec. de Contratación' type='date' name='fechaEntrada' value={formik.values ? formik.values.fechaEntrada : ''}
-                                onChange={handleChange} onBlur={formik.handleBlur}
-                                errores={formik.errors.fechaEntrada && formik.touched.fechaEntrada ? formik.errors.fechaEntrada : null}
+                        <div className="flex w-full">
+                          <FieldsBox title="Datos del empleado">
+                            <div className='flex flex-row gap-6'>
+                              <Inpt
+                                onKeyDown={() => setTheresChanges(true)}
+                                label='Fec. de Contratación'
+                                name='fechaEntrada'
+                                formik={formik}
+                                type='date'
                               />
-                              {<CustomSelect
-                                name='Departamento'
-                                className='input z-[100]'
-                                onChange={value => {
-                                  formik.setFieldValue('departamento', value.value)
-                                  setTheresChanges(true)
-                                }}
-                                value={formik.values ? formik.values.departamento : ''}
-                                onBlur={formik.handleBlur}
+                              <OptsInpt
+                                label="Departamento"
+                                name="departamento"
+                                formik={formik}
                                 options={optionsDepartamento}
-                                label='Departamento'
-                                errores={formik.errors.departamento && formik.touched.departamento ? formik.errors.departamento : null}
-                              />}
-                              {<CustomSelect
-                                name='Estado'
-                                className='input z-[100]'
-                                onChange={value => {
-                                  formik.setFieldValue('is_active', value.value)
-                                  setTheresChanges(true)
-                                }}
-                                value={formik.values ? (formik.values.is_active) : ''}
-                                onBlur={formik.handleBlur}
-                                options={optionsEstado}
-                                label='Estado'
-                                errores={formik.errors.is_active && formik.touched.is_active ? formik.errors.is_active : null}
-                              />}
-                            </div>
-                            <div className='flex flex-row'>
-                              <Input
-                                label='Fec. de registro en el seguro' type='date' name='fechaAltaSeguro' value={formik.values ? formik.values.fechaAltaSeguro : ''}
-                                onChange={handleChange} onBlur={formik.handleBlur}
-                                errores={formik.errors.fechaAltaSeguro && formik.touched.fechaAltaSeguro ? formik.errors.fechaAltaSeguro : null}
+                                placeholder="Seleccione"
+                                fieldChange={() => setTheresChanges(true)}
                               />
-                              <Input
-                                label='Seguro Social' type='number' name='ns' value={formik.values ? formik.values.ns : ''}
-                                onChange={handleChange} onBlur={formik.handleBlur}
-                                errores={formik.errors.ns && formik.touched.ns ? formik.errors.ns : null}
+                              <OptsInpt
+                                label="Estado"
+                                name="is_active"
+                                formik={formik}
+                                options={optionsEstado}
+                                placeholder="Seleccione"
+                                fieldChange={() => setTheresChanges(true)}
+                              />
+
+                            </div>
+                            <div className='flex flex-row gap-6'>
+                              <Inpt
+                                onKeyDown={() => setTheresChanges(true)}
+                                label="Fec. de registro en el seguro"
+                                name="fechaAltaSeguro"
+                                formik={formik}
+                                type="date"
+                              />
+                              <Inpt
+                                onKeyDown={() => setTheresChanges(true)}
+                                label="Seguro social"
+                                name="ns"
+                                formik={formik}
+                                type="number"
                                 Icon={ICONS.Add}
                               />
                             </div>
-                          </div>
+                          </FieldsBox>
                         </div>
                       </div>
-                      <div className="mx-2 my-4 relative h-80 px-4 py-4 border-2 border-slate-300">
-                        <div className="absolute w-full left-0 total-center -top-3">
-                          <div className='bg-white px-3 font-bold text-teal-700 text-base italic' >
-                            Máquinas
-                          </div>
-                        </div>
-                        { //loadingMaquinas ? <Loader /> :
-                          <SelectorMaquinas
-                            idEmpleado={id}
-                            allMaquinas={allMaquinas}
-                            assignedMaquinas={assignedMaquinas}
-                            setAssignedMaquinas={setAssignedMaquinas}
-                            setTheresChanges={setTheresMaquinasChanges}
-                            departamentoEmpleado={formik.values.departamento}
-                          />
-                        }
+
+                      <div className="flex w-full">
+                        <FieldsBox title="Máquinas" className="h-80">
+                          {
+                            <SelectorMaquinas
+                              idEmpleado={id}
+                              allMaquinas={allMaquinas}
+                              assignedMaquinas={assignedMaquinas}
+                              setAssignedMaquinas={setAssignedMaquinas}
+                              setTheresChanges={setTheresMaquinasChanges}
+                              departamentoEmpleado={formik.values.departamento}
+                            />
+                          }
+                        </FieldsBox>
                       </div>
+
+
                     </div>
                   </form>
                 }

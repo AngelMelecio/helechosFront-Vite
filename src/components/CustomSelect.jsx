@@ -23,14 +23,15 @@ const CustomSelect = ({ name, className, onChange, value, onBlur, options, label
       backgroundColor: readOnly ? "#fff" : "#F3F4F6",
       border: readOnly ? "#fff" : "#14B8A6",
       boxShadow: "#14B8A6",
+      radius: "0.375rem",
     }),
-    singleValue: (defaultStyles) => ({ ...defaultStyles,  color: "#374151" }),
+    singleValue: (defaultStyles) => ({ ...defaultStyles,  color: "#374151",radius: "0.375rem", }),
   };
 
   return (
-    <div className={`z-20 flex flex-col w-full mt-2 ${withoutMargin ? '' : 'mx-2'}`}>
-      <p className='text-sm font-medium text-teal-700'>{label}</p>
-      <div className={(errores ? cn_bad : cn_good) + ' bg-gray-100'}>
+    <div className={`z-20 flex flex-col w-full  ${withoutMargin ? '' : 'px-2'}`}>
+      <p className='pb-1 text-sm font-medium text-teal-800/80'>{label}</p>
+      <div className={(errores ? cn_bad : cn_good) + ' bg-gray-100 rounded-md'}>
         {
           loading ? <Loader /> :
             <Select
