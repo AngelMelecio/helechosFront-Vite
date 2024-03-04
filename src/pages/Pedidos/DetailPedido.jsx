@@ -232,8 +232,8 @@ const DetailPedido = () => {
                       <Input
                         readOnly
                         name='space'
-                        value=''
-                        label=''
+                        value={pedido?.progreso?.total }
+                        label='Pares totales'
                         type='text'
                       />
                       <Input

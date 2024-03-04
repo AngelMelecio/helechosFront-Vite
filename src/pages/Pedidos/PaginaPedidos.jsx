@@ -5,11 +5,11 @@ import CRUD from '../../components/CRUD'
 import { sleep } from '../../constants/functions'
 import { usePedidos } from './hooks/usePedidos'
 import ProgressBar from "@ramonak/react-progress-bar";
-import { get } from 'lodash'
+import { get, toInteger } from 'lodash'
 
 const PaginaPedidos = () => {
 
-  const { allPedidos, loading, refreshPedidos, deletePedidos} = usePedidos()
+  const { allPedidos, loading, refreshPedidos, deletePedidos } = usePedidos()
 
   const modalContainerRef = useRef()
   const [listaPedidos, setListaPedidos] = useState([])
@@ -45,6 +45,20 @@ const PaginaPedidos = () => {
     setSaving(false)
   }
 
+  function colorProgress(progress) {
+    let color = ''
+  
+    if (progress <= 25) {
+      color = '#9b1b1b'
+    } else if (progress <= 50) {
+      color = '#ea580c'
+    } else if (progress <= 75) {
+      color = '#eab308'
+    } else {
+      color = '#15803d'
+    }
+    return color
+  }
 
   return (
     <>
@@ -59,22 +73,25 @@ const PaginaPedidos = () => {
         setElements={setListaPedidos}
         columns={[
           { name: 'Pedido', attribute: 'idPedido' },
-          { name: 'Fecha de registro', attribute: 'fechaRegistro', type: 'dateTime' },
-          { name: 'Fecha de entrega', attribute: 'fechaEntrega', type: 'date'},
+          { name: 'Fecha de entrega', attribute: 'fechaEntrega', type: 'date' },
           { name: 'Cliente', attribute: 'modelo.cliente.nombre' },
           { name: 'Modelo', attribute: 'modelo.nombre' },
+          { name: 'Total pares', attribute: 'progreso.total' },
           { name: 'Orden de compra', attribute: 'ordenCompra' },
           {
-            name: 'Progreso del pedido', attribute: (e) => <ProgressBar completed={e.progressBar.progress}
-              maxCompleted={e.progressBar.goal}
-              className='w-full'
-              bgColor={e.progressBar.color} />
+            name: 'Progreso del pedido', attribute: (e) => <ProgressBar completed={toInteger(Number((e.progreso.progreso) * 100) / Number(e.progreso.total))}
+              maxCompleted={100}
+              className='w-full '
+              animateOnRender={true}
+              labelAlignment='left'
+              labelColor='#fff'
+              bgColor={colorProgress(toInteger(Number((e.progreso.progreso) * 100) / Number(e.progreso.total)))} />
           }
         ]}
         onDelete={() => handleOpenModal(setDeleteModalVisible)}
       />
 
-      <div className='modal absolute z-50 h-full w-full' ref={modalContainerRef}>
+      <div className='absolute z-50 w-full h-full modal' ref={modalContainerRef}>
         {deleteModalVisible &&
           <DeleteModal
             onCancel={() => handleCloseModal(setDeleteModalVisible)}
