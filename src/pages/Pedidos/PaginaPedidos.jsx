@@ -6,7 +6,6 @@ import { sleep } from '../../constants/functions'
 import { usePedidos } from './hooks/usePedidos'
 import ProgressBar from "@ramonak/react-progress-bar";
 import { get, toInteger } from 'lodash'
-import { get } from 'lodash'
 import CrudPedidos from './components/CrudPedidos'
 
 const PaginaPedidos = () => {
@@ -74,12 +73,12 @@ const PaginaPedidos = () => {
         setElements={setListaPedidos}
         columns={[
           { name: 'Pedido', attribute: 'idPedido' },
+          { name: 'Orden de compra', attribute: 'ordenCompra' },
           { name: 'Fecha de registro', attribute: 'fechaRegistro', type: 'dateTime' },
           { name: 'Fecha de entrega', attribute: 'fechaEntrega', type: 'date' },
           { name: 'Cliente', attribute: 'modelo.cliente.nombre' },
           { name: 'Modelo', attribute: 'modelo.nombre' },
-          { name: 'Total pares', attribute: 'progreso.total' },
-          { name: 'Orden de compra', attribute: 'ordenCompra' },
+          { name: 'Pares terminados', attribute: 'fraccion' },
           {
             name: 'Progreso del pedido', attribute: (e) => <ProgressBar completed={toInteger(Number((e.progreso.progreso) * 100) / Number(e.progreso.total))}
               maxCompleted={100}
