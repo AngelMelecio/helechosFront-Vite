@@ -24,9 +24,7 @@ const empleadosColumns = [
   { name: 'Nombre', attribute: 'nombre' },
   { name: 'Apellidos', attribute: 'apellidos' },
   { name: 'Dirección', attribute: 'direccion' },
-  { name: 'Seguro Social', attribute: 'ns' },
   { name: 'Fecha de Contratación', attribute: 'fechaEntrada', type: 'date' },
-  { name: 'Fecha Alta de Seguro', attribute: 'fechaAltaSeguro', type:'date' },
   { name: 'Estado', attribute: 'estado' },
   { name: 'Teléfono', attribute: 'telefono' },
   { name: 'Departamento', attribute: 'departamento' },
@@ -94,7 +92,7 @@ const PaginaEmpleados = () => {
         onPrint={() => handleOpenModal(setPrintModalVisible)}
       />
 
-      <div className='modal absolute z-50 h-full w-full' ref={modalContainerRef}>
+      <div className='absolute z-50 w-full h-full modal' ref={modalContainerRef}>
         {deleteModalVisible &&
           <DeleteModal
             onCancel={() => handleCloseModal(setDeleteModalVisible)}

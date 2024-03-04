@@ -224,16 +224,22 @@ const DetailPedido = () => {
                           value={pedido?.fechaRegistro}
                           label='Fecha de Registro'
                           type='text'
-                        />
-
-                        <Input
-                          readOnly
-                          name='fechaEntrega'
-                          value={pedido?.fechaEntrega}
-                          label='Fecha de Entrega'
-                          type='text'
-                        />
-
+                        />                    
+                     
+                      <Input
+                        readOnly
+                        name='space'
+                        value={pedido?.progreso?.total }
+                        label='Pares totales'
+                        type='text'
+                      />
+                      <Input
+                        readOnly
+                        name='fechaEntrega'
+                        value={pedido?.fechaEntrega}
+                        label='Fecha de Entrega'
+                        type='text'
+                      />
 
                       </div>
                     </FieldsBox>

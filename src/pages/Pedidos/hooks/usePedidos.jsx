@@ -72,11 +72,8 @@ function formatPedidos(pedidos) {
 
 function formatPedidosListar(pedidos) {
     return pedidos.map(p => {
-        let fch = p.fechaEntrega.split('-')
         return ({
             ...p,
-            //fechaRegistro: new Date(p.fechaRegistro),
-            //fechaEntrega: new Date(fch[0], fch[1], fch[2]),
             isSelected: false
         })
     })
@@ -132,6 +129,7 @@ export function PedidosProvider({ children }) {
             setLoading(true)
             const pedidos = await getPedidos()
             setAllPedidos(pedidos)
+            console.log(pedidos)
         } catch (e) {
             setErrors(e)
         } finally {
