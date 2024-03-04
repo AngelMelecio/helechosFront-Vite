@@ -63,7 +63,8 @@ function formatPedidos(pedidos) {
             fechaEntrega: new Intl.DateTimeFormat('es-ES', {
                 dateStyle: 'medium',
                 timeZone: 'UTC'
-            }).format(new Date(pedido.fechaEntrega))
+            }).format(new Date(pedido.fechaEntrega)),
+            fraccion: `${pedido.progreso.progreso} de ${pedido.progreso.total}`
         })
     }
     )
@@ -74,6 +75,7 @@ function formatPedidosListar(pedidos) {
     return pedidos.map(p => {
         return ({
             ...p,
+            fraccion: `${p.progreso.progreso} de ${p.progreso.total}`,
             isSelected: false
         })
     })
@@ -114,7 +116,7 @@ export function PedidosProvider({ children }) {
             setLoading(false)
         }
     }
-    
+
     async function getPedidos() {
         let options = {
             method: 'GET',
@@ -128,7 +130,7 @@ export function PedidosProvider({ children }) {
         try {
             setLoading(true)
             const pedidos = await getPedidos()
-            setAllPedidos(pedidos)
+            setAllPedidos(formatPedidosListar(pedidos))
             console.log(pedidos)
         } catch (e) {
             setErrors(e)
