@@ -1,15 +1,32 @@
 import { useRef } from "react"
-import { useEffect } from "react"
 import { useState } from "react"
 import { ICONS } from "../constants/icons"
+import Table from "./Table"
+import AbsScroll from "./AbsScroll"
 
-const Table = ({
+const Empty = ({ children }) => {
+  return (
+    <>
+      {children}
+    </>
+  )
+}
+
+const GroupTable = ({
   data,
   columns,
   unique,
   search = "on",
-  handleRowClick
+
+  subRowsRef,
+  subRowsColumns,
+  subRowsUnique,
+
+  handleSubRowClick
 }) => {
+
+  const [focusRow, setFocusRow] = useState(null)
+
   const [searchText, setSearchText] = useState('')
   const [sortParams, setSortParams] = useState({ attribute: null, criteria: null })
   const [filter, setFilter] = useState({ atr: unique, ord: 2 })
@@ -17,6 +34,8 @@ const Table = ({
   const searchRef = useRef()
   const someSelectedRef = useRef()
   const trashButtonRef = useRef()
+
+
 
   const handleSearchButtonClick = () => {
     if (searchText.length > 0) {
@@ -27,6 +46,10 @@ const Table = ({
     }
     searchRef?.current?.focus()
   }
+  const handleMainRowClick = (id) => () => {
+    setFocusRow(prev => prev === id ? null : id)
+  }
+
   return (
     <div className="flex flex-col w-full h-full bg-white">
       {/* Header */}
@@ -77,6 +100,7 @@ const Table = ({
                     </div>
                   </th>
                 ))}
+                <th>-</th>
               </tr>
             </thead>
             <tbody>
@@ -87,25 +111,53 @@ const Table = ({
                   if (filter.ord === 2) return a[filter.atr] < b[filter.atr] ? 1 : -1
                 })
                 .map((row, i) => (
-                  <tr
-                    onClick={() => handleRowClick(row)}
-                    className="h-8 duration-200 cursor-pointer hover:bg-gray-100 active:opacity-70 active:duration-0"
-                    key={"R" + i}>
-                    {/*<td className="sticky px-2">
-                      <input
-                      readOnly checked={row?.isSelected | false} className="pointer-events-none" type="checkbox" />
-                    </td>*/}
-                    {columns.map((column, j) => (
-                      column.Component ?
-                        <td key={j}> <column.Component data={row[column.atr]}></column.Component> </td> :
-                        <td className="px-4 whitespace-nowrap " key={j}>
-                          <p className="flex items-center h-10">
-                            {row[column.atr]}
-                          </p>
+                  <Empty key={"R" + i}>
+                    <tr
+                      onClick={handleMainRowClick(row[unique])}
+                      className={`group h-8 duration-200 cursor-pointer active:opacity-70 active:duration-0
+                    ${focusRow === row[unique] ? 'bg-slate-200/50  ' : 'hover:bg-gray-100/80'} `}>
+                      {/*<td className="sticky px-2">
+                        <input
+                        readOnly checked={row?.isSelected | false} className="pointer-events-none" type="checkbox" />
+                      </td>*/}
+                      {columns.map((column, j) => (
+                        <td key={j}>
+                          {column.Component ?
+                            <column.Component data={row[column.atr]} /> :
+                            <p className="flex items-center px-2">
+                              {row[column.atr]}
+                            </p>
+                          }
                         </td>
-                    ))}
-                  </tr>
+                      ))}
+                      <td className={`duration-150 ${row[unique] !== focusRow ? 'opacity-0 group-hover:opacity-100' : ''}`}>
+                        <div className="total-center">
+                          {focusRow === row[unique] ? <ICONS.Up size="18px" /> : <ICONS.Down size="18px" />}
+                        </div>
+                      </td>
+                    </tr>
+                    {
+                      focusRow === row[unique] &&
+                      <tr>
+                        <td colSpan={columns.length + 1} className="bg-slate-200/50">
+                          <div className="w-full py-2 h-60">
+                            <AbsScroll vertical horizontal>
+                              <Table
+                                data={row[subRowsRef]}
+                                columns={subRowsColumns}
+                                unique={subRowsUnique}
+                                search="off"
+                                handleRowClick={handleSubRowClick}
+                              />
+                            </AbsScroll>
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  </Empty>
+
                 ))}
+
             </tbody>
           </table>
         </div>
@@ -114,4 +166,4 @@ const Table = ({
   )
 }
 
-export default Table
+export default GroupTable

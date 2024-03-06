@@ -1,10 +1,5 @@
 import React, { useRef } from 'react'
-
-const Loader = () =>{
-    return(
-        <></>
-    )
-}
+import Loader from './Loader/Loader'
 
 const AbsScroll = ({
     vertical = false,

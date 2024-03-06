@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useContext } from "react";
 import { fetchAPI } from "../../../services/fetchApiService";
 import { API_URL } from "../../../constants/HOSTS";
+import { calculateDiasRestantes, formatDate } from "../../../constants/functions";
 
 const API_PEDIDOS_URL = "api/pedidos/"
 const API_PEDIDO_URL = "api/pedido/"
@@ -22,6 +23,8 @@ const PedidosContext = React.createContext('PedidosContext')
 export function usePedidos() {
     return useContext(PedidosContext)
 }
+
+
 
 function formatReposiciones(reposiciones) {
     return reposiciones.map((rp, indx) => ({
@@ -72,13 +75,21 @@ function formatPedidos(pedidos) {
 }
 
 function formatPedidosListar(pedidos) {
-    return pedidos.map(p => {
-        return ({
-            ...p,
-            fraccion: `${p.progreso.progreso} de ${p.progreso.total}`,
-            isSelected: false
+    return pedidos.map(p => (
+        {
+            idPedido: p.idPedido,
+            idCliente: p.modelo.cliente.idCliente,
+            nombreCliente: p.modelo.cliente.nombre,
+            nombreModelo: p.modelo.nombre,
+            //fechaRegistro: p.fechaRegistro, //formatDate({ data: { string: p.fechaRegistro, type: 'dateTime' } }),
+            fechaEntrega: p.fechaEntrega, // formatDate({ data: { string: p.fechaEntrega, type: 'date' } }),
+            diasRestantes: calculateDiasRestantes(p.fechaEntrega),
+            ordenCompra: p.ordenCompra,
+            ...p.progreso,
+            porcentaje: Number((Number(p.progreso.progreso) * 100 / Number(p.progreso.total)).toFixed(2)),
+            fraccion: `${p.progreso.progreso} / ${p.progreso.total}`,
         })
-    })
+    )
 }
 
 function formatFichas(fichas) {
@@ -130,8 +141,7 @@ export function PedidosProvider({ children }) {
         try {
             setLoading(true)
             const pedidos = await getPedidos()
-            setAllPedidos(formatPedidosListar(pedidos))
-            console.log(pedidos)
+            setAllPedidos(pedidos)
         } catch (e) {
             setErrors(e)
         } finally {
