@@ -7,48 +7,27 @@ import { usePedidos } from './hooks/usePedidos'
 import ProgressBar from "@ramonak/react-progress-bar";
 import { get, toInteger } from 'lodash'
 import CrudPedidos from './components/CrudPedidos'
+import Progress from './components/Progress'
+
+
 
 const PaginaPedidos = () => {
 
-  const { allPedidos, loading, refreshPedidos, deletePedidos } = usePedidos()
-
-  const modalContainerRef = useRef()
-  const [listaPedidos, setListaPedidos] = useState([])
-  const [saving, setSaving] = useState(false)
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const { allPedidos, loading, refreshPedidos } = usePedidos()
 
   useEffect(() => {
     refreshPedidos()
   }, [])
 
   useEffect(() => {
-    setListaPedidos(allPedidos)
+    console.log('EFECTO PAGINA', allPedidos)
+
   }, [allPedidos])
 
-  const handleOpenModal = async (setState) => {
-    setState(true)
-    await sleep(150)
-    document.getElementById("tbl-page").classList.add('blurred')
-    modalContainerRef.current.classList.add('visible')
-  }
-  const handleCloseModal = async (setState) => {
-    modalContainerRef.current.classList.remove('visible')
-    document.getElementById("tbl-page").classList.remove('blurred')
-    await sleep(150)
-    setState(false)
-  }
-
-  const handleDeletePedidos = async () => {
-    setSaving(true)
-    await deletePedidos(listaPedidos)
-    await refreshPedidos()
-    handleCloseModal(setDeleteModalVisible)
-    setSaving(false)
-  }
 
   function colorProgress(progress) {
     let color = ''
-  
+
     if (progress <= 25) {
       color = '#9b1b1b'
     } else if (progress <= 50) {
@@ -69,27 +48,45 @@ const PaginaPedidos = () => {
         path='pedidos'
         loading={loading}
         allElements={allPedidos}
-        elements={listaPedidos}
-        setElements={setListaPedidos}
-        columns={[
-          { name: 'Pedido', attribute: 'idPedido' },
-          { name: 'Orden de compra', attribute: 'ordenCompra' },
-          { name: 'Fecha de registro', attribute: 'fechaRegistro', type: 'dateTime' },
-          { name: 'Fecha de entrega', attribute: 'fechaEntrega', type: 'date' },
-          { name: 'Cliente', attribute: 'modelo.cliente.nombre' },
-          { name: 'Modelo', attribute: 'modelo.nombre' },
-          { name: 'Pares terminados', attribute: 'fraccion' },
-          {
-            name: 'Progreso del pedido', attribute: (e) => <ProgressBar completed={toInteger(Number((e.progreso.progreso) * 100) / Number(e.progreso.total))}
-              maxCompleted={100}
-              className='w-full '
-              animateOnRender={true}
-              labelAlignment='left'
-              labelColor='#fff'
-              bgColor={colorProgress(toInteger(Number((e.progreso.progreso) * 100) / Number(e.progreso.total)))} />
-          }
-        ]}
-        onDelete={() => handleOpenModal(setDeleteModalVisible)}
+
+      /*
+    mainRowsRef="cliente"
+    subRowsRef="pedidos"
+
+    mainColumns={[
+      { name: 'ID', attribute: 'idCliente' },
+      { name: 'Nombre', attribute: 'cliente.nombre' },
+      { name: 'Progreso del cliente', attribute: (e) => <ProgressBar completed={toInteger(Number((e.cliente.progreso) * 100) / Number(e.cliente.total))}
+        maxCompleted={100}
+        className='w-full'
+        animateOnRender={true}
+        labelAlignment='left'
+        labelColor='#fff'
+        bgColor={colorProgress(toInteger(Number((e.cliente.progreso) * 100) / Number(e.cliente.total)))} />
+      }
+    ]}
+
+    subColumns={[
+      { name: 'Pedido', attribute: 'idPedido' },
+      { name: 'Orden de compra', attribute: 'ordenCompra' },
+      { name: 'Fecha de registro', attribute: 'fechaRegistro', type: 'dateTime' },
+      { name: 'Fecha de entrega', attribute: 'fechaEntrega', type: 'date' },
+      { name: 'Cliente', attribute: 'modelo.cliente.nombre' },
+      { name: 'Modelo', attribute: 'modelo.nombre' },
+      { name: 'Pares terminados', attribute: 'fraccion' },
+      {
+        name: 'Progreso del pedido', attribute: (e) => <ProgressBar completed={toInteger(Number((e.progreso.progreso) * 100) / Number(e.progreso.total))}
+          maxCompleted={100}
+          className='w-full '
+          animateOnRender={true}
+          labelAlignment='left'
+          labelColor='#fff'
+          bgColor={colorProgress(toInteger(Number((e.progreso.progreso) * 100) / Number(e.progreso.total)))} />
+      }
+    ]}
+   
+    setElements={setListaPedidos}*/
+
       />
       {
         /*
@@ -119,18 +116,6 @@ const PaginaPedidos = () => {
           />
         */
       }
-
-      <div className='absolute z-50 w-full h-full modal' ref={modalContainerRef}>
-        {deleteModalVisible &&
-          <DeleteModal
-            onCancel={() => handleCloseModal(setDeleteModalVisible)}
-            onConfirm={handleDeletePedidos}
-            elements={listaPedidos}
-            representation={['idPedido']}
-            message='Los siguientes Pedidos se eliminarán permanentemente:'
-          />
-        }
-      </div>
     </>
   )
 }

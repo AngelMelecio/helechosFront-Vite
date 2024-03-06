@@ -28,7 +28,7 @@ const CRUD = ({
 
   const searchRef = useRef()
   const someSelectedRef = useRef()
-  const trashButtonRef = useRef()
+  //const trashButtonRef = useRef()
 
 
   useEffect(() => {
@@ -205,6 +205,7 @@ const CRUD = ({
                 <div
                   className="flex flex-row"
                   id="butons">
+
                   <Btton
                     onClick={() => navigate(`/${path}/0`)}
                     className='w-8 h-8 total-center'>
@@ -220,7 +221,7 @@ const CRUD = ({
                     trash
                     onClick={onDelete}
                     disabled={!isSelected()}
-                    ref={trashButtonRef}
+                    //ref={trashButtonRef}
                     className={'total-center ml-4 w-8 h-8 '}>
                     <ICONS.Trash size='19px' />
                   </Btton>
