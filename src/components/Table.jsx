@@ -95,18 +95,35 @@ const Table = ({
                       <input
                       readOnly checked={row?.isSelected | false} className="pointer-events-none" type="checkbox" />
                     </td>*/}
-                    {columns.map((column, j) => (
-                      column.Component ?
-                        <td key={j}> <column.Component data={row[column.atr]}></column.Component> </td> :
-                        <td className="px-4 whitespace-nowrap " key={j}>
+                    {columns.map((column, j) =>
+                      <td key={j}>
+                        {column.Component ?
+                          <column.Component data={row[column.atr]} /> :
                           <p className="flex items-center h-10">
                             {row[column.atr]}
                           </p>
-                        </td>
-                    ))}
+                        }
+                      </td>
+                    )}
                   </tr>
                 ))}
             </tbody>
+            <tfoot className="sticky bottom-0 ">
+              <tr className="h-8 bg-white ring-2 ring-slate-200">
+                {columns.map((column, index) => <td key={`TF_${index}`} className="font-semibold">
+                  {column.total && (
+                    column.Component ?
+                      <column.Component
+                        data={column.totalFunction(data.map(d => d[column.atr]))}
+                      />
+                      :
+                      column.totalFunction(data.map(d => d[column.atr]))
+                  )}
+                  {column.footLabel && column.footLabel}
+                </td>)
+                }
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>
