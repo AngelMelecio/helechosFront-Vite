@@ -100,7 +100,7 @@ const Slider = ({
                       <tr className="h-8 shadow-sm">
                         <th className="sticky top-0 z-10 px-2 bg-white">
                           <div className="h-full total-center">
-                            <input onChange={handleCheckAll} checked={someSelected} type="checkbox" />
+                            <input onChange={handleCheckAll} checked={someSelected} type="checkbox" className="inpt-check" />
                           </div>
                         </th>
                         {columns.map((column, index) => (
@@ -129,7 +129,7 @@ const Slider = ({
                             key={"R" + i}>
                             <td className="sticky px-2">
                               <div className="h-full total-center">
-                                <input readOnly checked={row?.isSelected | false} className="pointer-events-none" type="checkbox" />
+                                <input readOnly checked={row?.isSelected | false} className="pointer-events-none inpt-check" type="checkbox" />
                               </div>
                             </td>
                             {columns.map((column, j) => (
