@@ -1,13 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { useEffect } from 'react'
-import DeleteModal from '../../components/DeleteModal'
-import CRUD from '../../components/CRUD'
-import { sleep } from '../../constants/functions'
 import { usePedidos } from './hooks/usePedidos'
-import ProgressBar from "@ramonak/react-progress-bar";
-import { get, toInteger } from 'lodash'
 import CrudPedidos from './components/CrudPedidos'
-import Progress from './components/Progress'
 
 
 
@@ -18,27 +12,6 @@ const PaginaPedidos = () => {
   useEffect(() => {
     refreshPedidos()
   }, [])
-
-  useEffect(() => {
-    console.log('EFECTO PAGINA', allPedidos)
-
-  }, [allPedidos])
-
-
-  function colorProgress(progress) {
-    let color = ''
-
-    if (progress <= 25) {
-      color = '#9b1b1b'
-    } else if (progress <= 50) {
-      color = '#ea580c'
-    } else if (progress <= 75) {
-      color = '#eab308'
-    } else {
-      color = '#15803d'
-    }
-    return color
-  }
 
   return (
     <>

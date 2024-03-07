@@ -49,7 +49,7 @@ export function FichaMaterialesProvider({ children }) {
             const { materiales, message } = await fetchAPI(API_FICHA_MATERIALES_URL + idFicha, options)
             setAllFichaMateriales(formatFichaMateriales(materiales))
         } catch (e) {
-            console.log(e)
+           // console.log(e)
         } finally {
             setFetchingFichaMateriales(false)
         }

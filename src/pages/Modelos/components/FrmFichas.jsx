@@ -21,7 +21,6 @@ import OptsInpt from "../../../components/Inputs/OptsInpt";
 const FrmFichas = ({
   ficha,
 }) => {
-  useEffect(() => { console.log(ficha) }, [ficha])
   const { notify } = useAuth()
   const { id } = useParams()
   const formRef = useRef(null)
@@ -106,7 +105,7 @@ const FrmFichas = ({
           notify(message)
         }
       } catch (e) {
-        console.log(e)
+        //console.log(e)
       } finally {
         setSaving(false)
       }

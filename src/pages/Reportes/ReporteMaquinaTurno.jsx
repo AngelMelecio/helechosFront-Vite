@@ -36,7 +36,7 @@ const ReporteMaquinaTurno = ({ solicitud }) => {
           setWidthChart2(data.length * 50 + 200);
 
           const totalData = calculateTurnosTotales(data);
-          console.log(totalData)
+          //console.log(totalData)
           setTurnosTotales(totalData);
           setTransformedData(transData);
           setReadyToRender(true);

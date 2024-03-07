@@ -82,7 +82,7 @@ export function MaquinasProvider({ children }) {
       let maquinas = await fetchAPI(API_MAQUINAS_EMPLEADO_URL + idEmpleado, options)
       return (maquinas)
     }catch(e){
-      console.log('error al obtener las maquinas del empleado: ', e)
+      //console.log('error al obtener las maquinas del empleado: ', e)
     }finally{
       setLoading(false)
     }
@@ -140,7 +140,7 @@ export function MaquinasProvider({ children }) {
       const { message } = await postMaquina(values, method)
       notify(message)
     } catch (err) {
-      console.log(err)
+      //console.log(err)
       setErrors(err)
       notify('Error al guardar la maquina', true)
     } finally {

@@ -151,7 +151,7 @@ export function FichasProvider({ children }) {
         setAllFichasModelo([])
       }
     } catch (err) {
-      console.log('error al refrescar las fichas')
+      //console.log('error al refrescar las fichas')
       setError(err)
     } finally {
       setFetchingFichas(false)

@@ -34,7 +34,7 @@ const OptsInpt = ({
     setShowOpts(false);
     setSearch('')
     setFilteredOpts([...options])
-    formik.handleBlur(e)
+    formik && formik.handleBlur(e) 
   }
 
   const handleInptChange = (e) => {

@@ -112,7 +112,7 @@ const DetailMaquina = () => {
             await findMaquina(id)
       )
     } catch (e) {
-      console.log("Error en Detalles de Maquina", e)
+      //console.log("Error en Detalles de Maquina", e)
     } finally {
       setLoading(false)
     }

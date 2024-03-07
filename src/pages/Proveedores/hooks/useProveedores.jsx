@@ -17,7 +17,7 @@ function formatProveedores(proveedores) {
         ...prov,
         isSelected: false
     }))
-    console.log('pedidos -> ',formatData)
+    //console.log('pedidos -> ',formatData)
     return formatData
 }
 

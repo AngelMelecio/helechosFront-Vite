@@ -134,8 +134,8 @@ const CrudPedidos = ({
       c.fraccion = `${c.progreso} / ${c.total}`
     })
 
-    console.log(clientes)
-    console.log(newElements)
+    //console.log(clientes)
+    //console.log(newElements)
 
     setElementsGrouped(clientes)
     setElements(newElements)

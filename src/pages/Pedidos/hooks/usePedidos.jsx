@@ -263,6 +263,22 @@ export function PedidosProvider({ children }) {
         }
     }
 
+    async function patchPedido(idPedido, objProgreso) {
+
+        let options = {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + session.access
+            },
+            body: JSON.stringify({progreso: objProgreso})
+        }
+
+        setLoading(true)
+        const response = await fetchAPI(API_PEDIDO_URL+idPedido, options)
+        return response
+    }
+
     async function saveReposicion(values) {
         let options = {
             method: "POST",
@@ -324,7 +340,8 @@ export function PedidosProvider({ children }) {
                 produccion_por_modelo_y_empleado,
                 produccion_por_maquina_y_turno,
                 saveReposicionOrExtra,
-                getMaterialesByPedido
+                getMaterialesByPedido,
+                patchPedido
             }}
         >
             {children}

@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ICONS } from "../../constants/icons";
 import Loader from "../../components/Loader/Loader";
 import Input from "../../components/Input";
+import OptionsInpt from "../../components/Inputs/OptsInpt";
 import { useRef, useState } from "react";
 import { useEffect } from "react";
 import { usePedidos } from "./hooks/usePedidos";
@@ -20,8 +21,9 @@ import Modal from "../../components/Modal";
 import ReposicionesCrud from "./components/ReposicionesCrud";
 import PesosModal from "./components/PesosModal";
 import HButton from "./components/HButton";
-
+import { useFormik } from "formik";
 import FieldsBox from '../../components/FieldsBox'
+import Btton from '../../components/Buttons/Btton'
 
 const DetailPedido = () => {
 
@@ -36,7 +38,8 @@ const DetailPedido = () => {
   const pageRef = useRef()
   const modalRef = useRef()
 
-  const { findPedido, putProduccion } = usePedidos()
+
+  const { findPedido, putProduccion , patchPedido} = usePedidos()
 
   const [modalVisible, setModalVisible] = useState(false)
   const [detalleEtiquetaModalVisible, setDetalleEtiquetaModalVisible] = useState(false)
@@ -54,9 +57,36 @@ const DetailPedido = () => {
   const [selectedTallaIndx, setSelectedTallaIndx] = useState(0)
   const [selectedEtiqueta, setSelectedEtiqueta] = useState(null)
 
+  const [theresChanges, setTheresChanges] = useState(false)
+
+  const optionsEstado = [
+    { value: 'Pendiente', label: 'Pendiente' },
+    { value: 'Terminado', label: 'Terminado' },
+  ]
+
+  const formik = useFormik({
+    initialValues: { estado: 'Pendiente' },
+    onSubmit: async (values) => {
+      try {
+        if (theresChanges) {
+          const { message } = await patchPedido(id, {total: values.total, estado: values.estado, progreso: values.total})
+          notify(message)
+        }
+        navigate('/pedidos')
+      } catch (e) {
+        //console.log(e.message)
+        notify(e.message, true)
+      } finally {
+
+      }
+    },
+  });
+
+
   const onMountComponent = async () => {
     let p = await findPedido(id)
     setPedido(p)
+    formik.setValues({estado: p.progreso.estado,total:p.progreso.total})
   }
 
   useEffect(() => {
@@ -180,12 +210,24 @@ const DetailPedido = () => {
                 Detalles del Pedido
               </p>
             </div>
+            <div>
+              <Btton
+                disabled={(!theresChanges)}
+                className="h-10 px-8"
+                type="submit"
+                form="frmPedido"
+              >
+                Guardar
+              </Btton>
+
+            </div>
           </div>
 
           {pedido === null ? <Loader /> :
             <form
               id='frmPedido'
               className='relative flex flex-col w-full h-full'
+              onSubmit={formik.handleSubmit}
             >
               <div className="flex flex-col w-full">
                 {/* DATOS DEL PEDIDO */}
@@ -195,55 +237,58 @@ const DetailPedido = () => {
                       <div className="flex flex-row gap-6">
                         <Input
                           readOnly
-                          name='Cliente'
                           value={pedido?.modelo?.cliente.nombre}
                           label='Cliente'
                           type="text"
                         />
-
                         <Input
                           readOnly
-                          name='Modelo'
                           value={pedido?.modelo.nombre}
                           label='Modelo'
                           type="text"
                         />
-                        <Input
-                          readOnly
-                          name='orderCompra'
-                          value={pedido?.ordenCompra}
-                          label='Orden de compra'
-                          type="text"
-                        />
+
                       </div>
 
                       <div className="flex flex-row gap-6">
                         <Input
                           readOnly
-                          name='fechaRegistro'
                           value={pedido?.fechaRegistro}
                           label='Fecha de Registro'
                           type='text'
                         />
                         <Input
                           readOnly
-                          name='space'
+                          value={pedido?.fechaEntrega}
+                          label='Fecha de Entrega'
+                          type='text'
+                        />
+                      </div>
+                      <div className="grid grid-cols-3 gap-6">
+                        <Input
+                          readOnly
+                          value={pedido?.ordenCompra}
+                          label='Orden de compra'
+                          type="text"
+                        />
+                        <Input
+                          readOnly
                           value={pedido?.fraccion}
                           label='Pares terminados'
                           type='text'
                         />
-                        <Input
-                          readOnly
-                          name='fechaEntrega'
-                          value={pedido?.fechaEntrega}
-                          label='Fecha de Entrega'
-                          type='text'
+                        <OptionsInpt
+                          disabled={pedido?.progreso.estado === 'Terminado'}
+                          label="Estado del pedido"
+                          name='estado'
+                          options={optionsEstado}
+                          formik={formik}
+                          fieldChange={() => setTheresChanges(true)}
                         />
 
                       </div>
                     </FieldsBox>
                   </div>
-
                 </div>
                 {/*  MONITOREO DE LA PRODUCCION */}
                 <div className="flex flex-col screen">
