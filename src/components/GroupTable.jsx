@@ -139,8 +139,8 @@ const GroupTable = ({
                     {
                       focusRow === row[unique] &&
                       <tr>
-                        <td colSpan={columns.length + 1} className="bg-slate-200/50">
-                          <div className="w-full py-2 h-60">
+                        <td colSpan={columns.length + 1} className="px-2 bg-white">
+                          <div className="w-full shadow-md h-60">
                             <AbsScroll vertical horizontal>
                               <Table
                                 data={row[subRowsRef]}
