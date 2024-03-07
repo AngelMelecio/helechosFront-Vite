@@ -293,10 +293,9 @@ const PaginaProduccion = () => {
                                 </div>
                                 <div className="flex flex-col w-full px-4 my-4 bottom-7">
                                   <div className="flex flex-row justify-between">
-                                    <div className="flex w-full">
+                                    <div className="z-30 flex w-full">
                                       {showMaquina &&
                                         <CustomSelect
-                                          className="z-[10]"
                                           label="Maquina"
                                           options={optsMaquinas}
                                           value={maquina}
@@ -308,7 +307,6 @@ const PaginaProduccion = () => {
                                   <div className="flex flex-row w-full">
                                     <div className="flex w-full">
                                       <CustomSelect
-                                        className="z-[9]"
                                         label="Turno"
                                         options={optsTurno}
                                         value={turno}

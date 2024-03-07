@@ -36,7 +36,7 @@ const DetailProveedor = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = (id !== '0');
-  const { getProveedor, saveProveedor, loading, findProveedor, allProveedores, setLoading } = useProveedores();
+  const { saveProveedor, loading, findProveedor, allProveedores, setLoading } = useProveedores();
   const [theresChanges, setTheresChanges] = useState(false);
 
   const validate = values => {
@@ -183,7 +183,7 @@ const DetailProveedor = () => {
                               />
                               <OptsInpt
                                 label='Departamento'
-                                name='Departamento'
+                                name='departamento'
                                 options={optionsDepartamento}
                                 formik={formik}
                                 fieldChange={() => setTheresChanges(true)}

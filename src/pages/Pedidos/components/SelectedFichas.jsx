@@ -142,6 +142,7 @@ const SelectedFichas = ({
                                 <p className="px-2 font-medium text-gray-700">{r.name}</p>
                                 <div className="flex px-2 total-center">
                                   <input
+                                    className="inpt-check"
                                     onChange={(e) => { formik.setFieldValue(`detalles.${i}.estaciones.${r.atr}`, e.target.checked) }}
                                     checked={d.estaciones[r.atr]}
                                     type="checkbox" />
