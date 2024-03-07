@@ -29,7 +29,7 @@ const PesosModal = ({ idPedido }) => {
 
     useEffect(() => {
         if (data) {
-            console.log(data)
+            //console.log(data)
             setTabs(data.map((ft, i) => ({
                 id: i + 1,
                 label: ft.fichaTecnica.nombre

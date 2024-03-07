@@ -133,10 +133,10 @@ const NuevoPedido = () => {
     try {
       setLoadingModelos(true)
       let modelos = await getModelosCliente(formik?.values?.modelo.cliente)
-      console.log(modelos)
+      //console.log(modelos)
       setOptionsModelo(modelos.map(modelo => ({ value: modelo.idModelo, label: modelo.nombre })))
     } catch (e) {
-      console.log(e)
+      //console.log(e)
     } finally {
       setLoadingModelos(false)
     }

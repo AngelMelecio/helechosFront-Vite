@@ -91,7 +91,7 @@ const DetailModelo = () => {
             await getModelo(id)
       )
     } catch (e) {
-      console.log('Error en detalles del modelo: ', e)
+      //console.log('Error en detalles del modelo: ', e)
     } finally {
       setLoadingModelo(false)
     }

@@ -79,7 +79,6 @@ const DetailProveedor = () => {
 
   const formik = useFormik({
     initialValues: null,
-    validate,
     onSubmit: async (values) => {
       await saveProveedor({ values: values, method: isEdit ? 'PUT' : 'POST' })
       navigate(("/proveedores"))

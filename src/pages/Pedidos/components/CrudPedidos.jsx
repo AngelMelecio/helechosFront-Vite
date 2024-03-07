@@ -142,7 +142,6 @@ const CrudPedidos = ({
       c.porcentaje = Number((Number(c.progreso) * 100 / Number(c.total)).toFixed(2))
       c.fraccion = `${c.progreso} / ${c.total}`
     })
-
     setElementsGrouped(clientes)
     setElements(newElements)
 

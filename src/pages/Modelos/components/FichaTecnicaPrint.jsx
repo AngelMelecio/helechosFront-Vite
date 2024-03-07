@@ -37,7 +37,7 @@ const FichaTecnicaPrint = ({ data, onCloseModal }) => {
         }
       }
     })
-    console.log(data)
+    //console.log(data)
     return pesoAcum
   })
 
