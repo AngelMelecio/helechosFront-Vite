@@ -215,12 +215,9 @@ const DetailUsuario = () => {
                             <div className="flex">
                               {isEdit &&
                                 <div className="flex p-4 pb-8 total-center">
-                                  <div className="inp-container ">
-                                    <input
-                                      onChange={() => setNewPass(prev => !prev)}
-                                      value={newPass} type="checkbox" className="inp-check" />
-                                    <label className="check"></label>
-                                  </div>
+                                  <input
+                                    onChange={() => setNewPass(prev => !prev)}
+                                    value={newPass} type="checkbox" className="inpt-check" />
                                 </div>}
                               <Inpt
                                 label={isEdit ? 'Nueva Contraseña' : 'Contraseña'}
