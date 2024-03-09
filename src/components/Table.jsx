@@ -112,7 +112,7 @@ const Table = ({
             <tfoot className="sticky bottom-0 ">
               <tr className="h-8 bg-white ring-2 ring-slate-200">
                 {columns.map((column, index) => <td key={`TF_${index}`} className="font-semibold">
-                  { column.foot && (
+                  {column.foot && (
                     column.Component ?
                       <column.Component
                         data={footers[column.atr]}

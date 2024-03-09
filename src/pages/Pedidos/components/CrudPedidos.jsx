@@ -171,6 +171,7 @@ const CrudPedidos = ({
         porcentaje: c.porcentaje
       }
     })
+
     setElementsGrouped(clientes)
     setElements(newElements)
 
@@ -272,7 +273,7 @@ const CrudPedidos = ({
               <AbsScroll
                 vertical
                 horizontal
-                loading={loading}
+                loading={loading} 
               >
                 {
                   !controls?.values?.groupByClient ?
