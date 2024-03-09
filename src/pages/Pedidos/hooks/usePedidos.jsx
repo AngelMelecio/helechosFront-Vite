@@ -86,7 +86,7 @@ function formatPedidosListar(pedidos) {
             diasRestantes: calculateDiasRestantes(p.fechaEntrega),
             ordenCompra: p.ordenCompra,
             ...p.progreso,
-            porcentaje: Number((Number(p.progreso.progreso) * 100 / Number(p.progreso.total)).toFixed(2)),
+            porcentaje: Number((Number(p.progreso.progreso) * 100 / Number(p.progreso.total))),
             fraccion: `${p.progreso.progreso} / ${p.progreso.total}`,
         })
     )

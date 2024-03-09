@@ -1,8 +1,10 @@
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 import { useState } from "react"
 import { ICONS } from "../constants/icons"
 import Table from "./Table"
 import AbsScroll from "./AbsScroll"
+import { flushSync } from "react-dom"
+import { sleep } from "../constants/functions"
 
 const Empty = ({ children }) => {
   return (
@@ -22,20 +24,19 @@ const GroupTable = ({
   subRowsColumns,
   subRowsUnique,
 
-  handleSubRowClick
+  footers,
+
+  handleSubRowClick,
+
 }) => {
 
   const [focusRow, setFocusRow] = useState(null)
 
   const [searchText, setSearchText] = useState('')
-  const [sortParams, setSortParams] = useState({ attribute: null, criteria: null })
-  const [filter, setFilter] = useState({ atr: unique, ord: 2 })
+  const [sortParams, setSortParams] = useState({ atr: unique, ord: 2 })
 
   const searchRef = useRef()
-  const someSelectedRef = useRef()
-  const trashButtonRef = useRef()
-
-
+  const subTableRef = useRef()
 
   const handleSearchButtonClick = () => {
     if (searchText.length > 0) {
@@ -49,6 +50,7 @@ const GroupTable = ({
   const handleMainRowClick = (id) => () => {
     setFocusRow(prev => prev === id ? null : id)
   }
+
 
   return (
     <div className="flex flex-col w-full h-full bg-white">
@@ -91,10 +93,18 @@ const GroupTable = ({
                     <div className="absolute top-0 right-0 w-8 h-8 p-1">
                       <button
                         type="button"
-                        onClick={() => { setFilter(prev => ({ atr: column.atr, ord: (prev.atr === column.atr ? (prev.ord + 1) % 3 : 1) })) }}
-                        className={((filter.atr === column.atr && filter.ord !== 0) ? "" : "elmt ") + "h-full w-full flex items-center justify-center"} >
+                        onClick={() => { setSortParams(prev => ({ atr: column.atr, ord: (prev.atr === column.atr ? (prev.ord + 1) % 3 : 1) })) }}
+                        className={((sortParams.atr === column.atr && sortParams.ord !== 0) ? "" : "elmt ") + "h-full w-full flex items-center justify-center"} >
                         {
-                          filter.atr === column.atr ? (filter.ord === 1 ? <ICONS.Down size="18px" /> : (filter.ord === 2 ? <ICONS.Up size="18px" /> : <ICONS.Filter size="18px" />)) : <ICONS.Filter size="18px" />
+                          sortParams.atr === column.atr ?
+                            (sortParams.ord === 1 ?
+                              <ICONS.Down size="18px" /> :
+                              (sortParams.ord === 2 ?
+                                <ICONS.Up size="18px" /> :
+                                <ICONS.Filter size="18px" />
+                              )
+                            ) :
+                            <ICONS.Filter size="18px" />
                         }
                       </button>
                     </div>
@@ -107,8 +117,8 @@ const GroupTable = ({
               {data
                 .filter(d => Object.keys(d).some(k => d[k]?.toString().toLowerCase().includes(searchText.toLowerCase())))
                 .sort((a, b) => {
-                  if (filter.ord === 1) return a[filter.atr] > b[filter.atr] ? 1 : -1
-                  if (filter.ord === 2) return a[filter.atr] < b[filter.atr] ? 1 : -1
+                  if (sortParams.ord === 1) return a[sortParams.atr] > b[sortParams.atr] ? 1 : -1
+                  if (sortParams.ord === 2) return a[sortParams.atr] < b[sortParams.atr] ? 1 : -1
                 })
                 .map((row, i) => (
                   <Empty key={"R" + i}>
@@ -130,6 +140,7 @@ const GroupTable = ({
                           }
                         </td>
                       ))}
+                      {/* Control arrow */}
                       <td className={`duration-150 ${row[unique] !== focusRow ? 'opacity-0 group-hover:opacity-100' : ''}`}>
                         <div className="total-center">
                           {focusRow === row[unique] ? <ICONS.Up size="18px" /> : <ICONS.Down size="18px" />}
@@ -140,7 +151,7 @@ const GroupTable = ({
                       focusRow === row[unique] &&
                       <tr>
                         <td colSpan={columns.length + 1} className="px-2 bg-white">
-                          <div className="w-full shadow-md h-60">
+                          <div ref={subTableRef} className="w-full shadow-md h-60">
                             <AbsScroll vertical horizontal>
                               <Table
                                 data={row[subRowsRef]}
@@ -148,6 +159,8 @@ const GroupTable = ({
                                 unique={subRowsUnique}
                                 search="off"
                                 handleRowClick={handleSubRowClick}
+
+                                footers={row.footers}
                               />
                             </AbsScroll>
                           </div>
@@ -155,10 +168,24 @@ const GroupTable = ({
                       </tr>
                     }
                   </Empty>
-
                 ))}
-
             </tbody>
+            <tfoot className="sticky bottom-0 ">
+              <tr className="h-8 bg-white ring-2 ring-slate-200">
+                {columns.map((column, index) => <td key={`TF_${index}`} className="font-semibold">
+                  {column.foot && (
+                    column.Component ?
+                      <column.Component
+                        data={footers[column.atr]}
+                      />
+                      :
+                      footers[column.atr] && footers[column.atr]
+                  )}
+                </td>)
+                }
+                <td><p className="total-center text-teal-700/80">-</p></td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>

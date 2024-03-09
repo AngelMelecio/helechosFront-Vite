@@ -10,13 +10,13 @@ const Progress = ({ data }) => {
     return (
         <div className='relative flex flex-col items-start justify-center w-full h-10 '>
             <p className='w-full text-sm font-bold gray-700'>
-                %{data}
+                %{data ? data.toFixed(2) : '0.00'}
             </p>
             <div
                 className='relative w-full h-2 rounded-full bg-slate-200/80'>
                 <div
                     style={{
-                        width: `${data}%`,
+                        width: `${data ? data.toFixed(2) : '0.00'}%`,
                         backgroundColor:
                             data <= 25 ? RED :
                                 data <= 50 ? ORANGE :

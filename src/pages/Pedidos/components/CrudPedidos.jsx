@@ -23,7 +23,7 @@ const arrayAvg = (data) => {
 
   return Number((data.reduce((acc, curr) => {
     return acc + (Number(curr) || 0)
-  }, 0) / data.length).toFixed(2))
+  }, 0) / data.length))
 }
 
 const groupTabs = [
@@ -36,9 +36,10 @@ const subRowsRef = 'pedidos'
 
 const clienteColumns = [
   { label: 'ID', atr: 'idCliente' },
-  { label: 'Nombre', atr: 'nombreCliente', search: true },
-  { label: 'Pares terminados', atr: 'fraccion' },
-  { label: 'Progreso del cliente', atr: 'porcentaje', Component: Progress }
+  { label: 'Nombre', atr: 'nombreCliente', search: true, foot: true },
+  { label: 'Pares terminados', atr: 'fraccion', foot: true },
+  { label: 'Progreso del cliente', atr: 'porcentaje', Component: Progress, foot: true },
+  
 ]
 
 const pedidosColumns = [
@@ -47,9 +48,9 @@ const pedidosColumns = [
   { label: 'Cliente', atr: 'nombreCliente' },
   { label: 'Modelo', atr: 'nombreModelo', search: true },
   { label: 'Fecha de entrega', atr: 'fechaEntrega', Component: formatDate },
-  { label: 'Días restantes', atr: 'diasRestantes', footLabel: "TOTAL:" },
-  { label: 'Pares terminados', atr: 'fraccion', total: true, totalFunction: sumFraction },
-  { label: 'Progreso del pedido', atr: 'porcentaje', total: true, totalFunction: arrayAvg, Component: Progress }
+  { label: 'Días restantes', atr: 'diasRestantes', foot: true, },
+  { label: 'Pares terminados', atr: 'fraccion', foot: true, },
+  { label: 'Progreso del pedido', atr: 'porcentaje', Component: Progress, foot: true, }
 ]
 
 const Tab = ({ children, active, ...props }) => {
@@ -71,6 +72,13 @@ const CrudPedidos = ({
   loading,
   allElements,
 }) => {
+
+  const [pedidosFooteres, setPedidosFooteres] = useState({
+    nombreCliente: "Total:",
+    diasRestantes: "Total:",
+    fraccion: "",
+    porcentaje: "",
+  })
 
   const [elements, setElements] = useState(allElements)
   const [elementsGrouped, setElementsGrouped] = useState([])
@@ -137,10 +145,31 @@ const CrudPedidos = ({
         cliente.total += p.total
       }
     })
+
+    // Calcaulando footers
+    let totalPares = newElements.reduce((sum, p) => {
+      return sum + p.total
+    }, 0)
+    let totalProgreso = newElements.reduce((sum, p) => {
+      return sum + p.progreso
+    }, 0)
+    setPedidosFooteres(prev => ({
+      ...prev,
+      fraccion: `${totalProgreso} / ${totalPares}`,
+      porcentaje: Number((Number(totalProgreso) * 100 / Number(totalPares)))
+    }))
+
     // Calculando porcentaje de cada cliente
     clientes.forEach(c => {
-      c.porcentaje = Number((Number(c.progreso) * 100 / Number(c.total)).toFixed(2))
+      c.porcentaje = Number((Number(c.progreso) * 100 / Number(c.total)))
       c.fraccion = `${c.progreso} / ${c.total}`
+
+      // Calculando footers de cada cliente
+      c.footers = {
+        diasRestantes: "Total:",
+        fraccion: c.fraccion,
+        porcentaje: c.porcentaje
+      }
     })
 
     setElementsGrouped(clientes)
@@ -254,6 +283,7 @@ const CrudPedidos = ({
                       unique="idPedido"
                       search="off"
                       handleRowClick={(row) => navigate(`/${path}/${row[idName]}`)}
+                      footers={pedidosFooteres}
                     />
                     :
                     <GroupTable
@@ -266,6 +296,7 @@ const CrudPedidos = ({
                       subRowsColumns={pedidosColumns}
                       subRowsUnique="idPedido"
 
+                      footers={pedidosFooteres}
                       handleSubRowClick={(row) => navigate(`/${path}/${row[idName]}`)}
                     />
                 }

@@ -8,6 +8,7 @@ const Table = ({
   columns,
   unique,
   search = "on",
+  footers,
   handleRowClick
 }) => {
   const [searchText, setSearchText] = useState('')
@@ -111,15 +112,14 @@ const Table = ({
             <tfoot className="sticky bottom-0 ">
               <tr className="h-8 bg-white ring-2 ring-slate-200">
                 {columns.map((column, index) => <td key={`TF_${index}`} className="font-semibold">
-                  {column.total && (
+                  { column.foot && (
                     column.Component ?
                       <column.Component
-                        data={column.totalFunction(data.map(d => d[column.atr]))}
+                        data={footers[column.atr]}
                       />
                       :
-                      column.totalFunction(data.map(d => d[column.atr]))
+                      footers[column.atr]
                   )}
-                  {column.footLabel && column.footLabel}
                 </td>)
                 }
               </tr>
