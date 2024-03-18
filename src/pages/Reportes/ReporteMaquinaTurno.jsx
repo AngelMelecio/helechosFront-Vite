@@ -20,6 +20,22 @@ const ReporteMaquinaTurno = ({ solicitud }) => {
   const [widthChart2, setWidthChart2] = useState(1600)
   const [chartHeight, setChartHeight] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [tabSelected, setTabSelected] = useState(0)
+  const [maquinasTotales, setMaquinasTotales] = useState([]);
+  const groupTabs = [
+    { value: 0, label: 'Turnos' },
+    { value: 1, label: 'Maquinas' }
+  ]
+  const [datosActuales, setDatosActuales] = useState({ totales: [], total: 0 });
+
+  useEffect(() => {
+    // Asigna los datos actuales a mostrar basados en la pestaña seleccionada
+    if (tabSelected === 0) {
+      setDatosActuales({ totales: turnosTotales.totales, total: turnosTotales.total });
+    } else if (tabSelected === 1) {
+      setDatosActuales({ totales: maquinasTotales.totales, total: maquinasTotales.total });
+    }
+  }, [tabSelected, turnosTotales, maquinasTotales]);
 
   useEffect(() => {
     if (chartView.current) {
@@ -34,10 +50,10 @@ const ReporteMaquinaTurno = ({ solicitud }) => {
         .then((data) => {
           const transData = transformDataMaquina(data);
           setWidthChart2(data.length * 50 + 200);
-
-          const totalData = calculateTurnosTotales(data);
-          //console.log(totalData)
-          setTurnosTotales(totalData);
+          const totalTurnos = calculateTurnosTotales(data);
+          const totalMaquinas = calculateMaquinasTotales(transData);
+          setTurnosTotales(totalTurnos);
+          setMaquinasTotales(totalMaquinas);
           setTransformedData(transData);
           setReadyToRender(true);
         })
@@ -50,6 +66,31 @@ const ReporteMaquinaTurno = ({ solicitud }) => {
     }
   }, [solicitud])
 
+  const Tab = ({ children, active, ...props }) => {
+    return (
+      <div
+        className={`cursor-pointer hover:bg-white duration-100 rounded-md font-medium text-sm h-6 px-6 total-center mx-1 ${active ? 'bg-white text-teal-700 shadow-md' : 'text-gray-600'}`}
+        {...props}
+      >
+        {children}
+      </div>
+    )
+  }
+  const calculateMaquinasTotales = (consolidatedData) => {
+    let totalGeneral = 0; // Inicializamos el total de totales
+
+    const totales = consolidatedData.slice(1).map(empleado => {
+      const suma = empleado.slice(1).reduce((acumulado, valorActual) => acumulado + valorActual, 0);
+      totalGeneral += suma; // Sumamos al total de totales
+      return { entidad: empleado[0], total: suma };
+    });
+    totales.sort((a, b) => b.total - a.total);
+    
+    return {
+      total: totalGeneral,
+      totales
+    };
+  };
 
   {/* Metodos para tratar la informacion de los reportes (M) */ }
   function transformDataMaquina(maquinaData) {
@@ -67,20 +108,28 @@ const ReporteMaquinaTurno = ({ solicitud }) => {
   }
 
   const calculateTurnosTotales = (data) => {
-    const totales = data.reduce((acumulador, item) => {
+    const aux = data.reduce((acumulador, item) => {
       acumulador.m += item.m;
       acumulador.t += item.t;
       acumulador.n += item.n;
       return acumulador;
     }, { m: 0, t: 0, n: 0 });
+    
+    const totales = [
+      { entidad: 'Mañana', total: aux.m },
+      { entidad: 'Tarde', total: aux.t },
+      { entidad: 'Noche', total: aux.n }
+    ];
+
+    totales.sort((a, b) => b.total - a.total);
 
     // Calcula la suma total de m, t y n.
-    const sumaTotal = totales.m + totales.t + totales.n;
+    const sumaTotal = aux.m + aux.t + aux.n;
 
     // Crea un objeto JSON con los totales y la suma total.
     const resultado = {
-      totales: totales,
-      sumaTotal: sumaTotal
+      totales,
+      total: sumaTotal
     };
     //console.log(resultado);
     return resultado;
@@ -96,33 +145,44 @@ const ReporteMaquinaTurno = ({ solicitud }) => {
           <div className="grid grid-cols-[20%_auto] w-full h-full bg-slate-200">
             { /* Columna lateral Totales */}
             <div className="relative z-10 flex flex-col w-full h-full bg-white rounded-lg shadow-md appear">
-              {readyToRender && turnosTotales && <>
-                <div className="flex flex-col py-6 total-center">
-                  <p className="text-xl font-bold text-teal-800/80"> {turnosTotales?.sumaTotal}</p>
-                  <p className="text-gray-500">pares totales</p >
-                </div>
-                <AbsScroll vertical>
-                  <div className="flex flex-col px-2 bg-white total-center appear">
-                    {readyToRender && turnosTotales ?
-                      <div className="w-full h-full ">
-                        {[
-                          { label: "Manaña", atr: "m" },
-                          { label: "Tarde", atr: "t" },
-                          { label: "Noche", atr: "n" },
-                        ].map((turno, index) => (
-                          <div className="flex items-center justify-between w-full py-1 border-b-2" key={index}>
-                            <p className="px-2 font-normal text-gray-600 text-md">{turno.label}</p>
-                            <p className="px-2 font-bold text-teal-800/80 text-md">{turnosTotales.totales[turno.atr]}</p>
-                          </div>
-                        ))}
-                      </div> :
-                      <p className="italic font-semibold text-gray-600">
-                        Totales
-                      </p>
-                    }
+              <div className="flex flex-row justify-center w-full p-2 bg-slate-200">
+                {[groupTabs.map((tab, indx) =>
+                  <Tab
+                    key={indx}
+                    active={tabSelected === tab.value}
+                    onClick={() => setTabSelected(tab.value)}
+                  >
+                    {tab.label}
+                  </Tab>)]
+                }
+              </div>
+
+              {
+                readyToRender && datosActuales?.totales.length > 0 && <>
+                  <div className="flex flex-col py-6 total-center">
+                    <p className="text-xl font-bold text-teal-800/80"> {datosActuales.total}</p>
+                    <p className="text-gray-500">pares totales</p >
                   </div>
-                </AbsScroll>
-              </>}
+                  <AbsScroll vertical>
+                    <div className="flex flex-col px-2 bg-white total-center appear">
+                      {readyToRender ?
+                        datosActuales?.totales.length > 0 &&
+                        <div className="w-full h-full ">
+                          {datosActuales.totales.map((entidad, index) => (
+                            <div className="flex items-center justify-between w-full py-1 border-b-2" key={index}>
+                              <p className="px-2 font-normal text-gray-600 text-md">{entidad.entidad}</p>
+                              <p className="px-2 font-bold text-teal-800/80 text-md">{entidad.total}</p>
+                            </div>
+                          ))}
+                        </div> :
+                        <p className="italic font-semibold text-gray-600">
+                          Totales
+                        </p>
+                      }
+                    </div>
+                  </AbsScroll>
+                </>
+              }
             </div>
 
             {/*  Reportes y graficas  */}
@@ -132,7 +192,7 @@ const ReporteMaquinaTurno = ({ solicitud }) => {
                 <div className="h-full p-3 ">
                   <div
                     style={{
-                      height: `${chartHeight - 2*PADDING}px`,
+                      height: `${chartHeight - 2 * PADDING}px`,
                       width: widthChart2
                     }}
                     className="p-3 mr-3 bg-white rounded-md shadow-md ">

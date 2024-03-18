@@ -13,6 +13,7 @@ import SelectedFichas from "./components/SelectedFichas";
 import OptsInpt from "../../components/Inputs/OptsInpt";
 import FieldsBox from "../../components/FieldsBox";
 import Inpt from "../../components/Inputs/Inpt";
+import OptionsInpt from "../../components/Inputs/OptsInpt";
 
 const initPedido = {
   modelo: {
@@ -21,7 +22,8 @@ const initPedido = {
   },
   fechaEntrega: "",
   detalles: [],
-  ordenCompra: "",
+  ordenProduccion: "",
+  tipo: "Produccion",
 }
 const initRoute = {
   "creada": "tjeido",
@@ -40,6 +42,15 @@ const defaultRoute = {
   "corte": "empaque",
   "empaque": "empacado",
 }
+
+const optionsTipo = [
+  { value: 'Produccion', label: 'Produccion' },
+  { value: 'Muestra', label: 'Muestra' },
+  { value: 'Almacen', label: 'Almacen' },
+  { value: 'Faltante', label: 'Faltante' },
+  { value: 'Reposicion', label: 'Reposicion' },
+  { value: 'Otro', label: 'Otro' }
+]
 
 const NuevoPedido = () => {
 
@@ -67,7 +78,7 @@ const NuevoPedido = () => {
     if (values.modelo === "") errors.modelo = "Seleccione un modelo"
     if (values.fechaEntrega === "") errors.fechaEntrega = "Seleccione una fecha de entrega"
     if (values.detalles?.length === 0) errors.detalles = "Seleccione al menos una ficha"
-    if (values.ordenCompra === "") errors.ordenCompra = "Ingrese una orden de compra"
+    if (values.ordenProduccion === "") errors.ordenProduccion = "Ingrese una orden de producción"
 
     values.detalles?.forEach((detalle, i) => {
       detalle.cantidades.forEach((cantidad, j) => {
@@ -81,7 +92,7 @@ const NuevoPedido = () => {
   }
 
   const formik = useFormik({
-    initialValues: null,
+    initialValues: initPedido,
     validate,
     onSubmit: async (values) => {
       try {
@@ -251,8 +262,14 @@ const NuevoPedido = () => {
                           />
                         </div>
                         <div className='flex flex-row gap-6'>
+                          <OptionsInpt
+                            label="Tipo de pedido"
+                            name='tipo'
+                            options={optionsTipo}
+                            formik={formik}
+                          />
                           <Inpt
-                            label='Orden de compra' type='text' name='ordenCompra'
+                            label='Orden de producción' type='text' name='ordenProduccion'
                             formik={formik}
                           />
                           <Inpt

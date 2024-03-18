@@ -8,27 +8,21 @@ import AbsScroll from '../../../components/AbsScroll';
 import Table from '../../../components/Table';
 import { formatDate } from '../../../constants/functions';
 import GroupTable from '../../../components/GroupTable';
+import OptionsInpt from '../../../components/Inputs/OptsInpt';
 
-const sumFraction = (data) => {
-  return (`
-    ${data.reduce((acc, curr) => {
-    return acc + Number(curr.split('/')[0])
-  }, 0)} / 
-    ${data.reduce((acc, curr) => {
-    return acc + Number(curr.split('/')[1])
-  }, 0)}
-  `)
-}
-const arrayAvg = (data) => {
 
-  return Number((data.reduce((acc, curr) => {
-    return acc + (Number(curr) || 0)
-  }, 0) / data.length))
-}
+const optionsTipo = [
+  { value: 'Produccion', label: 'Produccion' },
+  { value: 'Muestra', label: 'Muestra' },
+  { value: 'Almacen', label: 'Almacen' },
+  { value: 'Faltante', label: 'Faltante' },
+  { value: 'Reposicion', label: 'Reposicion' },
+  { value: 'Otros', label: 'Otros' },
+]
 
-const groupTabs = [
-  { value: 0, label: 'Todos' },
-  { value: 1, label: 'Pendientes' }
+const optionsEstado = [
+  { value: 'Pendiente', label: 'Pendiente' },
+  { value: 'Terminado', label: 'Terminado' },
 ]
 
 const mainRowsRef = 'cliente'
@@ -37,33 +31,24 @@ const subRowsRef = 'pedidos'
 const clienteColumns = [
   { label: 'ID', atr: 'idCliente' },
   { label: 'Nombre', atr: 'nombreCliente', search: true, foot: true },
-  { label: 'Pares terminados', atr: 'fraccion', foot: true },
+  { label: 'Pares terminados', atr: 'paresProgreso', foot: true, },
+  { label: 'Pares totales', atr: 'paresTotales', foot: true, },
   { label: 'Progreso del cliente', atr: 'porcentaje', Component: Progress, foot: true },
-  
+
 ]
 
 const pedidosColumns = [
   { label: 'ID', atr: 'idPedido' },
-  { label: 'Orden de compra', atr: 'ordenCompra', search: true },
+  { label: 'Registro', atr: 'fechaRegistro', Component: formatDate },
+  { label: 'Orden de producción', atr: 'ordenProduccion', search: true },
   { label: 'Cliente', atr: 'nombreCliente' },
   { label: 'Modelo', atr: 'nombreModelo', search: true },
   { label: 'Fecha de entrega', atr: 'fechaEntrega', Component: formatDate },
   { label: 'Días restantes', atr: 'diasRestantes', foot: true, },
-  { label: 'Pares terminados', atr: 'fraccion', foot: true, },
-  { label: 'Progreso del pedido', atr: 'porcentaje', Component: Progress, foot: true, }
+  { label: 'Pares terminados', atr: 'paresProgreso', foot: true, },
+  { label: 'Pares totales', atr: 'paresTotales', foot: true, },
+  { label: 'Progreso del pedido', atr: 'porcentaje', Component: Progress, foot: true, },
 ]
-
-const Tab = ({ children, active, ...props }) => {
-  return (
-    <div
-      className={`cursor-pointer hover:bg-white duration-100 rounded-md font-medium text-sm h-6 px-6 total-center ${active ? 'bg-white text-teal-700 shadow-md' : 'text-gray-600'}`}
-      {...props}
-    >
-      {children}
-    </div>
-  )
-
-}
 
 const CrudPedidos = ({
   title,
@@ -76,8 +61,9 @@ const CrudPedidos = ({
   const [pedidosFooteres, setPedidosFooteres] = useState({
     nombreCliente: "Total:",
     diasRestantes: "Total:",
-    fraccion: "",
     porcentaje: "",
+    paresProgreso: "",
+    paresTotales: ""
   })
 
   const [elements, setElements] = useState(allElements)
@@ -89,8 +75,9 @@ const CrudPedidos = ({
     initialValues: {
 
       groupByClient: false,
-      vista: 0, // 0 todos, 1 pendientes
-      searchText: ''
+      searchText: '',
+      tipo: 'Produccion',
+      estado: 'Pendiente',
     },
     validate: (values) => {
       const errors = {}
@@ -106,10 +93,16 @@ const CrudPedidos = ({
 
     let newElements = [...allElements]
 
-    // Filtra los elementos segun la vista
-    if (controls?.values?.vista === 1) {
-      newElements = newElements.filter(e => e.estado === 'Pendiente')
+    // Filtrar por estado
+    if (controls?.values?.estado) {
+      newElements = newElements.filter(e => e.estado === controls?.values?.estado)
     }
+
+    // Filtrar por tipo
+    if (controls?.values?.tipo) {
+      newElements = newElements.filter(e => e.tipo === controls?.values?.tipo)
+    }
+
     // Filtrar por texto
     let searchText = controls?.values?.searchText?.toLowerCase()
     // Dependiendo si hay agrupacion por cliente, se filtra por diferentes columnas
@@ -134,40 +127,41 @@ const CrudPedidos = ({
         clientes.push({
           idCliente: p.idCliente,
           nombreCliente: p.nombreCliente,
-          progreso: p.progreso,
-          total: p.total,
+          paresProgreso: p.paresProgreso,
+          paresTotales: p.paresTotales,
           pedidos: [p]
         })
       } else {
         let cliente = clientes[mark.get(p.idCliente)]
         cliente.pedidos.push(p)
-        cliente.progreso += p.progreso
-        cliente.total += p.total
+        cliente.paresProgreso += p.paresProgreso
+        cliente.paresTotales += p.paresTotales
       }
     })
 
     // Calcaulando footers
-    let totalPares = newElements.reduce((sum, p) => {
-      return sum + p.total
+    let paresTotales = newElements.reduce((sum, p) => {
+      return sum + p.paresTotales
     }, 0)
-    let totalProgreso = newElements.reduce((sum, p) => {
-      return sum + p.progreso
+    let paresProgreso = newElements.reduce((sum, p) => {
+      return sum + p.paresProgreso
     }, 0)
     setPedidosFooteres(prev => ({
       ...prev,
-      fraccion: `${totalProgreso} / ${totalPares}`,
-      porcentaje: Number((Number(totalProgreso) * 100 / Number(totalPares)))
+      paresTotales: paresTotales,
+      paresProgreso: paresProgreso,
+      porcentaje: Number((Number(paresProgreso) * 100 / Number(paresTotales)))
     }))
 
     // Calculando porcentaje de cada cliente
     clientes.forEach(c => {
-      c.porcentaje = Number((Number(c.progreso) * 100 / Number(c.total)))
-      c.fraccion = `${c.progreso} / ${c.total}`
+      c.porcentaje = Number((Number(c.paresProgreso) * 100 / Number(c.paresTotales)))
 
       // Calculando footers de cada cliente
       c.footers = {
         diasRestantes: "Total:",
-        fraccion: c.fraccion,
+        paresProgreso: c.paresProgreso,
+        paresTotales: c.paresTotales,
         porcentaje: c.porcentaje
       }
     })
@@ -233,15 +227,19 @@ const CrudPedidos = ({
                         onClick={() => console.log(controls.values)}
                         size="20px" />
                     </p>
-                    {[groupTabs.map((tab, indx) =>
-                      <Tab
-                        key={indx}
-                        active={controls.values.vista === tab.value}
-                        onClick={() => controls.setFieldValue('vista', tab.value)}
-                      >
-                        {tab.label}
-                      </Tab>)]
-                    }
+                    <OptionsInpt
+                      name='tipo'
+                      options={optionsTipo}
+                      formik={controls}
+                      withoutErrors={true}
+                    />
+                    <OptionsInpt
+                      name='estado'
+                      options={optionsEstado}
+                      formik={controls}
+                      withoutErrors={true}
+                    />
+
                   </div>
                 </div>
                 {/* Search Bar */}
@@ -251,7 +249,7 @@ const CrudPedidos = ({
                   <input
                     id='search-input'
                     name="searchText"
-                    className='w-full h-full py-1 pl-3 pr-10 outline-none rounded-2xl bg-slate-100'
+                    className='w-full h-10 py-1 pl-3 pr-10 outline-none rounded-2xl bg-slate-100'
                     ref={searchRef}
                     onChange={controls.handleChange}
                     value={controls?.values?.searchText}
@@ -273,7 +271,7 @@ const CrudPedidos = ({
               <AbsScroll
                 vertical
                 horizontal
-                loading={loading} 
+                loading={loading}
               >
                 {
                   !controls?.values?.groupByClient ?

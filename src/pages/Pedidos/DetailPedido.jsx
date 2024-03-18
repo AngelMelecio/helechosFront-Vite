@@ -39,7 +39,7 @@ const DetailPedido = () => {
   const modalRef = useRef()
 
 
-  const { findPedido, putProduccion , patchPedido} = usePedidos()
+  const { findPedido, putProduccion, patchPedido } = usePedidos()
 
   const [modalVisible, setModalVisible] = useState(false)
   const [detalleEtiquetaModalVisible, setDetalleEtiquetaModalVisible] = useState(false)
@@ -69,7 +69,7 @@ const DetailPedido = () => {
     onSubmit: async (values) => {
       try {
         if (theresChanges) {
-          const { message } = await patchPedido(id, {total: values.total, estado: values.estado, progreso: values.total})
+          const { message } = await patchPedido(id, {paresTotales: values.paresTotales, estado: values.estado, paresProgreso: values.paresTotales})
           notify(message)
         }
         navigate('/pedidos')
@@ -86,7 +86,7 @@ const DetailPedido = () => {
   const onMountComponent = async () => {
     let p = await findPedido(id)
     setPedido(p)
-    formik.setValues({estado: p.progreso.estado,total:p.progreso.total})
+    formik.setValues({ paresTotales: p?.paresTotales, estado: p?.estado, paresProgreso: p?.paresProgreso })
   }
 
   useEffect(() => {
@@ -112,7 +112,7 @@ const DetailPedido = () => {
             isSelected: false,
             talla: etiqueta.tallaReal,
             numEtiqueta: etiqueta.numEtiqueta,
-            od: pedido.ordenCompra,
+            op: pedido.ordenProduccion,
             destino: etiqueta.destino
           })
         })
@@ -264,26 +264,33 @@ const DetailPedido = () => {
                           type='text'
                         />
                       </div>
-                      <div className="grid grid-cols-3 gap-6">
+                      <div className="grid grid-cols-4 gap-6">
                         <Input
                           readOnly
-                          value={pedido?.ordenCompra}
-                          label='Orden de compra'
+                          value={pedido?.tipo}
+                          label='Tipo de pedido'
                           type="text"
                         />
                         <Input
                           readOnly
-                          value={pedido?.fraccion}
+                          value={pedido?.ordenProduccion}
+                          label='Orden de producción'
+                          type="text"
+                        />
+                        <Input
+                          readOnly
+                          value={pedido?.paresProgreso + ' de ' + pedido?.paresTotales}
                           label='Pares terminados'
                           type='text'
                         />
                         <OptionsInpt
-                          disabled={pedido?.progreso.estado === 'Terminado'}
+                          disabled={pedido?.estado === 'Terminado'}
                           label="Estado del pedido"
                           name='estado'
                           options={optionsEstado}
                           formik={formik}
                           fieldChange={() => setTheresChanges(true)}
+                          withoutCancelButton={pedido?.estado === 'Terminado'}
                         />
 
                       </div>
