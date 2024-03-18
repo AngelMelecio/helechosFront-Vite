@@ -67,7 +67,7 @@ function formatPedidos(pedidos) {
                 dateStyle: 'medium',
                 timeZone: 'UTC'
             }).format(new Date(pedido.fechaEntrega)),
-            fraccion: `${pedido.progreso.progreso} de ${pedido.progreso.total}`
+            
         })
     }
     )
@@ -81,13 +81,15 @@ function formatPedidosListar(pedidos) {
             idCliente: p.modelo.cliente.idCliente,
             nombreCliente: p.modelo.cliente.nombre,
             nombreModelo: p.modelo.nombre,
-            //fechaRegistro: p.fechaRegistro, //formatDate({ data: { string: p.fechaRegistro, type: 'dateTime' } }),
+            fechaRegistro: p.fechaRegistro, //formatDate({ data: { string: p.fechaRegistro, type: 'dateTime' } }),
             fechaEntrega: p.fechaEntrega, // formatDate({ data: { string: p.fechaEntrega, type: 'date' } }),
             diasRestantes: calculateDiasRestantes(p.fechaEntrega),
-            ordenCompra: p.ordenCompra,
-            ...p.progreso,
-            porcentaje: Number((Number(p.progreso.progreso) * 100 / Number(p.progreso.total))),
-            fraccion: `${p.progreso.progreso} / ${p.progreso.total}`,
+            ordenProduccion: p.ordenProduccion,
+            paresTotales: p.paresTotales,
+            paresProgreso: p.paresProgreso,
+            estado: p.estado,
+            tipo: p.tipo,
+            porcentaje: Number((Number(p.paresProgreso) * 100 / Number(p.paresTotales))),
         })
     )
 }
@@ -263,15 +265,15 @@ export function PedidosProvider({ children }) {
         }
     }
 
-    async function patchPedido(idPedido, objProgreso) {
-
+    async function patchPedido(idPedido, obj) {
+        console.log(obj)
         let options = {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + session.access
             },
-            body: JSON.stringify({progreso: objProgreso})
+            body: JSON.stringify(obj)
         }
 
         setLoading(true)

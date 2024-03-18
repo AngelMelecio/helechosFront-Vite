@@ -17,7 +17,7 @@ export function formatDate({ data }) {
     value = new Intl.DateTimeFormat('es-ES', {
       dateStyle: 'medium',
       hourCycle: 'h12',
-      timeStyle: 'medium',
+      timeStyle: 'short',
       timeZone: 'America/Mexico_City'
 
     }).format(new Date(data));

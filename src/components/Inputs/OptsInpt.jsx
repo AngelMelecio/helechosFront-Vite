@@ -11,6 +11,8 @@ const OptsInpt = ({
   formik,
   fieldChange,
   space = null,
+  withoutCancelButton = false,
+  withoutErrors = false,
   ...props
 }) => {
 
@@ -85,6 +87,7 @@ const OptsInpt = ({
             size='20px'
           /> : null}
         {!NULL ?
+          withoutCancelButton ? null :
           <button type="button"
             onClick={() => formik?.setFieldValue(name, null)}
             className='absolute w-8 h-8 text-gray-600 -translate-y-1/2 rounded-md right-1.5 hover:bg-slate-200 total-center top-1/2'>
@@ -116,11 +119,14 @@ const OptsInpt = ({
           </ul>
         }
       </div>
-      <div className={`${space ? 'h-36' : 'h-8'}`}>
-        {err ? <div className='text-sm italic text-rose-400'>
-          {err}
-        </div> : null}
-      </div>
+      {
+        withoutErrors ? null :
+          <div className={`${space ? 'h-36' : 'h-8'}`}>
+            {err ? <div className='text-sm italic text-rose-400'>
+              {err}
+            </div> : null}
+          </div>
+      }
     </div>
   )
 }
