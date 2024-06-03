@@ -19,7 +19,7 @@ const formatListToPrint = (list) => {
     talla: e.tallaReal,
     numEtiqueta: e.numEtiqueta,
     cantidad: e.cantidad,
-    od: e.od,
+    op: e.op,
     tipo: e.tipo,
     destino: e.destino,
   }))

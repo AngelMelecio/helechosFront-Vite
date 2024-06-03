@@ -3,6 +3,8 @@ import { useFormik } from "formik";
 import ReporteEmpleadoModelo from "./ReporteEmpleadoModelo";
 import ReporteMaquinaTurno from "./ReporteMaquinaTurno";
 import AbsScroll from "../../components/AbsScroll"
+import Modal from "../../components/Modal";
+import { sleep } from "../../constants/functions";
 
 import Inpt from '../../components/Inputs/Inpt'
 import OptsInpt from '../../components/Inputs/OptsInpt'
@@ -16,6 +18,29 @@ const PaginaReportes = () => {
     const [solicitud, setSolicitud] = useState(null)
     const [renderTurno, setRenderTurno] = useState(false)
     const [renderModelo, setRenderModelo] = useState(false)
+
+    const modalContainerRef = useRef();
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const [modalComponent, setModalComponent] = useState(null)
+
+    const handleOpenModal = async (setState) => {
+        setState(true)
+        await sleep(150)
+        document.getElementById("tbl-page").classList.add('blurred')
+        modalContainerRef.current.classList.add('visible')
+    }
+    const handleCloseModal = async (setState) => {
+        modalContainerRef.current.classList.remove('visible')
+        document.getElementById("tbl-page").classList.remove('blurred')
+        await sleep(150)
+        setState(false)
+    }
+
+    useEffect(() => {
+        if (modalVisible) handleOpenModal(setModalVisible)
+    }, [modalVisible])
+
 
     useEffect(() => {
         if (solicitud) {
@@ -134,6 +159,7 @@ const PaginaReportes = () => {
                                 </div>
 
                             </form>
+
                         </div>
                         {solicitud &&
                             <div
@@ -144,7 +170,10 @@ const PaginaReportes = () => {
                                 {
                                     renderModelo &&
                                     <ReporteEmpleadoModelo
-                                        solicitud={solicitud} />
+                                        solicitud={solicitud}
+                                        setModalComponent={setModalComponent}
+                                        setModalVisible={setModalVisible}
+                                    />
                                 }
                                 {
                                     renderTurno &&
@@ -155,8 +184,16 @@ const PaginaReportes = () => {
                     </div>
                 </AbsScroll>
             </div>
-
+            <div className='absolute z-50 w-full h-full modal' ref={modalContainerRef}>
+                {modalVisible &&
+                    <Modal
+                        onClose={() => handleCloseModal(setModalVisible)}
+                        component={modalComponent}
+                    />
+                }
+            </div>
         </>
+
     )
 }
 export default PaginaReportes

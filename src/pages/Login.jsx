@@ -58,7 +58,7 @@ export default function Login({ navigate }) {
                 name='password'
               />
               <div className='h-10 pl-1 italic font-medium text-rose-400 appear'>
-                <ErrorMessage name="usuario" />
+                <ErrorMessage name="password" />
               </div>
             </div>
 
