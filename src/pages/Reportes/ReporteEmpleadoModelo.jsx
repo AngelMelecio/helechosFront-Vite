@@ -5,37 +5,38 @@ import chroma from "chroma-js";
 import Loader from "../../components/Loader/Loader";
 import AbsScroll from "../../components/AbsScroll";
 
+
 const PADDING = 16
 
-const ReporteEmpleadoModelo = ({ solicitud }) => {
+const ReporteEmpleadoModelo = ({ solicitud, setModalVisible, setModalComponent }) => {
 
   const chartView = useRef(null)
 
   {/* States and Effects */ }
-  const { produccion_por_modelo_y_empleado } = usePedidos()
+  const { produccion_por_modelo_y_empleado } = usePedidos();
 
   const [readyToRender, setReadyToRender] = useState(false)
   const [data, setData] = useState([])
   const [transformedData, setTransformedData] = useState([]);
   const [consolidatedData, setConsolidatedData] = useState([]);
   const [modelosTotales, setModelosTotales] = useState([]);
-  const [widthChart2, setWidthChart2] = useState(1600)
-  const [chartViewHeight, setChartViewHeight] = useState(0)
-  const [loading, setLoading] = useState(false)
-  const [tabSelected, setTabSelected] = useState(0)
+  const [widthChart2, setWidthChart2] = useState(1600);
+  const [chartViewHeight, setChartViewHeight] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [tabSelected, setTabSelected] = useState(0);
   const [empleadosTotales, setEmpleadosTotales] = useState([]);
   const groupTabs = [
     { value: 0, label: 'Modelos' },
     { value: 1, label: 'Empleados' }
   ]
-  const [datosActuales, setDatosActuales] = useState({ totales: [], total: 0 });
+  const [datosActuales, setDatosActuales] = useState({ totales: [], total: 0, nombreEntidad: '' });
 
   useEffect(() => {
     // Asigna los datos actuales a mostrar basados en la pestaña seleccionada
     if (tabSelected === 0) {
-      setDatosActuales({ totales: modelosTotales.totales, total: modelosTotales.total });
+      setDatosActuales({ totales: modelosTotales.totales, total: modelosTotales.total, nombreEntidad: 'modelo' });
     } else if (tabSelected === 1) {
-      setDatosActuales({ totales: empleadosTotales.totales, total: empleadosTotales.total });
+      setDatosActuales({ totales: empleadosTotales.totales, total: empleadosTotales.total, nombreEntidad: 'empleado' });
     }
   }, [tabSelected, modelosTotales, empleadosTotales]);
 
@@ -204,7 +205,49 @@ const ReporteEmpleadoModelo = ({ solicitud }) => {
                       datosActuales?.totales.length > 0 &&
                       <div className="w-full h-full ">
                         {datosActuales.totales.map((entidad, index) => (
-                          <div className="flex items-center justify-between w-full py-1 border-b-2" key={index}>
+
+                          <div className={"flex items-center justify-between w-full py-1 border-b-2 " +
+                            (datosActuales.nombreEntidad === 'empleado' && ' cursor-pointer hover:bg-slate-200')}
+                            key={index}
+                            onClick={() => {
+                              if (datosActuales.nombreEntidad === 'empleado') {
+                                const empleado = data.find(e => e.empleado === entidad.entidad);
+                                setModalComponent(
+                                  <div className="w-full h-full">
+                                    <div className="flex flex-col pb-2 m-2">
+                                      <div className="flex flex-col w-full total-center">
+                                        <p className="mb-1 text-2xl font-bold text-teal-800/80">{empleado.empleado}</p>
+                                        <p className="font-bold text-gray-500">Información del {new Intl.DateTimeFormat('es-ES', {
+                                          dateStyle: 'full',
+                                          timeZone: 'UTC'
+                                        }).format(new Date(solicitud.fechaInicio))} al {new Intl.DateTimeFormat('es-ES', {
+                                          dateStyle: 'full',
+                                          timeZone: 'UTC'
+                                        }).format(new Date(solicitud.fechaFinal))}</p>
+                                        <p className="mb-1 font-bold text-gray-500">{entidad.total} pares</p>
+                                        
+                                      </div>
+                                      <div className="overflow-scroll">
+                                      <Chart
+                                        chartType="Bar"
+                                        width="100%"
+                                        height="400px"
+                                        data={transformDataEmpleado(empleado).data}
+                                        options={{
+                                          colors: ["#23aa8f", "#46b99d", "#64c987", "#DC2626"]
+                                        }}
+                                      />
+                                      </div>
+                                      
+                                    </div>
+                                  </div>
+                                );
+                                setModalVisible(true);
+                              }
+                            }
+                            }
+
+                          >
                             <p className="px-2 font-normal text-gray-600 text-md">{entidad.entidad}</p>
                             <p className="px-2 font-bold text-teal-800/80 text-md">{entidad.total}</p>
                           </div>
@@ -240,6 +283,7 @@ const ReporteEmpleadoModelo = ({ solicitud }) => {
                               className={`flex flex-col bg-white shadow-md rounded-md p-4`} key={'DE_' + index}
                             >
                               <p className="px-2 pb-4 font-semibold text-teal-800/80 text-md">{dataEmpleado.empleado}</p>
+
                               <Chart
                                 loader={<Loader />}
                                 key={'CE_' + index}
@@ -288,8 +332,8 @@ const ReporteEmpleadoModelo = ({ solicitud }) => {
             </AbsScroll>
           </div>
         </div>
-
       }
+
     </>
   )
 }
